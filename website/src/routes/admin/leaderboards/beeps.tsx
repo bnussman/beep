@@ -1,19 +1,15 @@
 import React from 'react'
-import { leaderboardsRoute } from '.';
-import { createRoute, useNavigate, Link as RouterLink } from '@tanstack/react-router';
+import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
 import { useTRPC } from '../../../utils/trpc';
 import { PaginationFooter } from '../../../components/PaginationFooter';
 import { Avatar, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
-
 import { useQuery } from "@tanstack/react-query";
 
-export const beepsLeaderboard = createRoute({
+export const Route = createFileRoute('/admin/leaderboards/beeps')({
   component: Beeps,
-  path: 'beeps',
-  getParentRoute: () => leaderboardsRoute,
   validateSearch: (search: Record<string, string>) => {
     return {
       page: Number(search?.page ?? 1),
@@ -21,10 +17,10 @@ export const beepsLeaderboard = createRoute({
   },
 });
 
-export function Beeps() {
+function Beeps() {
   const trpc = useTRPC();
-  const { page } = beepsLeaderboard.useSearch();
-  const navigate = useNavigate({ from: "/admin/leaderboards/beeps" });
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
 
   const { isLoading, error, data } = useQuery(trpc.user.usersWithBeeps.queryOptions(
     {

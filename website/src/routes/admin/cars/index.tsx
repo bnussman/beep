@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { CarMenu } from "../../../components/CarMenu";
+import { DeleteCarDialog } from "../../../components/DeleteCarDialog";
+import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { Indicator } from "../../../components/Indicator";
 import { PhotoDialog } from "../../../components/PhotoDialog";
-import { DeleteCarDialog } from "./DeleteCarDialog";
-import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from "..";
+import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { PaginationFooter } from "../../../components/PaginationFooter";
@@ -12,7 +13,6 @@ import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
-import { CarMenu } from "./CarMenu";
 import {
   Box,
   Paper,
@@ -26,22 +26,18 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
-export const carsRoute = createRoute({
+export const Route = createFileRoute("/admin/cars/")({
   component: Cars,
-  path: "/cars",
-  getParentRoute: () => adminRoute,
   validateSearch: (search: Record<string, string>) => ({
     page: Number(search?.page ?? 1),
   }),
 });
 
-export function Cars() {
+function Cars() {
   const trpc = useTRPC();
-  const { page } = carsRoute.useSearch();
+  const { page } = Route.useSearch();
 
-  const navigate = useNavigate({ from: carsRoute.id });
+  const navigate = useNavigate({ from: Route.id });
 
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);

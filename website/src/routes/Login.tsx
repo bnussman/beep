@@ -1,6 +1,8 @@
 import React from "react";
-import { Link, createRoute, useNavigate } from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../utils/trpc";
 import {
   Alert,
@@ -10,18 +12,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
 
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-
-export const loginRoute = createRoute({
-  component: Login,
-  path: "/login",
-  getParentRoute: () => rootRoute,
+export const Route = createFileRoute('/login')({
+  component: Login
 });
 
-export function Login() {
+function Login() {
   const trpc = useTRPC();
   const navigate = useNavigate();
   const queryClient = useQueryClient();

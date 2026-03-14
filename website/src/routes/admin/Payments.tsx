@@ -1,6 +1,6 @@
 import React from "react";
-import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from ".";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../components/PaginationFooter";
@@ -20,22 +20,18 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
-export const paymentsRoute = createRoute({
+export const Route = createFileRoute("/admin/payments")({
   component: Payments,
-  path: "/payments",
-  getParentRoute: () => adminRoute,
   validateSearch: (search: Record<string, string>) => ({
     page: Number(search?.page ?? 1),
   }),
 });
 
-export function Payments() {
+function Payments() {
   const trpc = useTRPC();
-  const { page } = paymentsRoute.useSearch();
+  const { page } = Route.useSearch();
 
-  const navigate = useNavigate({ from: paymentsRoute.id });
+  const navigate = useNavigate({ from: Route.id });
 
   const { data, isLoading, error } = useQuery(trpc.payment.payments.queryOptions(
     {

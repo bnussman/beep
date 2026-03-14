@@ -1,19 +1,15 @@
 import React from "react";
 import { useTRPC } from "../../utils/trpc";
-import { createRoute } from "@tanstack/react-router";
-import { adminRoute } from ".";
+import { createRoute, createFileRoute } from "@tanstack/react-router";
 import { Loading } from "../../components/Loading";
 import { Alert } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
 
-export const healthRoute = createRoute({
+export const Route = createFileRoute("/admin/health")({
   component: Health,
-  path: "health",
-  getParentRoute: () => adminRoute,
 });
 
-export function Health() {
+function Health() {
   const trpc = useTRPC();
   const { data, isLoading, error } = useQuery(trpc.health.healthcheck.queryOptions(
     undefined,

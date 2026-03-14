@@ -1,4 +1,14 @@
 import React from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import { Indicator } from "../../../components/Indicator";
+import { createFileRoute, Link as RouterLink, useNavigate, } from "@tanstack/react-router";
+import { useTRPC } from "../../../utils/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
+import { useQuery } from "@tanstack/react-query";
+import { TableEmpty } from "../../../components/TableEmpty";
 import {
   Table,
   TableHead,
@@ -15,32 +25,15 @@ import {
   Avatar,
   Link,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { Indicator } from "../../../components/Indicator";
-import {
-  createRoute,
-  Link as RouterLink,
-  useNavigate,
-} from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
-import { keepPreviousData } from "@tanstack/react-query";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { usersRoute } from "./routes";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableError } from "../../../components/TableError";
-import { useQuery } from "@tanstack/react-query";
-import { TableEmpty } from "../../../components/TableEmpty";
 
-export interface PaginationSearchParams {
+interface PaginationSearchParams {
   page: number;
   query?: string;
 }
 
-export const usersListRoute = createRoute({
+export const Route = createFileRoute('/admin/users/')({
   component: Users,
-  path: "/",
-  getParentRoute: () => usersRoute,
-  validateSearch: (search: Record<string, string>): PaginationSearchParams => {
+  validateSearch(search: Record<string, string>): PaginationSearchParams {
     return {
       page: Number(search?.page ?? 1),
       query: search.query ? search.query : undefined,
@@ -51,8 +44,8 @@ export const usersListRoute = createRoute({
 function Users() {
   const trpc = useTRPC();
   const PAGE_SIZE = 20;
-  const { page, query } = usersListRoute.useSearch();
-  const navigate = useNavigate({ from: usersListRoute.id });
+  const { page, query } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
 
   const { isLoading, isFetching, error, data } = useQuery(
     trpc.user.users.queryOptions(
@@ -65,7 +58,7 @@ function Users() {
     ),
   );
 
-  const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (event: unknown, page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
   };
 

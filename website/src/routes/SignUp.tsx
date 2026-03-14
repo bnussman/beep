@@ -1,12 +1,9 @@
 import React, { useMemo } from "react";
 import { useTRPC } from "../utils/trpc";
 import { useForm, Controller } from "react-hook-form";
-import {
-  Link as RouterLink,
-  createRoute,
-  useNavigate,
-} from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link as RouterLink, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Alert,
   Avatar,
@@ -19,13 +16,9 @@ import {
   Box,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
-export const signupRoute = createRoute({
-  component: SignUp,
-  path: "/signup",
-  getParentRoute: () => rootRoute,
+export const Route = createFileRoute('/signup')({
+  component: SignUp
 });
 
 interface SignUpFormValues {
@@ -39,7 +32,7 @@ interface SignUpFormValues {
   photo: FileList;
 }
 
-export function SignUp() {
+function SignUp() {
   const trpc = useTRPC();
   const navigate = useNavigate();
 

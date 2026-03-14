@@ -1,16 +1,13 @@
 import React, { useEffect } from "react";
 import { getDownloadLink } from "../utils/utils";
-import { createRoute } from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
+import { createFileRoute } from "@tanstack/react-router";
 import { CircularProgress, Typography, Stack } from "@mui/material";
 
-export const downloadRoute = createRoute({
-  path: "/download",
-  getParentRoute: () => rootRoute,
+export const Route = createFileRoute('/download')({
   component: Download,
 });
 
-export function Download() {
+function Download() {
   useEffect(() => {
     window.location.href = getDownloadLink();
   }, []);

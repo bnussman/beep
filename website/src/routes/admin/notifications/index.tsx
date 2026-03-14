@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { SendNotificationConfirmationDialog } from "./SendNotificationConfirmationDialog";
+import { useMutation } from "@tanstack/react-query";
+import { SendNotificationConfirmationDialog } from "../../../components/SendNotificationConfirmationDialog";
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
-import { createRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../../../utils/trpc";
-import { adminRoute } from "..";
 import {
   Alert,
   TextField,
@@ -15,17 +15,13 @@ import {
   Card,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
-
 type SendNotifictionVariables = RouterInput["notification"]["sendNotification"];
 
-export const notificationsRoute = createRoute({
+export const Route = createFileRoute('/admin/notifications/')({
   component: Notifications,
-  path: "/notifications",
-  getParentRoute: () => adminRoute,
 });
 
-export function Notifications() {
+function Notifications() {
   const trpc = useTRPC();
   const notifications = useNotifications();
 

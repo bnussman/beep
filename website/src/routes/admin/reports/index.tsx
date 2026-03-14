@@ -1,15 +1,15 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Indicator } from "../../../components/Indicator";
-import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from "..";
+import { createFileRoute, createRoute, useNavigate } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
-import { ReportMenu } from "./ReportMenu";
-import { DeleteReportDialog } from "./DeleteReportDialog";
+import { ReportMenu } from "../../../components/ReportMenu";
+import { DeleteReportDialog } from "../../../components/DeleteReportDialog";
 import { keepPreviousData } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import {
@@ -24,26 +24,17 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
-export const reportsRoute = createRoute({
-  path: "reports",
-  getParentRoute: () => adminRoute,
-});
-
-export const reportsListRoute = createRoute({
+export const Route = createFileRoute('/admin/reports/')({
   component: Reports,
-  path: "/",
-  getParentRoute: () => reportsRoute,
   validateSearch: (search: Record<string, string>) => ({
     page: Number(search?.page ?? 1),
   }),
 });
 
-export function Reports() {
+function Reports() {
   const trpc = useTRPC();
-  const { page } = reportsListRoute.useSearch();
-  const navigate = useNavigate({ from: reportsListRoute.id });
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
 
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 
@@ -88,9 +79,9 @@ export function Reports() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.results === 0 && <TableEmpty colSpan={6} />}
-            {error && <TableError colSpan={6} error={error.message} />}
-            {isLoading && <TableLoading colSpan={6} />}
+            {data?.results === 0 && <TableEmpty colSpan={7} />}
+            {error && <TableError colSpan={7} error={error.message} />}
+            {isLoading && <TableLoading colSpan={7} />}
             {data?.reports.map((report) => (
               <TableRow key={report.id}>
                 <TableCellUser user={report.reporter} />
