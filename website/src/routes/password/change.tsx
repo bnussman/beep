@@ -1,7 +1,8 @@
 import React from "react";
-import { createRoute } from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
-import { useTRPC } from "../utils/trpc";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { useTRPC } from "../../utils/trpc";
 import {
   Alert,
   Box,
@@ -11,13 +12,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
 
-import { useMutation } from "@tanstack/react-query";
-
-export const changePasswordRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/password/change",
+export const Route = createFileRoute('/password/change')({
   component: ChangePassword,
 });
 

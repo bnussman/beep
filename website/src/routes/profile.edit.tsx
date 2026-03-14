@@ -1,8 +1,9 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
-import { createRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../utils/trpc";
-import { rootRoute } from "../utils/root";
 import { useNotifications } from "@toolpad/core";
 import {
   Alert,
@@ -16,14 +17,9 @@ import {
   Box,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-
 type Values = RouterInput["user"]["edit"];
 
-export const editProfileRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/profile/edit",
+export const Route = createFileRoute('/profile/edit')({
   component: EditProfile,
 });
 

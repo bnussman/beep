@@ -1,12 +1,9 @@
 import React from 'react';
 import { Stack, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
-import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
+import { createFileRoute } from '@tanstack/react-router';
 
-export const privacyRoute = createRoute({
+export const Route = createFileRoute('/privacy')({
   component: Privacy,
-  path: "/privacy",
-  getParentRoute: () => rootRoute,
 });
 
 const Introduction = () => {

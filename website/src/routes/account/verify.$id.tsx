@@ -1,22 +1,18 @@
 import React from "react";
 import { useEffect } from "react";
-import { Loading } from "../components/Loading";
-import { createRoute } from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
-import { useTRPC } from "../utils/trpc";
+import { Loading } from "../../components/Loading";
+import { createFileRoute } from "@tanstack/react-router";
+import { useTRPC } from "../../utils/trpc";
 import { Box, Alert } from "@mui/material";
-
 import { useMutation } from "@tanstack/react-query";
 
-export const verifyAccountRoute = createRoute({
+export const Route = createFileRoute('/account/verify/$id')({
   component: VerifyAccount,
-  path: "/account/verify/$id",
-  getParentRoute: () => rootRoute,
 });
 
 export function VerifyAccount() {
   const trpc = useTRPC();
-  const { id } = verifyAccountRoute.useParams();
+  const { id } = Route.useParams();
 
   const {
     mutateAsync: verifyEmail,

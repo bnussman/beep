@@ -1,7 +1,8 @@
 import React from "react";
 import iPhoneDark from "../assets/dark.png";
 import iPhoneLight from "../assets/light.png";
-import { createRoute } from "@tanstack/react-router";
+import { getDownloadLink } from "../utils/utils";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Box,
   Button,
@@ -11,13 +12,9 @@ import {
   useColorScheme,
   Zoom,
 } from "@mui/material";
-import { rootRoute } from "../utils/root";
-import { getDownloadLink } from "../utils/utils";
 
-export const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/",
-  component: Home,
+export const Route = createFileRoute('/')({
+  component: Home
 });
 
 export function Home() {

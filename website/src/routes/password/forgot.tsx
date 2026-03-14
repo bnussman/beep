@@ -1,7 +1,7 @@
 import React from "react";
-import { createRoute } from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
-import { RouterInput, useTRPC } from "../utils/trpc";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { RouterInput, useTRPC } from "../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import {
   Card,
@@ -12,12 +12,9 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
 
-export const forgotPasswordRoute = createRoute({
+export const Route = createFileRoute("/password/forgot")({
   component: ForgotPassword,
-  path: "/password/forgot",
-  getParentRoute: () => rootRoute,
 });
 
 export function ForgotPassword() {

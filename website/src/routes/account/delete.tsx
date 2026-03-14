@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNotifications } from "@toolpad/core";
-import { queryClient, useTRPC } from "../utils/trpc";
-import { rootRoute } from "../utils/root";
+import { queryClient, useTRPC } from "../../utils/trpc";
 import {
   Link as RouterLink,
-  createRoute,
+  createFileRoute,
   useNavigate,
 } from "@tanstack/react-router";
 import {
@@ -20,12 +21,7 @@ import {
   Box,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-
-export const deleteAccountRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/account/delete",
+export const Route = createFileRoute('/account/delete')({
   component: DeleteAccount,
 });
 
