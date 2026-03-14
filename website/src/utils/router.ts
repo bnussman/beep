@@ -4,7 +4,8 @@ import { routeTree } from "../routeTree.gen";
 
 export const router = createRouter({
   routeTree,
-  defaultNotFoundComponent: NotFound
+  defaultNotFoundComponent: NotFound,
+  defaultPreload: 'intent',
 });
 
 declare module '@tanstack/react-router' {
