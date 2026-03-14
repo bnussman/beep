@@ -289,11 +289,11 @@ importers:
         specifier: ^5.90.21
         version: 5.90.21(react@19.2.0)
       '@tanstack/react-router':
-        specifier: ^1.161.3
-        version: 1.161.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^1.166.8
+        version: 1.166.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@toolpad/core':
         specifier: ^0.16.0
-        version: 0.16.0(16ee175ef7c58182921e251a06da10a4)
+        version: 0.16.0(6eb8f483efbdafc63e25e1022cea0a41)
       '@trpc/client':
         specifier: ^11.10.0
         version: 11.10.0(@trpc/server@11.10.0(typescript@5.9.2))(typescript@5.9.2)
@@ -320,14 +320,14 @@ importers:
         version: 8.1.0(mapbox-gl@3.14.0)(maplibre-gl@5.18.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@rolldown/plugin-babel':
-        specifier: ^0.2.0
-        version: 0.2.0(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
+        specifier: ^0.2.1
+        version: 0.2.1(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
       '@tanstack/react-query-devtools':
         specifier: ^5.91.3
         version: 5.91.3(@tanstack/react-query@5.90.21(react@19.2.0))(react@19.2.0)
       '@tanstack/router-plugin':
         specifier: ^1.166.8
-        version: 1.166.8(@tanstack/react-router@1.161.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
+        version: 1.166.8(@tanstack/react-router@1.166.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
       '@trpc/server':
         specifier: ^11.10.0
         version: 11.10.0(typescript@5.9.2)
@@ -342,7 +342,7 @@ importers:
         version: 19.1.9(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^6.0.0
-        version: 6.0.0(@rolldown/plugin-babel@0.2.0(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
+        version: 6.0.0(@rolldown/plugin-babel@0.2.1(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
@@ -2892,8 +2892,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rolldown/plugin-babel@0.2.0':
-    resolution: {integrity: sha512-ZkajPtfcBTfLSZTmm40k2E0cwT5HDosBcj71fdUURXl7FfETb50jEbV39ujPw2RFp3ZpOugK3ATdX+HuFfWr9Q==}
+  '@rolldown/plugin-babel@0.2.1':
+    resolution: {integrity: sha512-pHDVHqFv26JNC8I500JZ0H4h1kvSyiE3V9gjEO9pRAgD1KrIdJvcHCokV6f7gG7Rx4vMOD11V8VUOpqdyGbKBw==}
     engines: {node: '>=22.12.0 || ^24.0.0'}
     peerDependencies:
       '@babel/core': ^7.29.0 || ^8.0.0-rc.1
@@ -3260,10 +3260,6 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tanstack/history@1.154.14':
-    resolution: {integrity: sha512-xyIfof8eHBuub1CkBnbKNKQXeRZC4dClhmzePHVOEel4G7lk/dW+TQ16da7CFdeNLv6u6Owf5VoBQxoo6DFTSA==}
-    engines: {node: '>=12'}
-
   '@tanstack/history@1.161.4':
     resolution: {integrity: sha512-Kp/WSt411ZWYvgXy6uiv5RmhHrz9cAml05AQPrtdAp7eUqvIDbMGPnML25OKbzR3RJ1q4wgENxDTvlGPa9+Mww==}
     engines: {node: '>=20.19'}
@@ -3285,9 +3281,9 @@ packages:
     peerDependencies:
       react: 19.2.0
 
-  '@tanstack/react-router@1.161.3':
-    resolution: {integrity: sha512-evYPrkuFt4T6E0WVyBGGq83lWHJjsYy3E5SpPpfPY/uRnEgmgwfr6Xl570msRnWYMj7DIkYg8ZWFFwzqKrSlBw==}
-    engines: {node: '>=12'}
+  '@tanstack/react-router@1.166.8':
+    resolution: {integrity: sha512-EfDPSpPQetdtqi0UT9UAeZEo1cE0O57073IF84kLDvolwR3rWhOX8TgvjL6c2h723EN8EcUlcCU7Tb9Pyt/42g==}
+    engines: {node: '>=20.19'}
     peerDependencies:
       react: 19.2.0
       react-dom: 19.2.0
@@ -3297,10 +3293,6 @@ packages:
     peerDependencies:
       react: 19.2.0
       react-dom: 19.2.0
-
-  '@tanstack/router-core@1.161.3':
-    resolution: {integrity: sha512-8EuaGXLUjugQE9Rsb8VrWSy+wImcs/DZ9JORqUJYCmiiWnJzbat8KedQItq/9LCjMJyx4vTLCt8NnZCL+j1Ayg==}
-    engines: {node: '>=12'}
 
   '@tanstack/router-core@1.166.7':
     resolution: {integrity: sha512-MCc8wYIIcxmbeidM8PL2QeaAjUIHyhEDIZPW6NGfn/uwvyi+K2ucn3AGCxxcXl4JGGm0Mx9+7buYl1v3HdcFrg==}
@@ -10343,7 +10335,7 @@ snapshots:
   '@rolldown/binding-win32-x64-msvc@1.0.0-rc.9':
     optional: true
 
-  '@rolldown/plugin-babel@0.2.0(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))':
+  '@rolldown/plugin-babel@0.2.1(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))':
     dependencies:
       '@babel/core': 7.29.0
       picomatch: 4.0.3
@@ -10706,8 +10698,6 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tanstack/history@1.154.14': {}
-
   '@tanstack/history@1.161.4': {}
 
   '@tanstack/query-core@5.90.20': {}
@@ -10725,11 +10715,11 @@ snapshots:
       '@tanstack/query-core': 5.90.20
       react: 19.2.0
 
-  '@tanstack/react-router@1.161.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@tanstack/react-router@1.166.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
-      '@tanstack/history': 1.154.14
+      '@tanstack/history': 1.161.4
       '@tanstack/react-store': 0.9.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@tanstack/router-core': 1.161.3
+      '@tanstack/router-core': 1.166.7
       isbot: 5.1.35
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -10742,16 +10732,6 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       use-sync-external-store: 1.6.0(react@19.2.0)
-
-  '@tanstack/router-core@1.161.3':
-    dependencies:
-      '@tanstack/history': 1.154.14
-      '@tanstack/store': 0.9.1
-      cookie-es: 2.0.0
-      seroval: 1.5.0
-      seroval-plugins: 1.5.0(seroval@1.5.0)
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
 
   '@tanstack/router-core@1.166.7':
     dependencies:
@@ -10776,7 +10756,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/router-plugin@1.166.8(@tanstack/react-router@1.161.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))':
+  '@tanstack/router-plugin@1.166.8(@tanstack/react-router@1.166.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-syntax-jsx': 7.28.6(@babel/core@7.29.0)
@@ -10792,7 +10772,7 @@ snapshots:
       unplugin: 2.3.11
       zod: 3.25.76
     optionalDependencies:
-      '@tanstack/react-router': 1.161.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tanstack/react-router': 1.166.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       vite: 8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1)
     transitivePeerDependencies:
       - supports-color
@@ -10817,7 +10797,7 @@ snapshots:
 
   '@tediousjs/connection-string@0.5.0': {}
 
-  '@toolpad/core@0.16.0(16ee175ef7c58182921e251a06da10a4)':
+  '@toolpad/core@0.16.0(6eb8f483efbdafc63e25e1022cea0a41)':
     dependencies:
       '@babel/runtime': 7.28.4
       '@emotion/cache': 11.14.0
@@ -10836,7 +10816,7 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
     optionalDependencies:
-      '@tanstack/react-router': 1.161.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tanstack/react-router': 1.166.8(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
     transitivePeerDependencies:
       - '@emotion/styled'
       - '@mui/system'
@@ -11092,12 +11072,12 @@ snapshots:
     optionalDependencies:
       maplibre-gl: 5.18.0
 
-  '@vitejs/plugin-react@6.0.0(@rolldown/plugin-babel@0.2.0(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))':
+  '@vitejs/plugin-react@6.0.0(@rolldown/plugin-babel@0.2.1(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.7
       vite: 8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1)
     optionalDependencies:
-      '@rolldown/plugin-babel': 0.2.0(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
+      '@rolldown/plugin-babel': 0.2.1(@babel/core@7.29.0)(@babel/runtime@7.28.6)(rolldown@1.0.0-rc.9)(vite@8.0.0(@types/node@25.3.0)(esbuild@0.27.3)(jiti@1.21.6)(terser@5.37.0)(tsx@4.21.0)(yaml@2.6.1))
       babel-plugin-react-compiler: 1.0.0
 
   '@whatwg-node/events@0.1.2':

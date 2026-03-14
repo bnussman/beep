@@ -79,9 +79,9 @@ export function Reports() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.results === 0 && <TableEmpty colSpan={6} />}
-            {error && <TableError colSpan={6} error={error.message} />}
-            {isLoading && <TableLoading colSpan={6} />}
+            {data?.results === 0 && <TableEmpty colSpan={7} />}
+            {error && <TableError colSpan={7} error={error.message} />}
+            {isLoading && <TableLoading colSpan={7} />}
             {data?.reports.map((report) => (
               <TableRow key={report.id}>
                 <TableCellUser user={report.reporter} />
