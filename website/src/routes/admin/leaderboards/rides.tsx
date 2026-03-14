@@ -1,6 +1,6 @@
 import React from "react";
-import { leaderboardsRoute } from ".";
-import { createRoute, Link as RouterLink, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Link as RouterLink, useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
@@ -20,12 +20,8 @@ import {
   Link,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
-export const ridesLeaderboard = createRoute({
+export const Route = createFileRoute('/admin/leaderboards/rides')({
   component: Rides,
-  path: "rides",
-  getParentRoute: () => leaderboardsRoute,
   validateSearch: (search: Record<string, string>) => {
     return {
       page: Number(search?.page ?? 1),
@@ -35,8 +31,8 @@ export const ridesLeaderboard = createRoute({
 
 export function Rides() {
   const trpc = useTRPC();
-  const { page } = ridesLeaderboard.useSearch();
-  const navigate = useNavigate({ from: "/admin/leaderboards/rides" });
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
 
   const { isLoading, error, data } = useQuery(trpc.user.usersWithRides.queryOptions(
     {

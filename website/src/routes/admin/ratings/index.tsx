@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
-import { RatingMenu } from "./RatingMenu";
-import { DeleteRatingDialog } from "./DeleteRatingDialog";
+import { RatingMenu } from "../../../components/RatingMenu";
+import { DeleteRatingDialog } from "../../../components/DeleteRatingDialog";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useNotifications } from "@toolpad/core";
-import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from "..";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
@@ -25,18 +26,8 @@ import {
   TableBody,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-
-export const ratingsRoute = createRoute({
-  path: "ratings",
-  getParentRoute: () => adminRoute,
-});
-
-export const ratingsListRoute = createRoute({
-  path: "/",
+export const Route = createFileRoute('/admin/ratings/')({
   component: Ratings,
-  getParentRoute: () => ratingsRoute,
   validateSearch: (search: Record<string, string>) => ({
     page: Number(search?.page ?? 1),
   }),
@@ -44,9 +35,9 @@ export const ratingsListRoute = createRoute({
 
 export function Ratings() {
   const trpc = useTRPC();
-  const { page } = ratingsListRoute.useSearch();
+  const { page } = Route.useSearch();
 
-  const navigate = useNavigate({ from: ratingsListRoute.id });
+  const navigate = useNavigate({ from: Route.id });
 
   const notifications = useNotifications();
 

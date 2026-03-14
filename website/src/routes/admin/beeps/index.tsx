@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BeepMenu } from "./BeepMenu";
-import { DeleteBeepDialog } from "./DeleteBeepDialog";
+import { BeepMenu } from "../../../components/BeepMenu";
+import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import { Indicator } from "../../../components/Indicator";
-import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from "..";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { RouterOutput, useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
@@ -39,14 +38,7 @@ export const beepStatusMap: Record<
   complete: "green",
 };
 
-export const beepsRoute = createRoute({
-  path: "beeps",
-  getParentRoute: () => adminRoute,
-});
-
-export const beepsListRoute = createRoute({
-  path: "/",
-  getParentRoute: () => beepsRoute,
+export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
   validateSearch: (search) => {
     return {
@@ -57,8 +49,8 @@ export const beepsListRoute = createRoute({
 
 export function Beeps() {
   const trpc = useTRPC();
-  const { page } = beepsListRoute.useSearch();
-  const navigate = useNavigate({ from: beepsListRoute.id });
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedBeepId, setSelectedBeepId] = useState<string | null>(null);

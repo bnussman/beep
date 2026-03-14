@@ -1,6 +1,5 @@
 import React from 'react'
-import { createRoute, Outlet, useLocation, useMatch } from '@tanstack/react-router';
-import { adminRoute } from '..';
+import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
@@ -8,10 +7,8 @@ import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import { Link } from '@tanstack/react-router';
 
-export const leaderboardsRoute = createRoute({
+export const Route = createFileRoute('/admin/leaderboards/')({
   component: Leaderboards,
-  path: 'leaderboards',
-  getParentRoute: () => adminRoute,
 });
 
 export function Leaderboards() {

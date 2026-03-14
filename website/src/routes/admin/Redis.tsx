@@ -1,16 +1,12 @@
 import React from "react";
 import { Loading } from "../../components/Loading";
-import { createRoute } from "@tanstack/react-router";
-import { adminRoute } from ".";
+import { createFileRoute, createRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../utils/trpc";
 import { Stack, Alert, Typography } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
 
-export const redisRoute = createRoute({
+export const Route = createFileRoute('/admin/redis')({
   component: Redis,
-  path: "redis",
-  getParentRoute: () => adminRoute,
 });
 
 export function Redis() {
