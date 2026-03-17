@@ -7,6 +7,7 @@ build/
 build/**
 .expo/
 .idea/
+.tanstack
 .DS_Store
 **/.env
 **/test-results/
