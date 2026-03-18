@@ -3,7 +3,7 @@ import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { CircularProgress, Typography, Stack } from "@mui/material";
 
-export const Route = createFileRoute('/download')({
+export const Route = createFileRoute('/Download')({
   component: Download,
 });
 

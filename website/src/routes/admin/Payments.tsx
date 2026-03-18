@@ -20,7 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 
-export const Route = createFileRoute("/admin/payments")({
+export const Route = createFileRoute("/admin/Payments")({
   component: Payments,
   validateSearch: (search: Record<string, string>) => ({
     page: Number(search?.page ?? 1),

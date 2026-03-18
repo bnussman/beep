@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 
 
-export const Route = createFileRoute('/signup')({
+export const Route = createFileRoute('/SignUp')({
   component: SignUp
 });
 
