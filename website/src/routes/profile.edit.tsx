@@ -15,6 +15,8 @@ import {
   Stack,
   Button,
   Box,
+  Container,
+  LinearProgress,
 } from "@mui/material";
 
 type Values = RouterInput["user"]["edit"];
@@ -108,140 +110,137 @@ function EditProfile() {
   }
 
   return (
-    <Card sx={{ p: 3 }}>
-      <form onSubmit={onSubmit}>
-        <Stack spacing={2}>
-          <Typography variant="h4" fontWeight="bold">
-            Edit Profile
-          </Typography>
-          {errors.root?.message && (
-            <Alert severity="error">{errors.root?.message}</Alert>
-          )}
-          {isUploadPending && (
-            <Alert severity="info">
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Typography>Uploading Profile Photo</Typography>
-                <CircularProgress size={16} />
+    <Container maxWidth="sm">
+      <Card sx={{ p: 3 }}>
+        <form onSubmit={onSubmit}>
+          <Stack spacing={2}>
+            <Typography variant="h4" fontWeight="bold">
+              Edit Profile
+            </Typography>
+            {errors.root?.message && (
+              <Alert severity="error">{errors.root?.message}</Alert>
+            )}
+            {isUploadPending && (
+              <LinearProgress variant="indeterminate" sx={{ mb: '16px !important' }} />
+            )}
+            {uploadError && <Alert severity="error">{uploadError.message}</Alert>}
+            <Stack direction="row" spacing={2}>
+              <Stack spacing={2} flexGrow={1}>
+                <Controller
+                  control={control}
+                  name="first"
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      label="First Name"
+                      value={field.value}
+                      onChange={field.onChange}
+                      error={Boolean(fieldState.error?.message)}
+                      helperText={fieldState.error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="last"
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      label="Last Name"
+                      value={field.value}
+                      onChange={field.onChange}
+                      error={Boolean(fieldState.error?.message)}
+                      helperText={fieldState.error?.message}
+                    />
+                  )}
+                />
               </Stack>
-            </Alert>
-          )}
-          {uploadError && <Alert severity="error">{uploadError.message}</Alert>}
-          <Stack direction="row" spacing={2}>
-            <Stack spacing={2} flexGrow={1}>
-              <Controller
-                control={control}
-                name="first"
-                render={({ field, fieldState }) => (
-                  <TextField
-                    label="First Name"
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={Boolean(fieldState.error?.message)}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="last"
-                render={({ field, fieldState }) => (
-                  <TextField
-                    label="Last Name"
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={Boolean(fieldState.error?.message)}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
+              <label style={{ cursor: "pointer" }} htmlFor="photo">
+                <Avatar
+                  sx={{ width: 128, height: 128 }}
+                  src={user?.photo ?? undefined}
+                />
+              </label>
+              <input
+                id="photo"
+                type="file"
+                onChange={(e) => uploadPhoto(e.target.files?.[0])}
+                hidden
               />
             </Stack>
-            <label style={{ cursor: "pointer" }} htmlFor="photo">
-              <Avatar
-                sx={{ width: 128, height: 128 }}
-                src={user?.photo ?? undefined}
-              />
-            </label>
-            <input
-              id="photo"
-              type="file"
-              onChange={(e) => uploadPhoto(e.target.files?.[0])}
-              hidden
+            <Controller
+              control={control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Email"
+                  type="email"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={
+                    (fieldState.error?.message ?? user.isEmailVerified)
+                      ? user.isStudent
+                        ? "Your email is verified and you are a student"
+                        : "Your email is verified"
+                      : "Your email is not verified"
+                  }
+                />
+              )}
             />
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Phone"
+                  type="tel"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="venmo"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Venmo"
+                  type="text"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="cashapp"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Cash App"
+                  type="text"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                disabled={!isDirty}
+              >
+                Save Profile
+              </Button>
+            </Box>
           </Stack>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Email"
-                type="email"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={
-                  (fieldState.error?.message ?? user.isEmailVerified)
-                    ? user.isStudent
-                      ? "Your email is verified and you are a student"
-                      : "Your email is verified"
-                    : "Your email is not verified"
-                }
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="phone"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Phone"
-                type="tel"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="venmo"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Venmo"
-                type="text"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="cashapp"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Cash App"
-                type="text"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-              />
-            )}
-          />
-          <Box display="flex" justifyContent="flex-end">
-            <Button
-              type="submit"
-              variant="contained"
-              loading={isSubmitting}
-              disabled={!isDirty}
-            >
-              Save Profile
-            </Button>
-          </Box>
-        </Stack>
-      </form>
-    </Card>
+        </form>
+      </Card>
+    </Container>
   );
 }

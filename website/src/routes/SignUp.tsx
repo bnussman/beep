@@ -14,10 +14,10 @@ import {
   Button,
   Stack,
   Box,
+  Container,
 } from "@mui/material";
 
-
-export const Route = createFileRoute('/signup')({
+export const Route = createFileRoute('/SignUp')({
   component: SignUp
 });
 
@@ -98,136 +98,138 @@ function SignUp() {
   );
 
   return (
-    <Card sx={{ p: 3 }}>
-      <form onSubmit={onSubmit}>
-        <Stack spacing={2}>
-          <Typography variant="h4" fontWeight="bold">
-            Sign Up
-          </Typography>
-          <Stack spacing={1}>
-            <Alert severity="info">
-              By signing up, you agree to our{" "}
-              <Link component={RouterLink} preload="intent" to="/terms">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link component={RouterLink} to="/privacy">
-                Privacy Policy
-              </Link>
-            </Alert>
-            {errors.root?.message && (
-              <Alert severity="error">{errors.root.message}</Alert>
-            )}
-            {errors.photo?.message && (
-              <Alert severity="error">{errors.photo.message}</Alert>
-            )}
-          </Stack>
-          <Stack direction="row" spacing={2}>
-            <Stack spacing={2} flexGrow={1}>
-              <Controller
-                control={control}
-                name="first"
-                render={({ field, fieldState }) => (
-                  <TextField
-                    label="First Name"
-                    onChange={field.onChange}
-                    helperText={fieldState.error?.message}
-                    error={Boolean(fieldState.error?.message)}
-                    value={field.value}
-                    required
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="last"
-                render={({ field, fieldState }) => (
-                  <TextField
-                    label="Last Name"
-                    onChange={field.onChange}
-                    helperText={fieldState.error?.message}
-                    error={Boolean(fieldState.error?.message)}
-                    value={field.value}
-                    required
-                  />
-                )}
-              />
-            </Stack>
-            <Stack>
-              <label htmlFor="photo">{Image}</label>
-              <input hidden id="photo" type="file" {...register("photo")} />
-            </Stack>
-          </Stack>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Email"
-                type="email"
-                onChange={field.onChange}
-                helperText={
-                  fieldState.error?.message ??
-                  "You must use a .edu to be eligible to use the Beep App"
-                }
-                error={Boolean(fieldState.error?.message)}
-                value={field.value}
-                required
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="phone"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Phone Number"
-                type="tel"
-                onChange={field.onChange}
-                helperText={fieldState.error?.message}
-                error={Boolean(fieldState.error?.message)}
-                value={field.value}
-                required
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="username"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Username"
-                type="text"
-                onChange={field.onChange}
-                helperText={fieldState.error?.message}
-                error={Boolean(fieldState.error?.message)}
-                value={field.value}
-                required
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="password"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Password"
-                type="password"
-                onChange={field.onChange}
-                helperText={fieldState.error?.message}
-                error={Boolean(fieldState.error?.message)}
-                value={field.value}
-                required
-              />
-            )}
-          />
-          <Box display="flex" justifyContent="flex-end">
-            <Button type="submit" loading={isSubmitting} variant="contained">
+    <Container maxWidth="sm">
+      <Card sx={{ p: 3 }}>
+        <form onSubmit={onSubmit}>
+          <Stack spacing={2}>
+            <Typography variant="h4" fontWeight="bold">
               Sign Up
-            </Button>
-          </Box>
-        </Stack>
-      </form>
-    </Card>
+            </Typography>
+            <Stack spacing={1}>
+              <Alert severity="info">
+                By signing up, you agree to our{" "}
+                <Link component={RouterLink} preload="intent" to="/terms" sx={{ textDecoration: 'underline' }}>
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link component={RouterLink} to="/privacy" sx={{ textDecoration: 'underline' }}>
+                  Privacy Policy
+                </Link>
+              </Alert>
+              {errors.root?.message && (
+                <Alert severity="error">{errors.root.message}</Alert>
+              )}
+              {errors.photo?.message && (
+                <Alert severity="error">{errors.photo.message}</Alert>
+              )}
+            </Stack>
+            <Stack direction="row" spacing={2}>
+              <Stack spacing={2} flexGrow={1}>
+                <Controller
+                  control={control}
+                  name="first"
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      label="First Name"
+                      onChange={field.onChange}
+                      helperText={fieldState.error?.message}
+                      error={Boolean(fieldState.error?.message)}
+                      value={field.value}
+                      required
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="last"
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      label="Last Name"
+                      onChange={field.onChange}
+                      helperText={fieldState.error?.message}
+                      error={Boolean(fieldState.error?.message)}
+                      value={field.value}
+                      required
+                    />
+                  )}
+                />
+              </Stack>
+              <Stack>
+                <label htmlFor="photo">{Image}</label>
+                <input hidden id="photo" type="file" {...register("photo")} />
+              </Stack>
+            </Stack>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Email"
+                  type="email"
+                  onChange={field.onChange}
+                  helperText={
+                    fieldState.error?.message ??
+                    "You must use a .edu to be eligible to use the Beep App"
+                  }
+                  error={Boolean(fieldState.error?.message)}
+                  value={field.value}
+                  required
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Phone Number"
+                  type="tel"
+                  onChange={field.onChange}
+                  helperText={fieldState.error?.message}
+                  error={Boolean(fieldState.error?.message)}
+                  value={field.value}
+                  required
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="username"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Username"
+                  type="text"
+                  onChange={field.onChange}
+                  helperText={fieldState.error?.message}
+                  error={Boolean(fieldState.error?.message)}
+                  value={field.value}
+                  required
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Password"
+                  type="password"
+                  onChange={field.onChange}
+                  helperText={fieldState.error?.message}
+                  error={Boolean(fieldState.error?.message)}
+                  value={field.value}
+                  required
+                />
+              )}
+            />
+            <Box display="flex" justifyContent="flex-end">
+              <Button type="submit" loading={isSubmitting} variant="contained">
+                Sign Up
+              </Button>
+            </Box>
+          </Stack>
+        </form>
+      </Card>
+    </Container>
   );
 }

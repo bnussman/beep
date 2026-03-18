@@ -31,6 +31,36 @@ export const theme = createTheme({
         },
       },
     },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          marginLeft: 0
+        },
+      }
+    },
+    MuiTextField: {
+      defaultProps: {
+        slotProps: {
+          inputLabel: {
+            shrink: true,
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      defaultProps: {
+        variant: 'outlined'
+      },
+      styleOverrides: {
+        root: ''
+      },
+    },
+    MuiDialogTitle: {
+      defaultProps: {
+        variant: 'h5',
+        fontWeight: 'bold'
+      },
+    },
     MuiPopover: {
       defaultProps: {
         elevation: 0,

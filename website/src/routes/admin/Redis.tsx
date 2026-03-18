@@ -5,7 +5,7 @@ import { useTRPC } from "../../utils/trpc";
 import { Stack, Alert, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
-export const Route = createFileRoute('/admin/redis')({
+export const Route = createFileRoute('/admin/Redis')({
   component: Redis,
 });
 

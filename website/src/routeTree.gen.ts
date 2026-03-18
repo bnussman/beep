@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DownloadRouteImport } from './routes/download'
+import { Route as TermsRouteImport } from './routes/Terms'
+import { Route as SignUpRouteImport } from './routes/SignUp'
+import { Route as PrivacyRouteImport } from './routes/Privacy'
+import { Route as LoginRouteImport } from './routes/Login'
+import { Route as DownloadRouteImport } from './routes/Download'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileEditRouteImport } from './routes/profile.edit'
 import { Route as PasswordForgotRouteImport } from './routes/password/forgot'
 import { Route as PasswordChangeRouteImport } from './routes/password/change'
-import { Route as AdminRedisRouteImport } from './routes/admin/redis'
-import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
-import { Route as AdminHealthRouteImport } from './routes/admin/health'
+import { Route as AdminRedisRouteImport } from './routes/admin/Redis'
+import { Route as AdminPaymentsRouteImport } from './routes/admin/Payments'
+import { Route as AdminHealthRouteImport } from './routes/admin/Health'
 import { Route as AccountDeleteRouteImport } from './routes/account/delete'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
 import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports/index'
@@ -55,28 +55,28 @@ import { Route as AdminUsersUserIdEditLocationRouteImport } from './routes/admin
 import { Route as AdminUsersUserIdEditSplatRouteImport } from './routes/admin/users/$userId/edit/$'
 
 const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+  id: '/Terms',
+  path: '/Terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/SignUp',
+  path: '/SignUp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
+  id: '/Privacy',
+  path: '/Privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: '/Login',
+  path: '/Login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadRoute = DownloadRouteImport.update({
-  id: '/download',
-  path: '/download',
+  id: '/Download',
+  path: '/Download',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -100,18 +100,18 @@ const PasswordChangeRoute = PasswordChangeRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRedisRoute = AdminRedisRouteImport.update({
-  id: '/admin/redis',
-  path: '/admin/redis',
+  id: '/admin/Redis',
+  path: '/admin/Redis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
-  id: '/admin/payments',
-  path: '/admin/payments',
+  id: '/admin/Payments',
+  path: '/admin/Payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminHealthRoute = AdminHealthRouteImport.update({
-  id: '/admin/health',
-  path: '/admin/health',
+  id: '/admin/Health',
+  path: '/admin/Health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountDeleteRoute = AccountDeleteRouteImport.update({
@@ -281,15 +281,15 @@ const AdminUsersUserIdEditSplatRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/download': typeof DownloadRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/Download': typeof DownloadRoute
+  '/Login': typeof LoginRoute
+  '/Privacy': typeof PrivacyRoute
+  '/SignUp': typeof SignUpRoute
+  '/Terms': typeof TermsRoute
   '/account/delete': typeof AccountDeleteRoute
-  '/admin/health': typeof AdminHealthRoute
-  '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/redis': typeof AdminRedisRoute
+  '/admin/Health': typeof AdminHealthRoute
+  '/admin/Payments': typeof AdminPaymentsRoute
+  '/admin/Redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
   '/profile/edit': typeof ProfileEditRoute
@@ -327,15 +327,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/download': typeof DownloadRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/Download': typeof DownloadRoute
+  '/Login': typeof LoginRoute
+  '/Privacy': typeof PrivacyRoute
+  '/SignUp': typeof SignUpRoute
+  '/Terms': typeof TermsRoute
   '/account/delete': typeof AccountDeleteRoute
-  '/admin/health': typeof AdminHealthRoute
-  '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/redis': typeof AdminRedisRoute
+  '/admin/Health': typeof AdminHealthRoute
+  '/admin/Payments': typeof AdminPaymentsRoute
+  '/admin/Redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
   '/profile/edit': typeof ProfileEditRoute
@@ -374,15 +374,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/download': typeof DownloadRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/Download': typeof DownloadRoute
+  '/Login': typeof LoginRoute
+  '/Privacy': typeof PrivacyRoute
+  '/SignUp': typeof SignUpRoute
+  '/Terms': typeof TermsRoute
   '/account/delete': typeof AccountDeleteRoute
-  '/admin/health': typeof AdminHealthRoute
-  '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/redis': typeof AdminRedisRoute
+  '/admin/Health': typeof AdminHealthRoute
+  '/admin/Payments': typeof AdminPaymentsRoute
+  '/admin/Redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
   '/profile/edit': typeof ProfileEditRoute
@@ -422,15 +422,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/download'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/terms'
+    | '/Download'
+    | '/Login'
+    | '/Privacy'
+    | '/SignUp'
+    | '/Terms'
     | '/account/delete'
-    | '/admin/health'
-    | '/admin/payments'
-    | '/admin/redis'
+    | '/admin/Health'
+    | '/admin/Payments'
+    | '/admin/Redis'
     | '/password/change'
     | '/password/forgot'
     | '/profile/edit'
@@ -468,15 +468,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/download'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/terms'
+    | '/Download'
+    | '/Login'
+    | '/Privacy'
+    | '/SignUp'
+    | '/Terms'
     | '/account/delete'
-    | '/admin/health'
-    | '/admin/payments'
-    | '/admin/redis'
+    | '/admin/Health'
+    | '/admin/Payments'
+    | '/admin/Redis'
     | '/password/change'
     | '/password/forgot'
     | '/profile/edit'
@@ -514,15 +514,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/download'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/terms'
+    | '/Download'
+    | '/Login'
+    | '/Privacy'
+    | '/SignUp'
+    | '/Terms'
     | '/account/delete'
-    | '/admin/health'
-    | '/admin/payments'
-    | '/admin/redis'
+    | '/admin/Health'
+    | '/admin/Payments'
+    | '/admin/Redis'
     | '/password/change'
     | '/password/forgot'
     | '/profile/edit'
@@ -564,7 +564,7 @@ export interface RootRouteChildren {
   DownloadRoute: typeof DownloadRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
-  SignupRoute: typeof SignupRoute
+  SignUpRoute: typeof SignUpRoute
   TermsRoute: typeof TermsRoute
   AccountDeleteRoute: typeof AccountDeleteRoute
   AdminHealthRoute: typeof AdminHealthRoute
@@ -596,38 +596,38 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
+    '/Terms': {
+      id: '/Terms'
+      path: '/Terms'
+      fullPath: '/Terms'
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
+    '/SignUp': {
+      id: '/SignUp'
+      path: '/SignUp'
+      fullPath: '/SignUp'
+      preLoaderRoute: typeof SignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
+    '/Privacy': {
+      id: '/Privacy'
+      path: '/Privacy'
+      fullPath: '/Privacy'
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
+    '/Login': {
+      id: '/Login'
+      path: '/Login'
+      fullPath: '/Login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/download': {
-      id: '/download'
-      path: '/download'
-      fullPath: '/download'
+    '/Download': {
+      id: '/Download'
+      path: '/Download'
+      fullPath: '/Download'
       preLoaderRoute: typeof DownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -659,24 +659,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PasswordChangeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/redis': {
-      id: '/admin/redis'
-      path: '/admin/redis'
-      fullPath: '/admin/redis'
+    '/admin/Redis': {
+      id: '/admin/Redis'
+      path: '/admin/Redis'
+      fullPath: '/admin/Redis'
       preLoaderRoute: typeof AdminRedisRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/payments': {
-      id: '/admin/payments'
-      path: '/admin/payments'
-      fullPath: '/admin/payments'
+    '/admin/Payments': {
+      id: '/admin/Payments'
+      path: '/admin/Payments'
+      fullPath: '/admin/Payments'
       preLoaderRoute: typeof AdminPaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/health': {
-      id: '/admin/health'
-      path: '/admin/health'
-      fullPath: '/admin/health'
+    '/admin/Health': {
+      id: '/admin/Health'
+      path: '/admin/Health'
+      fullPath: '/admin/Health'
       preLoaderRoute: typeof AdminHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -954,7 +954,7 @@ const rootRouteChildren: RootRouteChildren = {
   DownloadRoute: DownloadRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
-  SignupRoute: SignupRoute,
+  SignUpRoute: SignUpRoute,
   TermsRoute: TermsRoute,
   AccountDeleteRoute: AccountDeleteRoute,
   AdminHealthRoute: AdminHealthRoute,

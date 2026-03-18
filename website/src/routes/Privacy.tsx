@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/privacy')({
+export const Route = createFileRoute('/Privacy')({
   component: Privacy,
 });
 

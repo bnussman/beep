@@ -8,12 +8,13 @@ import {
   Alert,
   Button,
   Card,
+  Container,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute('/Login')({
   component: Login
 });
 
@@ -48,59 +49,61 @@ function Login() {
   };
 
   return (
-    <Card sx={{ p: 3 }}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <Typography fontWeight="bold" variant="h4">
-            Login
-          </Typography>
-          {form.formState.errors.root?.message && (
-            <Alert severity="error">{form.formState.errors.root.message}</Alert>
-          )}
-          <Controller
-            control={form.control}
-            name="username"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Username or Email"
-                type="text"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-                required
-              />
+    <Container maxWidth="sm">
+      <Card sx={{ p: 3 }}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Stack spacing={2}>
+            <Typography fontWeight="bold" variant="h4">
+              Login
+            </Typography>
+            {form.formState.errors.root?.message && (
+              <Alert severity="error">{form.formState.errors.root.message}</Alert>
             )}
-          />
-          <Controller
-            control={form.control}
-            name="password"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Password"
-                type="password"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-                required
-              />
-            )}
-          />
-          <Stack direction="row" justifyContent="space-between">
-            <Button LinkComponent={Link} href="/password/forgot">
-              Forgot Password
-            </Button>
-            <Button
-              type="submit"
-              loading={form.formState.isSubmitting}
-              variant="contained"
-            >
-              Sign in
-            </Button>
+            <Controller
+              control={form.control}
+              name="username"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Username or Email"
+                  type="text"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                  required
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="password"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Password"
+                  type="password"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                  required
+                />
+              )}
+            />
+            <Stack direction="row" justifyContent="space-between">
+              <Button LinkComponent={Link} href="/password/forgot">
+                Forgot Password
+              </Button>
+              <Button
+                type="submit"
+                loading={form.formState.isSubmitting}
+                variant="contained"
+              >
+                Sign in
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
-      </form>
-    </Card>
+        </form>
+      </Card>
+    </Container>
   );
 }

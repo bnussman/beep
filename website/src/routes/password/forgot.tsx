@@ -11,6 +11,7 @@ import {
   Alert,
   Typography,
   Box,
+  Container,
 } from "@mui/material";
 
 export const Route = createFileRoute("/password/forgot")({
@@ -53,52 +54,54 @@ function ForgotPassword() {
   };
 
   return (
-    <Card sx={{ p: 3 }}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <Typography variant="h4" fontWeight="bold">
-            Forgot Password
-          </Typography>
-          {form.formState.errors.root?.message && (
-            <Alert severity="error">
-              {form.formState.errors.root?.message}
-            </Alert>
-          )}
-          {data && (
-            <Alert severity="success">
-              Done! If an account with the email "{data}" exists, you will
-              recieve an email with a link to reset your password.
-            </Alert>
-          )}
-          <Controller
-            control={form.control}
-            name="email"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Email"
-                type="email"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={
-                  fieldState.error?.message ??
-                  "We'll send you an email with a link to reset your password."
-                }
-                required
-              />
+    <Container maxWidth="sm">
+      <Card sx={{ p: 3 }}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Stack spacing={2}>
+            <Typography variant="h4" fontWeight="bold">
+              Forgot Password
+            </Typography>
+            {form.formState.errors.root?.message && (
+              <Alert severity="error">
+                {form.formState.errors.root?.message}
+              </Alert>
             )}
-          />
-          <Box display="flex" justifyContent="flex-end">
-            <Button
-              type="submit"
-              loading={form.formState.isSubmitting}
-              variant="contained"
-            >
-              Send Reset Password Email
-            </Button>
-          </Box>
-        </Stack>
-      </form>
-    </Card>
+            {data && (
+              <Alert severity="success">
+                Done! If an account with the email "{data}" exists, you will
+                recieve an email with a link to reset your password.
+              </Alert>
+            )}
+            <Controller
+              control={form.control}
+              name="email"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Email"
+                  type="email"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={
+                    fieldState.error?.message ??
+                    "We'll send you an email with a link to reset your password."
+                  }
+                  required
+                />
+              )}
+            />
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                type="submit"
+                loading={form.formState.isSubmitting}
+                variant="contained"
+              >
+                Send Reset Password Email
+              </Button>
+            </Box>
+          </Stack>
+        </form>
+      </Card>
+    </Container>
   );
 }

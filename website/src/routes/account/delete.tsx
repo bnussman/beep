@@ -49,21 +49,21 @@ function DeleteAccount() {
 
   return (
     <Stack spacing={2}>
-      <Typography>Delete Account</Typography>
+      <Typography variant="h4" fontWeight="bold">Delete Account</Typography>
       <Alert severity="info">
-        When your account is deleted, we do not retain any of your data,
-        although it may exist in backups.
+        When your account is deleted, we try not retain any of your data.
+        It may exist in our database backups for some amount of time.
       </Alert>
       {user ? (
         <Box>
-          <Button color="error" onClick={() => setIsOpen(true)}>
+          <Button color="error" onClick={() => setIsOpen(true)} variant="contained">
             Delete Account
           </Button>
         </Box>
       ) : (
         <>
           <Typography>
-            <Link component={RouterLink} to="/login">
+            <Link component={RouterLink} to="/login" sx={{ textDecoration: 'underline' }}>
               Login
             </Link>{" "}
             to delete your account.
@@ -84,7 +84,7 @@ function DeleteAccount() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsOpen(false)}>Cancel</Button>
-          <Button color="error" loading={isPending} onClick={onDelete}>
+          <Button color="error" variant="contained" loading={isPending} onClick={onDelete}>
             Delete Account
           </Button>
         </DialogActions>

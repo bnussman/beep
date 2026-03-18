@@ -1,20 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
+import * as Sentry from '@sentry/react';
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { useTRPC } from "../utils/trpc";
 import { AppBar, Stack, Toolbar, Typography, Button, Link, useColorScheme } from "@mui/material";
-
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
 
 export function Header() {
   const trpc = useTRPC();
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, {
-    enabled: false,
-    retry: false,
-  }));
-
+  const queryClient = useQueryClient();
   const { colorScheme } = useColorScheme();
+
+  const { data: user, isLoading } = useQuery(
+    trpc.user.me.queryOptions(undefined, {
+      retry: false,
+      refetchOnWindowFocus: false,
+    }),
+  );
+
+  useSubscription(
+    trpc.user.updates.subscriptionOptions(undefined, {
+      enabled: user !== undefined,
+      onData(user) {
+        queryClient.setQueryData(trpc.user.me.queryKey(), user);
+      },
+    }),
+  );
+
+  useEffect(() => {
+    if (user) {
+      Sentry.setUser(user);
+    }
+  }, [user]);
 
   return (
     <AppBar
@@ -33,7 +52,7 @@ export function Header() {
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Stack direction="row" spacing={4} alignItems="center">
           <Link component={RouterLink} to="/">
-            <Stack direction="row" alignItems="center" spacing={2}>
+            <Stack direction="row" alignItems="center" gap={2}>
               <Typography
                 fontWeight="bold"
                 variant="h1"
@@ -54,7 +73,7 @@ export function Header() {
               <Button component={RouterLink} to="/login">
                 Login
               </Button>
-              <Button component={RouterLink} to="/signup">
+              <Button component={RouterLink} to="/signup" variant="contained">
                 Sign Up
               </Button>
             </>

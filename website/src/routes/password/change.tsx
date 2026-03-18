@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Card,
+  Container,
   Stack,
   TextField,
   Typography,
@@ -67,57 +68,59 @@ function ChangePassword() {
   };
 
   return (
-    <Card sx={{ p: 3 }}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <Typography variant="h4" fontWeight="bold">
-            Change Password
-          </Typography>
-          {data && (
-            <Alert severity="success">Successfully changed your password</Alert>
-          )}
-          {form.formState.errors.root?.message && (
-            <Alert severity="error">{form.formState.errors.root.message}</Alert>
-          )}
-          <Controller
-            name="password"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Password"
-                type="new-password"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-              />
+    <Container maxWidth="sm">
+      <Card sx={{ p: 3 }}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Stack spacing={2}>
+            <Typography variant="h4" fontWeight="bold">
+              Change Password
+            </Typography>
+            {data && (
+              <Alert severity="success">Successfully changed your password</Alert>
             )}
-          />
-          <Controller
-            name="confirmPassword"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Confirm Password"
-                type="new-password"
-                value={field.value}
-                onChange={field.onChange}
-                error={Boolean(fieldState.error?.message)}
-                helperText={fieldState.error?.message}
-              />
+            {form.formState.errors.root?.message && (
+              <Alert severity="error">{form.formState.errors.root.message}</Alert>
             )}
-          />
-          <Box display="flex" justifyContent="flex-end">
-            <Button
-              loading={form.formState.isSubmitting}
-              type="submit"
-              variant="contained"
-            >
-              Update password
-            </Button>
-          </Box>
-        </Stack>
-      </form>
-    </Card>
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Password"
+                  type="new-password"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="confirmPassword"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Confirm Password"
+                  type="new-password"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                loading={form.formState.isSubmitting}
+                type="submit"
+                variant="contained"
+              >
+                Update password
+              </Button>
+            </Box>
+          </Stack>
+        </form>
+      </Card>
+    </Container>
   );
 }

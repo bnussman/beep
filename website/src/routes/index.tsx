@@ -34,6 +34,7 @@ function Home() {
             fontWeight="bold"
             variant="h1"
             fontSize={{ xs: "3.0rem", md: "3.8rem" }}
+            textAlign={{ xs: 'center', sm: 'center', md: 'unset' }}
           >
             Ride Beep App
           </Typography>
@@ -61,7 +62,7 @@ function Home() {
               width: { xs: 250, sm: 250, md: 400, lg: 400, xl: 500 },
               transition: "transform 0.3s ease-in-out", // Smooth transition
               ":hover": {
-                transform: "rotate(5deg) scale(1.1) !important",
+                transform: "rotate(3deg) scale(1.1) !important",
               },
             }}
             src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
