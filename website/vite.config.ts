@@ -12,7 +12,11 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   plugins: [
-    tanstackStart(),
+    tanstackStart({
+      prerender: {
+        enabled: true
+      },
+    }),
     // tanstackRouter({ autoCodeSplitting: true }),
     react(),
     // babel({ presets: [reactCompilerPreset()] }),

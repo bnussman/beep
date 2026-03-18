@@ -9,6 +9,8 @@ import { Header } from '../components/Header';
 import { Banners } from '../components/Banners';
 import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+
 import {
   HeadContent,
   Outlet,
@@ -18,8 +20,16 @@ import {
 import { theme } from "../utils/theme";
 import { NotificationsProvider } from "@toolpad/core/useNotifications";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import poppinsNormal from '@fontsource/poppins/400?url'
+import poppinsBold from '@fontsource/poppins/700?url'
 
 export const Route = createRootRoute({
+  head: () => ({
+    links: [
+      { rel: 'stylesheet', href: poppinsNormal },
+      { rel: 'stylesheet', href: poppinsBold }
+    ],
+  }),
   component: RootComponent,
 })
 
@@ -87,6 +97,7 @@ function Providers({ children }: { children: React.ReactNode }) {
               <CssBaseline enableColorScheme />
               {children}
               <ReactQueryDevtools />
+              <TanStackRouterDevtools />
             </QueryClientProvider>
           </TRPCProvider>
         </NotificationsProvider>
