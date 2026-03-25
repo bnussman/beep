@@ -59,7 +59,7 @@ function Home() {
           <Box
             component="img"
             sx={{
-              width: { xs: 250, sm: 250, md: 400, lg: 400, xl: 500 },
+              width: { xs: 250, sm: 250, md: 300, lg: 400, xl: 400 },
               transition: "transform 0.3s ease-in-out", // Smooth transition
               ":hover": {
                 transform: "rotate(3deg) scale(1.1) !important",

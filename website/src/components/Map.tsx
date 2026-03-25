@@ -1,6 +1,7 @@
 import React from "react";
 import { default as _Map } from "react-map-gl/maplibre";
 import { useColorScheme } from "@mui/material";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 const getStyle = (theme: "light" | "dark") => ({
   version: 8 as const,
