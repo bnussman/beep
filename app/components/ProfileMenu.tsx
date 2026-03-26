@@ -6,8 +6,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { isMobile } from "@/utils/constants";
 import { useRouter } from "expo-router";
+import type { Option } from "./Menu";
 
-export function useProfileMenu() {
+export function useProfileMenu(): Option[] {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -71,15 +72,18 @@ export function useProfileMenu() {
     {
       title: "Change Password",
       onClick: () => router.navigate("/profile/change-password"),
+      sfIcon: "person.badge.key.fill"
     },
     {
       title: "Logout",
       onClick: () => logout({ isApp: true }),
+      sfIcon: 'person.crop.circle.fill.badge.minus'
     },
     {
       title: "Delete Account",
       onClick: handleDeleteWrapper,
       destructive: true,
+      sfIcon: 'trash.fill'
     },
   ]
 }

@@ -21,25 +21,28 @@ export function openMaps(query: string) {
 
 export function getCashAppLink(
   username: string,
-  groupSize: number,
-  groupRate: number,
-  singlesRate: number,
+  groupSize?: number,
+  groupRate?: number,
+  singlesRate?: number,
 ) {
+
+  if (groupSize === undefined || groupRate === undefined) {
+    return `https://cash.app/$${username}`;
+  }
   if (groupSize > 1) {
     return `https://cash.app/$${username}/${Number(groupSize) * groupRate}`;
-  } else {
-    return `https://cash.app/$${username}/${singlesRate}`;
   }
+  return `https://cash.app/$${username}/${singlesRate}`;
 }
 
 export function openCashApp(
   username: string | null | undefined,
-  groupSize: number,
-  groupRate: number | undefined,
-  singlesRate: number | undefined,
+  groupSize?: number,
+  groupRate?: number,
+  singlesRate?: number,
 ) {
-  if (!username || groupRate === undefined || singlesRate === undefined) {
-    return;
+  if (!username) {
+    return alert("User does not have a Cash App username configured.");
   }
 
   Linking.openURL(getCashAppLink(username, groupSize, groupRate, singlesRate))
@@ -48,11 +51,14 @@ export function openCashApp(
 
 export function getVenmoLink(
   username: string,
-  groupSize: number,
-  groupRate: number,
-  singlesRate: number,
-  transaction: "pay" | "charge",
+  groupSize?: number,
+  groupRate?: number,
+  singlesRate?: number,
+  transaction?: "pay" | "charge",
 ) {
+  if (groupSize === undefined || groupSize === undefined || groupRate === undefined) {
+    return `venmo://paycharge?recipients=${username}&note=Beep`;
+  }
   if (groupSize > 1) {
     return `venmo://paycharge?txn=${transaction}&recipients=${username}&amount=${
       groupRate * groupSize
@@ -64,13 +70,13 @@ export function getVenmoLink(
 
 export function openVenmo(
   username: string | null | undefined,
-  groupSize: number,
-  groupRate: number | undefined,
-  singlesRate: number | undefined,
-  transaction: "pay" | "charge",
+  groupSize?: number,
+  groupRate?: number,
+  singlesRate?: number,
+  transaction?: "pay" | "charge",
 ) {
-  if (!username || groupRate === undefined || singlesRate === undefined) {
-    return;
+  if (!username) {
+    return alert("User does not have a Venmo username configured.")
   }
 
   Linking.openURL(

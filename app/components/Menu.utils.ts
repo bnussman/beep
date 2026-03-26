@@ -11,12 +11,29 @@ export function getNavigationMenuFromOptions(
       icon: { name: "ellipsis", type: "sfSymbol" },
       menu: {
         title: "",
-        items: options.map((option) => ({
-          label: option.title,
-          type: "action",
-          destructive: option.destructive,
-          onPress: option.onClick ?? (() => {}),
-        })),
+        items: options.map((option) => {
+          if (option.options) {
+            return {
+              type: "submenu",
+              label: option.title,
+              icon: option.sfIcon ? { name: option.sfIcon, type: "sfSymbol" } : undefined,
+              items: option.options.map((option) => ({
+                label: option.title,
+                type: "action",
+                icon: option.sfIcon ? { name: option.sfIcon, type: "sfSymbol" } : undefined,
+                destructive: option.destructive,
+                onPress: option.onClick ?? (() => { }),
+              }))
+            };
+          }
+          return {
+            label: option.title,
+            type: "action",
+            icon: option.sfIcon ? { name: option.sfIcon, type: "sfSymbol" } : undefined,
+            destructive: option.destructive,
+            onPress: option.onClick ?? (() => { }),
+          }
+        }),
       },
     },
   ];

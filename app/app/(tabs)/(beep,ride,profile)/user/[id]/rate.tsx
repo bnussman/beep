@@ -84,7 +84,6 @@ export default function RateScreen() {
           onChangeText={(text) => setMessage(text)}
           onSubmitEditing={onSubmit}
           style={{ height: 100 }}
-          autoFocus
         />
       </View>
       <Button onPress={onSubmit} disabled={stars < 1} isLoading={isPending}>

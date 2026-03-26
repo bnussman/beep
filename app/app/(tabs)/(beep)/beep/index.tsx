@@ -212,6 +212,7 @@ export default function StartBeepingScreen() {
         variant="prominent"
         disabled={form.formState.isSubmitting}
         tintColor={user?.isBeeping ? "red" : undefined}
+        // icon={user?.isBeeping ? "stop.fill" : "play.fill"}
       >
         {user?.isBeeping ? "Stop" : "Start"} Beeping
       </Stack.Toolbar.Button>

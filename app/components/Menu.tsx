@@ -2,12 +2,14 @@ import * as DropdownMenu from "zeego/dropdown-menu";
 import * as ContextMenu from "zeego/context-menu";
 import { isWeb } from "@/utils/constants";
 import { useTheme } from "@/utils/theme";
+import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
 
 export interface Option {
   /**
    * The text content of the option
    */
   title: string;
+  sfIcon?: Extract<SFSymbolIcon['sf'], string>;
   /**
    * Called when the option is chosen/clicked/pressed
    */
