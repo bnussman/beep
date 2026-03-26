@@ -71,7 +71,7 @@ export function LocationInput(props: Props) {
         textContentType="fullStreetAddress"
         {...props}
       />
-      <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 24, height: 24 }}>
+      <View style={{ position: 'absolute', right: 22, top: 14, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 24, height: 24 }}>
         <CurrentLocationButton onPress={handleGetCurrentLocation} isLoading={isLoading} /> 
       </View>
     </View>

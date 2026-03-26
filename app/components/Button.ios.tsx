@@ -1,6 +1,5 @@
-import { useTheme } from "@/utils/theme";
-import { Host, Button as IOSButton } from "@expo/ui/swift-ui";
-import { buttonStyle, controlSize, frame } from "@expo/ui/swift-ui/modifiers";
+import { Host, Button as IOSButton, Text } from "@expo/ui/swift-ui";
+import { buttonStyle, controlSize, frame, fixedSize, disabled } from "@expo/ui/swift-ui/modifiers";
 import { Props } from "./Button";
 
 export function Button(props: Props) {
@@ -14,15 +13,28 @@ export function Button(props: Props) {
     ...rest
   } = props;
 
-  const theme = useTheme();
-
   return (
-    <Host matchContents style={{ width: '100%'}}>
-        <IOSButton
-          label={typeof children === 'string' ? children : 'Button'}
-          onPress={rest.onPress}
-          modifiers={[buttonStyle('glass'), controlSize('large')]}
-        />
+    <Host matchContents>
+      <IOSButton
+        label={typeof children === 'string' ? children : 'Button'}
+        onPress={rest.onPress as any}
+        modifiers={[
+          buttonStyle(variant === 'primary' ? 'glassProminent' : 'glass'),
+          controlSize(size === 'sm' ? 'regular' : 'large'),
+          fixedSize(),
+          frame({ maxWidth: Infinity, alignment: 'trailing' }),
+          ...(props.disabled ? [disabled()] : []),
+        ]}
+      >
+        {typeof children === 'string' ? (
+          <Text
+            modifiers={[
+              frame({ minWidth: 0, maxWidth: Infinity })
+            ]}>
+            {children}
+          </Text>
+          ) : undefined}
+        </IOSButton>
     </Host>
   );
 }

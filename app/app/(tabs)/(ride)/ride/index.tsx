@@ -160,7 +160,11 @@ export default function MainFindBeepScreen() {
           />
           <Text color="error">{errors.destination?.message}</Text>
         </View>
-        <Button onPress={() => findBeep()}>Find Beep</Button>
+        <View style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+          <View>
+            <Button onPress={() => findBeep()}>Find Beep</Button>
+          </View>
+        </View>
         <Link asChild href="/ride/map">
           <Link.Trigger withAppleZoom>
             <BeepersMap />
