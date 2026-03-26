@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
-import { Text } from "@/components/Text";
-import { Host, Image } from '@expo/ui/swift-ui';
-import { ActivityIndicator, Pressable, TextInput, TextInputProps, View } from "react-native";
+import { TextInput, TextInputProps, View } from "react-native";
+import { CurrentLocationButton } from "./CurrentLocationButton";
 
 interface Props extends TextInputProps {
   ref: React.Ref<TextInput>;
@@ -73,16 +72,7 @@ export function LocationInput(props: Props) {
         {...props}
       />
       <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 24, height: 24 }}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <Pressable onPress={handleGetCurrentLocation} style={{ paddingTop: 4 }} hitSlop={24}>
-            {/* <Text size="2xl">️📍</Text> */}
-              <Host matchContents>
-                <Image systemName="location.fill" size={18} />
-              </Host>
-          </Pressable>
-        )}
+        <CurrentLocationButton onPress={handleGetCurrentLocation} isLoading={isLoading} /> 
       </View>
     </View>
   );
