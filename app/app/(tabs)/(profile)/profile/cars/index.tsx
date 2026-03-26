@@ -207,11 +207,13 @@ export default function Cars() {
               {
                 title: "Make Default",
                 show: !car.default,
+                sfIcon: 'car.badge.gearshape.fill',
                 onClick: () => setDefault(car.id),
               },
               {
                 title: "Delete",
                 onClick: () => onDelete(car.id),
+                sfIcon: 'trash',
                 destructive: true,
               },
             ]}
