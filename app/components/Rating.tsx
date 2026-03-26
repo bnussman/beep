@@ -46,7 +46,13 @@ export function Rating(props: Props) {
       activationMethod="longPress"
       options={[
         {
+          title: 'Profile',
+          onClick: () => router.navigate({ pathname: '/user/[id]', params: { id: otherUser.id, beepId: item.id } }),
+          sfIcon: 'person.crop.circle',
+        },
+        {
           title: "Report",
+          sfIcon: 'exclamationmark.bubble.fill',
           onClick: () =>
             router.push({
               pathname: '/user/[id]/report',
@@ -59,6 +65,7 @@ export function Rating(props: Props) {
         {
           title: "Delete Rating",
           onClick: () => deleteRating({ ratingId: item.id }),
+          sfIcon: 'trash',
           destructive: true,
           show: isRater,
         },

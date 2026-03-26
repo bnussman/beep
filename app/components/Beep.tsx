@@ -50,22 +50,37 @@ export function Beep({ item }: Props) {
     <Menu
       options={[
         {
-          onClick: () => call(otherUser.id),
-          title: "Call",
-          show: isAcceptedOrComplete,
+          title: 'Profile',
+          onClick: () => router.navigate({ pathname: '/user/[id]', params: { id: otherUser.id, beepId: item.id } }),
+          sfIcon: 'person.crop.circle',
         },
         {
-          onClick: () => sms(otherUser.id),
-          title: "Text",
-          show: isAcceptedOrComplete,
+          title: "Contact",
+          sfIcon: 'phone.fill',
+          options: [
+            {
+              onClick: () => call(otherUser.id),
+              sfIcon: 'phone.fill',
+              title: "Call",
+              show: isAcceptedOrComplete,
+            },
+            {
+              onClick: () => sms(otherUser.id),
+              sfIcon: 'message.fill',
+              title: "Text",
+              show: isAcceptedOrComplete,
+            },
+          ],
         },
         {
           title: "Pay",
           show: isRider && isAcceptedOrComplete,
+          sfIcon: 'dollarsign',
           options: [
             {
               title: "Venmo",
               show: Boolean(item.beeper.venmo),
+              sfIcon: 'creditcard',
               onClick: () =>
                 openVenmo(
                   item.beeper.venmo,
@@ -78,6 +93,7 @@ export function Beep({ item }: Props) {
             {
               title: "Cash App",
               show: Boolean(item.beeper.cashapp),
+              sfIcon: 'dollarsign',
               onClick: () =>
                 openCashApp(
                   item.beeper.cashapp,
@@ -90,11 +106,13 @@ export function Beep({ item }: Props) {
         },
         {
           title: "Charge",
+          sfIcon: 'dollarsign',
           show: isBeeper && isAcceptedOrComplete,
           options: [
             {
               title: "Venmo",
               show: Boolean(item.rider.venmo),
+              sfIcon: 'creditcard',
               onClick: () =>
                 openVenmo(
                   item.rider.venmo,
@@ -107,6 +125,7 @@ export function Beep({ item }: Props) {
             {
               title: "Cash App",
               show: Boolean(item.rider.cashapp),
+              sfIcon: 'dollarsign',
               onClick: () =>
                 openCashApp(
                   item.rider.cashapp,
@@ -120,14 +139,17 @@ export function Beep({ item }: Props) {
         {
           title: "Rate",
           show: !myRating && item.status === "complete", // only allow rating if you haven't already left a rating and the beep is complete
+          sfIcon: 'star.fill',
           onClick: () => router.navigate({ pathname: '/user/[id]/rate', params: { id: otherUser.id, beepId: item.id } }),
         },
         {
           title: "Report",
-          onClick: () => router.navigate({ pathname: '/user/[id]/report', params: { id: otherUser.id, beepId: item.id  } }),
+          sfIcon: 'exclamationmark.bubble.fill',
+          onClick: () => router.navigate({ pathname: '/user/[id]/report', params: { id: otherUser.id, beepId: item.id } }),
         },
         {
           onClick: () => deleteRating({ ratingId: myRating!.id }),
+          sfIcon: 'trash',
           show: Boolean(myRating),
           destructive: true,
           title: "Delete Rating",

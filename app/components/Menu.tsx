@@ -74,7 +74,8 @@ export const Menu = (props: MenuProps) => {
       return (
         <Component.Sub>
           <Component.SubTrigger key={option.title}>
-            {option.title}
+            <Component.ItemIcon ios={{ name: option.sfIcon }}></Component.ItemIcon>
+            <Component.ItemTitle>{option.title}</Component.ItemTitle>
           </Component.SubTrigger>
           <Component.SubContent>
             {option.options.map(renderOption)}
@@ -95,7 +96,8 @@ export const Menu = (props: MenuProps) => {
         onValueChange={option.onClick}
         style={isWeb ? { color: theme.text.primary } : {}}
       >
-        {option.title}
+        <Component.ItemIcon ios={{ name: option.sfIcon }}></Component.ItemIcon>
+        <Component.ItemTitle>{option.title}</Component.ItemTitle>
       </C>
     );
   };
