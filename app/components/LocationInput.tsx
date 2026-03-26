@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
+import { Host, Image } from '@expo/ui/swift-ui';
 import { ActivityIndicator, Pressable, TextInput, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
@@ -67,7 +68,7 @@ export function LocationInput(props: Props) {
     <View style={{ flexDirection: "row", gap: 8 }}>
       <Input
         placeholder={isLoading ? "Loading" : undefined}
-        style={{ flex: 1, flexGrow: 1 }}
+        style={{ flex: 1, flexGrow: 1, paddingRight: 52 }}
         textContentType="fullStreetAddress"
         {...props}
       />
@@ -75,8 +76,11 @@ export function LocationInput(props: Props) {
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <Pressable onPress={handleGetCurrentLocation}>
-            <Text size="2xl">️📍</Text>
+          <Pressable onPress={handleGetCurrentLocation} style={{ paddingTop: 4 }} hitSlop={24}>
+            {/* <Text size="2xl">️📍</Text> */}
+              <Host matchContents>
+                <Image systemName="location.fill" size={18} />
+              </Host>
           </Pressable>
         )}
       </View>
