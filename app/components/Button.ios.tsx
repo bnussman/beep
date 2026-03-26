@@ -1,5 +1,5 @@
-import { Host, Button as IOSButton, Text } from "@expo/ui/swift-ui";
-import { buttonStyle, controlSize, frame, fixedSize, disabled } from "@expo/ui/swift-ui/modifiers";
+import { Host, Button as IOSButton, Text, ProgressView, ZStack } from "@expo/ui/swift-ui";
+import { buttonStyle, controlSize, frame, fixedSize, disabled, tint, resizable, hidden } from "@expo/ui/swift-ui/modifiers";
 import { Props } from "./Button";
 
 export function Button(props: Props) {
@@ -16,7 +16,6 @@ export function Button(props: Props) {
   return (
     <Host matchContents>
       <IOSButton
-        label={typeof children === 'string' ? children : 'Button'}
         onPress={rest.onPress as any}
         modifiers={[
           buttonStyle(variant === 'primary' ? 'glassProminent' : 'glass'),
@@ -24,16 +23,21 @@ export function Button(props: Props) {
           fixedSize(),
           frame({ maxWidth: Infinity, alignment: 'trailing' }),
           ...(props.disabled ? [disabled()] : []),
+          ...(props.color ? [tint(props.color)] : [])
         ]}
       >
-        {typeof children === 'string' ? (
-          <Text
-            modifiers={[
-              frame({ minWidth: 0, maxWidth: Infinity })
-            ]}>
-            {children}
-          </Text>
+        <ZStack>
+          {isLoading && <ProgressView modifiers={[resizable(), controlSize('regular')]} />}
+          {typeof children === 'string' ? (
+            <Text
+              modifiers={[
+                frame({ minWidth: 0, maxWidth: Infinity }),
+                ...(isLoading ? [hidden()] : [])
+              ]}>
+              {children}
+            </Text>
           ) : undefined}
+        </ZStack>
         </IOSButton>
     </Host>
   );

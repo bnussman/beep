@@ -62,6 +62,7 @@ export function AcceptDenyButton(props: Props) {
       isLoading={isPending}
       onPress={isAccept ? onSubmit : onConfirm}
       style={props.style}
+      color={isAccept ? undefined : 'red'}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>
