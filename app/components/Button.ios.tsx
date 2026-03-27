@@ -36,7 +36,7 @@ export function Button(props: Props) {
               ]}>
               {children}
             </Text>
-          ) : undefined}
+          ) : children}
         </ZStack>
         </IOSButton>
     </Host>

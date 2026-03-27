@@ -224,10 +224,7 @@ export function Beep(props: Props) {
           trigger={
             isWeb ?
               <Elipsis /> :
-              <Button
-                style={{ paddingHorizontal: 16, paddingVertical: 6 }}
-                size="md"
-              >
+              <Button size="md">
                 <Elipsis />
               </Button>
           }
