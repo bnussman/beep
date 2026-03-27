@@ -104,7 +104,6 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
         gap: 8,
         flexDirection: "row",
         alignItems: "center",
-        // borderRadius: 50
       }}
       variant="outlined"
     >
@@ -120,7 +119,6 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
         isLoading={isPurchasing}
         onPress={() => onBuy(p)}
         disabled={disabled}
-        size="sm"
       >
         {p.product.priceString}
       </Button>
@@ -246,7 +244,7 @@ export default function Premium() {
   return (
     <FlatList
       data={offerings}
-      contentContainerStyle={{ paddingHorizontal: 16 }}
+      contentContainerStyle={{ padding: 16 }}
       contentInsetAdjustmentBehavior="automatic"
       renderItem={({ item }) => (
         <Offering item={item} disabled={numberOfActivePayments > 0} />

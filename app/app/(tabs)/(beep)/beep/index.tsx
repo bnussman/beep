@@ -207,30 +207,15 @@ export default function StartBeepingScreen() {
           {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
         </Stack.Toolbar.Button>
       )}
-      {form.formState.isSubmitting && (
-        <Stack.Toolbar.View>
-          <ActivityIndicator size="small" />
-        </Stack.Toolbar.View>
-      )}
-      <Stack.Toolbar.View>
-        <View style={{ paddingHorizontal: 8 }}>
-          <Switch
-            disabled={form.formState.isSubmitting}
-            value={user?.isBeeping ?? false}
-            onValueChange={onToggleIsBeeping}
-            trackColor={{ true: 'rgb(36, 147, 250)' }}
-          />
-        </View>
-      </Stack.Toolbar.View>
-      {/* <Stack.Toolbar.Button
+      <Stack.Toolbar.Button
         onPress={handleIsBeepingChange}
         variant="prominent"
         disabled={form.formState.isSubmitting}
         tintColor={user?.isBeeping ? "red" : undefined}
-        icon={user?.isBeeping ? "stop.fill" : "play.fill"}
+        // icon={user?.isBeeping ? "stop.fill" : "play.fill"}
       >
         {user?.isBeeping ? "Stop" : "Start"} Beeping
-      </Stack.Toolbar.Button> */}
+      </Stack.Toolbar.Button>
     </Stack.Toolbar>
   );
 

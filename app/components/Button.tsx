@@ -15,7 +15,7 @@ const sizeMap = {
   lg: 24,
 };
 
-export interface Props extends PressableProps {
+interface Props extends PressableProps {
   /**
    * Shows a loading indicator instead of children
    */

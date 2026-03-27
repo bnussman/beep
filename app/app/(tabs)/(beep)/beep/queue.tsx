@@ -34,7 +34,8 @@ export default function StartBeepingScreen() {
       contentContainerStyle={getContentContainerStyle(queue.length === 0)}
       ListEmptyComponent={
         <View style={{ gap: 8, alignItems: 'center' }}>
-          <Text size="2xl" weight="800">
+          <Text size="5xl">⏳</Text>
+          <Text weight="800" size="lg">
             Your queue is empty!
           </Text>
           <Text style={{ textAlign: "center", maxWidth: "80%" }}>
