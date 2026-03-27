@@ -14,7 +14,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
-import { LocationInput } from "@/components/LocationInput";
+import { LocationInput } from "@/components/location-input/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
 import { RateLastBeeper } from "@/components/RateLastBeeper";
@@ -160,7 +160,11 @@ export default function MainFindBeepScreen() {
           />
           <Text color="error">{errors.destination?.message}</Text>
         </View>
-        <Button onPress={() => findBeep()}>Find Beep</Button>
+        <View style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+          <View>
+            <Button onPress={() => findBeep()}>Find Beep</Button>
+          </View>
+        </View>
         <Link asChild href="/ride/map">
           <Link.Trigger withAppleZoom>
             <BeepersMap />

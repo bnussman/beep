@@ -298,6 +298,7 @@ export function Beep(props: Props) {
             },
           ]}
         />
+        <View style={{ flexGrow: 1 }} />
         {beep.status === "waiting" ? (
           <View style={{ flexDirection: "row", gap: 8, flexGrow: 1 }}>
             <AcceptDenyButton item={beep} type="deny" />

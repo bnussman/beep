@@ -34,7 +34,7 @@ export function PremiumBanner() {
             Get premium to show at the top of the beeper list
           </Text>
           <Button onPress={() => router.navigate('/profile/premium')}>
-            Get Premium 👑
+            Get Premium
           </Button>
         </>
       )}
