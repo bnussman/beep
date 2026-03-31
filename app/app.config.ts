@@ -1,16 +1,17 @@
 import type { ExpoConfig } from "expo/config";
+import packageJson from "./package.json";
 
 const config: ExpoConfig = {
   experiments: {
     tsconfigPaths: true,
     reactCompiler: true,
-    typedRoutes: true
+    typedRoutes: true,
   },
   name: "Beep",
   slug: "Beep",
   scheme: "beep",
   owner: "bnussman",
-  version: "2.19.0",
+  version: packageJson.version,
   githubUrl: "https://github.com/bnussman/Beep",
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
@@ -62,7 +63,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "36",
+    buildNumber: "37",
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
@@ -94,7 +95,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 56,
+    versionCode: 57,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",
