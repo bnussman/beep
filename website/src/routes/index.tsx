@@ -67,6 +67,7 @@ function Home() {
             }}
             src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
             alt="iPhone Mockup of the Beep App"
+            fetchPriority="high"
           />
         </Zoom>
       </Stack>

@@ -1,21 +1,21 @@
 import React from "react";
+import createCache from "@emotion/cache";
+import fontUrl from "@fontsource/poppins/400.css?url";
+import fontUrlBold from "@fontsource/poppins/700.css?url";
+import { Container, ThemeProvider, CssBaseline } from "@mui/material";
+import { Header } from "../components/Header";
+import { Banners } from "../components/Banners";
+import { CacheProvider } from "@emotion/react";
+import { theme } from "../utils/theme";
+import { NotificationsProvider } from "@toolpad/core";
+import { queryClient, trpcClient, TRPCProvider } from "../utils/trpc";
+import { QueryClientProvider } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
-import { Stack, Container, ThemeProvider, CssBaseline } from "@mui/material";
-import { Header } from "../components/Header";
-import { Banners } from "../components/Banners";
-import createCache from "@emotion/cache";
-import { CacheProvider } from "@emotion/react";
-import { theme } from "../utils/theme";
-import { NotificationsProvider } from "@toolpad/core";
-import { queryClient, trpcClient, TRPCProvider } from "../utils/trpc";
-import { QueryClientProvider } from "@tanstack/react-query";
-import fontUrl from "@fontsource/poppins/400.css?url";
-import fontUrlBold from "@fontsource/poppins/700.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -23,7 +23,14 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
     ],
-    meta: [{ title: "Ride Beep App" }],
+    meta: [
+      { title: "Ride Beep App" },
+      {
+        name: "description",
+        content:
+          "A rideshare app for students. Ride or drive at your university today.",
+      },
+    ],
   }),
   component: RootComponent,
 });
@@ -68,6 +75,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <Header />
 
           <Container component="main" sx={{ pt: 10 }}>
+            <Banners />
             {children}
           </Container>
         </Providers>
