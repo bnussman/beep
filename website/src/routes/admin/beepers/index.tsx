@@ -27,7 +27,7 @@ import {
   Tooltip,
 } from "@mui/material";
 
-export const Route = createFileRoute('/admin/beepers/')({
+export const Route = createFileRoute("/admin/beepers/")({
   component: Beepers,
 });
 
@@ -47,7 +47,6 @@ function Beepers() {
         admin: true,
       },
       {
-        enabled: location !== undefined,
         onData(locationUpdate) {
           queryClient.setQueryData(
             trpc.rider.beepers.queryKey(),

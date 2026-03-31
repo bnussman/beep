@@ -7,7 +7,11 @@ export default defineConfig({
     noExternal: ["@mui/*", "@toolpad/*"],
   },
   plugins: [
-    tanstackStart({}),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+      },
+    }),
     react(),
     // babel({ presets: [reactCompilerPreset()] }),
   ],
