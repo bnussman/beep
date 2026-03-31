@@ -13,8 +13,8 @@ import {
   Zoom,
 } from "@mui/material";
 
-export const Route = createFileRoute('/')({
-  component: Home
+export const Route = createFileRoute("/")({
+  component: Home,
 });
 
 function Home() {
@@ -34,7 +34,7 @@ function Home() {
             fontWeight="bold"
             variant="h1"
             fontSize={{ xs: "3.0rem", md: "3.8rem" }}
-            textAlign={{ xs: 'center', sm: 'center', md: 'unset' }}
+            textAlign={{ xs: "center", sm: "center", md: "unset" }}
           >
             Ride Beep App
           </Typography>
@@ -66,6 +66,7 @@ function Home() {
               },
             }}
             src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
+            alt="iPhone Mockup of the Beep App"
           />
         </Zoom>
       </Stack>

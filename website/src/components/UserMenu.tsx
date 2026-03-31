@@ -2,7 +2,6 @@ import React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { queryClient, useTRPC } from "../utils/trpc";
 import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
@@ -57,6 +56,7 @@ export function UserMenu() {
           <Avatar
             sx={{ width: 24, height: 24 }}
             src={user?.photo ?? undefined}
+            alt={`${user?.username}'s profile picture`}
           />
         }
       >
