@@ -30,28 +30,25 @@ function Login() {
     },
   });
 
-  const { mutateAsync: login } = useMutation(
+  const { mutate: login } = useMutation(
     trpc.auth.login.mutationOptions({
       onError(error) {
         form.setError("root", { message: error.message });
       },
+      onSuccess(data) {
+        localStorage.setItem("user", JSON.stringify(data));
+
+        queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+
+        navigate({ to: "/" });
+      },
     }),
   );
-
-  const onSubmit = async (values: RouterInput["auth"]["login"]) => {
-    const result = await login(values);
-
-    localStorage.setItem("user", JSON.stringify(result));
-
-    queryClient.setQueryData(trpc.user.me.queryKey(), result.user);
-
-    navigate({ to: "/" });
-  };
 
   return (
     <Container maxWidth="sm">
       <Card sx={{ p: 3 }}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit((values) => login(values))}>
           <Stack spacing={2}>
             <Typography fontWeight="bold" variant="h4">
               Login

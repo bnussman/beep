@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../../utils/trpc";
+import { useTRPC } from "../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import {
   Card,
@@ -27,10 +27,9 @@ function ForgotPassword() {
   });
 
   const {
-    mutateAsync: sendForgotPasswordEmail,
+    mutate: sendForgotPasswordEmail,
     data,
     isPending,
-    error,
   } = useMutation(
     trpc.auth.forgotPassword.mutationOptions({
       onError(error) {
@@ -44,19 +43,20 @@ function ForgotPassword() {
           form.setError("root", { message: error.message });
         }
       },
+      onSuccess() {
+        form.reset();
+      },
     }),
   );
-
-  const onSubmit = async (values: RouterInput["auth"]["forgotPassword"]) => {
-    await sendForgotPasswordEmail(values);
-
-    form.reset();
-  };
 
   return (
     <Container maxWidth="sm">
       <Card sx={{ p: 3 }}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={form.handleSubmit((values) =>
+            sendForgotPasswordEmail(values),
+          )}
+        >
           <Stack spacing={2}>
             <Typography variant="h4" fontWeight="bold">
               Forgot Password
@@ -86,6 +86,7 @@ function ForgotPassword() {
                     fieldState.error?.message ??
                     "We'll send you an email with a link to reset your password."
                   }
+                  disabled={!!data}
                   required
                 />
               )}
@@ -93,7 +94,8 @@ function ForgotPassword() {
             <Box display="flex" justifyContent="flex-end">
               <Button
                 type="submit"
-                loading={form.formState.isSubmitting}
+                loading={isPending}
+                disabled={!!data}
                 variant="contained"
               >
                 Send Reset Password Email

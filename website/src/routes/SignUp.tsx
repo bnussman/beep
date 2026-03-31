@@ -3,7 +3,11 @@ import { useTRPC } from "../utils/trpc";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link as RouterLink, createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  Link as RouterLink,
+  createFileRoute,
+  useNavigate,
+} from "@tanstack/react-router";
 import {
   Alert,
   Avatar,
@@ -17,8 +21,8 @@ import {
   Container,
 } from "@mui/material";
 
-export const Route = createFileRoute('/SignUp')({
-  component: SignUp
+export const Route = createFileRoute("/SignUp")({
+  component: SignUp,
 });
 
 interface SignUpFormValues {
@@ -42,10 +46,10 @@ function SignUp() {
     watch,
     register,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignUpFormValues>({ mode: "onChange" });
 
-  const { mutateAsync } = useMutation(
+  const { mutate, isPending } = useMutation(
     trpc.auth.signup.mutationOptions({
       onError(error) {
         if (error.data?.fieldErrors) {
@@ -57,6 +61,13 @@ function SignUp() {
         } else {
           setError("root", { message: error.message });
         }
+      },
+      onSuccess(data) {
+        localStorage.setItem("user", JSON.stringify(data));
+
+        queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+
+        navigate({ to: "/" });
       },
     }),
   );
@@ -78,13 +89,7 @@ function SignUp() {
       }
     }
 
-    const data = await mutateAsync(formData);
-
-    localStorage.setItem("user", JSON.stringify(data));
-
-    queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
-
-    navigate({ to: "/" });
+    mutate(formData);
   });
 
   const Image = useMemo(
@@ -108,11 +113,20 @@ function SignUp() {
             <Stack spacing={1}>
               <Alert severity="info">
                 By signing up, you agree to our{" "}
-                <Link component={RouterLink} preload="intent" to="/terms" sx={{ textDecoration: 'underline' }}>
+                <Link
+                  component={RouterLink}
+                  preload="intent"
+                  to="/terms"
+                  sx={{ textDecoration: "underline" }}
+                >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link component={RouterLink} to="/privacy" sx={{ textDecoration: 'underline' }}>
+                <Link
+                  component={RouterLink}
+                  to="/privacy"
+                  sx={{ textDecoration: "underline" }}
+                >
                   Privacy Policy
                 </Link>
               </Alert>
@@ -223,7 +237,7 @@ function SignUp() {
               )}
             />
             <Box display="flex" justifyContent="flex-end">
-              <Button type="submit" loading={isSubmitting} variant="contained">
+              <Button type="submit" loading={isPending} variant="contained">
                 Sign Up
               </Button>
             </Box>
