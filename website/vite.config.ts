@@ -1,12 +1,18 @@
 import { defineConfig } from "vite";
-import react, { reactCompilerPreset } from "@vitejs/plugin-react";
-import babel from '@rolldown/plugin-babel'
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import react from "@vitejs/plugin-react";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
 export default defineConfig({
+  ssr: {
+    noExternal: ["@mui/*", "@toolpad/*"],
+  },
   plugins: [
-    tanstackRouter({ autoCodeSplitting: true }),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+      },
+    }),
     react(),
-    babel({ presets: [reactCompilerPreset()] }),
+    // babel({ presets: [reactCompilerPreset()] }),
   ],
 });

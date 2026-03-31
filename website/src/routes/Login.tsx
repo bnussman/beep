@@ -14,8 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 
-export const Route = createFileRoute('/Login')({
-  component: Login
+export const Route = createFileRoute("/Login")({
+  component: Login,
 });
 
 function Login() {
@@ -57,7 +57,9 @@ function Login() {
               Login
             </Typography>
             {form.formState.errors.root?.message && (
-              <Alert severity="error">{form.formState.errors.root.message}</Alert>
+              <Alert severity="error">
+                {form.formState.errors.root.message}
+              </Alert>
             )}
             <Controller
               control={form.control}
