@@ -23,6 +23,7 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
     ],
+    meta: [{ title: "Ride Beep App" }],
   }),
   component: RootComponent,
 });
@@ -66,7 +67,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Providers>
           <Header />
 
-          <Container component="main" sx={{ paddingBlock: 4 }}>
+          <Container component="main" sx={{ pt: 10 }}>
             {children}
           </Container>
         </Providers>
