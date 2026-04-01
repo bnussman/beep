@@ -10,18 +10,21 @@ import { theme } from "../utils/theme";
 import { NotificationsProvider } from "@toolpad/core";
 import { queryClient, trpcClient, TRPCProvider } from "../utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { RootProvider } from "fumadocs-ui/provider/tanstack";
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import styles from "../styles.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
     links: [
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
+      { rel: "stylesheet", href: styles },
     ],
     meta: [
       { title: "Ride Beep App" },
@@ -54,8 +57,10 @@ function Providers({ children }: { children: React.ReactNode }) {
         >
           <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
             <QueryClientProvider client={queryClient}>
-              <CssBaseline enableColorScheme />
-              {children}
+              <RootProvider>
+                <CssBaseline enableColorScheme />
+                {children}
+              </RootProvider>
             </QueryClientProvider>
           </TRPCProvider>
         </NotificationsProvider>
