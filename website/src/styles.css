@@ -1,3 +1,11 @@
 @import "tailwindcss";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
+
+#nd-docs-layout {
+  margin-top: 64px;
+}
+
+[data-sidebar-panel] {
+  margin-top: 64px;
+}

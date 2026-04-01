@@ -16,6 +16,7 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useLocation,
 } from "@tanstack/react-router";
 import styles from "../styles.css?url";
 
@@ -70,6 +71,10 @@ function Providers({ children }: { children: React.ReactNode }) {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const pathname = useLocation({ select: (l) => l.pathname });
+
+  const isDocs = typeof pathname === "string" && pathname.startsWith("/docs");
+
   return (
     <html>
       <head>
@@ -79,10 +84,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Providers>
           <Header />
 
-          <Container component="main" sx={{ pt: 10 }}>
-            <Banners />
-            {children}
-          </Container>
+          {isDocs ? (
+            <div>{children}</div>
+          ) : (
+            <Container component="main" sx={{ pt: 10 }}>
+              <Banners />
+              {children}
+            </Container>
+          )}
         </Providers>
         <Scripts />
       </body>

@@ -17,7 +17,6 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 function baseOptions(): BaseLayoutProps {
   return {
-    slots: {},
     nav: {
       title: "Tanstack Start",
     },
