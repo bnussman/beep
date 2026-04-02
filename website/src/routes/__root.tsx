@@ -85,7 +85,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <Header />
 
           {isDocs ? (
-            <div>{children}</div>
+            children
           ) : (
             <Container component="main" sx={{ pt: 10 }}>
               <Banners />

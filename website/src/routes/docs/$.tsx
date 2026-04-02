@@ -8,17 +8,19 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
+  ViewOptionsPopover,
 } from "fumadocs-ui/layouts/docs/page";
 import { useFumadocsLoader } from "fumadocs-core/source/client";
-import { Suspense } from "react";
+import { ReactNode, Suspense } from "react";
 import { useMDXComponents } from "../../components/mdx";
 import React from "react";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import { ClientAPIPage } from "../../components/api-page";
 
 function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: "Tanstack Start",
+      title: "Beep App Docs",
     },
   };
 }
@@ -28,7 +30,10 @@ export const Route = createFileRoute("/docs/$")({
   loader: async ({ params }) => {
     const slugs = params._splat?.split("/") ?? [];
     const data = await serverLoader({ data: slugs });
-    await clientLoader.preload(data.path);
+    // Fumadocs MDX: only preload content for normal pages
+    if (data.type === "docs") {
+      await clientLoader.preload(data.path);
+    }
     return data;
   },
 });
@@ -41,22 +46,42 @@ const serverLoader = createServerFn({
     const page = source.getPage(slugs);
     if (!page) throw notFound();
 
+    const pageTree = await source.serializePageTree(source.getPageTree());
+    if (page.data.type === "openapi") {
+      return {
+        type: "openapi",
+        title: page.data.title,
+        description: page.data.description,
+        pageTree,
+        props: await page.data.getClientAPIPageProps(),
+      };
+    }
+
     return {
+      type: "docs",
       path: page.path,
-      pageTree: await source.serializePageTree(source.getPageTree()),
+      pageTree,
     };
   });
 
 const clientLoader = browserCollections.docs.createClientLoader({
   component(
     { toc, frontmatter, default: MDX },
-    // you can define props for the component
-    _props: undefined,
+    {
+      path,
+    }: {
+      path: string;
+    },
   ) {
     return (
       <DocsPage toc={toc}>
         <DocsTitle>{frontmatter.title}</DocsTitle>
         <DocsDescription>{frontmatter.description}</DocsDescription>
+        <div className="flex flex-row gap-2 items-center border-b -mt-4 pb-6">
+          <ViewOptionsPopover
+            githubUrl={`https://github.com/bnussman/beep/blob/main/content/docs/${path}`}
+          />
+        </div>
         <DocsBody>
           <MDX components={useMDXComponents()} />
         </DocsBody>
@@ -66,11 +91,26 @@ const clientLoader = browserCollections.docs.createClientLoader({
 });
 
 function Page() {
-  const data = useFumadocsLoader(Route.useLoaderData());
+  const page = useFumadocsLoader(Route.useLoaderData());
+  let content: ReactNode;
+
+  if (page.type === "openapi") {
+    content = (
+      <DocsPage full>
+        <DocsTitle>{page.title}</DocsTitle>
+        <DocsDescription>{page.description}</DocsDescription>
+        <DocsBody>
+          <ClientAPIPage {...page.props} />
+        </DocsBody>
+      </DocsPage>
+    );
+  } else {
+    content = <Suspense>{clientLoader.useContent(page.path, page)}</Suspense>;
+  }
 
   return (
-    <DocsLayout {...baseOptions()} tree={data.pageTree}>
-      <Suspense>{clientLoader.useContent(data.path)}</Suspense>
+    <DocsLayout {...baseOptions()} tree={page.pageTree}>
+      {content}
     </DocsLayout>
   );
 }

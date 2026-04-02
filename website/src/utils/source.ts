@@ -1,7 +1,17 @@
+import { openapiPlugin, openapiSource } from "fumadocs-openapi/server";
 import { docs } from "../../.source/server";
-import { loader } from "fumadocs-core/source";
+import { InferPageType, loader, multiple } from "fumadocs-core/source";
+import { openapi } from "./openapi";
 
-export const source = loader({
-  baseUrl: "/docs",
-  source: docs.toFumadocsSource(),
-});
+export const source = loader(
+  multiple({
+    docs: docs.toFumadocsSource(),
+    openapi: await openapiSource(openapi, {
+      baseDir: "API",
+    }),
+  }),
+  {
+    baseUrl: "/docs",
+    plugins: [openapiPlugin()],
+  },
+);

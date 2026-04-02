@@ -29,6 +29,7 @@
     "@types/mdx": "^2.0.13",
     "fumadocs-core": "^16.7.7",
     "fumadocs-mdx": "^14.2.11",
+    "fumadocs-openapi": "^10.6.3",
     "fumadocs-ui": "^16.7.7",
     "luxon": "^3.7.2",
     "maplibre-gl": "^5.18.0",
@@ -36,6 +37,7 @@
     "react-dom": "19.2.0",
     "react-hook-form": "^7.69.0",
     "react-map-gl": "^8.1.0",
+    "shiki": "^4.0.2",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
