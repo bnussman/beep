@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@import "fumadocs-openapi/css/preset.css";
+
+#nd-sidebar {
+  padding-top: 64px;
+}
+
+[data-sidebar-panel] {
+  margin-top: 64px;
+}
+
+#nd-page {
+  padding-top: 96px;
+}

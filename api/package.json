@@ -7,6 +7,7 @@
   "author": "Banks Nussman",
   "scripts": {
     "dev": "bun run --preload ./src/utils/instrument.ts --watch src/index.ts",
+    "openapi": "trpc-openapi ./src/index.ts",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },
@@ -23,6 +24,7 @@
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
     "@sentry/bun": "^10.39.0",
+    "@trpc/openapi": "11.16.0-alpha",
     "@trpc/server": "^11.10.0",
     "@types/pg": "^8.16.0",
     "car-info": "0.2.5",
