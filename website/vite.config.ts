@@ -8,6 +8,9 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
+      spa: {
+        enabled: true,
+      },
       prerender: {
         enabled: true,
       },
