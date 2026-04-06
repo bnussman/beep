@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 
-export const Route = createFileRoute("/Login")({
+export const Route = createFileRoute("/login")({
   component: Login,
 });
 

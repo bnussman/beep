@@ -5,7 +5,7 @@ import { Loading } from "../../components/Loading";
 import { Alert } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/admin/Health")({
+export const Route = createFileRoute("/admin/health")({
   component: Health,
 });
 

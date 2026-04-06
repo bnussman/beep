@@ -2,7 +2,7 @@ import React from 'react';
 import { Link as RouterLink, createFileRoute } from '@tanstack/react-router';
 import { Typography, Stack, Accordion, AccordionDetails, AccordionSummary, Link, Box } from '@mui/material';
 
-export const Route = createFileRoute('/Terms')({
+export const Route = createFileRoute('/terms')({
   component: Terms,
 });
 
