@@ -244,7 +244,7 @@ export default function Premium() {
   return (
     <FlatList
       data={offerings}
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 16 }}
       contentInsetAdjustmentBehavior="automatic"
       renderItem={({ item }) => (
         <Offering item={item} disabled={numberOfActivePayments > 0} />

@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
-import { ActivityIndicator, Pressable, TextInput, TextInputProps, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
+import { LocationIcon } from "./LocationIcon";
 
 interface Props extends TextInputProps {
   ref: React.Ref<TextInput>;
@@ -67,19 +74,26 @@ export function LocationInput(props: Props) {
     <View style={{ flexDirection: "row", gap: 8 }}>
       <Input
         placeholder={isLoading ? "Loading" : undefined}
-        style={{ flex: 1, flexGrow: 1 }}
+        style={{ flex: 1, flexGrow: 1, paddingRight: 56 }}
         textContentType="fullStreetAddress"
         {...props}
       />
-      <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 24, height: 24 }}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <Pressable onPress={handleGetCurrentLocation}>
-            <Text size="2xl">️📍</Text>
-          </Pressable>
-        )}
-      </View>
+      <Pressable
+        style={{
+          position: "absolute",
+          right: 16,
+          top: 12,
+          display: "flex",
+          alignContent: "center",
+          justifyContent: "center",
+          width: 24,
+          height: 24,
+        }}
+        hitSlop={16}
+        onPress={handleGetCurrentLocation}
+      >
+        {isLoading ? <ActivityIndicator /> : <LocationIcon />}
+      </Pressable>
     </View>
   );
 }
