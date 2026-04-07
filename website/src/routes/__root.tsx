@@ -92,15 +92,3 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
-// function RootComponent() {
-//   return (
-//     <>
-//       <Header />
-//       <Container component="main" sx={{ pt: 10 }}>
-//         <Banners />
-//         <Outlet />
-//       </Container>
-//     </>
-//   );
-// }
