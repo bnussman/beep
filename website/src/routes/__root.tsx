@@ -26,6 +26,14 @@ export const Route = createRootRoute({
     meta: [
       { title: "Ride Beep App" },
       {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1.0",
+      },
+      {
+        name: "apple-itunes-app",
+        content: "app-id=1528601773",
+      },
+      {
         name: "description",
         content:
           "A rideshare app for students. Ride or drive at your university today.",
