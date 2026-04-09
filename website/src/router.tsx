@@ -8,6 +8,7 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPendingMs: 0,
     defaultPendingMinMs: 0,
+    defaultPendingComponent: () => null,
   });
 
   return router;
