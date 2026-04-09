@@ -1,5 +1,6 @@
 import React from "react";
 import createCache from "@emotion/cache";
+import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
 import { Container, ThemeProvider, CssBaseline } from "@mui/material";
@@ -20,6 +21,7 @@ import {
 export const Route = createRootRoute({
   head: () => ({
     links: [
+      { rel: "icon", href: faviconUrl },
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
     ],
