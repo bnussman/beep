@@ -26,7 +26,7 @@ import {
   TableBody,
 } from "@mui/material";
 
-export const Route = createFileRoute('/admin/ratings/')({
+export const Route = createFileRoute("/admin/ratings/")({
   component: Ratings,
   validateSearch: (search: Record<string, string>) => ({
     page: Number(search?.page ?? 1),
@@ -41,30 +41,16 @@ function Ratings() {
 
   const notifications = useNotifications();
 
-  const { data, isLoading, error } = useQuery(trpc.rating.ratings.queryOptions(
-    {
-      cursor: page,
-    },
-    { placeholderData: keepPreviousData },
-  ));
+  const { data, isLoading, error } = useQuery(
+    trpc.rating.ratings.queryOptions(
+      {
+        cursor: page,
+      },
+      { placeholderData: keepPreviousData },
+    ),
+  );
 
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
-
-  const { mutate, isPending } = useMutation(trpc.user.reconcileUserRatings.mutationOptions({
-    onSuccess(count) {
-      notifications.show(
-        `Successfully reconciled user ratings. ${count} user ratings were updated`,
-        {
-          severity: "success",
-        },
-      );
-    },
-    onError(error) {
-      notifications.show(error.message, {
-        severity: "error",
-      });
-    },
-  }));
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
@@ -72,19 +58,9 @@ function Ratings() {
 
   return (
     <Stack spacing={1}>
-      <Stack direction="row" justifyContent="space-between">
-        <Typography variant="h4" fontWeight="bold">
-          Ratings
-        </Typography>
-        <Button
-          loading={isPending}
-          onClick={() => mutate()}
-          color="warning"
-          variant="contained"
-        >
-          Reconcile
-        </Button>
-      </Stack>
+      <Typography variant="h4" fontWeight="bold">
+        Ratings
+      </Typography>
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}

@@ -76,9 +76,7 @@ export const userRouter = router({
         .object({
           first: z.string().refine(isAlpha, "Must be letters only.").min(1),
           last: z.string().refine(isAlpha, "Must be letters only.").min(1),
-          email: z
-            .email()
-            .endsWith(".edu", "Email must end with .edu"),
+          email: z.email().endsWith(".edu", "Email must end with .edu"),
           phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
           venmo: z.string().nullable(),
           cashapp: z.string().nullable(),
@@ -265,9 +263,7 @@ export const userRouter = router({
       return u[0];
     }),
   syncPayments: authedProcedure
-    .input(
-      z.object({ userId: z.string() }).optional()
-    )
+    .input(z.object({ userId: z.string() }).optional())
     .mutation(async ({ ctx, input }) => {
       const userId = input?.userId ?? ctx.user.id;
 
@@ -288,7 +284,8 @@ export const userRouter = router({
       if (ctx.user.role === "user" && userId !== ctx.user.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "You must be an admin to get active payments for other users.",
+          message:
+            "You must be an admin to get active payments for other users.",
         });
       }
 
@@ -568,30 +565,6 @@ export const userRouter = router({
   }),
   deleteUser: adminProcedure.input(z.string()).mutation(async ({ input }) => {
     await db.delete(user).where(eq(user.id, input));
-  }),
-  reconcileUserRatings: adminProcedure.mutation(async () => {
-    await db.update(user).set({ rating: null });
-
-    const ratings = await db
-      .select({
-        userId: rating.rated_id,
-        avgRating: avg(rating.stars),
-      })
-      .from(rating)
-      .groupBy(rating.rated_id);
-
-    if (!ratings) {
-      throw new Error("No ratings!");
-    }
-
-    for (const { userId, avgRating } of ratings) {
-      await db
-        .update(user)
-        .set({ rating: avgRating })
-        .where(eq(user.id, userId));
-    }
-
-    return ratings.length;
   }),
   getUsersDefaultCar: authedProcedure
     .concat(mustHaveBeenInAcceptedBeep)
