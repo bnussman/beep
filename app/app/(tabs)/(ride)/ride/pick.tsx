@@ -84,8 +84,6 @@ export default function PickBeepScreen() {
       return;
     }
 
-    captureMessage("User is starting a beep", { extra: { location: location.coords }})
-
     startBeep({
       beeperId,
       ...params,
@@ -183,9 +181,7 @@ export default function PickBeepScreen() {
       refreshing={isRefetching}
       onRefresh={refetch}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={
-        getContentContainerStyle(beepers?.length === 0)
-      }
+      contentContainerStyle={getContentContainerStyle(beepers?.length === 0)}
       ListEmptyComponent={
         <View style={{ alignItems: "center" }}>
           <Text weight="800" size="2xl">
