@@ -1,4 +1,5 @@
 import React from "react";
+import '../index.css';
 import createCache from "@emotion/cache";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
@@ -10,11 +11,13 @@ import { theme } from "../utils/theme";
 import { NotificationsProvider } from "@toolpad/core";
 import { queryClient, trpcClient, TRPCProvider } from "../utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { RootProvider } from 'fumadocs-ui/provider/tanstack';
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
+  useLocation,
 } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
@@ -73,6 +76,8 @@ function Providers({ children }: { children: React.ReactNode }) {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
   return (
     <html>
       <head>
@@ -81,11 +86,18 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <Providers>
           <Header />
-
-          <Container component="main" sx={{ pt: 10 }}>
-            <Banners />
-            {children}
-          </Container>
+          {location.pathname === '/docs' ? (
+            <>
+              <RootProvider theme={{ enableSystem: true }}>
+                {children}
+              </RootProvider>
+            </>
+          ) : (
+            <Container component="main" sx={{ pt: 10 }}>
+              <Banners />
+              {children}
+            </Container>
+          )}
         </Providers>
         <Scripts />
       </body>

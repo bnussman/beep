@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileEditRouteImport } from './routes/profile.edit'
 import { Route as PasswordForgotRouteImport } from './routes/password/forgot'
 import { Route as PasswordChangeRouteImport } from './routes/password/change'
+import { Route as DocsSplatRouteImport } from './routes/docs/$'
 import { Route as AdminRedisRouteImport } from './routes/admin/redis'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminHealthRouteImport } from './routes/admin/health'
@@ -97,6 +98,11 @@ const PasswordForgotRoute = PasswordForgotRouteImport.update({
 const PasswordChangeRoute = PasswordChangeRouteImport.update({
   id: '/password/change',
   path: '/password/change',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsSplatRoute = DocsSplatRouteImport.update({
+  id: '/docs/$',
+  path: '/docs/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRedisRoute = AdminRedisRouteImport.update({
@@ -290,6 +296,7 @@ export interface FileRoutesByFullPath {
   '/admin/health': typeof AdminHealthRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/redis': typeof AdminRedisRoute
+  '/docs/$': typeof DocsSplatRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
   '/profile/edit': typeof ProfileEditRoute
@@ -336,6 +343,7 @@ export interface FileRoutesByTo {
   '/admin/health': typeof AdminHealthRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/redis': typeof AdminRedisRoute
+  '/docs/$': typeof DocsSplatRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
   '/profile/edit': typeof ProfileEditRoute
@@ -383,6 +391,7 @@ export interface FileRoutesById {
   '/admin/health': typeof AdminHealthRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/redis': typeof AdminRedisRoute
+  '/docs/$': typeof DocsSplatRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
   '/profile/edit': typeof ProfileEditRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/payments'
     | '/admin/redis'
+    | '/docs/$'
     | '/password/change'
     | '/password/forgot'
     | '/profile/edit'
@@ -477,6 +487,7 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/payments'
     | '/admin/redis'
+    | '/docs/$'
     | '/password/change'
     | '/password/forgot'
     | '/profile/edit'
@@ -523,6 +534,7 @@ export interface FileRouteTypes {
     | '/admin/health'
     | '/admin/payments'
     | '/admin/redis'
+    | '/docs/$'
     | '/password/change'
     | '/password/forgot'
     | '/profile/edit'
@@ -570,6 +582,7 @@ export interface RootRouteChildren {
   AdminHealthRoute: typeof AdminHealthRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRedisRoute: typeof AdminRedisRoute
+  DocsSplatRoute: typeof DocsSplatRoute
   PasswordChangeRoute: typeof PasswordChangeRoute
   PasswordForgotRoute: typeof PasswordForgotRoute
   ProfileEditRoute: typeof ProfileEditRoute
@@ -657,6 +670,13 @@ declare module '@tanstack/react-router' {
       path: '/password/change'
       fullPath: '/password/change'
       preLoaderRoute: typeof PasswordChangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/$': {
+      id: '/docs/$'
+      path: '/docs/$'
+      fullPath: '/docs/$'
+      preLoaderRoute: typeof DocsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/redis': {
@@ -960,6 +980,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminHealthRoute: AdminHealthRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRedisRoute: AdminRedisRoute,
+  DocsSplatRoute: DocsSplatRoute,
   PasswordChangeRoute: PasswordChangeRoute,
   PasswordForgotRoute: PasswordForgotRoute,
   ProfileEditRoute: ProfileEditRoute,
