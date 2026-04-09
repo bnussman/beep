@@ -8,17 +8,8 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
-      spa: {
-        enabled: true,
-        prerender: {
-          outputPath: '/index.html',
-          enabled: true,
-          crawlLinks: true,
-          // autoSubfolderIndex: true,
-        },
-      },
       prerender: {
-        enabled: true
+        enabled: true,
       },
     }),
     react(),
