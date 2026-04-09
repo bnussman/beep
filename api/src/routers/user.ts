@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/bun";
-import { beep, rating, user, verify_email } from "../../drizzle/schema";
+import { beep, user, verify_email } from "../../drizzle/schema";
 import { db } from "../utils/db";
-import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
+import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -12,6 +12,9 @@ import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
 import { inProgressBeep } from "../logic/beep";
+import { userSchema } from "../schemas/user";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
+import { getActivePayments } from "../logic/payments";
 import {
   adminProcedure,
   authedProcedure,
@@ -23,9 +26,6 @@ import {
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../utils/constants";
-import { userSchema } from "../schemas/user";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
-import { getActivePayments } from "../logic/payments";
 
 export const userRouter = router({
   me: authedProcedure.output(userSchema).query(async ({ ctx }) => {
