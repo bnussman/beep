@@ -34,9 +34,9 @@ export const theme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          marginLeft: 0
+          marginLeft: 0,
         },
-      }
+      },
     },
     MuiTextField: {
       defaultProps: {
@@ -49,16 +49,16 @@ export const theme = createTheme({
     },
     MuiPaper: {
       defaultProps: {
-        variant: 'outlined'
+        variant: "outlined",
       },
       styleOverrides: {
-        root: ''
+        root: "",
       },
     },
     MuiDialogTitle: {
       defaultProps: {
-        variant: 'h5',
-        fontWeight: 'bold'
+        variant: "h5",
+        fontWeight: "bold",
       },
     },
     MuiPopover: {

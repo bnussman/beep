@@ -10,7 +10,6 @@ import {
   Stack,
   Typography,
   useColorScheme,
-  Zoom,
 } from "@mui/material";
 
 export const Route = createFileRoute("/")({
@@ -59,9 +58,9 @@ function Home() {
           component="img"
           sx={{
             width: { xs: 250, sm: 250, md: 300, lg: 400, xl: 400 },
-            transition: "transform 0.3s ease-in-out", // Smooth transition
+            transition: "transform 0.15s ease-in-out", // Smooth transition
             ":hover": {
-              transform: "rotate(3deg) scale(1.1) !important",
+              transform: "rotate(2deg) scale(1.1) !important",
             },
           }}
           src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
