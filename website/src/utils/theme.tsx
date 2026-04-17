@@ -38,23 +38,6 @@ export const theme = createTheme({
         },
       },
     },
-    MuiTextField: {
-      defaultProps: {
-        slotProps: {
-          inputLabel: {
-            shrink: true,
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      defaultProps: {
-        variant: "outlined",
-      },
-      styleOverrides: {
-        root: "",
-      },
-    },
     MuiDialogTitle: {
       defaultProps: {
         variant: "h5",

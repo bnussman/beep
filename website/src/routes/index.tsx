@@ -1,6 +1,6 @@
 import React from "react";
-import iPhoneDark from "../assets/dark.png";
-import iPhoneLight from "../assets/light.png";
+import iPhoneDark from "../assets/dark.png?url";
+import iPhoneLight from "../assets/light.png?url";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -54,19 +54,23 @@ function Home() {
             </Button>
           </Box>
         </Stack>
-        <Box
-          component="img"
-          sx={{
-            width: { xs: 250, sm: 250, md: 300, lg: 400, xl: 400 },
-            transition: "transform 0.15s ease-in-out", // Smooth transition
-            ":hover": {
-              transform: "rotate(2deg) scale(1.1) !important",
-            },
-          }}
-          src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
-          alt="iPhone Mockup of the Beep App"
-          fetchPriority="high"
-        />
+        <picture>
+          <source srcSet={iPhoneLight} media="(prefers-color-scheme: light)" />
+          <source srcSet={iPhoneDark} media="(prefers-color-scheme: dark)" />
+          <Box
+            component="img"
+            sx={{
+              width: { xs: 250, sm: 250, md: 300, lg: 400, xl: 400 },
+              transition: "transform 0.15s ease-in-out", // Smooth transition
+              ":hover": {
+                transform: "rotate(2deg) scale(1.1) !important",
+              },
+            }}
+            src={iPhoneLight}
+            alt="iPhone Mockup of the Beep App"
+            fetchPriority="high"
+          />
+        </picture>
       </Stack>
     </Container>
   );
