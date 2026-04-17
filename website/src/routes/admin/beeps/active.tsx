@@ -92,7 +92,7 @@ function ActiveBeeps() {
               <TableCell />
             </TableRow>
           </TableHead>
-          <TableBody ref={parent}>
+          <TableBody ref={data !== undefined ? parent: undefined}>
             {isLoading && <TableLoading colSpan={8} />}
             {error && <TableError colSpan={8} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={8} />}
