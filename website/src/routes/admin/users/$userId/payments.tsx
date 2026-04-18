@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@mui/material";
 
-export const Route = createFileRoute('/admin/users/$userId/payments')({
+export const Route = createFileRoute("/admin/users/$userId/payments")({
   component: PaymentsTable,
 });
 
@@ -27,11 +27,13 @@ function PaymentsTable() {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data, isLoading, error } = useQuery(trpc.payment.payments.queryOptions({
-    userId,
-    page: currentPage,
-    pageSize: 10,
-  }));
+  const { data, isLoading, error } = useQuery(
+    trpc.payment.payments.queryOptions({
+      userId,
+      page: currentPage,
+      pageSize: 10,
+    }),
+  );
 
   return (
     <Stack spacing={1}>
@@ -62,8 +64,12 @@ function PaymentsTable() {
                 <TableCell>{payment.id}</TableCell>
                 <TableCell>{payment.productId}</TableCell>
                 <TableCell>{payment.price}</TableCell>
-                <TableCell>{payment.created}</TableCell>
-                <TableCell>{payment.expires}</TableCell>
+                <TableCell>
+                  {new Date(payment.created).toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(payment.expires).toLocaleString()}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

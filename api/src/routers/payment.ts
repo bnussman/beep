@@ -60,7 +60,7 @@ export const paymentRouter = router({
         payments,
         pages: Math.ceil(results / input.pageSize),
         page: input.page,
-        pageSize: input.page,
+        pageSize: input.pageSize,
         results,
       };
     }),
