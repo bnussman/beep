@@ -8,10 +8,10 @@ export default defineConfig({
   dialect: "postgresql",
   extensionsFilters: ["postgis"],
   dbCredentials: {
-    url: DB_URL + '?sslmode=require',
+    url: DB_URL + "?sslmode=require",
   },
   schemaFilter: ["public"],
-  tablesFilter: ["*"],
+  tablesFilter: ["!geography_columns", "!geometry_columns", "!spatial_ref_sys"],
   verbose: true,
   strict: true,
 });
