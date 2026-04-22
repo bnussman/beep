@@ -7,9 +7,8 @@ import { Alert, Stack, Typography, Box, Link } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating } from "../../../../utils/utils";
 
-export const Route = createFileRoute("/admin/users/$userId/$")({
+export const Route = createFileRoute('/admin/users/$userId/$')({
   component: Details,
-  ssr: false,
 });
 
 function Details() {
