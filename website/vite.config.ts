@@ -8,9 +8,15 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
+      srcDirectory: "src",
+      router: {
+        routesDirectory: "routes",
+      },
       prerender: {
         enabled: true,
+        crawlLinks: false,
       },
+      pages: [{ path: "/" }],
     }),
     react(),
     // babel({ presets: [reactCompilerPreset()] }),
