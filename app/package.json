@@ -59,7 +59,7 @@
     "@sentry/cli": "3.1.0",
     "@trpc/server": "^11.16.0",
     "@types/react": "19.2.14",
-    "@types/react-dom": "~19.1.9",
+    "@types/react-dom": "~19.2.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "babel-preset-expo": "~55.0.9",
     "typescript": "^5.9.2"
