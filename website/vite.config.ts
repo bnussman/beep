@@ -8,44 +8,15 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
+      srcDirectory: "src",
+      router: {
+        routesDirectory: "routes",
+      },
       prerender: {
         enabled: true,
         crawlLinks: false,
       },
-      // pages: [
-      //   {
-      //     path: "/",
-      //     prerender: {
-      //       outputPath: "/index.html",
-      //       enabled: true,
-      //       crawlLinks: false,
-      //     },
-      //   },
-      //   {
-      //     path: "/tools",
-      //     prerender: {
-      //       outputPath: "/tools.html",
-      //       enabled: true,
-      //       crawlLinks: false,
-      //     },
-      //   },
-      //   {
-      //     path: "/docs",
-      //     prerender: {
-      //       outputPath: "/docs.html",
-      //       enabled: true,
-      //       crawlLinks: true,
-      //     },
-      //   },
-      // ],
-      spa: {
-        enabled: true,
-        prerender: {
-          outputPath: "/index.html",
-          enabled: true,
-          crawlLinks: false,
-        },
-      },
+      pages: [{ path: "/" }],
     }),
     react(),
     // babel({ presets: [reactCompilerPreset()] }),
