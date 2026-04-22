@@ -27,7 +27,7 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
         working-directory: ./test
-      - run: npx drizzle-kit push --force
+      - run: pnpm drizzle-kit push --force
         working-directory: ./api
       - run: pnpm --filter @beep/test test
       - uses: actions/upload-artifact@v4
