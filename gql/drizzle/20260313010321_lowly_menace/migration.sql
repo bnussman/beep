@@ -1,0 +1,2 @@
+ALTER TABLE "report" ADD COLUMN "rating_id" varchar(255);--> statement-breakpoint
+ALTER TABLE "report" ADD CONSTRAINT "report_rating_id_rating_id_fkey" FOREIGN KEY ("rating_id") REFERENCES "rating"("id") ON DELETE SET NULL ON UPDATE CASCADE;
