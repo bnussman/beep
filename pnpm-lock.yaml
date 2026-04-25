@@ -212,9 +212,6 @@ importers:
       '@babel/core':
         specifier: ^7.24.4
         version: 7.28.4
-      '@expo/metro-runtime':
-        specifier: ~55.0.10
-        version: 55.0.10(@expo/dom-webview@55.0.3)(expo@55.0.17)(react-dom@19.2.0(react@19.2.0))(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       '@sentry/cli':
         specifier: 3.1.0
         version: 3.1.0
@@ -3604,9 +3601,6 @@ packages:
 
   '@types/mysql@2.15.27':
     resolution: {integrity: sha512-YfWiV16IY0OeBfBCk8+hXKmdTKrKlwKN1MNKAPBu5JYxLwBEZl7QzeEpGnlZb3VMGJrrGmB84gXiH+ofs/TezA==}
-
-  '@types/node@24.7.2':
-    resolution: {integrity: sha512-/NbVmcGTP+lj5oa4yiYxxeBjRivKQ5Ns1eSZeB99ExsEQ6rX5XYU1Zy/gGxY/ilqtD4Etx9mKyrPxZRetiahhA==}
 
   '@types/node@25.5.2':
     resolution: {integrity: sha512-tO4ZIRKNC+MDWV4qKVZe3Ql/woTnmHDr5JD8UI5hn2pwBrHEwOEMZK7WlNb5RKB6EoJ02gwmQS9OrjuFnZYdpg==}
@@ -7049,9 +7043,6 @@ packages:
 
   ufo@1.6.3:
     resolution: {integrity: sha512-yDJTmhydvl5lJzBmy/hyOAA0d+aqCBuwl818haVdYCRrWV84o7YyeVm4QlVHStqNrrJSTb6jKuFAVqAFsr+K3Q==}
-
-  undici-types@7.14.0:
-    resolution: {integrity: sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==}
 
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
@@ -11358,10 +11349,6 @@ snapshots:
     dependencies:
       '@types/node': 25.5.2
 
-  '@types/node@24.7.2':
-    dependencies:
-      undici-types: 7.14.0
-
   '@types/node@25.5.2':
     dependencies:
       undici-types: 7.18.2
@@ -15110,8 +15097,6 @@ snapshots:
 
   ufo@1.6.3: {}
 
-  undici-types@7.14.0: {}
-
   undici-types@7.18.2: {}
 
   undici@6.23.0: {}
@@ -15290,7 +15275,7 @@ snapshots:
 
   wkx@0.5.0:
     dependencies:
-      '@types/node': 24.7.2
+      '@types/node': 25.5.2
 
   wrap-ansi@7.0.0:
     dependencies:
