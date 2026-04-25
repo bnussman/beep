@@ -3,4 +3,5 @@ packages:
   - "website"
   - "api"
   - "test"
+  - "gql"
   - "deploy"

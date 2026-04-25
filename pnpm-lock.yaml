@@ -275,7 +275,7 @@ importers:
         version: 4.12.0(graphql@16.13.2)
       '@pothos/plugin-drizzle':
         specifier: ^0.17.2
-        version: 0.17.2(@pothos/core@4.12.0(graphql@16.13.2))(drizzle-orm@1.0.0-beta.22(@opentelemetry/api@1.9.1)(@types/mssql@9.1.8(@azure/core-client@1.10.1))(@types/pg@8.20.0)(bun-types@1.3.11)(gel@2.0.1)(mssql@11.0.1(@azure/core-client@1.10.1))(pg@8.20.0)(postgres@3.4.4)(zod@4.3.6))(graphql@16.13.2)
+        version: 0.17.3(@pothos/core@4.12.0(graphql@16.13.2))(drizzle-orm@1.0.0-beta.22(@opentelemetry/api@1.9.1)(@types/mssql@9.1.8(@azure/core-client@1.10.1))(@types/pg@8.20.0)(bun-types@1.3.11)(gel@2.0.1)(mssql@11.0.1(@azure/core-client@1.10.1))(pg@8.20.0)(postgres@3.4.4)(zod@4.3.6))(graphql@16.13.2)
       '@pothos/plugin-scope-auth':
         specifier: ^4.1.6
         version: 4.1.6(@pothos/core@4.12.0(graphql@16.13.2))(graphql@16.13.2)
@@ -2507,8 +2507,8 @@ packages:
     peerDependencies:
       graphql: ^16.10.0
 
-  '@pothos/plugin-drizzle@0.17.2':
-    resolution: {integrity: sha512-Q3MJzjtX77Tw8yxF+vLgb+Juxka5TzZSPWP+/jgv4plTzWr6qH0Pe0pVa24Hahg/Vun37FCodOnD1ZqkSK7G9w==}
+  '@pothos/plugin-drizzle@0.17.3':
+    resolution: {integrity: sha512-dj+Jc60OOMkfItEFMa/tIeLRfKyje1EUeNS0YiKvGCgC8nEw8pSpJ9WmPq1es32HdhUbGLuvQtqSxjJH2+x7oA==}
     peerDependencies:
       '@pothos/core': '*'
       drizzle-orm: '>=1.0.0-beta.2'
@@ -10207,7 +10207,7 @@ snapshots:
     dependencies:
       graphql: 16.13.2
 
-  '@pothos/plugin-drizzle@0.17.2(@pothos/core@4.12.0(graphql@16.13.2))(drizzle-orm@1.0.0-beta.22(@opentelemetry/api@1.9.1)(@types/mssql@9.1.8(@azure/core-client@1.10.1))(@types/pg@8.20.0)(bun-types@1.3.11)(gel@2.0.1)(mssql@11.0.1(@azure/core-client@1.10.1))(pg@8.20.0)(postgres@3.4.4)(zod@4.3.6))(graphql@16.13.2)':
+  '@pothos/plugin-drizzle@0.17.3(@pothos/core@4.12.0(graphql@16.13.2))(drizzle-orm@1.0.0-beta.22(@opentelemetry/api@1.9.1)(@types/mssql@9.1.8(@azure/core-client@1.10.1))(@types/pg@8.20.0)(bun-types@1.3.11)(gel@2.0.1)(mssql@11.0.1(@azure/core-client@1.10.1))(pg@8.20.0)(postgres@3.4.4)(zod@4.3.6))(graphql@16.13.2)':
     dependencies:
       '@pothos/core': 4.12.0(graphql@16.13.2)
       drizzle-orm: 1.0.0-beta.22(@opentelemetry/api@1.9.1)(@types/mssql@9.1.8(@azure/core-client@1.10.1))(@types/pg@8.20.0)(bun-types@1.3.11)(gel@2.0.1)(mssql@11.0.1(@azure/core-client@1.10.1))(pg@8.20.0)(postgres@3.4.4)(zod@4.3.6)
