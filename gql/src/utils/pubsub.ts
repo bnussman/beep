@@ -1,10 +1,11 @@
 import { Context } from "./trpc";
-import { queueResponseSchema, rideResponseSchema } from "../schemas/beep";
 import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis";
 import z from "zod";
+import { user } from "../../drizzle/schema";
 
-export type User = NonNullable<Context["user"]>;
+export type User = typeof user.$inferSelect;
+
 type Ride = z.infer<typeof rideResponseSchema> | null;
 type Queue = z.infer<typeof queueResponseSchema>;
 
