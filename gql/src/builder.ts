@@ -15,6 +15,7 @@ export interface PothosTypes {
     loggedIn: boolean;
     admin: boolean;
   };
+  Scalars: { File: { Input: File; Output: never } };
 }
 
 export const builder = new SchemaBuilder<PothosTypes>({
@@ -34,4 +35,9 @@ export const builder = new SchemaBuilder<PothosTypes>({
 });
 
 builder.queryType();
-// builder.mutationType();
+builder.mutationType();
+builder.scalarType("File", {
+  serialize: () => {
+    throw new Error("Uploads can only be used as input types");
+  },
+});

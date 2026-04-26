@@ -1,9 +1,13 @@
-import '../utils/instrument';
+import "../utils/instrument";
 import React, { useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
-import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router';
+import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
 import { queryClient, trpcClient, TRPCProvider, useTRPC } from "@/utils/trpc";
-import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClientProvider,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "react-native";
@@ -11,18 +15,42 @@ import { useAutoUpdate } from "@/utils/updates";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { navigationIntegration } from '../utils/instrument';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { navigationIntegration } from "../utils/instrument";
+import { gql, Provider } from "urql";
+import { client } from "@/utils/graphql";
+import { graphql } from "gql.tada";
+import { useQuery as useGraphQLQuery } from "urql";
 
 SplashScreen.preventAutoHideAsync();
 
 setupPurchase();
 setupNotifications();
 
+const MeQuery = graphql(`
+  query {
+    me {
+      id
+      first
+      last
+    }
+  }
+`);
+
 function App() {
   const trpc = useTRPC();
   const colorScheme = useColorScheme();
   const queryClient = useQueryClient();
+
+  const [result] = useGraphQLQuery({
+    query: MeQuery,
+  });
+
+  console.log("GQL", result);
 
   const { data: user, isLoading } = useQuery(
     trpc.user.me.queryOptions(undefined, {
@@ -70,10 +98,16 @@ function App() {
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
-        <Stack.Screen options={{ headerTitle: "Sign Up"}} name="(auth)/sign-up" />
-        <Stack.Screen options={{ headerTitle: "Forgot Password"}} name="(auth)/forgot-password" />
+        <Stack.Screen
+          options={{ headerTitle: "Sign Up" }}
+          name="(auth)/sign-up"
+        />
+        <Stack.Screen
+          options={{ headerTitle: "Forgot Password" }}
+          name="(auth)/forgot-password"
+        />
       </Stack.Protected>
-    </Stack> 
+    </Stack>
   );
 }
 
@@ -92,16 +126,20 @@ function Layout() {
       <KeyboardProvider>
         <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
-            <ThemeProvider value={
-              colorScheme === "dark"
-                ? DarkTheme
-                : {
-                  ...DefaultTheme,
-                  colors: { ...DefaultTheme.colors, background: "white" },
-                }}
-            >
-              <App />
-            </ThemeProvider>
+            <Provider value={client}>
+              <ThemeProvider
+                value={
+                  colorScheme === "dark"
+                    ? DarkTheme
+                    : {
+                        ...DefaultTheme,
+                        colors: { ...DefaultTheme.colors, background: "white" },
+                      }
+                }
+              >
+                <App />
+              </ThemeProvider>
+            </Provider>
           </QueryClientProvider>
         </TRPCProvider>
       </KeyboardProvider>
@@ -112,6 +150,5 @@ function Layout() {
 export default Sentry.wrap(Layout);
 
 export const unstable_settings = {
-  initialRouteName: '(auth)/index',
+  initialRouteName: "(auth)/index",
 };
-
