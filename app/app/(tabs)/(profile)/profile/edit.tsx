@@ -20,6 +20,8 @@ const UpdatePhotoMutation = graphql(`
     uploadProfilePicture(photo: $photo) {
       id
       photo
+      first
+      last
     }
   }
 `);

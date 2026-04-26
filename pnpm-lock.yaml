@@ -15,6 +15,9 @@ importers:
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
 
   api:
     dependencies:
