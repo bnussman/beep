@@ -169,6 +169,9 @@ importers:
       gql.tada:
         specifier: ^1.9.2
         version: 1.9.2(graphql@16.13.2)(typescript@5.9.2)
+      graphql-ws:
+        specifier: ^6.0.8
+        version: 6.0.8(graphql@16.13.2)(ws@8.18.3)
       react:
         specifier: 19.2.0
         version: 19.2.0

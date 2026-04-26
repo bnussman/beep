@@ -24,22 +24,16 @@ import { navigationIntegration } from "../utils/instrument";
 import { gql, Provider } from "urql";
 import { client } from "@/utils/graphql";
 import { graphql } from "gql.tada";
-import { useQuery as useGraphQLQuery } from "urql";
+import {
+  useQuery as useGraphQLQuery,
+  useSubscription as useGraphQLSubscription,
+} from "urql";
+import { MeQuery, MeSubscription } from "@/utils/useUser";
 
 SplashScreen.preventAutoHideAsync();
 
 setupPurchase();
 setupNotifications();
-
-const MeQuery = graphql(`
-  query {
-    me {
-      id
-      first
-      last
-    }
-  }
-`);
 
 function App() {
   const trpc = useTRPC();
@@ -49,6 +43,14 @@ function App() {
   const [result] = useGraphQLQuery({
     query: MeQuery,
   });
+
+  useGraphQLSubscription(
+    { query: MeSubscription, pause: !result.data?.me },
+    (prev, data) => {
+      console.log("GQL SUBSCRIPTION", data);
+      return data;
+    },
+  );
 
   console.log("GQL", result);
 

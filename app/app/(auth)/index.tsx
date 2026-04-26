@@ -12,6 +12,7 @@ import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { SplashScreen, useRouter } from "expo-router";
+import { client } from "@/utils/graphql";
 
 type Values = RouterInput["auth"]["login"];
 
@@ -31,13 +32,14 @@ export default function LoginScreen() {
     trpc.auth.login.mutationOptions({
       async onSuccess(data, variables, result, context) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
-
         context.client.setQueryData(trpc.user.me.queryKey(), data.user);
       },
       onError(error) {
         if (error.data?.fieldErrors) {
           for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, { message: error.data.fieldErrors[key]?.[0] });
+            setError(key as keyof Values, {
+              message: error.data.fieldErrors[key]?.[0],
+            });
           }
         } else {
           alert(error.message);
@@ -45,7 +47,6 @@ export default function LoginScreen() {
       },
     }),
   );
-
 
   useEffect(() => {
     SplashScreen.hide();
@@ -94,9 +95,7 @@ export default function LoginScreen() {
             />
           )}
         />
-        <Text color="error">
-          {errors.username?.message}
-        </Text>
+        <Text color="error">{errors.username?.message}</Text>
       </View>
       <View style={{ gap: 4 }}>
         <Label htmlFor="password">Password</Label>
@@ -120,18 +119,13 @@ export default function LoginScreen() {
             />
           )}
         />
-        <Text color="error">
-          {errors.password?.message}
-        </Text>
+        <Text color="error">{errors.password?.message}</Text>
       </View>
       <Button isLoading={isSubmitting} onPress={onLogin}>
         Login
       </Button>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Button
-          variant="secondary"
-          onPress={() => router.push("/sign-up")}
-        >
+        <Button variant="secondary" onPress={() => router.push("/sign-up")}>
           Sign Up
         </Button>
         <Button

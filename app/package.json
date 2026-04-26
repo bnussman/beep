@@ -38,6 +38,7 @@
     "expo-task-manager": "~55.0.15",
     "expo-updates": "~55.0.21",
     "gql.tada": "^1.9.2",
+    "graphql-ws": "^6.0.8",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.69.0",

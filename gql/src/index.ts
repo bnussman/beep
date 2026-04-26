@@ -15,16 +15,18 @@ Bun.serve({
     if (req.method === "OPTIONS") {
       return new Response("Departed", { headers: CORS_HEADERS });
     }
-    const [path, _search] = req.url.split("?");
-    if (!path.endsWith("/graphql")) {
-      return new Response("Not Found", { status: 404 });
-    }
     if (server.upgrade(req)) {
       return;
     }
     return yoga.fetch(req);
   },
-  websocket: makeHandler({ schema }),
+  websocket: makeHandler({
+    schema,
+    context(ctx, id, payload, args) {
+      console.log("WebSocket Connection:", ctx.connectionParams);
+      return createContext({ context: ctx });
+    },
+  }),
 });
 
 console.info("🚕 Beep GraphQL Server Started");

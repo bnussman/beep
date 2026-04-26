@@ -112,11 +112,15 @@ builder.subscriptionType({
   fields: (t) => ({
     userSubscription: t.field({
       type: UserRef,
+      authScopes: {
+        loggedIn: true,
+      },
       nullable: false,
       args: {
-        userId: t.arg.string({ required: true }),
+        userId: t.arg.string(),
       },
-      subscribe: (_parent, args, ctx) => pubSub.subscribe("user", args.userId),
+      subscribe: (_parent, args, ctx) =>
+        pubSub.subscribe("user", args.userId ?? ctx.user!.id),
       resolve: (user) => user.user,
     }),
   }),
