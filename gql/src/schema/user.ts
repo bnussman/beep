@@ -7,7 +7,7 @@ import { pubSub } from "../utils/pubsub";
 import { s3 } from "../utils/s3";
 import * as Sentry from "@sentry/bun";
 
-const UserRef = builder.drizzleObject("user", {
+export const UserRef = builder.drizzleObject("user", {
   name: "User",
   fields: (t) => ({
     id: t.exposeString("id"),
