@@ -6,6 +6,7 @@ import { db } from "../utils/db";
 import { pubSub } from "../utils/pubsub";
 import { s3 } from "../utils/s3";
 import * as Sentry from "@sentry/bun";
+import { Repeater, pipe } from "graphql-yoga";
 
 export const UserRef = builder.drizzleObject("user", {
   name: "User",
@@ -119,8 +120,27 @@ builder.subscriptionType({
       args: {
         userId: t.arg.string(),
       },
-      subscribe: (_parent, args, ctx) =>
-        pubSub.subscribe("user", args.userId ?? ctx.user!.id),
+      subscribe: (parent, args, ctx, info) => {
+        const userId = args.userId ?? ctx.user!.id;
+        return pipe(
+          Repeater.merge([
+            new Repeater<{ user: typeof user.$inferSelect }>(
+              async (push, stop) => {
+                const user = await db.query.user.findFirst({
+                  where: { id: userId },
+                });
+
+                if (user) {
+                  push({ user });
+                }
+
+                stop();
+              },
+            ),
+            pubSub.subscribe("user", userId),
+          ]),
+        );
+      },
       resolve: (user) => user.user,
     }),
   }),
