@@ -22,19 +22,10 @@ export function BeepsCount() {
     marginTop: "90px !important",
   };
 
-  if (isLoading) {
-    return (
-      <Box sx={sx}>
-        <Skeleton sx={{ height: "2.5rem", width: "72px" }} />
-        <Skeleton sx={{ width: "72px" }} />
-      </Box>
-    );
-  }
-
   return (
     <Box sx={sx}>
       <Typography fontSize="2.5rem" lineHeight="2.5rem" minWidth="72px">
-        {count.toLocaleString()}
+        {isLoading ? <Skeleton /> : count.toLocaleString()}
       </Typography>
       <Typography>beeps</Typography>
     </Box>
