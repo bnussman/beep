@@ -10,8 +10,6 @@ export function BeepsCount() {
     trpc.beep.beepsCountSubscription.subscriptionOptions(),
   );
 
-  // const count = 736537;
-
   const isLoading = count === undefined;
 
   const sx = {
@@ -24,10 +22,12 @@ export function BeepsCount() {
 
   return (
     <Box sx={sx}>
-      <Typography fontSize="2.5rem" lineHeight="2.5rem" minWidth="72px">
+      <Typography fontSize="2.5rem" minWidth="150px">
         {isLoading ? <Skeleton /> : count.toLocaleString()}
       </Typography>
-      <Typography>beeps</Typography>
+      <Typography fontSize="1.125rem" sx={{ mb: 1 }}>
+        beeps
+      </Typography>
     </Box>
   );
 }
