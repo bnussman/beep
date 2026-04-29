@@ -15,6 +15,7 @@ type PubSubChannels = {
   locations: [
     payload: { id: string; location: { latitude: number; longitude: number } },
   ];
+  beepsCount: [payload: number];
 };
 
 export const pubSub = createPubSub<PubSubChannels>({ eventTarget });

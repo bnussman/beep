@@ -11,6 +11,7 @@ import {
   Typography,
   useColorScheme,
 } from "@mui/material";
+import { BeepsCount } from "../components/BeepsCount";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -54,6 +55,7 @@ function Home() {
               Download
             </Button>
           </Box>
+          <BeepsCount />
         </Stack>
         <picture>
           <source srcSet={iPhoneLight} media="(prefers-color-scheme: light)" />

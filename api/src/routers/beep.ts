@@ -1,12 +1,28 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import {
+  adminProcedure,
+  authedProcedure,
+  publicProcedure,
+  router,
+} from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
-import { PushNotification, sendNotification, sendNotifications } from "../utils/notifications";
+import {
+  PushNotification,
+  sendNotification,
+  sendNotifications,
+} from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { getBeeperQueue, getDerivedRiderFields, getIsInProgressBeep, inProgressBeep, inProgressBeepNew } from "../logic/beep";
+import {
+  getBeeperQueue,
+  getBeepsCount,
+  getDerivedRiderFields,
+  getIsInProgressBeep,
+  inProgressBeep,
+  inProgressBeepNew,
+} from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
@@ -138,12 +154,14 @@ export const beepRouter = router({
     .input(
       z.object({
         beepId: z.string(),
-        data: z.object({
-          origin: z.string().min(2),
-          destination: z.string().min(2),
-          groupSize: z.number().min(1).max(25),
-        }).partial(),
-      })
+        data: z
+          .object({
+            origin: z.string().min(2),
+            destination: z.string().min(2),
+            groupSize: z.number().min(1).max(25),
+          })
+          .partial(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const b = await db.query.beep.findFirst({
@@ -177,10 +195,12 @@ export const beepRouter = router({
       const keyToFieldMap = {
         origin: "pick up location",
         destination: "destination location",
-        groupSize: "group size"
-      }
+        groupSize: "group size",
+      };
 
-      const fieldNames = Object.keys(input.data).map((key) => keyToFieldMap[key as keyof typeof keyToFieldMap]).join(", ");
+      const fieldNames = Object.keys(input.data)
+        .map((key) => keyToFieldMap[key as keyof typeof keyToFieldMap])
+        .join(", ");
 
       if (beeper?.pushToken) {
         await sendNotification({
@@ -278,4 +298,24 @@ export const beepRouter = router({
       pubSub.publish("user", beeper.id, { user: u[0] });
       pubSub.publish("queue", beeper.id, { queue: [] });
     }),
+  beepsCountSubscription: publicProcedure.subscription(async function* ({
+    signal,
+  }) {
+    const beepsCount = await getBeepsCount();
+
+    yield beepsCount;
+
+    const eventSource = pubSub.subscribe("beepsCount");
+
+    if (signal) {
+      signal.onabort = () => {
+        eventSource.return();
+      };
+    }
+
+    for await (const beepsCount of eventSource) {
+      if (signal?.aborted) return;
+      yield beepsCount;
+    }
+  }),
 });
