@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/bun";
 import { eq, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep } from "../../drizzle/schema";
-import { User } from "../utils/pubsub";
+import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 
 type Beep = typeof beep.$inferSelect;
@@ -199,4 +199,9 @@ export async function getBeepsCount() {
 
 export async function getInProgressBeepsCount() {
   return await db.$count(beep, inProgressBeep);
+}
+
+export async function publishBeepsCount() {
+  const count = await getBeepsCount();
+  pubSub.publish("beepsCount", count);
 }
