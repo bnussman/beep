@@ -1,5 +1,5 @@
 {
-  "name": "@beep/gql",
+  "name": "@beep/graphql",
   "version": "0.0.1",
   "description": "GraphQL API for Ride Beep App",
   "main": "src/index.ts",

@@ -257,7 +257,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.2
 
-  gql:
+  graphql:
     dependencies:
       '@banksnussman/osrm':
         specifier: ^0.0.2
