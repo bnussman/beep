@@ -12,19 +12,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
-import { useMutation as useGraphQLMutation } from "urql";
-import { graphql } from "gql.tada";
-
-const UpdatePhotoMutation = graphql(`
-  mutation UploadProfilePhoto($photo: File!) {
-    uploadProfilePicture(photo: $photo) {
-      id
-      photo
-      first
-      last
-    }
-  }
-`);
 
 export default function EditProfileScreen() {
   const trpc = useTRPC();
@@ -66,20 +53,17 @@ export default function EditProfileScreen() {
     }),
   );
 
-  // const { mutate: upload, isPending: uploadLoading } = useMutation(
-  //   trpc.user.updatePicture.mutationOptions({
-  //     onSuccess() {
-  //       setPhoto(undefined);
-  //     },
-  //     onError(error) {
-  //       alert(error.message);
-  //       setPhoto(undefined);
-  //     },
-  //   }),
-  // );
-
-  const [{ fetching: uploadLoading }, upload] =
-    useGraphQLMutation(UpdatePhotoMutation);
+  const { mutate: upload, isPending: uploadLoading } = useMutation(
+    trpc.user.updatePicture.mutationOptions({
+      onSuccess() {
+        setPhoto(undefined);
+      },
+      onError(error) {
+        alert(error.message);
+        setPhoto(undefined);
+      },
+    }),
+  );
 
   const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset>();
 
@@ -98,9 +82,11 @@ export default function EditProfileScreen() {
 
     setPhoto(result.assets[0]);
 
-    const file = (await getFile(result.assets[0])) as Blob;
+    const formData = new FormData();
 
-    upload({ photo: file });
+    formData.append("photo", (await getFile(result.assets[0])) as Blob);
+
+    upload(formData);
   };
 
   const onSubmit = handleSubmit(async (variables) => {
