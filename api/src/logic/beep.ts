@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/bun";
 import { eq, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep } from "../../drizzle/schema";
-import { User } from "../utils/pubsub";
+import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 
 type Beep = typeof beep.$inferSelect;
@@ -72,18 +72,18 @@ export async function getBeeperQueue(beeperId: string) {
 export async function getRidersCurrentRide(userId: string) {
   const beep = await db.query.beep.findFirst({
     where: {
-      AND: [inProgressBeepNew, { rider_id: userId }]
+      AND: [inProgressBeepNew, { rider_id: userId }],
     },
     with: {
       beeper: true,
-    }
+    },
   });
 
   if (!beep) {
     return null;
   }
 
-  const queue = await getBeeperQueue(beep.beeper_id)
+  const queue = await getBeeperQueue(beep.beeper_id);
 
   return { ...beep, ...getDerivedRiderFields(beep, queue) };
 }
@@ -98,7 +98,7 @@ export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
     position: getPositionInQueue(beep, queue),
     queue: queue.map((beep) => ({ status: beep.status })),
     index_in_queue: queue.findIndex((beep) => beep.id === beep.id),
-    riders_waiting: queue.filter((beep) => !getIsAcceptedBeep(beep)).length
+    riders_waiting: queue.filter((beep) => !getIsAcceptedBeep(beep)).length,
   };
 }
 
@@ -191,4 +191,17 @@ export async function sendBeepUpdateNotificationToRider(
         "Our beeper's state notification switch statement reached a point that is should not have",
       );
   }
+}
+
+export async function getBeepsCount() {
+  return await db.$count(beep);
+}
+
+export async function getInProgressBeepsCount() {
+  return await db.$count(beep, inProgressBeep);
+}
+
+export async function publishBeepsCount() {
+  const count = await getBeepsCount();
+  pubSub.publish("beepsCount", count);
 }

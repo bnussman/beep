@@ -11,6 +11,7 @@ import {
   Typography,
   useColorScheme,
 } from "@mui/material";
+import { BeepsCount } from "../components/BeepsCount";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -26,13 +27,14 @@ function Home() {
         width="100%"
         direction={{ xs: "column", md: "row" }}
         spacing={3}
+        justifyContent="space-between"
         alignItems="center"
       >
         <Stack spacing={2} alignItems={{ xs: "center", md: "flex-start" }}>
           <Typography
             fontWeight="bold"
             variant="h1"
-            fontSize={{ xs: "3.0rem", md: "3.8rem" }}
+            fontSize={{ xs: "3.0rem", md: "3.0rem", lg: "3.8rem" }}
             textAlign={{ xs: "center", sm: "center", md: "unset" }}
           >
             Ride Beep App
@@ -53,6 +55,7 @@ function Home() {
               Download
             </Button>
           </Box>
+          <BeepsCount />
         </Stack>
         <picture>
           <source srcSet={iPhoneLight} media="(prefers-color-scheme: light)" />
@@ -60,10 +63,13 @@ function Home() {
           <Box
             component="img"
             sx={{
-              width: { xs: 250, sm: 250, md: 300, lg: 400, xl: 400 },
-              transition: "transform 0.15s ease-in-out", // Smooth transition
+              maxHeight: "min(max(80vh, 500px), 700px)",
+              maxWidth: "calc(100vw - 64px)",
+              objectFit: "contain",
+              cursor: "zoom-in",
+              transition: "transform 0.15s ease-in-out",
               ":hover": {
-                transform: "rotate(2deg) scale(1.1) !important",
+                transform: "scale(1.1)",
               },
             }}
             src={iPhoneLight}

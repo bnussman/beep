@@ -21,6 +21,7 @@ import {
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeepNew,
+  publishBeepsCount,
 } from "../logic/beep";
 import { rideResponseSchema } from "../schemas/beep";
 
@@ -157,17 +158,20 @@ export const riderRouter = router({
       } as const;
 
       const currentRide = await db.query.beep.findFirst({
-        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] }
+        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] },
       });
 
       if (currentRide) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "You are already in an active beep. You can't start another beep until your current one is done."
+          message:
+            "You are already in an active beep. You can't start another beep until your current one is done.",
         });
       }
 
       await db.insert(beep).values(newBeep);
+
+      publishBeepsCount();
 
       queue.push({
         ...newBeep,
@@ -205,8 +209,12 @@ export const riderRouter = router({
     .query(({ input, ctx }) => {
       const userId = input ?? ctx.user.id;
 
-      if (ctx.user.role === 'user' && userId !== ctx.user.id) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "You must be an admin to view the current ride of another user"});
+      if (ctx.user.role === "user" && userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You must be an admin to view the current ride of another user",
+        });
       }
 
       return getRidersCurrentRide(userId);
@@ -222,8 +230,12 @@ export const riderRouter = router({
     .subscription(async function* ({ ctx, signal, input }) {
       const userId = input ?? ctx.user.id;
 
-      if (ctx.user.role === 'user' && userId !== ctx.user.id) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "You must be an admin to view the current ride of another user" });
+      if (ctx.user.role === "user" && userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You must be an admin to view the current ride of another user",
+        });
       }
 
       console.log("➕ Rider subscribed", userId);
