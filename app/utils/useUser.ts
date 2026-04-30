@@ -1,43 +1,17 @@
-import { graphql } from "gql.tada";
 import { useTRPC } from "./trpc";
+
 import { useQuery } from "@tanstack/react-query";
-
-export const MeQuery = graphql(`
-  query {
-    me {
-      id
-      first
-      last
-      photo
-    }
-  }
-`);
-
-export const MeSubscription = graphql(`
-  subscription {
-    userSubscription {
-      id
-      first
-      last
-      photo
-    }
-  }
-`);
 
 export function useUser() {
   const trpc = useTRPC();
-  const { data: user, ...query } = useQuery(
-    trpc.user.me.queryOptions(undefined, { enabled: false, retry: false }),
-  );
+  const { data: user, ...query } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false, retry: false }));
 
   return { user, ...query };
 }
 
 export function useIsSignedIn() {
   const trpc = useTRPC();
-  const { data: user } = useQuery(
-    trpc.user.me.queryOptions(undefined, { enabled: false }),
-  );
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
 
   return user !== undefined;
 }
@@ -50,9 +24,7 @@ export function useIsSignedOut() {
 
 export function useIsUserNotBeeping() {
   const trpc = useTRPC();
-  const { data: user } = useQuery(
-    trpc.user.me.queryOptions(undefined, { enabled: false }),
-  );
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
 
   return !Boolean(user?.isBeeping);
 }
