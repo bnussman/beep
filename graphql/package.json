@@ -1,0 +1,43 @@
+{
+  "name": "@beep/graphql",
+  "version": "0.0.1",
+  "description": "GraphQL API for Ride Beep App",
+  "main": "src/index.ts",
+  "type": "module",
+  "author": "Banks Nussman",
+  "scripts": {
+    "dev": "bun run --preload ./src/utils/instrument.ts --watch src/index.ts",
+    "typecheck": "tsc",
+    "db:push": "drizzle-kit push"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.11",
+    "@types/nodemailer": "^8.0.0",
+    "@types/pg": "^8.20.0",
+    "@types/validator": "^13.15.10",
+    "drizzle-kit": "1.0.0-beta.22",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@banksnussman/osrm": "^0.0.2",
+    "@banksnussman/photon": "^0.0.4",
+    "@graphql-yoga/redis-event-target": "^3.0.3",
+    "@graphql-yoga/subscription": "^5.0.5",
+    "@pothos/core": "^4.12.0",
+    "@pothos/plugin-drizzle": "^0.17.2",
+    "@pothos/plugin-scope-auth": "^4.1.6",
+    "@sentry/bun": "^10.47.0",
+    "car-info": "0.2.5",
+    "drizzle-orm": "1.0.0-beta.22",
+    "graphql": "^16.13.2",
+    "graphql-ws": "^6.0.8",
+    "graphql-yoga": "^5.21.0",
+    "ioredis": "^5.10.1",
+    "nodemailer": "^8.0.5",
+    "pg": "^8.20.0",
+    "redlock-universal": "^0.8.4",
+    "validator": "^13.15.35",
+    "wkx": "^0.5.0",
+    "zod": "^4.3.6"
+  }
+}
