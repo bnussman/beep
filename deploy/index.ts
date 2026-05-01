@@ -154,7 +154,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               image: apiImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3000 }],
-              envFrom: [{ configMapRef: { name: apiAppName } }],
+              envFrom: [{ secretRef: { name: apiAppName } }],
             },
           ],
         },
@@ -164,17 +164,18 @@ const apiDeployment = new k8s.apps.v1.Deployment(
   { provider: k8sProvider },
 );
 
-const config = new k8s.core.v1.ConfigMap(
+const secret = new k8s.core.v1.Secret(
   apiAppName,
   {
     metadata: {
       name: apiAppName,
       namespace: namespaceName,
     },
-    data: {
+    stringData: {
       ...env,
       REDIS_HOST: `redis.${namespaceName}`,
     },
+    type: "Opaque",
   },
-  { provider: k8sProvider, hideDiffs: ["data"] },
+  { provider: k8sProvider },
 );
