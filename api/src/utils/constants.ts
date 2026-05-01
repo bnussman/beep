@@ -85,5 +85,3 @@ export const CAR_COLOR_OPTIONS = [
   "silver",
   "yellow",
 ];
-
-// re-deploy
