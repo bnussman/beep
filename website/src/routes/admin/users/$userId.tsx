@@ -5,7 +5,12 @@ import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteUserDialog } from "../../../components/DeleteUserDialog";
-import { Link, Outlet, useLocation, createFileRoute } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  createFileRoute,
+} from "@tanstack/react-router";
 import { useNotifications } from "@toolpad/core";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
@@ -201,19 +206,17 @@ function User() {
           >
             Sync Payments
           </Button>
-          <Button
-            variant="contained"
-            onClick={() => setIsClearOpen(true)}
-          >
+          <Button variant="contained" onClick={() => setIsClearOpen(true)}>
             Clear Queue
           </Button>
-          {/* <Button
+          <Button
             variant="contained"
             onClick={() => sendTestEmail({ userId })}
             color="warning"
+            loading={isSendingTestEmail}
           >
             Send Test Email
-          </Button> */}
+          </Button>
           <Button
             color="error"
             variant="contained"
