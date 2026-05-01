@@ -176,5 +176,5 @@ const config = new k8s.core.v1.ConfigMap(
       REDIS_HOST: `redis.${namespaceName}`,
     },
   },
-  { provider: k8sProvider, hideDiffs: ["*"] },
+  { provider: k8sProvider, hideDiffs: ["data"] },
 );
