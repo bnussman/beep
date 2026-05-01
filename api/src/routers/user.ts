@@ -584,11 +584,18 @@ export const userRouter = router({
     .mutation(async ({ input }) => {
       const user = await db.query.user.findFirst({
         where: { id: input.userId },
-        columns: { email: true, username: true },
+        columns: { email: true, username: true, role: true },
       });
 
       if (!user) {
         throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (user.role !== "admin") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Can only send test emails to admins.",
+        });
       }
 
       const mailOptions: SendMailOptions = {
