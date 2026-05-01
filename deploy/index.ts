@@ -9,6 +9,7 @@ const envName = pulumi.getStack();
 
 const namespaceName = `beep-${envName}`;
 const apiAppName = "api";
+const graphqlAppName = "graphql";
 const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 
 const apiImageResource = new docker.Image("apiImageResource", {
@@ -16,6 +17,19 @@ const apiImageResource = new docker.Image("apiImageResource", {
   build: {
     context: "../api",
     dockerfile: "../api/Dockerfile",
+  },
+  registry: {
+    password: process.env.GITHUB_TOKEN,
+    server: "ghcr.io",
+    username: ACTOR,
+  },
+});
+
+const graphqlImageResource = new docker.Image("graphqlImageResource", {
+  imageName: apiImageName,
+  build: {
+    context: "../graphql",
+    dockerfile: "../graphql/Dockerfile",
   },
   registry: {
     password: process.env.GITHUB_TOKEN,
@@ -55,6 +69,22 @@ const apiService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
+const graphqlService = new k8s.core.v1.Service(
+  graphqlAppName,
+  {
+    metadata: {
+      name: graphqlAppName,
+      namespace: namespaceName,
+    },
+    spec: {
+      type: "ClusterIP",
+      ports: [{ port: 3000, targetPort: 3001 }],
+      selector: { app: graphqlAppName },
+    },
+  },
+  { provider: k8sProvider },
+);
+
 const apiIngress = new k8s.networking.v1.Ingress(
   "api-ingress",
   {
@@ -66,7 +96,7 @@ const apiIngress = new k8s.networking.v1.Ingress(
       rules: [
         {
           host:
-            envName === "production" || envName === "production-homelab"
+            envName === "production"
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
           http: {
@@ -78,6 +108,26 @@ const apiIngress = new k8s.networking.v1.Ingress(
                   service: {
                     name: apiAppName,
                     port: { number: 3000 },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        {
+          host:
+            envName === "production"
+              ? "graphql.ridebeep.app"
+              : "graphql.dev.ridebeep.app",
+          http: {
+            paths: [
+              {
+                path: "/",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: graphqlAppName,
+                    port: { number: 3001 },
                   },
                 },
               },
@@ -154,6 +204,36 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               image: apiImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3000 }],
+              envFrom: [{ configMapRef: { name: apiAppName } }],
+            },
+          ],
+        },
+      },
+    },
+  },
+  { provider: k8sProvider },
+);
+
+const graphqlDeployment = new k8s.apps.v1.Deployment(
+  graphqlAppName,
+  {
+    metadata: {
+      name: graphqlAppName,
+      namespace: namespace.metadata.name,
+      labels: { app: graphqlAppName },
+    },
+    spec: {
+      selector: { matchLabels: { app: graphqlAppName } },
+      replicas: envName === "production" ? 5 : 3,
+      template: {
+        metadata: { labels: { app: graphqlAppName } },
+        spec: {
+          containers: [
+            {
+              name: graphqlAppName,
+              image: graphqlImageResource.repoDigest,
+              imagePullPolicy: "Always",
+              ports: [{ containerPort: 3001 }],
               envFrom: [{ configMapRef: { name: apiAppName } }],
             },
           ],
