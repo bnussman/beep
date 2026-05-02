@@ -1,21 +1,30 @@
-import { createPubSub } from "@graphql-yoga/subscription";
-import { eventTarget } from "./redis";
-import { beep, user } from "../../drizzle/schema";
+import Redis from "ioredis";
+import { createPubSub } from "graphql-yoga";
+import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
+import { REDIS_HOST, REDIS_PASSWROD } from "./constants";
+import type { User } from "../entities/User";
+import type { Beep } from "../entities/Beep";
+import type { Point } from "../location/resolver";
+import type { AnonymousBeeper } from "../beeper/resolver";
 
-export type User = typeof user.$inferSelect;
-
-type Beep = typeof beep.$inferSelect;
-
-type Ride = Beep | null;
-type Queue = Beep[];
-
-type PubSubChannels = {
-  user: [userId: string, payload: { user: User }];
-  ride: [userId: string, payload: { ride: Ride }];
-  queue: [userId: string, payload: { queue: Queue }];
-  locations: [
-    payload: { id: string; location: { latitude: number; longitude: number } },
-  ];
+const options = {
+  host: REDIS_HOST,
+  password: REDIS_PASSWROD,
+  port: 6379,
+  lazyConnect: true,
 };
 
-export const pubSub = createPubSub<PubSubChannels>({ eventTarget });
+const eventTarget = createRedisEventTarget({
+  publishClient: new Redis(options),
+  subscribeClient: new Redis(options)
+});
+
+type Subscriptions = {
+  user: [userId: string, payload: User];
+  location: [userId: string, payload: Point];
+  beeperLocation: [payload: AnonymousBeeper];
+  currentRide: [riderId: string, payload: Beep | null];
+  beeperQueue: [beeperId: string, payload: Beep[]];
+};
+
+export const pubSub = createPubSub<Subscriptions>({ eventTarget });

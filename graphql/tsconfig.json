@@ -2,13 +2,31 @@
   "compilerOptions": {
     "incremental": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noEmit": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "outDir": "build",
     "strict": true,
     "skipLibCheck": true,
-    "noUnusedLocals": true
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "resolveJsonModule": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "@types/bun" // add Bun global
+    ]
   },
+  "compileOnSave": true,
+  "include": [
+    "src"
+  ]
 }

@@ -1,4 +1,6 @@
-export const DB_HOST = process.env.DB_HOST || "localhost";
+export const SENTRY_URL = process.env.SENTRY_URL;
+
+export const DB_URL = process.env.DB_URL || "postgresql://localhost:5432";
 
 export const DB_DATABASE = process.env.DB_DATABASE || "beep";
 
@@ -6,7 +8,7 @@ export const DB_PASSWORD = process.env.DB_PASSWORD || "beep";
 
 export const DB_USER = process.env.DB_USER || "beep";
 
-export const DB_URL = `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_DATABASE}`;
+export const DB_CA = process.env.DB_CA;
 
 export const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 
@@ -17,16 +19,15 @@ export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID ?? "beep";
 export const S3_ACCESS_KEY_SECRET =
   process.env.S3_ACCESS_KEY_SECRET ?? "beepbeepbeep";
 
-export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "http://localhost:9000";
-
-/**
- * The user-facing root URL of the S3 bucket.
- * Should start with something like `https://` and end with a `/`
- */
-export const S3_BUCKET_URL =
-  process.env.S3_BUCKET_URL ?? "http://localhost:9000/beep/";
+export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "localhost";
 
 export const S3_BUCKET = process.env.S3_BUCKET ?? "beep";
+
+export const isLocalS3 = S3_ACCESS_KEY_SECRET === "beepbeepbeep";
+
+export const S3_BUCKET_URL = isLocalS3
+  ? "http://localhost:9000/beep/"
+  : "https://beep.us-east-1.linodeobjects.com/";
 
 export const MAIL_HOST = process.env.MAIL_HOST;
 
@@ -40,48 +41,14 @@ export const REVENUE_CAT_WEBHOOK_TOKEN = process.env.REVENUE_CAT_WEBHOOK_TOKEN;
 
 export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
 
-export const SENTRY_DSN = process.env.SENTRY_DSN;
+export const OSRM_SECRET = process.env.OSRM_SECRET;
 
-/**
- * A name for the environment.
- *
- * This is used for identifying the environment in Sentry
- */
-export const ENVIRONMENT: "dev" | "production" =
-  (process.env.ENVIRONMENT_NAME as "dev" | "production") ?? "local";
+export const isProduction = process.env.NODE_ENV === "production";
+
+export const ENVIRONMENT: "staging" | "production" | "development" =
+  (process.env.ENVIRONMENT_NAME as "staging" | "production") ?? "development";
 
 export const isDevelopment =
   ENVIRONMENT !== "production" &&
-  ENVIRONMENT !== "dev" &&
+  ENVIRONMENT !== "staging" &&
   DB_PASSWORD === "beep";
-
-/**
- * The base URL of the Beep App website.
- *
- * Should start with `http://` or `https://` and should not end with a `/`
- *
- * @example https://ridebeep.app
- * @example https://dev.ridebeep.app
- * @example http://localhost:5173
- */
-export const WEB_BASE_URL = process.env.WEB_BASE_URL ?? "http://localhost:5173";
-
-export const DEFAULT_PAGE_SIZE = 25;
-
-export const DEFAULT_LOCATION_RADIUS = 20;
-
-export const CAR_COLOR_OPTIONS = [
-  "red",
-  "green",
-  "blue",
-  "purple",
-  "black",
-  "gray",
-  "pink",
-  "white",
-  "orange",
-  "tan",
-  "brown",
-  "silver",
-  "yellow",
-];
