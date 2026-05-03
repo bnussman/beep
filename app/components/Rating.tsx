@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
@@ -46,36 +45,43 @@ export function Rating(props: Props) {
       activationMethod="longPress"
       options={[
         {
-          title: 'Profile',
-          onClick: () => router.navigate({ pathname: '/user/[id]', params: { id: otherUser.id, beepId: item.id } }),
-          sfIcon: 'person.crop.circle',
+          title: "Profile",
+          onClick: () =>
+            router.navigate({
+              pathname: "/user/[id]",
+              params: { id: otherUser.id, beepId: item.id },
+            }),
+          sfIcon: "person.crop.circle",
         },
         {
           title: "Report",
-          sfIcon: 'exclamationmark.bubble.fill',
+          sfIcon: "exclamationmark.bubble.fill",
           onClick: () =>
             router.push({
-              pathname: '/user/[id]/report',
+              pathname: "/user/[id]/report",
               params: {
                 id: otherUser.id,
                 beepId: item.beep_id,
-              }
+              },
             }),
         },
         {
           title: "Delete Rating",
           onClick: () => deleteRating({ ratingId: item.id }),
-          sfIcon: 'trash',
+          sfIcon: "trash",
           destructive: true,
           show: isRater,
         },
       ]}
       trigger={
         <Card
-          pressable
           style={{ padding: 16, gap: 16, display: "flex" }}
-          onLongPress={() => {}}
-          onPress={() => router.push({ pathname: '/user/[id]', params: { id: otherUser.id, ratingId: item.id }})}
+          onPress={() =>
+            router.push({
+              pathname: "/user/[id]",
+              params: { id: otherUser.id, ratingId: item.id },
+            })
+          }
         >
           <View
             style={{

@@ -1,54 +1,33 @@
-import { Theme, useTheme } from "@/utils/theme";
+import {
+  PressableFeedback,
+  Card as HeroCard,
+  CardRootProps,
+} from "heroui-native";
 import React from "react";
-import { Pressable, PressableProps, StyleSheet } from "react-native";
 
-interface Props extends PressableProps {
+interface Props extends CardRootProps {
   /**
-   * Applies styles to make card look pressable
-   *
-   * @default false
+   * Makes the card pressable
    */
-  pressable?: boolean;
-  /**
-   * Variant for the card
-   *
-   * @default 'filled'
-   */
-  variant?: "outlined" | "filled";
+  onPress?: () => void;
 }
 
 export function Card(props: Props) {
-  const { pressable, variant = "filled", ...rest } = props;
+  const { onPress, ...rest } = props;
 
-  const theme = useTheme();
-  const styles = createStyle(theme);
+  if (onPress) {
+    return (
+      <PressableFeedback
+        onPress={props.onPress}
+        className="w-full overflow-auto"
+      >
+        <HeroCard {...props}>
+          <PressableFeedback.Highlight />
+          {rest.children}
+        </HeroCard>
+      </PressableFeedback>
+    );
+  }
 
-  return (
-    <Pressable
-      {...rest}
-      style={(options) => [
-        styles.card,
-        variant === "outlined" && {
-          backgroundColor: "transparent",
-        },
-        pressable &&
-          options.pressed && {
-            backgroundColor:
-              theme.components.button.primary.pressed.backgroundColor,
-          },
-        typeof rest.style === "function" ? rest.style(options) : rest.style,
-      ]}
-    />
-  );
+  return <HeroCard {...props} />;
 }
-
-const createStyle = (theme: Theme) =>
-  StyleSheet.create({
-    card: {
-      backgroundColor: theme.components.card.backgroundColor,
-      borderColor: theme.components.card.borderColor,
-      borderRadius: 16,
-      borderWidth: theme.name === "light" ? 1.5 : 1,
-      padding: 16,
-    },
-  });

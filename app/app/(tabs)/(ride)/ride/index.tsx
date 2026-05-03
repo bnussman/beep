@@ -8,17 +8,20 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { View } from "react-native";
 import { RideMap } from "@/components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Link, SplashScreen, useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { Label } from "@/components/Label";
-import { Text } from "@/components/Text";
-import { Input } from "@/components/Input";
+import { Input, TextField, FieldError } from "heroui-native";
 import { LocationInput } from "@/components/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
-import { RateLastBeeper } from "@/components/RateLastBeeper";
 import { RideMenu } from "@/components/RideToolbar";
+import { Label } from "@/components/Label";
+import {
+  Link,
+  SplashScreen,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -80,7 +83,7 @@ export default function MainFindBeepScreen() {
   });
 
   const findBeep = handleSubmit((values) => {
-    router.navigate({ pathname: '/ride/pick', params: values });
+    router.navigate({ pathname: "/ride/pick", params: values });
   });
 
   if (!beep) {
@@ -91,7 +94,6 @@ export default function MainFindBeepScreen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <View style={{ gap: 4 }}>
-          <Label htmlFor="groupSize">Group Size</Label>
           <Controller
             name="groupSize"
             rules={{
@@ -101,64 +103,79 @@ export default function MainFindBeepScreen() {
               pattern: { value: /\d+/, message: "Must be a number" },
             }}
             control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="groupSize"
-                inputMode="numeric"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("origin")}
-              />
+            render={({
+              field: { onChange, onBlur, value, ref },
+              fieldState,
+            }) => (
+              <TextField isInvalid={Boolean(fieldState.error)}>
+                <Label htmlFor="groupSize">Group Size</Label>
+                <Input
+                  id="groupSize"
+                  inputMode="numeric"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("origin")}
+                />
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </TextField>
             )}
           />
-          <Text color="error">{errors.groupSize?.message}</Text>
-          <Text color="error">{errors.groupSize?.root?.message}</Text>
         </View>
         <View style={{ gap: 4 }}>
-          <Label htmlFor="origin">Pick Up Location</Label>
           <Controller
             name="origin"
             rules={{ required: "Pick up location is required" }}
             control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <LocationInput
-                id="origin"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("destination")}
-              />
+            render={({
+              field: { onChange, onBlur, value, ref },
+              fieldState,
+            }) => (
+              <TextField isInvalid={Boolean(fieldState.error)}>
+                <Label htmlFor="origin">Pick Up Location</Label>
+                <LocationInput
+                  id="origin"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("destination")}
+                />
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </TextField>
             )}
           />
-          <Text color="error">{errors.origin?.message}</Text>
         </View>
         <View style={{ gap: 4 }}>
-          <Label htmlFor="destination">Destination Location</Label>
           <Controller
             name="destination"
             rules={{ required: "Destination location is required" }}
             control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="destination"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                ref={ref}
-                returnKeyType="go"
-                onSubmitEditing={() => findBeep()}
-                textContentType="fullStreetAddress"
-              />
+            render={({
+              field: { onChange, onBlur, value, ref },
+              fieldState,
+            }) => (
+              <TextField isInvalid={Boolean(fieldState.error)}>
+                <Label htmlFor="destination">Destination Location</Label>
+                <Input
+                  id="destination"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  ref={ref}
+                  returnKeyType="go"
+                  onSubmitEditing={() => findBeep()}
+                  textContentType="fullStreetAddress"
+                />
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </TextField>
             )}
           />
-          <Text color="error">{errors.destination?.message}</Text>
         </View>
         <Button onPress={() => findBeep()}>Find Beep</Button>
         <Link asChild href="/ride/map">

@@ -13,13 +13,15 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function ReportScreen() {
   const trpc = useTRPC();
-  const { id, beepId, ratingId } = useLocalSearchParams<{ id: string, beepId: string, ratingId: string }>();
+  const { id, beepId, ratingId } = useLocalSearchParams<{
+    id: string;
+    beepId: string;
+    ratingId: string;
+  }>();
   const [reason, setReason] = useState<string>("");
   const { goBack } = useNavigation();
 
-  const { data: user } = useQuery(
-    trpc.user.publicUser.queryOptions(id),
-  );
+  const { data: user } = useQuery(trpc.user.publicUser.queryOptions(id));
 
   const { mutateAsync: report, isPending } = useMutation(
     trpc.report.createReport.mutationOptions({
@@ -43,7 +45,11 @@ export default function ReportScreen() {
 
   return (
     <SafeAreaView>
-      <KeyboardAwareScrollView style={{ height: '100%'}} scrollEnabled={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+      <KeyboardAwareScrollView
+        style={{ height: "100%" }}
+        scrollEnabled={false}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+      >
         {user && (
           <UserHeader
             name={`${user.first} ${user.last}`}
@@ -60,7 +66,11 @@ export default function ReportScreen() {
             onChangeText={(text) => setReason(text)}
           />
         </View>
-        <Button onPress={handleReport} disabled={!reason} isLoading={isPending}>
+        <Button
+          onPress={handleReport}
+          isDisabled={!reason}
+          isLoading={isPending}
+        >
           Report User
         </Button>
       </KeyboardAwareScrollView>

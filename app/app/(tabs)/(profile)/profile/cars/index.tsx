@@ -16,20 +16,20 @@ import { Stack, useRouter } from "expo-router";
 import { getContentContainerStyle } from "@/utils/styles";
 
 const colorMap = {
-  "red": '#ca3f3f',
-  "green": '#62be62',
-  "blue": '#4285ea',
-  "purple": '#a837b7',
-  "black": '#2b2b2b',
-  "gray": '#a8a8a8',
-  "pink": '#d36ecb',
-  "white": '#e2e2e2',
-  "orange": '#d8670a',
-  "tan": '#c69567',
-  "brown": '#78513edd',
-  "silver": '#7e7e7e',
-  "yellow": '#ffc72f',
-}
+  red: "#ca3f3f",
+  green: "#62be62",
+  blue: "#4285ea",
+  purple: "#a837b7",
+  black: "#2b2b2b",
+  gray: "#a8a8a8",
+  pink: "#d36ecb",
+  white: "#e2e2e2",
+  orange: "#d8670a",
+  tan: "#c69567",
+  brown: "#78513edd",
+  silver: "#7e7e7e",
+  yellow: "#ffc72f",
+};
 
 export default function Cars() {
   const trpc = useTRPC();
@@ -139,21 +139,18 @@ export default function Cars() {
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
           icon="plus"
-          onPress={() => router.push('/profile/cars/create')}
+          onPress={() => router.push("/profile/cars/create")}
         />
       </Stack.Toolbar>
       <FlatList
         data={cars}
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={
-          getContentContainerStyle(cars?.length === 0)
-        }
+        contentContainerStyle={getContentContainerStyle(cars?.length === 0)}
         renderItem={({ item: car }) => (
           <Menu
             activationMethod="longPress"
             trigger={
               <Card
-                pressable
                 style={{
                   padding: 16,
                   gap: 16,
@@ -163,21 +160,25 @@ export default function Cars() {
                 }}
               >
                 <View style={{ gap: 8, flexShrink: 1 }}>
-                  <Text
-                    weight="500"
-                    style={{ flexWrap: "wrap" }}
-                  >
+                  <Text weight="500" style={{ flexWrap: "wrap" }}>
                     {car.make} {car.model} {car.year}
                   </Text>
                   <View
-                    style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 8 }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: 8,
+                    }}
                   >
                     <View
                       style={{
                         width: 16,
                         height: 16,
                         borderRadius: 16 / 2,
-                        backgroundColor: colorMap[car.color as keyof typeof colorMap] ?? car.color,
+                        backgroundColor:
+                          colorMap[car.color as keyof typeof colorMap] ??
+                          car.color,
                       }}
                     />
                     {car.default && (
@@ -207,13 +208,13 @@ export default function Cars() {
               {
                 title: "Make Default",
                 show: !car.default,
-                sfIcon: 'car.badge.gearshape.fill',
+                sfIcon: "car.badge.gearshape.fill",
                 onClick: () => setDefault(car.id),
               },
               {
                 title: "Delete",
                 onClick: () => onDelete(car.id),
-                sfIcon: 'trash',
+                sfIcon: "trash",
                 destructive: true,
               },
             ]}

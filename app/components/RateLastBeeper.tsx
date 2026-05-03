@@ -21,14 +21,13 @@ export function RateLastBeeper() {
 
   return (
     <Card
-      pressable
       onPress={() =>
         router.push({
-          pathname: '/user/[id]/rate',
+          pathname: "/user/[id]/rate",
           params: {
             id: otherUser.id,
             beepId: beep.id,
-          }
+          },
         })
       }
       style={{
