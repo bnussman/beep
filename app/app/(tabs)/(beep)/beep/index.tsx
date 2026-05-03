@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTimeRemainingString } from "@/components/CountDown";
-import { isAndroid, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS, isWeb } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
@@ -155,16 +155,12 @@ export default function StartBeepingScreen() {
             }}
           >
             <Link href="/beep/queue" asChild>
-              <Link.Trigger>
-                <Button>
-                  <Text>
-                    Queue{" "}
-                    {queue && queue.length > 1
-                      ? `(${String(queue.length - 1)})`
-                      : ""}
-                  </Text>
-                </Button>
-              </Link.Trigger>
+              <Button>
+                Queue{" "}
+                {queue && queue.length > 1
+                  ? `(${String(queue.length - 1)})`
+                  : ""}
+              </Button>
             </Link>
             {payments?.[0] && (
               <Text
@@ -184,6 +180,10 @@ export default function StartBeepingScreen() {
               disabled={form.formState.isSubmitting}
               value={user?.isBeeping ?? false}
               onValueChange={onToggleIsBeeping}
+              trackColor={{ true: "#3a82ef", false: "gray" }}
+              thumbColor="white"
+              // @ts-expect-error
+              activeThumbColor="white"
             />
           </View>
         ),

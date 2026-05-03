@@ -76,6 +76,7 @@ export function Rating(props: Props) {
       trigger={
         <Card
           style={{ padding: 16, gap: 16, display: "flex" }}
+          onLongPress={() => null}
           onPress={() =>
             router.push({
               pathname: "/user/[id]",

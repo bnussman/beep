@@ -10,18 +10,23 @@ interface Props extends CardRootProps {
    * Makes the card pressable
    */
   onPress?: () => void;
+  /**
+   * Makes the card pressable
+   */
+  onLongPress?: () => void;
 }
 
 export function Card(props: Props) {
-  const { onPress, ...rest } = props;
+  const { onPress, onLongPress, ...rest } = props;
 
   if (onPress) {
     return (
       <PressableFeedback
-        onPress={props.onPress}
+        onPress={onPress}
+        onLongPress={onLongPress}
         className="w-full overflow-auto"
       >
-        <HeroCard {...props}>
+        <HeroCard {...rest}>
           <PressableFeedback.Highlight />
           {rest.children}
         </HeroCard>

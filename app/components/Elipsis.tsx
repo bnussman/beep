@@ -1,4 +1,3 @@
-import { useThemeColor } from "heroui-native";
 import { Text } from "./Text";
 import { View } from "react-native";
 

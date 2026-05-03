@@ -174,7 +174,7 @@ export function Beep({ item }: Props) {
           asChild
         >
           <Link.Trigger withAppleZoom>
-            <Card style={{ padding: 16, gap: 8 }}>
+            <Card style={{ padding: 16, gap: 8 }} onLongPress={() => null}>
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >
