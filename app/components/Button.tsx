@@ -14,18 +14,12 @@ interface Props {
 }
 
 export function Button(props: Props & ButtonRootProps) {
-  const {
-    children,
-    isLoading,
-    variant = "primary",
-    size = "md",
-    ...rest
-  } = props;
+  const { children, isLoading, ...rest } = props;
 
   const themeColorAccentForeground = useThemeColor("accent-foreground");
 
   return (
-    <HeroButton variant="primary" {...rest}>
+    <HeroButton {...rest}>
       {isLoading ? (
         <ActivityIndicator color={themeColorAccentForeground} />
       ) : (

@@ -113,19 +113,37 @@ export function Beep(props: Props) {
   };
 
   return (
-    <SafeAreaView style={{ padding: 16, gap: 18, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
-      <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id, beepId: beep.id } }} asChild>
+    <SafeAreaView
+      style={{
+        padding: 16,
+        gap: 18,
+        height: "100%",
+        paddingBottom: isWeb ? 64 : 12,
+        paddingTop: 64,
+      }}
+    >
+      <Link
+        href={{
+          pathname: "/user/[id]",
+          params: { id: beep.rider.id, beepId: beep.id },
+        }}
+        asChild
+      >
         <Link.Trigger>
           <Pressable>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <View style={{ flexShrink: 1 }}>
                 <Text weight="800" size="2xl">
                   {beep.rider.first} {beep.rider.last}
                 </Text>
                 {beep.rider.rating && (
-                  <Text size="xs">
-                    {printStars(Number(beep.rider.rating))}
-                  </Text>
+                  <Text size="xs">{printStars(Number(beep.rider.rating))}</Text>
                 )}
               </View>
               <Avatar size="md" src={beep.rider.photo ?? undefined} />
@@ -133,11 +151,11 @@ export function Beep(props: Props) {
           </Pressable>
         </Link.Trigger>
       </Link>
-      <View style={{ flexDirection: "row", flexShrink: 1  }}>
+      <View style={{ flexDirection: "row", flexShrink: 1 }}>
         <Pressable
           onPress={() => openMaps(beep.origin)}
           onLongPress={() => null}
-          style={{ width: '50%', gap: 4 }}
+          style={{ width: "50%", gap: 4 }}
         >
           <Text weight="800">Pick Up</Text>
           <Text style={{ flexShrink: 1 }} selectable>
@@ -147,7 +165,7 @@ export function Beep(props: Props) {
         <Pressable
           onPress={() => openMaps(beep.destination)}
           onLongPress={() => null}
-          style={{ width: '50%', gap: 4 }}
+          style={{ width: "50%", gap: 4 }}
         >
           <Text weight="800">Drop Off</Text>
           <Text style={{ flexShrink: 1 }} selectable>
@@ -156,9 +174,11 @@ export function Beep(props: Props) {
         </Pressable>
       </View>
       <View style={{ flexDirection: "row" }}>
-        <View style={{ width: '50%', gap: 4 }}>
+        <View style={{ width: "50%", gap: 4 }}>
           <Text weight="800">Group Size</Text>
-          <Text>{beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}</Text>
+          <Text>
+            {beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}
+          </Text>
         </View>
         <View style={{ gap: 4 }}>
           <Text weight="800">Started at</Text>
@@ -171,7 +191,14 @@ export function Beep(props: Props) {
       </View>
       {route && (
         <View style={{ flexDirection: "row" }}>
-          <View style={{ flexShrink: 1, justifyContent: "center", gap: 4, width: '50%' }}>
+          <View
+            style={{
+              flexShrink: 1,
+              justifyContent: "center",
+              gap: 4,
+              width: "50%",
+            }}
+          >
             <Text weight="bold" style={{ flexShrink: 1 }}>
               Duration
             </Text>
@@ -222,14 +249,13 @@ export function Beep(props: Props) {
       <View style={{ flexDirection: "row", gap: 8 }}>
         <Menu
           trigger={
-            isWeb ?
-              <Elipsis /> :
-              <Button
-                style={{ paddingHorizontal: 16, paddingVertical: 6 }}
-                size="md"
-              >
-                <Elipsis />
-              </Button>
+            <Button
+              style={{ paddingHorizontal: 16, paddingVertical: 6 }}
+              size="md"
+              variant="tertiary"
+            >
+              <Elipsis />
+            </Button>
           }
           options={[
             {
@@ -253,7 +279,8 @@ export function Beep(props: Props) {
               options: [
                 {
                   title: "Directions to Rider",
-                  onClick: () => openDirections("Current+Location", beep.origin),
+                  onClick: () =>
+                    openDirections("Current+Location", beep.origin),
                 },
                 {
                   title: "Directions for Beep",

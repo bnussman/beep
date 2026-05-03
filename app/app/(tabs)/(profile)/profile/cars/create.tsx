@@ -16,7 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { Card } from "heroui-native";
+import { Card, FieldError, TextField } from "heroui-native";
 
 interface Values {
   year: number;
@@ -28,7 +28,6 @@ interface Values {
 
 export default function AddCar() {
   const trpc = useTRPC();
-  const theme = useTheme();
   const navigation = useNavigation();
 
   const {
@@ -36,7 +35,7 @@ export default function AddCar() {
     handleSubmit,
     setValue,
     setError,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm<Values>();
 
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
@@ -58,7 +57,7 @@ export default function AddCar() {
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync: addCar } = useMutation(
+  const { mutate: addCar } = useMutation(
     trpc.car.createCar.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries(trpc.car.cars.pathFilter());
@@ -108,7 +107,7 @@ export default function AddCar() {
       }
     }
 
-    await addCar(formData).catch();
+    addCar(formData);
   });
 
   return (
@@ -116,14 +115,14 @@ export default function AddCar() {
       contentContainerStyle={{ padding: 16, gap: 8 }}
       contentInsetAdjustmentBehavior="automatic"
     >
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="make">Make</Label>
-        <Controller
-          name="make"
-          rules={{ required: "Make is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field, fieldState }) => (
+      <Controller
+        name="make"
+        rules={{ required: "Make is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="make">Make</Label>
             <Menu
               trigger={
                 <Input
@@ -138,18 +137,18 @@ export default function AddCar() {
                 onClick: () => field.onChange(make),
               }))}
             />
-          )}
-        />
-        <Text color="error">{errors.make?.message}</Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="model">Model</Label>
-        <Controller
-          name="model"
-          rules={{ required: "Model is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="model"
+        rules={{ required: "Model is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="model">Model</Label>
             <Menu
               disabled={!make}
               trigger={
@@ -165,17 +164,17 @@ export default function AddCar() {
                 onClick: () => field.onChange(model),
               }))}
             />
-          )}
-        />
-        <Text color="error">{errors.model?.message}</Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="year">Year</Label>
-        <Controller
-          name="year"
-          rules={{ required: "Year is required" }}
-          control={control}
-          render={({ field }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="year"
+        rules={{ required: "Year is required" }}
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="year">Year</Label>
             <Menu
               trigger={
                 <Input
@@ -190,18 +189,18 @@ export default function AddCar() {
                 onClick: () => field.onChange(year),
               }))}
             />
-          )}
-        />
-        <Text color="error">{errors.year?.message}</Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="color">Color</Label>
-        <Controller
-          name="color"
-          rules={{ required: "Color is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="color"
+        rules={{ required: "Color is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="color">Color</Label>
             <Menu
               trigger={
                 <Input
@@ -216,16 +215,16 @@ export default function AddCar() {
                 onClick: () => field.onChange(color),
               }))}
             />
-          )}
-        />
-        <Text color="error">{errors.color?.message}</Text>
-      </View>
-      <View style={{ gap: 4, marginVertical: 8 }}>
-        <Controller
-          name="photo"
-          rules={{ required: "Photo is required" }}
-          control={control}
-          render={() => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="photo"
+        rules={{ required: "Photo is required" }}
+        control={control}
+        render={({ fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
             <Pressable
               onPress={choosePhoto}
               style={({ pressed }) => (pressed ? { opacity: 0.8 } : {})}
@@ -243,10 +242,10 @@ export default function AddCar() {
                 </Card>
               )}
             </Pressable>
-          )}
-        />
-        <Text color="error">{errors.photo?.message}</Text>
-      </View>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
       <Button
         isLoading={isSubmitting}
         onPress={onSubmit}

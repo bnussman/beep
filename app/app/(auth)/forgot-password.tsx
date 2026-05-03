@@ -38,7 +38,9 @@ export default function ForgotPasswordScreen() {
           onSubmitEditing={() => sendForgotEmail({ email })}
         />
       </View>
-      <Button isLoading={true}>Click me</Button>
+      <Button isLoading={isPending} isDisabled={!email}>
+        Click me
+      </Button>
     </KeyboardAwareScrollView>
   );
 }
