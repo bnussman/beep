@@ -1,7 +1,6 @@
 import * as DropdownMenu from "zeego/dropdown-menu";
 import * as ContextMenu from "zeego/context-menu";
 import { isWeb } from "@/utils/constants";
-import { useTheme } from "@/utils/theme";
 import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
 import { useColorScheme } from "react-native";
 

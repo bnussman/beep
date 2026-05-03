@@ -105,7 +105,6 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
         flexDirection: "row",
         alignItems: "center",
       }}
-      variant="secondary"
     >
       <Text weight="bold">{p.identifier}</Text>
       {payment && (

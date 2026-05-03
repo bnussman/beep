@@ -1,4 +1,3 @@
-import { useTheme } from "@/utils/theme";
 import React, { useState } from "react";
 import {
   ImageProps,
