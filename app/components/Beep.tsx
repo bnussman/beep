@@ -42,6 +42,9 @@ export function Beep({ item }: Props) {
       onSuccess() {
         queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
         queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries(
+          trpc.rider.getLastBeepToRate.queryFilter(),
+        );
       },
     }),
   );

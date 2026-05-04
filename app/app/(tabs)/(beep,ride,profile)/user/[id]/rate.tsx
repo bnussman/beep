@@ -55,7 +55,10 @@ export default function RateScreen() {
   }
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
+    <KeyboardAwareScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ padding: 16, gap: 16 }}
+    >
       <View
         style={{
           display: "flex",

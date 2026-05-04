@@ -33,6 +33,9 @@ export function Rating(props: Props) {
     trpc.rating.deleteRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries(
+          trpc.rider.getLastBeepToRate.queryFilter(),
+        );
       },
       onError(error) {
         alert(error.message);

@@ -33,7 +33,6 @@ const colorMap = {
 
 export default function Cars() {
   const trpc = useTRPC();
-  const router = useRouter();
   const { user } = useUser();
 
   const queryClient = useQueryClient();
@@ -135,106 +134,98 @@ export default function Cars() {
   }
 
   return (
-    <>
-      <Stack.Toolbar placement="right">
-        <Stack.Toolbar.Button
-          icon="plus"
-          onPress={() => router.push("/profile/cars/create")}
-        />
-      </Stack.Toolbar>
-      <FlatList
-        data={cars}
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={getContentContainerStyle(cars?.length === 0)}
-        renderItem={({ item: car }) => (
-          <Menu
-            activationMethod="longPress"
-            trigger={
-              <Card
-                style={{
-                  padding: 16,
-                  gap: 16,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ gap: 8, flexShrink: 1 }}>
-                  <Text weight="500" style={{ flexWrap: "wrap" }}>
-                    {car.make} {car.model} {car.year}
-                  </Text>
+    <FlatList
+      data={cars}
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={getContentContainerStyle(cars?.length === 0)}
+      renderItem={({ item: car }) => (
+        <Menu
+          activationMethod="longPress"
+          trigger={
+            <Card
+              style={{
+                padding: 16,
+                gap: 16,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={{ gap: 8, flexShrink: 1 }}>
+                <Text weight="500" style={{ flexWrap: "wrap" }}>
+                  {car.make} {car.model} {car.year}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 8,
+                  }}
+                >
                   <View
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: 8,
+                      width: 16,
+                      height: 16,
+                      borderRadius: 16 / 2,
+                      backgroundColor:
+                        colorMap[car.color as keyof typeof colorMap] ??
+                        car.color,
                     }}
-                  >
+                  />
+                  {car.default && (
                     <View
                       style={{
-                        width: 16,
-                        height: 16,
-                        borderRadius: 16 / 2,
-                        backgroundColor:
-                          colorMap[car.color as keyof typeof colorMap] ??
-                          car.color,
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        borderRadius: 16,
+                        backgroundColor: "#2e2e2e",
                       }}
-                    />
-                    {car.default && (
-                      <View
-                        style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          borderRadius: 16,
-                          backgroundColor: "#2e2e2e",
-                        }}
-                      >
-                        <Text size="xs" weight="500" style={{ color: "white" }}>
-                          Default
-                        </Text>
-                      </View>
-                    )}
-                  </View>
+                    >
+                      <Text size="xs" weight="500" style={{ color: "white" }}>
+                        Default
+                      </Text>
+                    </View>
+                  )}
                 </View>
-                <Image
-                  style={{ borderRadius: 12, width: 128, height: 80 }}
-                  source={{ uri: car.photo }}
-                  alt={`car-${car.id}`}
-                />
-              </Card>
-            }
-            options={[
-              {
-                title: "Make Default",
-                show: !car.default,
-                sfIcon: "car.badge.gearshape.fill",
-                onClick: () => setDefault(car.id),
-              },
-              {
-                title: "Delete",
-                onClick: () => onDelete(car.id),
-                sfIcon: "trash",
-                destructive: true,
-              },
-            ]}
-          />
-        )}
-        keyExtractor={(car) => car.id}
-        ListEmptyComponent={
-          <View style={{ alignItems: "center" }}>
-            <Text weight="800" key="title" size="3xl">
-              No Cars
-            </Text>
-            <Text key="message">You have no cars on your account!</Text>
-          </View>
-        }
-        onEndReached={() => fetchNextPage()}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter()}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-      />
-    </>
+              </View>
+              <Image
+                style={{ borderRadius: 12, width: 128, height: 80 }}
+                source={{ uri: car.photo }}
+                alt={`car-${car.id}`}
+              />
+            </Card>
+          }
+          options={[
+            {
+              title: "Make Default",
+              show: !car.default,
+              sfIcon: "car.badge.gearshape.fill",
+              onClick: () => setDefault(car.id),
+            },
+            {
+              title: "Delete",
+              onClick: () => onDelete(car.id),
+              sfIcon: "trash",
+              destructive: true,
+            },
+          ]}
+        />
+      )}
+      keyExtractor={(car) => car.id}
+      ListEmptyComponent={
+        <View style={{ alignItems: "center" }}>
+          <Text weight="800" key="title" size="3xl">
+            No Cars
+          </Text>
+          <Text key="message">You have no cars on your account!</Text>
+        </View>
+      }
+      onEndReached={() => fetchNextPage()}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter()}
+      refreshing={isRefetching}
+      onRefresh={refetch}
+    />
   );
 }

@@ -22,6 +22,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
+import { RateLastBeeper } from "@/components/RateLastBeeper";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -69,12 +70,7 @@ export default function MainFindBeepScreen() {
     destination?: string;
   }>();
 
-  const {
-    control,
-    handleSubmit,
-    setFocus,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, setFocus, formState } = useForm({
     values: {
       groupSize: params.groupSize ? String(params.groupSize) : "",
       origin: params.origin ?? "",
@@ -89,94 +85,78 @@ export default function MainFindBeepScreen() {
   if (!beep) {
     return (
       <KeyboardAwareScrollView
-        scrollEnabled={false}
         contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <View style={{ gap: 4 }}>
-          <Controller
-            name="groupSize"
-            rules={{
-              required: "Group size is required",
-              min: { value: 1, message: "Too small" },
-              max: { value: 100, message: "Too large" },
-              pattern: { value: /\d+/, message: "Must be a number" },
-            }}
-            control={control}
-            render={({
-              field: { onChange, onBlur, value, ref },
-              fieldState,
-            }) => (
-              <TextField isInvalid={Boolean(fieldState.error)}>
-                <Label htmlFor="groupSize">Group Size</Label>
-                <Input
-                  id="groupSize"
-                  inputMode="numeric"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("origin")}
-                />
-                <FieldError>{fieldState.error?.message}</FieldError>
-              </TextField>
-            )}
-          />
-        </View>
-        <View style={{ gap: 4 }}>
-          <Controller
-            name="origin"
-            rules={{ required: "Pick up location is required" }}
-            control={control}
-            render={({
-              field: { onChange, onBlur, value, ref },
-              fieldState,
-            }) => (
-              <TextField isInvalid={Boolean(fieldState.error)}>
-                <Label htmlFor="origin">Pick Up Location</Label>
-                <LocationInput
-                  id="origin"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("destination")}
-                />
-                <FieldError>{fieldState.error?.message}</FieldError>
-              </TextField>
-            )}
-          />
-        </View>
-        <View style={{ gap: 4 }}>
-          <Controller
-            name="destination"
-            rules={{ required: "Destination location is required" }}
-            control={control}
-            render={({
-              field: { onChange, onBlur, value, ref },
-              fieldState,
-            }) => (
-              <TextField isInvalid={Boolean(fieldState.error)}>
-                <Label htmlFor="destination">Destination Location</Label>
-                <Input
-                  id="destination"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  ref={ref}
-                  returnKeyType="go"
-                  onSubmitEditing={() => findBeep()}
-                  textContentType="fullStreetAddress"
-                />
-                <FieldError>{fieldState.error?.message}</FieldError>
-              </TextField>
-            )}
-          />
-        </View>
+        <Controller
+          name="groupSize"
+          rules={{
+            required: "Group size is required",
+            min: { value: 1, message: "Too small" },
+            max: { value: 100, message: "Too large" },
+            pattern: { value: /\d+/, message: "Must be a number" },
+          }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+            <TextField isInvalid={Boolean(fieldState.error)}>
+              <Label htmlFor="groupSize">Group Size</Label>
+              <Input
+                id="groupSize"
+                inputMode="numeric"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("origin")}
+              />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          name="origin"
+          rules={{ required: "Pick up location is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+            <TextField isInvalid={Boolean(fieldState.error)}>
+              <Label htmlFor="origin">Pick Up Location</Label>
+              <LocationInput
+                id="origin"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("destination")}
+              />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          name="destination"
+          rules={{ required: "Destination location is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+            <TextField isInvalid={Boolean(fieldState.error)}>
+              <Label htmlFor="destination">Destination Location</Label>
+              <Input
+                id="destination"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                ref={ref}
+                returnKeyType="go"
+                onSubmitEditing={() => findBeep()}
+                textContentType="fullStreetAddress"
+              />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
         <Button onPress={() => findBeep()}>Find Beep</Button>
         <Link asChild href="/ride/map">
           <Link.Trigger withAppleZoom>
@@ -184,7 +164,7 @@ export default function MainFindBeepScreen() {
           </Link.Trigger>
           <Link.Preview />
         </Link>
-        {/* <RateLastBeeper /> */}
+        <RateLastBeeper />
       </KeyboardAwareScrollView>
     );
   }
