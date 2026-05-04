@@ -8,17 +8,21 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { View } from "react-native";
 import { RideMap } from "@/components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Link, SplashScreen, useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { Label } from "@/components/Label";
-import { Text } from "@/components/Text";
-import { Input } from "@/components/Input";
+import { Input, TextField, FieldError } from "heroui-native";
 import { LocationInput } from "@/components/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
-import { RateLastBeeper } from "@/components/RateLastBeeper";
 import { RideMenu } from "@/components/RideToolbar";
+import { Label } from "@/components/Label";
+import {
+  Link,
+  SplashScreen,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+// import { RateLastBeeper } from "@/components/RateLastBeeper";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -66,12 +70,7 @@ export default function MainFindBeepScreen() {
     destination?: string;
   }>();
 
-  const {
-    control,
-    handleSubmit,
-    setFocus,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, setFocus, formState } = useForm({
     values: {
       groupSize: params.groupSize ? String(params.groupSize) : "",
       origin: params.origin ?? "",
@@ -80,28 +79,27 @@ export default function MainFindBeepScreen() {
   });
 
   const findBeep = handleSubmit((values) => {
-    router.navigate({ pathname: '/ride/pick', params: values });
+    router.navigate({ pathname: "/ride/pick", params: values });
   });
 
   if (!beep) {
     return (
       <KeyboardAwareScrollView
-        scrollEnabled={false}
         contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="groupSize">Group Size</Label>
-          <Controller
-            name="groupSize"
-            rules={{
-              required: "Group size is required",
-              min: { value: 1, message: "Too small" },
-              max: { value: 100, message: "Too large" },
-              pattern: { value: /\d+/, message: "Must be a number" },
-            }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
+        <Controller
+          name="groupSize"
+          rules={{
+            required: "Group size is required",
+            min: { value: 1, message: "Too small" },
+            max: { value: 100, message: "Too large" },
+            pattern: { value: /\d+/, message: "Must be a number" },
+          }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+            <TextField isInvalid={Boolean(fieldState.error)}>
+              <Label htmlFor="groupSize">Group Size</Label>
               <Input
                 id="groupSize"
                 inputMode="numeric"
@@ -113,18 +111,17 @@ export default function MainFindBeepScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("origin")}
               />
-            )}
-          />
-          <Text color="error">{errors.groupSize?.message}</Text>
-          <Text color="error">{errors.groupSize?.root?.message}</Text>
-        </View>
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="origin">Pick Up Location</Label>
-          <Controller
-            name="origin"
-            rules={{ required: "Pick up location is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          name="origin"
+          rules={{ required: "Pick up location is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+            <TextField isInvalid={Boolean(fieldState.error)}>
+              <Label htmlFor="origin">Pick Up Location</Label>
               <LocationInput
                 id="origin"
                 onBlur={onBlur}
@@ -135,17 +132,17 @@ export default function MainFindBeepScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("destination")}
               />
-            )}
-          />
-          <Text color="error">{errors.origin?.message}</Text>
-        </View>
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="destination">Destination Location</Label>
-          <Controller
-            name="destination"
-            rules={{ required: "Destination location is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          name="destination"
+          rules={{ required: "Destination location is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+            <TextField isInvalid={Boolean(fieldState.error)}>
+              <Label htmlFor="destination">Destination Location</Label>
               <Input
                 id="destination"
                 onBlur={onBlur}
@@ -156,10 +153,10 @@ export default function MainFindBeepScreen() {
                 onSubmitEditing={() => findBeep()}
                 textContentType="fullStreetAddress"
               />
-            )}
-          />
-          <Text color="error">{errors.destination?.message}</Text>
-        </View>
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
         <Button onPress={() => findBeep()}>Find Beep</Button>
         <Link asChild href="/ride/map">
           <Link.Trigger withAppleZoom>
@@ -167,7 +164,7 @@ export default function MainFindBeepScreen() {
           </Link.Trigger>
           <Link.Preview />
         </Link>
-        {/* <RateLastBeeper /> */}
+        {/*<RateLastBeeper />*/}
       </KeyboardAwareScrollView>
     );
   }

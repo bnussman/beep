@@ -236,7 +236,7 @@ export default function EditProfileScreen() {
         />
         <Text color="error">{errors.cashapp?.message}</Text>
       </View>
-      <Button onPress={onSubmit} isLoading={isSubmitting} disabled={!isDirty}>
+      <Button onPress={onSubmit} isLoading={isSubmitting} isDisabled={!isDirty}>
         Update Profile
       </Button>
     </KeyboardAwareScrollView>

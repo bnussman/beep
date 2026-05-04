@@ -1,17 +1,21 @@
-import { Text as _Text, TextProps as _TextProps, StyleSheet, TextStyle } from "react-native";
+import {
+  Text as _Text,
+  TextProps as _TextProps,
+  TextStyle,
+  useColorScheme,
+} from "react-native";
 import React from "react";
-import { Theme, useTheme } from "@/utils/theme";
 
 const fontSizeMap = {
-  'xs': 12,
-  'sm': 14,
-  'md': 16,
-  'lg': 18,
-  'xl': 20,
-  '2xl': 24,
-  '3xl': 30,
-  '4xl': 36,
-  '5xl': 48,
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+  "2xl": 24,
+  "3xl": 30,
+  "4xl": 36,
+  "5xl": 48,
 };
 
 export interface TextProps extends _TextProps {
@@ -23,18 +27,18 @@ export interface TextProps extends _TextProps {
   /**
    * Set a font weight
    * @default normal
-   */ 
-  weight?: TextStyle['fontWeight'];
+   */
+  weight?: TextStyle["fontWeight"];
   /**
    * Override the text color
    */
-  color?: 'error' | 'subtle';
+  color?: "error" | "subtle";
 }
 
 export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
   const { size, weight, color, ...rest } = props;
-  const theme = useTheme();
-  const styles = createStyles(theme);
+
+  const colorScheme = useColorScheme();
 
   if (Array.isArray(rest.children) && rest.children.every((c) => !c)) {
     return null;
@@ -43,29 +47,17 @@ export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
   if (rest.children === null || rest.children === undefined) {
     return null;
   }
-  
-  const colorMap = {
-    error: theme.text.error,
-    subtle: theme.text.subtle,
-  };
 
   return (
     <_Text
       ref={ref}
       {...rest}
       style={[
-        styles.default,
-        color ? { color: colorMap[color] } : {},
+        colorScheme === "dark" ? { color: "white" } : { color: "black" },
         weight ? { fontWeight: weight } : {},
         size ? { fontSize: fontSizeMap[size] } : {},
-        rest.style
+        rest.style,
       ]}
     />
   );
-});
-
-const createStyles = (theme: Theme) => StyleSheet.create({
-  default: {
-    color: theme.text.primary, 
-  },
 });

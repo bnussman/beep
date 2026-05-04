@@ -8,14 +8,14 @@ import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
 import { years } from "@/utils/cars";
-import { Pressable, SafeAreaView, View } from "react-native";
+import { Pressable } from "react-native";
 import { useTRPC } from "@/utils/trpc";
-import { useTheme } from "@/utils/theme";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { Card, FieldError, TextField } from "heroui-native";
 
 interface Values {
   year: number;
@@ -27,7 +27,6 @@ interface Values {
 
 export default function AddCar() {
   const trpc = useTRPC();
-  const theme = useTheme();
   const navigation = useNavigation();
 
   const {
@@ -35,7 +34,7 @@ export default function AddCar() {
     handleSubmit,
     setValue,
     setError,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm<Values>();
 
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
@@ -57,7 +56,7 @@ export default function AddCar() {
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync: addCar } = useMutation(
+  const { mutate: addCar } = useMutation(
     trpc.car.createCar.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries(trpc.car.cars.pathFilter());
@@ -107,19 +106,22 @@ export default function AddCar() {
       }
     }
 
-    await addCar(formData).catch();
+    addCar(formData);
   });
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 8 }} contentInsetAdjustmentBehavior="automatic">
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="make">Make</Label>
-        <Controller
-          name="make"
-          rules={{ required: "Make is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field, fieldState }) => (
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ padding: 16, gap: 8 }}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <Controller
+        name="make"
+        rules={{ required: "Make is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="make">Make</Label>
             <Menu
               trigger={
                 <Input
@@ -134,18 +136,18 @@ export default function AddCar() {
                 onClick: () => field.onChange(make),
               }))}
             />
-          )}
-        />
-        <Text color="error">{errors.make?.message}</Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="model">Model</Label>
-        <Controller
-          name="model"
-          rules={{ required: "Model is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="model"
+        rules={{ required: "Model is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="model">Model</Label>
             <Menu
               disabled={!make}
               trigger={
@@ -161,17 +163,17 @@ export default function AddCar() {
                 onClick: () => field.onChange(model),
               }))}
             />
-          )}
-        />
-        <Text color="error">{errors.model?.message}</Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="year">Year</Label>
-        <Controller
-          name="year"
-          rules={{ required: "Year is required" }}
-          control={control}
-          render={({ field }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="year"
+        rules={{ required: "Year is required" }}
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="year">Year</Label>
             <Menu
               trigger={
                 <Input
@@ -186,78 +188,70 @@ export default function AddCar() {
                 onClick: () => field.onChange(year),
               }))}
             />
-          )}
-        />
-          <Text color="error">{errors.year?.message}</Text>
-        </View>
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="color">Color</Label>
-          <Controller
-            name="color"
-            rules={{ required: "Color is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field }) => (
-              <Menu
-                trigger={
-                  <Input
-                    id="color"
-                    readOnly
-                    value={field.value ? String(field.value) : ""}
-                    placeholder="Select a color"
-                  />
-                }
-                options={colors.map((color) => ({
-                  title: color,
-                  onClick: () => field.onChange(color),
-                }))}
-              />
-            )}
-          />
-          <Text color="error">{errors.color?.message}</Text>
-        </View>
-        <View style={{ gap: 4, marginVertical: 8 }}>
-          <Controller
-            name="photo"
-            rules={{ required: "Photo is required" }}
-            control={control}
-            render={() => (
-              <Pressable onPress={choosePhoto} style={({ pressed }) => pressed ? { opacity: 0.8 } : {}}>
-                {photo ? (
-                  <Image
-                    style={{ borderRadius: 12, height: 192, width: "100%" }}
-                    source={{ uri: photo.uri }}
-                    alt="uploaded car image"
-                  />
-                ) : (
-                  <View
-                    style={{
-                      backgroundColor: theme.components.card.backgroundColor,
-                      borderColor: theme.components.card.borderColor,
-                      borderWidth: 1,
-                      borderRadius: 12,
-                      height: 192,
-                      width: "100%",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text weight="bold">Attach a Photo</Text>
-                    <Text size="4xl">📷</Text>
-                  </View>
-                )}
-              </Pressable>
-            )}
-          />
-          <Text color="error">{errors.photo?.message}</Text>
-        </View>
-        <Button
-          isLoading={isSubmitting}
-          onPress={onSubmit}
-          disabled={isSubmitting}
-        >
-          Add Car
-        </Button>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="color"
+        rules={{ required: "Color is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="color">Color</Label>
+            <Menu
+              trigger={
+                <Input
+                  id="color"
+                  readOnly
+                  value={field.value ? String(field.value) : ""}
+                  placeholder="Select a color"
+                />
+              }
+              options={colors.map((color) => ({
+                title: color,
+                onClick: () => field.onChange(color),
+              }))}
+            />
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="photo"
+        rules={{ required: "Photo is required" }}
+        control={control}
+        render={({ fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Pressable
+              onPress={choosePhoto}
+              style={({ pressed }) => (pressed ? { opacity: 0.8 } : {})}
+            >
+              {photo ? (
+                <Image
+                  style={{ borderRadius: 12, height: 192, width: "100%" }}
+                  source={{ uri: photo.uri }}
+                  alt="uploaded car image"
+                />
+              ) : (
+                <Card className="flex items-center min-h-48 justify-center">
+                  <Text weight="bold">Attach a Photo</Text>
+                  <Text size="4xl">📷</Text>
+                </Card>
+              )}
+            </Pressable>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Button
+        isLoading={isSubmitting}
+        onPress={onSubmit}
+        isDisabled={isSubmitting}
+      >
+        Add Car
+      </Button>
     </KeyboardAwareScrollView>
   );
 }

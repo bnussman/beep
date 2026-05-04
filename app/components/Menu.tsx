@@ -1,15 +1,15 @@
 import * as DropdownMenu from "zeego/dropdown-menu";
 import * as ContextMenu from "zeego/context-menu";
 import { isWeb } from "@/utils/constants";
-import { useTheme } from "@/utils/theme";
 import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
+import { useColorScheme } from "react-native";
 
 export interface Option {
   /**
    * The text content of the option
    */
   title: string;
-  sfIcon?: Extract<SFSymbolIcon['sf'], string>;
+  sfIcon?: Extract<SFSymbolIcon["sf"], string>;
   /**
    * Called when the option is chosen/clicked/pressed
    */
@@ -56,7 +56,7 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
-  const theme = useTheme();
+  const colorScheme = useColorScheme();
 
   if (props.disabled) {
     return props.trigger;
@@ -74,8 +74,20 @@ export const Menu = (props: MenuProps) => {
       return (
         <Component.Sub>
           <Component.SubTrigger key={option.title}>
-            <Component.ItemIcon ios={{ name: option.sfIcon }}></Component.ItemIcon>
-            <Component.ItemTitle>{option.title}</Component.ItemTitle>
+            <Component.ItemIcon
+              ios={{ name: option.sfIcon }}
+            ></Component.ItemIcon>
+            <Component.ItemTitle
+              className={
+                isWeb
+                  ? colorScheme === "dark"
+                    ? "text-white"
+                    : "text-black"
+                  : undefined
+              }
+            >
+              {option.title}
+            </Component.ItemTitle>
           </Component.SubTrigger>
           <Component.SubContent>
             {option.options.map(renderOption)}
@@ -84,27 +96,54 @@ export const Menu = (props: MenuProps) => {
       );
     }
 
-    const C = option.checked !== undefined ? Component.CheckboxItem : Component.Item;
+    const C =
+      option.checked !== undefined ? Component.CheckboxItem : Component.Item;
+
+    const moreProps =
+      option.checked !== undefined
+        ? {
+            onValueChange: option.onClick,
+          }
+        : {};
 
     return (
       <C
-        value={option.checked ? "on" : 'off'}
+        value={option.checked ? "on" : "off"}
         key={option.title}
         destructive={isWeb ? undefined : option.destructive}
         disabled={option.disabled}
         onSelect={option.onClick}
-        onValueChange={option.onClick}
-        style={isWeb ? { color: theme.text.primary } : {}}
+        {...moreProps}
       >
         <Component.ItemIcon ios={{ name: option.sfIcon }}></Component.ItemIcon>
-        <Component.ItemTitle>{option.title}</Component.ItemTitle>
+        <Component.ItemTitle
+          className={
+            isWeb
+              ? colorScheme === "dark"
+                ? "text-white"
+                : "text-black"
+              : undefined
+          }
+        >
+          {option.title}
+        </Component.ItemTitle>
       </C>
     );
   };
 
   return (
     <Component.Root>
-      <Component.Trigger>{props.trigger}</Component.Trigger>
+      <Component.Trigger
+        className={
+          isWeb
+            ? colorScheme === "dark"
+              ? "text-white *:w-full"
+              : "text-black *:w-full"
+            : undefined
+        }
+      >
+        {props.trigger}
+      </Component.Trigger>
       <Component.Content>{props.options.map(renderOption)}</Component.Content>
     </Component.Root>
   );

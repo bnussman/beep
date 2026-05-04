@@ -103,8 +103,14 @@ export function QueueItem({ item: beep }: Props) {
     <Menu
       activationMethod="longPress"
       trigger={
-        <Card variant="filled" style={{ padding: 16, gap: 16 }} pressable>
-          <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id, beepId: beep.id } }} asChild>
+        <Card style={{ padding: 16, gap: 16 }}>
+          <Link
+            href={{
+              pathname: "/user/[id]",
+              params: { id: beep.rider.id, beepId: beep.id },
+            }}
+            asChild
+          >
             <Link.Trigger>
               <View
                 style={{

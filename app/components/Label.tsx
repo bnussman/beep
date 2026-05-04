@@ -1,9 +1,9 @@
 import { isWeb } from "@/utils/constants";
-import { Text, TextProps } from "./Text";
+import { Label as HeroLabel, LabelProps } from "heroui-native";
 import { AccessibilityRole, Text as _Text } from "react-native";
 import { useEffect } from "react";
 
-interface Props extends TextProps {
+interface Props extends LabelProps {
   htmlFor?: string;
 }
 
@@ -22,14 +22,9 @@ export function Label(props: Props) {
     }, [htmlFor]);
   }
 
-  const webProps = isWeb ? { accessibilityRole: "label" as AccessibilityRole } : {};
+  const webProps = isWeb
+    ? { accessibilityRole: "label" as AccessibilityRole }
+    : {};
 
-  return (
-    <Text
-      id={id}
-      weight="bold"
-      {...rest}
-      {...webProps}
-    />
-  );
+  return <HeroLabel id={id} {...rest} {...webProps} />;
 }

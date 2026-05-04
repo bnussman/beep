@@ -12,6 +12,7 @@ import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { SplashScreen, useRouter } from "expo-router";
+import { FieldError, TextField } from "heroui-native";
 
 type Values = RouterInput["auth"]["login"];
 
@@ -37,7 +38,9 @@ export default function LoginScreen() {
       onError(error) {
         if (error.data?.fieldErrors) {
           for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, { message: error.data.fieldErrors[key]?.[0] });
+            setError(key as keyof Values, {
+              message: error.data.fieldErrors[key]?.[0],
+            });
           }
         } else {
           alert(error.message);
@@ -45,7 +48,6 @@ export default function LoginScreen() {
       },
     }),
   );
-
 
   useEffect(() => {
     SplashScreen.hide();
@@ -72,14 +74,14 @@ export default function LoginScreen() {
       <Text size="4xl" weight="800">
         Ride Beep App 🚕
       </Text>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="username">Username or Email</Label>
-        <Controller
-          name="username"
-          rules={{ required: "Username or Email is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+      <Controller
+        name="username"
+        rules={{ required: "Username or Email is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="username">Username or Email</Label>
             <Input
               id="username"
               autoCapitalize="none"
@@ -92,20 +94,18 @@ export default function LoginScreen() {
               onSubmitEditing={() => setFocus("password")}
               textContentType="username"
             />
-          )}
-        />
-        <Text color="error">
-          {errors.username?.message}
-        </Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="password">Password</Label>
-        <Controller
-          name="password"
-          rules={{ required: "Password is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="password"
+        rules={{ required: "Password is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="password">Password</Label>
             <PasswordInput
               id="password"
               autoCapitalize="none"
@@ -118,24 +118,19 @@ export default function LoginScreen() {
               onSubmitEditing={onLogin}
               textContentType="password"
             />
-          )}
-        />
-        <Text color="error">
-          {errors.password?.message}
-        </Text>
-      </View>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
       <Button isLoading={isSubmitting} onPress={onLogin}>
         Login
       </Button>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Button
-          variant="secondary"
-          onPress={() => router.push("/sign-up")}
-        >
+        <Button variant="tertiary" onPress={() => router.push("/sign-up")}>
           Sign Up
         </Button>
         <Button
-          variant="secondary"
+          variant="tertiary"
           onPress={() => router.push("/forgot-password")}
         >
           Forgot Password
