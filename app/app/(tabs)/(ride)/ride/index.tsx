@@ -22,7 +22,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import { RateLastBeeper } from "@/components/RateLastBeeper";
+// import { RateLastBeeper } from "@/components/RateLastBeeper";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -164,7 +164,7 @@ export default function MainFindBeepScreen() {
           </Link.Trigger>
           <Link.Preview />
         </Link>
-        <RateLastBeeper />
+        {/*<RateLastBeeper />*/}
       </KeyboardAwareScrollView>
     );
   }

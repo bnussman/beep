@@ -77,7 +77,17 @@ export const Menu = (props: MenuProps) => {
             <Component.ItemIcon
               ios={{ name: option.sfIcon }}
             ></Component.ItemIcon>
-            <Component.ItemTitle>{option.title}</Component.ItemTitle>
+            <Component.ItemTitle
+              className={
+                isWeb
+                  ? colorScheme === "dark"
+                    ? "text-white"
+                    : "text-black"
+                  : undefined
+              }
+            >
+              {option.title}
+            </Component.ItemTitle>
           </Component.SubTrigger>
           <Component.SubContent>
             {option.options.map(renderOption)}
