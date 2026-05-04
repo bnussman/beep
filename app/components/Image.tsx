@@ -11,7 +11,7 @@ export function Image({ style, ...props }: ImageProps) {
   const [loading, setLoading] = useState(true);
 
   return (
-    <Card style={[style, { padding: 0 }]}>
+    <Card variant="tertiary" style={[style, { padding: 0 }]}>
       {loading && (
         <View
           style={{
