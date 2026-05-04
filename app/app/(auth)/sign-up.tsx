@@ -15,6 +15,7 @@ import { Input } from "@/components/Input";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
+import { TextField, FieldError, Description } from "heroui-native";
 
 interface Values {
   first: string;
@@ -48,7 +49,9 @@ export default function SignUpScreen() {
       onError(error) {
         if (error.data?.fieldErrors) {
           for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, { message: error.data.fieldErrors[key]?.[0] });
+            setError(key as keyof Values, {
+              message: error.data.fieldErrors[key]?.[0],
+            });
           }
         } else {
           alert(error.message);
@@ -107,194 +110,191 @@ export default function SignUpScreen() {
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
         <View style={{ flexGrow: 1, gap: 8 }}>
-          <View style={{ gap: 4 }}>
-            <Label htmlFor="first">First Name</Label>
-            <Controller
-              name="first"
-              rules={{ required: "First name is required" }}
-              defaultValue=""
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
+          <Controller
+            name="first"
+            rules={{ required: "First name is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextField isInvalid={!!fieldState.error}>
+                <Label htmlFor="first">First Name</Label>
                 <Input
                   id="first"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
+                  onBlur={field.onBlur}
+                  onChangeText={field.onChange}
+                  value={field.value}
+                  ref={field.ref}
                   returnKeyLabel="next"
                   returnKeyType="next"
                   onSubmitEditing={() => setFocus("last")}
                   textContentType="givenName"
                 />
-              )}
-            />
-            <Text color="error">{errors.first?.message}</Text>
-          </View>
-          <View style={{ gap: 4 }}>
-            <Label htmlFor="last">Last Name</Label>
-            <Controller
-              name="last"
-              rules={{ required: "Last name is required" }}
-              defaultValue=""
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </TextField>
+            )}
+          />
+          <Controller
+            name="last"
+            rules={{ required: "Last name is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextField isInvalid={!!fieldState.error}>
+                <Label htmlFor="last">Last Name</Label>
                 <Input
                   id="last"
-                  onBlur={onBlur}
+                  onBlur={field.onBlur}
                   textContentType="familyName"
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
+                  onChangeText={field.onChange}
+                  value={field.value}
+                  ref={field.ref}
                   returnKeyLabel="next"
                   returnKeyType="next"
                   onSubmitEditing={() => setFocus("email")}
                 />
-              )}
-            />
-            <Text color="error">{errors.last?.message}</Text>
-          </View>
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </TextField>
+            )}
+          />
         </View>
-        <View style={{ gap: 4, alignItems: "center" }}>
-          <Controller
-            control={control}
-            rules={{ required: "Profile picture is required" }}
-            name="photo"
-            render={({ field }) => (
+        <Controller
+          control={control}
+          rules={{ required: "Profile picture is required" }}
+          name="photo"
+          render={({ field, fieldState }) => (
+            <TextField isInvalid={!!fieldState.error}>
               <TouchableOpacity
                 onPress={chooseProfilePhoto}
                 aria-label="profile photo"
               >
                 <Avatar src={field.value?.uri} size="xl" />
               </TouchableOpacity>
-            )}
-          />
-          <Text color="error" style={{ maxWidth: 100, textAlign: "center" }}>
-            {errors.photo?.message}
-          </Text>
-        </View>
+              <FieldError className="max-w-32 text-center">
+                {fieldState.error?.message}
+              </FieldError>
+            </TextField>
+          )}
+        />
       </View>
-
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="email">Email</Label>
-        <Controller
-          name="email"
-          rules={{ required: "Email is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+      <Controller
+        name="email"
+        rules={{ required: "Email is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              onBlur={onBlur}
+              onBlur={field.onBlur}
               textContentType="emailAddress"
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              ref={ref}
+              onChangeText={field.onChange}
+              value={field.value}
+              ref={field.ref}
               returnKeyLabel="next"
               returnKeyType="next"
               onSubmitEditing={() => setFocus("phone")}
               autoCapitalize="none"
             />
-          )}
-        />
-        <Text size="sm">You must a .edu email address</Text>
-        <Text color="error">{errors.email?.message}</Text>
-      </View>
-
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="phone">Phone</Label>
-        <Controller
-          name="phone"
-          rules={{ required: "Phone number is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Description>You must a .edu email address</Description>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="phone"
+        rules={{ required: "Phone number is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="phone">Phone</Label>
             <Input
               id="phone"
-              onBlur={onBlur}
+              onBlur={field.onBlur}
               textContentType="telephoneNumber"
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              ref={ref}
+              onChangeText={field.onChange}
+              value={field.value}
+              ref={field.ref}
               returnKeyLabel="next"
               returnKeyType="next"
               onSubmitEditing={() => setFocus("venmo")}
             />
-          )}
-        />
-        <Text color="error">{errors.phone?.message}</Text>
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="venmo">Venmo Username</Label>
-        <Controller
-          name="venmo"
-          rules={{ required: "Venmo username is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="venmo"
+        rules={{ required: "Venmo username is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="venmo">Venmo Username</Label>
             <Input
               id="venmo"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value as string | undefined}
-              ref={ref}
+              onBlur={field.onBlur}
+              onChangeText={field.onChange}
+              value={field.value}
+              ref={field.ref}
               returnKeyLabel="next"
               returnKeyType="next"
               textContentType="username"
               onSubmitEditing={() => setFocus("username")}
               autoCapitalize="none"
             />
-          )}
-        />
-        <Text color="error">{errors.venmo?.message}</Text>
-      </View>
-
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="username-input">Username</Label>
-        <Controller
-          name="username"
-          rules={{ required: "Username is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        name="username"
+        rules={{ required: "Username is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="username-input">Username</Label>
             <Input
               id="username-input"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              ref={ref}
+              onBlur={field.onBlur}
+              onChangeText={field.onChange}
+              value={field.value}
+              ref={field.ref}
               returnKeyLabel="next"
               returnKeyType="next"
               autoCapitalize="none"
               textContentType="username"
               onSubmitEditing={() => setFocus("password")}
             />
-          )}
-        />
-        <Text color="error">{errors.username?.message}</Text>
-      </View>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
 
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="password-input">Password</Label>
-        <Controller
-          name="password"
-          defaultValue=""
-          rules={{ required: "Password is required" }}
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
+      <Controller
+        name="password"
+        defaultValue=""
+        rules={{ required: "Password is required" }}
+        control={control}
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="password-input">Password</Label>
             <PasswordInput
               id="password-input"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              ref={ref}
+              onBlur={field.onBlur}
+              onChangeText={field.onChange}
+              value={field.value}
+              ref={field.ref}
               returnKeyLabel="sign up"
               returnKeyType="go"
               onSubmitEditing={onSubmit}
             />
-          )}
-        />
-        <Text color="error">{errors.password?.message}</Text>
-      </View>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
       <Button isLoading={isSubmitting} onPress={onSubmit}>
         Sign Up
       </Button>
