@@ -27,6 +27,9 @@ import { MoneyInput } from "@/components/MoneyInput";
 import { CarSelect } from "@/components/CarSelect";
 import { useActivePayments } from "../../(beep,ride,profile)/premium";
 import { Description, FieldError, TextField } from "heroui-native";
+import { Menu, Option } from "@/components/Menu";
+import { Elipsis } from "@/components/Elipsis";
+import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -52,7 +55,7 @@ export default function StartBeepingScreen() {
     }),
   );
 
-  const { mutate: updateBeepSettings } = useMutation(
+  const { mutateAsync: updateBeepSettings } = useMutation(
     trpc.user.edit.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.user.me.queryKey(), data);
@@ -122,7 +125,7 @@ export default function StartBeepingScreen() {
       };
     }
 
-    updateBeepSettings({
+    await updateBeepSettings({
       isBeeping: willBeBeeping,
       ...values,
       location,
@@ -141,125 +144,99 @@ export default function StartBeepingScreen() {
     }
   }, [user?.isBeeping]);
 
+  const headerLeftMenuOptions: Option[] = [
+    {
+      title: "Stop Beeping",
+      destructive: true,
+      sfIcon: "xmark",
+      onClick: handleIsBeepingChange,
+    },
+    {
+      title: "Get Premium",
+      sfIcon: "crown.fill",
+      onClick: () => router.navigate("/premium"),
+    },
+  ];
+
   React.useLayoutEffect(() => {
-    if (isAndroid || isWeb) {
-      navigation.setOptions({
-        headerRight: () => (
-          <View
-            style={{
-              marginRight: 8,
-              display: "flex",
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-            }}
-          >
-            <Link href="/beep/queue" asChild>
-              <Button>
-                Queue{" "}
-                {queue && queue.length > 1
-                  ? `(${String(queue.length - 1)})`
-                  : ""}
-              </Button>
-            </Link>
-            {payments?.[0] && (
-              <Text
-                size="xl"
-                onPress={() =>
-                  Alert.alert(
-                    "You are premium!",
-                    `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
-                  )
-                }
-              >
-                👑
-              </Text>
-            )}
-            {form.formState.isSubmitting && <ActivityIndicator size="small" />}
-            <Switch
-              disabled={form.formState.isSubmitting}
-              value={user?.isBeeping ?? false}
-              onValueChange={onToggleIsBeeping}
-              trackColor={{ true: "#3a82ef", false: "gray" }}
-              thumbColor="white"
-              // @ts-expect-error
-              activeThumbColor="white"
-            />
-          </View>
-        ),
-      });
-    }
-  }, [navigation, user?.isBeeping, form.formState.isSubmitting, payments]);
-
-  const toolbar = (
-    <>
-      <Stack.Toolbar placement="left">
-        {user?.isBeeping && (
-          <Stack.Toolbar.Menu icon="ellipsis">
-            <Stack.Toolbar.MenuAction
-              icon="xmark"
-              destructive
-              onPress={handleIsBeepingChange}
+    navigation.setOptions({
+      headerLeft: user?.isBeeping
+        ? () => <Menu trigger={<Elipsis />} options={headerLeftMenuOptions} />
+        : null,
+      unstable_headerLeftItems: () =>
+        user?.isBeeping
+          ? getNavigationMenuFromOptions(headerLeftMenuOptions)
+          : [],
+      unstable_headerRightItems: () =>
+        user?.isBeeping
+          ? [
+              {
+                type: "button",
+                label: "Queue",
+                onPress: () => router.push("/beep/queue"),
+                badge:
+                  queue && queue.length > 1
+                    ? {
+                        value: queue.length - 1,
+                      }
+                    : undefined,
+              },
+              ...(payments?.[0]
+                ? [
+                    {
+                      type: "button",
+                      label: "👑",
+                      onPress: () => {
+                        Alert.alert(
+                          "You are premium!",
+                          `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                        );
+                      },
+                    },
+                  ]
+                : []),
+            ]
+          : [],
+      headerRight: user?.isBeeping
+        ? () => (
+            <View
+              style={{
+                marginRight: 8,
+                display: "flex",
+                flexDirection: "row",
+                gap: 8,
+                alignItems: "center",
+              }}
             >
-              Stop Beeping
-            </Stack.Toolbar.MenuAction>
-            {!payments?.[0] && (
-              <Stack.Toolbar.MenuAction
-                icon="crown.fill"
-                onPress={() => router.push("/premium")}
-              >
-                Get Premium
-              </Stack.Toolbar.MenuAction>
-            )}
-          </Stack.Toolbar.Menu>
-        )}
-      </Stack.Toolbar>
-      <Stack.Toolbar placement="right">
-        {payments?.[0] && (
-          <Stack.Toolbar.Button
-            onPress={() =>
-              Alert.alert(
-                "You are premium!",
-                `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
-              )
-            }
-          >
-            👑
-          </Stack.Toolbar.Button>
-        )}
-        {user?.isBeeping && (
-          <Stack.Toolbar.Button onPress={() => router.push("/beep/queue")}>
-            <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
-            {queue && queue.length > 1 && (
-              <Stack.Toolbar.Badge>
-                {String(queue.length - 1)}
-              </Stack.Toolbar.Badge>
-            )}
-          </Stack.Toolbar.Button>
-        )}
-
-        {!user?.isBeeping && (
-          <Stack.Toolbar.Button
-            onPress={handleIsBeepingChange}
-            variant="prominent"
-            disabled={form.formState.isSubmitting}
-            tintColor={user?.isBeeping ? "red" : undefined}
-            // icon={user?.isBeeping ? "stop.fill" : "play.fill"}
-          >
-            {user?.isBeeping ? "Stop" : "Start"} Beeping
-          </Stack.Toolbar.Button>
-        )}
-      </Stack.Toolbar>
-    </>
-  );
+              <Link href="/beep/queue" asChild>
+                <Button>
+                  Queue{" "}
+                  {queue && queue.length > 1
+                    ? `(${String(queue.length - 1)})`
+                    : ""}
+                </Button>
+              </Link>
+              {payments?.[0] && (
+                <Text
+                  size="xl"
+                  onPress={() =>
+                    Alert.alert(
+                      "You are premium!",
+                      `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                    )
+                  }
+                >
+                  👑
+                </Text>
+              )}
+            </View>
+          )
+        : null,
+    });
+  }, [navigation, user?.isBeeping, payments, queue]);
 
   if (user?.isBeeping && queue?.[0]) {
-    return (
-      <>
-        {toolbar}
-        <Beep beep={queue[0]} />
-      </>
-    );
+    return <Beep beep={queue[0]} />;
   }
 
   if (user?.isBeeping && queue?.length === 0) {
@@ -273,7 +250,7 @@ export default function StartBeepingScreen() {
           gap: 8,
         }}
       >
-        {toolbar}
+        {/*{toolbar}*/}
         <Text size="2xl" weight="800">
           Waiting for riders
         </Text>
@@ -296,11 +273,9 @@ export default function StartBeepingScreen() {
 
   return (
     <KeyboardAwareScrollView
-      scrollEnabled={false}
       contentContainerStyle={{ paddingHorizontal: 16, gap: 16 }}
       contentInsetAdjustmentBehavior="automatic"
     >
-      {toolbar}
       <CarSelect />
       <Controller
         control={form.control}
@@ -370,6 +345,12 @@ export default function StartBeepingScreen() {
           </TextField>
         )}
       />
+      <Button
+        onPress={handleIsBeepingChange}
+        isLoading={form.formState.isSubmitting}
+      >
+        Start Beeping
+      </Button>
       {/* <Text size="sm" style={{ marginTop: 24, textAlign: 'center' }}>
         Use the toggle in the top right to start beeping
       </Text> */}

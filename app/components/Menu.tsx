@@ -37,6 +37,10 @@ export interface Option {
 
 export interface MenuProps {
   /**
+   * An accessible label for the trigger
+   */
+  label?: string;
+  /**
    * The trigger for the menu
    */
   trigger: React.ReactNode;
@@ -134,6 +138,7 @@ export const Menu = (props: MenuProps) => {
   return (
     <Component.Root>
       <Component.Trigger
+        aria-label={props.label}
         className={
           isWeb
             ? colorScheme === "dark"
