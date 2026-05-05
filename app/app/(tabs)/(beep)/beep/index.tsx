@@ -192,39 +192,65 @@ export default function StartBeepingScreen() {
   }, [navigation, user?.isBeeping, form.formState.isSubmitting, payments]);
 
   const toolbar = (
-    <Stack.Toolbar placement="right">
-      {payments?.[0] && (
-        <Stack.Toolbar.Button
-          onPress={() =>
-            Alert.alert(
-              "You are premium!",
-              `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
-            )
-          }
-        >
-          👑
-        </Stack.Toolbar.Button>
-      )}
-      {user?.isBeeping && (
-        <Stack.Toolbar.Button onPress={() => router.push("/beep/queue")}>
-          <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
-          {queue && queue.length > 1 && (
-            <Stack.Toolbar.Badge>
-              {String(queue.length - 1)}
-            </Stack.Toolbar.Badge>
-          )}
-        </Stack.Toolbar.Button>
-      )}
-      <Stack.Toolbar.Button
-        onPress={handleIsBeepingChange}
-        variant="prominent"
-        disabled={form.formState.isSubmitting}
-        tintColor={user?.isBeeping ? "red" : undefined}
-        // icon={user?.isBeeping ? "stop.fill" : "play.fill"}
-      >
-        {user?.isBeeping ? "Stop" : "Start"} Beeping
-      </Stack.Toolbar.Button>
-    </Stack.Toolbar>
+    <>
+      <Stack.Toolbar placement="left">
+        {user?.isBeeping && (
+          <Stack.Toolbar.Menu icon="ellipsis">
+            <Stack.Toolbar.MenuAction
+              icon="xmark"
+              destructive
+              onPress={handleIsBeepingChange}
+            >
+              Stop Beeping
+            </Stack.Toolbar.MenuAction>
+            {!payments?.[0] && (
+              <Stack.Toolbar.MenuAction
+                icon="crown.fill"
+                onPress={() => router.push("/profile/premium")}
+              >
+                Get Premium
+              </Stack.Toolbar.MenuAction>
+            )}
+          </Stack.Toolbar.Menu>
+        )}
+      </Stack.Toolbar>
+      <Stack.Toolbar placement="right">
+        {payments?.[0] && (
+          <Stack.Toolbar.Button
+            onPress={() =>
+              Alert.alert(
+                "You are premium!",
+                `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+              )
+            }
+          >
+            👑
+          </Stack.Toolbar.Button>
+        )}
+        {user?.isBeeping && (
+          <Stack.Toolbar.Button onPress={() => router.push("/beep/queue")}>
+            <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
+            {queue && queue.length > 1 && (
+              <Stack.Toolbar.Badge>
+                {String(queue.length - 1)}
+              </Stack.Toolbar.Badge>
+            )}
+          </Stack.Toolbar.Button>
+        )}
+
+        {!user?.isBeeping && (
+          <Stack.Toolbar.Button
+            onPress={handleIsBeepingChange}
+            variant="prominent"
+            disabled={form.formState.isSubmitting}
+            tintColor={user?.isBeeping ? "red" : undefined}
+            // icon={user?.isBeeping ? "stop.fill" : "play.fill"}
+          >
+            {user?.isBeeping ? "Stop" : "Start"} Beeping
+          </Stack.Toolbar.Button>
+        )}
+      </Stack.Toolbar>
+    </>
   );
 
   if (user?.isBeeping && queue?.[0]) {

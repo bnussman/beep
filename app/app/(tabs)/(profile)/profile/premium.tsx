@@ -97,6 +97,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
 
   return (
     <Card
+      variant="tertiary"
       style={{
         paddingHorizontal: 8,
         paddingVertical: 8,
