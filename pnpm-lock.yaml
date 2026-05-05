@@ -7,7 +7,6 @@ settings:
 overrides:
   react: 19.2.0
   react-dom: 19.2.0
-  '@expo/dom-webview': 55.0.5
 
 importers:
 
@@ -1482,7 +1481,7 @@ packages:
   '@expo/log-box@55.0.11':
     resolution: {integrity: sha512-JQHFLWkskIbJi6cxYMjErx8lQqfFJilDQLKmdTO3m3YkdmN9GE/CrzjOfVlCG0DGEGZJ90br0pGKvGPdXNsHKw==}
     peerDependencies:
-      '@expo/dom-webview': 55.0.5
+      '@expo/dom-webview': ^55.0.5
       expo: '*'
       react: 19.2.0
       react-native: '*'
@@ -1490,7 +1489,7 @@ packages:
   '@expo/log-box@55.0.12':
     resolution: {integrity: sha512-f9ARS8J60cq3LLNdIqmUjYwyerBzVS5Ecp7KjIf3GOIPjW0571rkcwLz4/U18l/1DeSkSzIkYsNl2TC9oTdWaQ==}
     peerDependencies:
-      '@expo/dom-webview': 55.0.5
+      '@expo/dom-webview': ^55.0.6
       expo: '*'
       react: 19.2.0
       react-native: '*'
@@ -4950,7 +4949,7 @@ packages:
     resolution: {integrity: sha512-b+lKwfzJzFiSm9G0wVGWw3c2YoZyubbl9gHOF1ZFuK8FqtxSge8pDDJMuEFmTi14dbKwh/tirB7MiORq54r7CQ==}
     hasBin: true
     peerDependencies:
-      '@expo/dom-webview': 55.0.5
+      '@expo/dom-webview': '*'
       '@expo/metro-runtime': '*'
       react: 19.2.0
       react-native: '*'
