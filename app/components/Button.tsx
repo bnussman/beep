@@ -1,127 +1,30 @@
 import {
-  Pressable,
-  PressableProps,
-  ActivityIndicator,
-  ActivityIndicatorProps,
-  PressableStateCallbackType,
-  ViewStyle,
-} from "react-native";
-import { Text } from "./Text";
-import { useTheme } from "@/utils/theme";
+  Button as HeroButton,
+  ButtonRootProps,
+  useThemeColor,
+} from "heroui-native";
+import { ActivityIndicator } from "react-native";
+import React from "react";
 
-const sizeMap = {
-  sm: 8,
-  md: 16,
-  lg: 24,
-};
-
-interface Props extends PressableProps {
+interface Props {
   /**
    * Shows a loading indicator instead of children
    */
   isLoading?: boolean;
-  /**
-   * Optional props to pass to the ActivityIndicator when `isLoading` is true
-   */
-  activityIndicatorProps?: ActivityIndicatorProps;
-  /**
-   * @default primary
-   */
-  variant?: "primary" | "secondary";
-  /**
-   * @default md
-   */
-  size?: "sm" | "md" | "lg";
-  /**
-   * The color of the button
-   * If no color is provided, the button will be a netral color
-   */
-  color?: "red" | "green";
 }
 
-export function Button(props: Props) {
-  const {
-    children,
-    isLoading,
-    variant = "primary",
-    size = "md",
-    color,
-    activityIndicatorProps,
-    ...rest
-  } = props;
+export function Button(props: Props & ButtonRootProps) {
+  const { children, isLoading, ...rest } = props;
 
-  const theme = useTheme();
+  const themeColorAccentForeground = useThemeColor("accent-foreground");
 
-  const getStyle = (state: PressableStateCallbackType): ViewStyle[] => {
-    const style = [
-      {
-        borderRadius: 50,
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: props.disabled ? "auto" : "pointer",
-        padding: sizeMap[size],
-      },
-    ] as ViewStyle[];
-
-    if (variant === "primary") {
-      style.push({
-        backgroundColor: theme.components.button.primary.backgroundColor,
-      });
-
-      if (state.pressed) {
-        style.push({
-          backgroundColor:
-            theme.components.button.primary.pressed.backgroundColor,
-        });
-      }
-    }
-
-    if (variant === "secondary") {
-      style.push({});
-
-      if (state.pressed) {
-        style.push({
-          backgroundColor:
-            theme.components.button.secondary.pressed.backgroundColor,
-        });
-      }
-    }
-
-    if (color === "red" || color === "green") {
-      style.push({
-        backgroundColor: theme.components.button[color].backgroundColor,
-        borderColor: theme.components.button[color].borderColor,
-        borderWidth: 1,
-      });
-
-      if (state.pressed) {
-        style.push({
-          backgroundColor:
-            theme.components.button[color].pressed.backgroundColor,
-        });
-      }
-    }
-
-    return style;
-  };
   return (
-    <Pressable
-      accessibilityRole="button"
-      {...rest}
-      style={(state) => [
-        ...getStyle(state),
-        typeof rest.style === "function" ? rest.style(state) : rest.style,
-      ]}
-    >
+    <HeroButton {...rest}>
       {isLoading ? (
-        <ActivityIndicator {...activityIndicatorProps} />
-      ) : typeof children === "string" ? (
-        <Text weight="600">
-          {children}
-        </Text>
+        <ActivityIndicator color={themeColorAccentForeground} />
       ) : (
         children
       )}
-    </Pressable>
+    </HeroButton>
   );
 }

@@ -25,7 +25,7 @@ const apiImageResource = new docker.Image("apiImageResource", {
 });
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
-  kubeconfig: env.KUBECONFIG,
+  kubeconfig: pulumi.secret(env.KUBECONFIG),
 });
 
 const namespace = new k8s.core.v1.Namespace(
@@ -66,7 +66,7 @@ const apiIngress = new k8s.networking.v1.Ingress(
       rules: [
         {
           host:
-            envName === "production" || envName === "production-homelab"
+            envName === "production"
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
           http: {

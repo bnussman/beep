@@ -6,7 +6,7 @@
   },
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "concurrently --raw \"pnpm --filter @beep/app dev\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
+    "dev": "pnpm --filter \"*\" --stream --color dev",
     "start:api": "pnpm --filter @beep/api start",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
@@ -23,7 +23,6 @@
     "node": "24.3.0"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
     "typescript": "^5.9.2"
   }
 }

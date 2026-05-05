@@ -50,7 +50,6 @@ export default function Feedback() {
       scrollEnabled={false}
     >
       <Card
-        pressable
         onPress={() =>
           Linking.openURL(
             "https://apps.apple.com/us/app/ride-beep-app/id1528601773",

@@ -16,7 +16,7 @@ import { Polyline } from "@/components/Polyline";
 import { isMobile, isWeb } from "@/utils/constants";
 import { Menu } from "@/components/Menu";
 import { Elipsis } from "@/components/Elipsis";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { printStars } from "../Stars";
 import {
@@ -27,6 +27,7 @@ import {
   openVenmo,
   sms,
 } from "../../utils/links";
+import { Separator, Surface } from "heroui-native";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -35,6 +36,7 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
+  const router = useRouter();
   const trpc = useTRPC();
 
   const { data: beepRoute } = useQuery(
@@ -113,31 +115,52 @@ export function Beep(props: Props) {
   };
 
   return (
-    <SafeAreaView style={{ padding: 16, gap: 18, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
-      <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id, beepId: beep.id } }} asChild>
-        <Link.Trigger>
-          <Pressable>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <View style={{ flexShrink: 1 }}>
-                <Text weight="800" size="2xl">
-                  {beep.rider.first} {beep.rider.last}
-                </Text>
-                {beep.rider.rating && (
-                  <Text size="xs">
-                    {printStars(Number(beep.rider.rating))}
+    <SafeAreaView
+      style={{
+        padding: 16,
+        gap: 16,
+        height: "100%",
+        paddingBottom: isWeb ? 64 : 12,
+        paddingTop: 56,
+      }}
+    >
+      <Surface className="gap-4">
+        <Link
+          href={{
+            pathname: "/user/[id]",
+            params: { id: beep.rider.id, beepId: beep.id },
+          }}
+          asChild
+        >
+          <Link.Trigger>
+            <Pressable>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <View style={{ flexShrink: 1 }}>
+                  <Text weight="800" size="xl">
+                    {beep.rider.first} {beep.rider.last}
                   </Text>
-                )}
+                  {/*{beep.rider.rating && (
+                    <Text size="xs">
+                      {printStars(Number(beep.rider.rating))}
+                    </Text>
+                  )}*/}
+                </View>
+                <Avatar size="sm" src={beep.rider.photo ?? undefined} />
               </View>
-              <Avatar size="md" src={beep.rider.photo ?? undefined} />
-            </View>
-          </Pressable>
-        </Link.Trigger>
-      </Link>
-      <View style={{ flexDirection: "row", flexShrink: 1  }}>
+            </Pressable>
+          </Link.Trigger>
+        </Link>
+        <Separator />
         <Pressable
           onPress={() => openMaps(beep.origin)}
           onLongPress={() => null}
-          style={{ width: '50%', gap: 4 }}
+          style={{ width: "50%", gap: 4 }}
         >
           <Text weight="800">Pick Up</Text>
           <Text style={{ flexShrink: 1 }} selectable>
@@ -147,48 +170,58 @@ export function Beep(props: Props) {
         <Pressable
           onPress={() => openMaps(beep.destination)}
           onLongPress={() => null}
-          style={{ width: '50%', gap: 4 }}
+          style={{ width: "50%", gap: 4 }}
         >
           <Text weight="800">Drop Off</Text>
           <Text style={{ flexShrink: 1 }} selectable>
             {beep.destination}
           </Text>
         </Pressable>
-      </View>
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ width: '50%', gap: 4 }}>
-          <Text weight="800">Group Size</Text>
-          <Text>{beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}</Text>
-        </View>
-        <View style={{ gap: 4 }}>
-          <Text weight="800">Started at</Text>
-          <Text>
-            {new Date(beep.start).toLocaleTimeString(undefined, {
-              timeStyle: "short",
-            })}
-          </Text>
-        </View>
-      </View>
-      {route && (
+        <Separator />
         <View style={{ flexDirection: "row" }}>
-          <View style={{ flexShrink: 1, justifyContent: "center", gap: 4, width: '50%' }}>
-            <Text weight="bold" style={{ flexShrink: 1 }}>
-              Duration
-            </Text>
-            <Text style={{ flexShrink: 1 }}>
-              {Math.round(route.duration / 60)} min
+          <View style={{ width: "50%", gap: 4 }}>
+            <Text weight="800">Group Size</Text>
+            <Text>
+              {beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}
             </Text>
           </View>
-          <View style={{ flexShrink: 1, justifyContent: "center", gap: 4 }}>
-            <Text weight="bold" style={{ flexShrink: 1 }}>
-              Distance
-            </Text>
-            <Text style={{ flexShrink: 1 }}>
-              {Math.round(route.distance * 0.000621371)} miles
+          <View style={{ gap: 4 }}>
+            <Text weight="800">Started at</Text>
+            <Text>
+              {new Date(beep.start).toLocaleTimeString(undefined, {
+                timeStyle: "short",
+              })}
             </Text>
           </View>
         </View>
-      )}
+        {route && (
+          <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                flexShrink: 1,
+                justifyContent: "center",
+                gap: 4,
+                width: "50%",
+              }}
+            >
+              <Text weight="bold" style={{ flexShrink: 1 }}>
+                Duration
+              </Text>
+              <Text style={{ flexShrink: 1 }}>
+                {Math.round(route.duration / 60)} min
+              </Text>
+            </View>
+            <View style={{ flexShrink: 1, justifyContent: "center", gap: 4 }}>
+              <Text weight="bold" style={{ flexShrink: 1 }}>
+                Distance
+              </Text>
+              <Text style={{ flexShrink: 1 }}>
+                {Math.round(route.distance * 0.000621371)} miles
+              </Text>
+            </View>
+          </View>
+        )}
+      </Surface>
       <View style={{ flexGrow: 1 }}>
         {polylineCoordinates && origin && destination && (
           <Map
@@ -221,28 +254,31 @@ export function Beep(props: Props) {
       </View>
       <View style={{ flexDirection: "row", gap: 8 }}>
         <Menu
+          label="Beeper actions"
           trigger={
-            isWeb ?
-              <Elipsis /> :
-              <Button
-                style={{ paddingHorizontal: 16, paddingVertical: 6 }}
-                size="md"
-              >
-                <Elipsis />
-              </Button>
+            <Button
+              style={{ paddingHorizontal: 16, paddingVertical: 6 }}
+              size="md"
+              variant="tertiary"
+            >
+              <Elipsis />
+            </Button>
           }
           options={[
             {
               title: "Contact",
+              sfIcon: "phone.fill",
               show: beep.status !== "waiting",
               options: [
                 {
                   title: "Call",
+                  sfIcon: "phone.fill",
                   show: beep.status !== "waiting",
                   onClick: () => call(beep.rider.id),
                 },
                 {
                   title: "Text",
+                  sfIcon: "message.fill",
                   show: beep.status !== "waiting",
                   onClick: () => sms(beep.rider.id),
                 },
@@ -250,23 +286,29 @@ export function Beep(props: Props) {
             },
             {
               title: "Directions",
+              sfIcon: "map.fill",
               options: [
                 {
                   title: "Directions to Rider",
-                  onClick: () => openDirections("Current+Location", beep.origin),
+                  sfIcon: "figure.wave",
+                  onClick: () =>
+                    openDirections("Current+Location", beep.origin),
                 },
                 {
                   title: "Directions for Beep",
+                  sfIcon: "map.fill",
                   onClick: () => openDirections(beep.origin, beep.destination),
                 },
               ],
             },
             {
               title: "Request Money",
+              sfIcon: "dollarsign",
               show: beep.status === "here" || beep.status === "in_progress",
               options: [
                 {
                   title: "Venmo",
+                  sfIcon: "creditcard.fill",
                   show: Boolean(beep.rider.venmo),
                   onClick: () =>
                     openVenmo(
@@ -279,6 +321,7 @@ export function Beep(props: Props) {
                 },
                 {
                   title: "Cash App",
+                  sfIcon: "dollarsign",
                   show: Boolean(beep.rider.cashapp),
                   onClick: () =>
                     openCashApp(
@@ -291,7 +334,18 @@ export function Beep(props: Props) {
               ],
             },
             {
+              title: "Report",
+              sfIcon: "exclamationmark.bubble.fill",
+              onClick: () =>
+                router.push({
+                  pathname: "/user/[id]/report",
+                  params: { id: beep.rider.id, beepId: beep.id },
+                }),
+              show: beep.status !== "waiting" && beep.status !== "in_progress",
+            },
+            {
               title: "Cancel Beep",
+              sfIcon: "xmark",
               onClick: onPress,
               destructive: true,
               show: beep.status !== "waiting" && beep.status !== "in_progress",

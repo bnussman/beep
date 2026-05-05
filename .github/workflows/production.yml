@@ -18,15 +18,15 @@ jobs:
       name: production
       url: https://ridebeep.app
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: latest
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           cache: pnpm
           node-version: latest
@@ -34,7 +34,7 @@ jobs:
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
-      - uses: pulumi/actions@v4
+      - uses: pulumi/actions@v6
         with:
           command: up
           stack-name: production
@@ -48,12 +48,12 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
         with:
           version: latest
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           cache: pnpm
           node-version: latest

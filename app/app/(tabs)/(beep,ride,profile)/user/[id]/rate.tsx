@@ -15,7 +15,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function RateScreen() {
   const trpc = useTRPC();
-  const { id, beepId } = useLocalSearchParams<{ id: string, beepId: string }>();
+  const { id, beepId } = useLocalSearchParams<{ id: string; beepId: string }>();
 
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
@@ -23,9 +23,7 @@ export default function RateScreen() {
   const { back } = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: user } = useQuery(
-    trpc.user.publicUser.queryOptions(id),
-  );
+  const { data: user } = useQuery(trpc.user.publicUser.queryOptions(id));
 
   const { mutateAsync: rate, isPending } = useMutation(
     trpc.rating.createRating.mutationOptions({
@@ -57,7 +55,10 @@ export default function RateScreen() {
   }
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
+    <KeyboardAwareScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ padding: 16, gap: 16 }}
+    >
       <View
         style={{
           display: "flex",
@@ -86,7 +87,7 @@ export default function RateScreen() {
           style={{ height: 100 }}
         />
       </View>
-      <Button onPress={onSubmit} disabled={stars < 1} isLoading={isPending}>
+      <Button onPress={onSubmit} isDisabled={stars < 1} isLoading={isPending}>
         Rate User
       </Button>
     </KeyboardAwareScrollView>

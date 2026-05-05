@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
-import { Text } from "@/components/Text";
+import { LocationIcon } from "./LocationIcon";
 import {
   ActivityIndicator,
   Pressable,
@@ -9,7 +9,6 @@ import {
   TextInputProps,
   View,
 } from "react-native";
-import { LocationIcon } from "./LocationIcon";
 
 interface Props extends TextInputProps {
   ref: React.Ref<TextInput>;

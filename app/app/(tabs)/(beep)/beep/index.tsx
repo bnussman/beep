@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, View, Switch, ActivityIndicator} from "react-native";
+import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTimeRemainingString } from "@/components/CountDown";
-import { isAndroid, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS, isWeb } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
@@ -25,7 +25,11 @@ import {
 import { Button } from "@/components/Button";
 import { MoneyInput } from "@/components/MoneyInput";
 import { CarSelect } from "@/components/CarSelect";
-import { useActivePayments } from "../../(profile)/profile/premium";
+import { useActivePayments } from "../../(beep,ride,profile)/premium";
+import { Description, FieldError, TextField } from "heroui-native";
+import { Menu, Option } from "@/components/Menu";
+import { Elipsis } from "@/components/Elipsis";
+import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -34,7 +38,6 @@ export default function StartBeepingScreen() {
   const queryClient = useQueryClient();
 
   const { user } = useUser();
-
 
   const form = useForm({
     values: {
@@ -52,7 +55,7 @@ export default function StartBeepingScreen() {
     }),
   );
 
-  const { mutate: updateBeepSettings } = useMutation(
+  const { mutateAsync: updateBeepSettings } = useMutation(
     trpc.user.edit.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.user.me.queryKey(), data);
@@ -122,7 +125,7 @@ export default function StartBeepingScreen() {
       };
     }
 
-    updateBeepSettings({
+    await updateBeepSettings({
       isBeeping: willBeBeeping,
       ...values,
       location,
@@ -141,91 +144,99 @@ export default function StartBeepingScreen() {
     }
   }, [user?.isBeeping]);
 
+  const headerLeftMenuOptions: Option[] = [
+    {
+      title: "Stop Beeping",
+      destructive: true,
+      sfIcon: "xmark",
+      onClick: handleIsBeepingChange,
+    },
+    {
+      title: "Get Premium",
+      sfIcon: "crown.fill",
+      onClick: () => router.navigate("/premium"),
+    },
+  ];
 
   React.useLayoutEffect(() => {
-    if (isAndroid || isWeb) {
-      navigation.setOptions({
-        headerRight: () => (
-          <View
-            style={{
-              marginRight: 8,
-              display: "flex",
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-            }}
-          >
-            <Link href="/beep/queue" asChild>
-              <Link.Trigger>
+    navigation.setOptions({
+      headerLeft: user?.isBeeping
+        ? () => <Menu trigger={<Elipsis />} options={headerLeftMenuOptions} />
+        : null,
+      unstable_headerLeftItems: () =>
+        user?.isBeeping
+          ? getNavigationMenuFromOptions(headerLeftMenuOptions)
+          : [],
+      unstable_headerRightItems: () =>
+        user?.isBeeping
+          ? [
+              {
+                type: "button",
+                label: "Queue",
+                onPress: () => router.push("/beep/queue"),
+                badge:
+                  queue && queue.length > 1
+                    ? {
+                        value: queue.length - 1,
+                      }
+                    : undefined,
+              },
+              ...(payments?.[0]
+                ? [
+                    {
+                      type: "button",
+                      label: "👑",
+                      onPress: () => {
+                        Alert.alert(
+                          "You are premium!",
+                          `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                        );
+                      },
+                    },
+                  ]
+                : []),
+            ]
+          : [],
+      headerRight: user?.isBeeping
+        ? () => (
+            <View
+              style={{
+                marginRight: 8,
+                display: "flex",
+                flexDirection: "row",
+                gap: 8,
+                alignItems: "center",
+              }}
+            >
+              <Link href="/beep/queue" asChild>
                 <Button>
-                  <Text>
-                    Queue {queue && queue.length > 1 ? `(${String(queue.length - 1)})` : ''}
-                  </Text>
+                  Queue{" "}
+                  {queue && queue.length > 1
+                    ? `(${String(queue.length - 1)})`
+                    : ""}
                 </Button>
-              </Link.Trigger>
-            </Link>
-            {payments?.[0] && (
-              <Text
-                size="xl"
-                onPress={() =>
-                  Alert.alert(
-                    "You are premium!",
-                    `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
-                  )
-                }
-              >
-                👑
-              </Text>
-            )}
-            {form.formState.isSubmitting && <ActivityIndicator size="small" />}
-            <Switch
-              disabled={form.formState.isSubmitting}
-              value={user?.isBeeping ?? false}
-              onValueChange={onToggleIsBeeping}
-            />
-          </View>
-        ),
-      });
-    }
-  }, [navigation, user?.isBeeping, form.formState.isSubmitting, payments]);
-
-  const toolbar = (
-    <Stack.Toolbar placement="right">
-      {payments?.[0] && (
-        <Stack.Toolbar.Button onPress={() =>
-          Alert.alert(
-            "You are premium!",
-            `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+              </Link>
+              {payments?.[0] && (
+                <Text
+                  size="xl"
+                  onPress={() =>
+                    Alert.alert(
+                      "You are premium!",
+                      `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                    )
+                  }
+                >
+                  👑
+                </Text>
+              )}
+            </View>
           )
-        }>
-          👑
-        </Stack.Toolbar.Button>
-      )}
-      {user?.isBeeping && (
-        <Stack.Toolbar.Button onPress={() => router.push('/beep/queue')}>
-          <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
-          {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
-        </Stack.Toolbar.Button>
-      )}
-      <Stack.Toolbar.Button
-        onPress={handleIsBeepingChange}
-        variant="prominent"
-        disabled={form.formState.isSubmitting}
-        tintColor={user?.isBeeping ? "red" : undefined}
-        // icon={user?.isBeeping ? "stop.fill" : "play.fill"}
-      >
-        {user?.isBeeping ? "Stop" : "Start"} Beeping
-      </Stack.Toolbar.Button>
-    </Stack.Toolbar>
-  );
+        : null,
+    });
+  }, [navigation, user?.isBeeping, payments, queue]);
 
   if (user?.isBeeping && queue?.[0]) {
-    return (
-      <>
-        {toolbar}
-        <Beep beep={queue[0]} />
-      </>
-    );
+    return <Beep beep={queue[0]} />;
   }
 
   if (user?.isBeeping && queue?.length === 0) {
@@ -239,7 +250,7 @@ export default function StartBeepingScreen() {
           gap: 8,
         }}
       >
-        {toolbar}
+        {/*{toolbar}*/}
         <Text size="2xl" weight="800">
           Waiting for riders
         </Text>
@@ -249,117 +260,100 @@ export default function StartBeepingScreen() {
             paddingLeft: 8,
             paddingRight: 8,
             marginBottom: 16,
-            maxWidth: '90%'
+            maxWidth: "90%",
           }}
         >
           If a rider wants a ride, it will appear here. If your app is closed,
           you will receive a push notification.
         </Text>
-        {!payments || payments?.length === 0 && (
-          <PremiumBanner />
-        )}
+        {!payments || (payments?.length === 0 && <PremiumBanner />)}
       </View>
     );
   }
 
   return (
     <KeyboardAwareScrollView
-      scrollEnabled={false}
       contentContainerStyle={{ paddingHorizontal: 16, gap: 16 }}
       contentInsetAdjustmentBehavior="automatic"
     >
-      {toolbar}
       <CarSelect />
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="capacity">Max Rider Capacity</Label>
-        <Controller
-          control={form.control}
-          name="capacity"
-          render={({ field, fieldState }) => (
-            <>
-              <Input
-                id="capacity"
-                placeholder="Max Capacity"
-                inputMode="numeric"
-                ref={field.ref}
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(Number(value))}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => form.setFocus("singlesRate")}
-              />
-              <Text color="subtle" size="sm">
-                Maximum number of riders you can safely fit in your car
-              </Text>
-              <Text size="sm" color="error">
-                {fieldState.error?.message}
-              </Text>
-            </>
-          )}
-        />
-      </View>
-
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="singles">Singles Rate</Label>
-        <Controller
-          control={form.control}
-          name="singlesRate"
-          render={({ field, fieldState }) => (
-            <>
-              <MoneyInput
-                id="singles"
-                placeholder="Singles Rate"
-                keyboardType="numeric"
-                ref={field.ref}
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(Number(value))}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => form.setFocus("groupRate")}
-              />
-              <Text color="subtle" size="sm">
-                Price for a single person riding alone
-              </Text>
-              <Text size="sm" color="error">
-                {fieldState.error?.message}
-              </Text>
-            </>
-          )}
-        />
-      </View>
-
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="groups">Group Rate</Label>
-        <Controller
-          control={form.control}
-          name="groupRate"
-          render={({ field, fieldState }) => (
-            <>
-              <MoneyInput
-                id="groups"
-                placeholder="Group Rate"
-                keyboardType="numeric"
-                ref={field.ref}
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(Number(value))}
-                returnKeyLabel="Start Beeping"
-                returnKeyType="go"
-                onSubmitEditing={() => handleIsBeepingChange()}
-              />
-              <Text color="subtle" size="sm">
-                Price per person in a group
-              </Text>
-              <Text size="sm" color="error">
-                {fieldState.error?.message}
-              </Text>
-            </>
-          )}
-        />
-      </View>
+      <Controller
+        control={form.control}
+        name="capacity"
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="capacity">Max Rider Capacity</Label>
+            <Input
+              id="capacity"
+              placeholder="Max Capacity"
+              inputMode="numeric"
+              ref={field.ref}
+              value={String(field.value)}
+              onChangeText={(value) => field.onChange(Number(value))}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus("singlesRate")}
+            />
+            <Description>
+              Maximum number of riders you can safely fit in your car
+            </Description>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="singlesRate"
+        render={({ field, fieldState }) => (
+          <TextField>
+            <Label htmlFor="singles">Singles Rate</Label>
+            <MoneyInput
+              id="singles"
+              placeholder="Singles Rate"
+              keyboardType="numeric"
+              ref={field.ref}
+              value={String(field.value)}
+              onChangeText={(value) => field.onChange(Number(value))}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => form.setFocus("groupRate")}
+            />
+            <Description>Price for a single person riding alone</Description>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="groupRate"
+        render={({ field, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="groups">Group Rate</Label>
+            <MoneyInput
+              id="groups"
+              placeholder="Group Rate"
+              keyboardType="numeric"
+              ref={field.ref}
+              value={String(field.value)}
+              onChangeText={(value) => field.onChange(Number(value))}
+              returnKeyLabel="Start Beeping"
+              returnKeyType="go"
+              onSubmitEditing={() => handleIsBeepingChange()}
+            />
+            <Description>Price per person in a group</Description>
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Button
+        onPress={handleIsBeepingChange}
+        isLoading={form.formState.isSubmitting}
+      >
+        Start Beeping
+      </Button>
       {/* <Text size="sm" style={{ marginTop: 24, textAlign: 'center' }}>
         Use the toggle in the top right to start beeping
       </Text> */}
     </KeyboardAwareScrollView>
   );
 }
-

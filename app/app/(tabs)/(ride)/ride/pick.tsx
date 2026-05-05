@@ -13,7 +13,6 @@ import { printStars } from "@/components/Stars";
 import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException, captureMessage } from "@sentry/react-native";
-import { isIOS } from "@/utils/constants";
 import { getContentContainerStyle } from "@/utils/styles";
 
 export default function PickBeepScreen() {
@@ -100,7 +99,7 @@ export default function PickBeepScreen() {
     index: number;
   }) => {
     return (
-      <Card onPress={() => chooseBeep(item.id)} pressable>
+      <Card onPress={() => chooseBeep(item.id)}>
         <View
           style={{
             flexDirection: "row",

@@ -11,16 +11,16 @@ export interface RateBarProps {
 
 export const RateBar = (props: RateBarProps) => {
   return (
-    <View style={{ flexDirection: 'row', gap: 8 }}>
+    <View style={{ flexDirection: "row", gap: 8 }}>
       {[1, 2, 3, 4, 5].map((value) => {
         const isSelected = value <= props.value;
 
         return (
           <Button
             key={value}
-            variant="primary"
+            variant="tertiary"
             onPress={() => props.onValueChange(value)}
-            style={{ padding: 8 }}
+            style={{ padding: 4 }}
           >
             <Text>{isSelected ? "⭐" : "⚪"}</Text>
           </Button>

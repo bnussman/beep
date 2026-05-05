@@ -1,16 +1,14 @@
-import { Avatar } from "@/components/Avatar";
-import { Card } from "@/components/Card";
-import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
-import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { Alert, PressableFeedback } from "heroui-native";
 
 export function RateLastBeeper() {
   const trpc = useTRPC();
-  const { user } = useUser();
   const router = useRouter();
+
+  const { user } = useUser();
   const { data: beep } = useQuery(trpc.rider.getLastBeepToRate.queryOptions());
 
   if (!beep) {
@@ -20,30 +18,27 @@ export function RateLastBeeper() {
   const otherUser = user?.id === beep?.rider_id ? beep.beeper : beep.rider;
 
   return (
-    <Card
-      pressable
+    <PressableFeedback
+      className="w-full overflow-auto"
       onPress={() =>
-        router.push({
-          pathname: '/user/[id]/rate',
-          params: {
-            id: otherUser.id,
-            beepId: beep.id,
-          }
+        router.navigate({
+          pathname: "/user/[id]/rate",
+          params: { id: otherUser.id, beepId: beep.id },
         })
       }
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-      }}
     >
-      <Text style={{ flexShrink: 1 }}>
-        Rate Your Last Beep with <Text weight="800">{otherUser.first}</Text>
-      </Text>
-      <Avatar src={otherUser.photo ?? undefined} size="sm" />
-    </Card>
+      <Alert status="default">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>
+            Rate {otherUser.first} {otherUser.last}
+          </Alert.Title>
+          <Alert.Description>
+            You recently had a beep with {otherUser.first}. Tap here to rate
+            them!
+          </Alert.Description>
+        </Alert.Content>
+      </Alert>
+    </PressableFeedback>
   );
 }

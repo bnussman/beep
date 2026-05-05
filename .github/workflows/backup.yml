@@ -15,7 +15,7 @@ jobs:
           authkey: ${{ secrets.TS_AUTHKEY }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install PostgreSQL client
         run: sudo apt install -y postgresql-client jq s3cmd

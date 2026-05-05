@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { View } from "react-native";
+import { Button } from "@/components/Button";
+import { TextField } from "heroui-native";
 
 export default function ForgotPasswordScreen() {
   const trpc = useTRPC();
@@ -28,7 +29,7 @@ export default function ForgotPasswordScreen() {
       scrollEnabled={false}
       contentContainerStyle={{ padding: 16, gap: 8 }}
     >
-      <View style={{ gap: 4 }}>
+      <TextField>
         <Label>Email</Label>
         <Input
           textContentType="emailAddress"
@@ -37,13 +38,9 @@ export default function ForgotPasswordScreen() {
           onChangeText={(text) => setEmail(text)}
           onSubmitEditing={() => sendForgotEmail({ email })}
         />
-      </View>
-      <Button
-        isLoading={isPending}
-        disabled={!email}
-        onPress={() => sendForgotEmail({ email })}
-      >
-        Send Password Reset Email
+      </TextField>
+      <Button isLoading={isPending} isDisabled={!email}>
+        Click me
       </Button>
     </KeyboardAwareScrollView>
   );

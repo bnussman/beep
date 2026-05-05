@@ -41,7 +41,7 @@ function User() {
 
   const {
     data: user,
-    isLoading,
+    isPending,
     error,
   } = useQuery(trpc.user.user.queryOptions(userId));
 
@@ -138,7 +138,7 @@ function User() {
     return <Alert severity="error">{error.message}</Alert>;
   }
 
-  if (isLoading || !user) {
+  if (isPending) {
     return <Loading />;
   }
 
@@ -180,13 +180,18 @@ function User() {
           flexWrap="wrap"
           justifyContent="flex-end"
         >
-          <Link to="/admin/users/$userId/edit" params={{ userId }}>
-            <Button variant="contained">Edit</Button>
-          </Link>
+          <Button
+            LinkComponent={Link}
+            href={`/admin/users/${user.id}/edit`}
+            variant="contained"
+            size="small"
+          >
+            Edit
+          </Button>
           {!user.isEmailVerified && (
             <Button
-              color="success"
               variant="contained"
+              size="small"
               onClick={onVerify}
               loading={isVerifyLoading}
             >
@@ -195,30 +200,39 @@ function User() {
           )}
           <Button
             variant="contained"
+            size="small"
             onClick={() => setIsSendNotificationOpen(true)}
           >
             Send Notification
           </Button>
           <Button
             variant="contained"
+            size="small"
             onClick={onSyncPayments}
             loading={isSyncingPayments}
           >
             Sync Payments
           </Button>
-          <Button variant="contained" onClick={() => setIsClearOpen(true)}>
-            Clear Queue
-          </Button>
           <Button
             variant="contained"
-            onClick={() => sendTestEmail({ userId })}
-            color="warning"
-            loading={isSendingTestEmail}
+            size="small"
+            onClick={() => setIsClearOpen(true)}
           >
-            Send Test Email
+            Clear Queue
           </Button>
+          {user.role === "admin" && (
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => sendTestEmail({ userId })}
+              loading={isSendingTestEmail}
+            >
+              Send Test Email
+            </Button>
+          )}
           <Button
             color="error"
+            size="small"
             variant="contained"
             onClick={() => setIsDeleteOpen(true)}
           >

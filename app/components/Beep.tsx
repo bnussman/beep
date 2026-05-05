@@ -42,6 +42,9 @@ export function Beep({ item }: Props) {
       onSuccess() {
         queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
         queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries(
+          trpc.rider.getLastBeepToRate.queryFilter(),
+        );
       },
     }),
   );
@@ -50,23 +53,27 @@ export function Beep({ item }: Props) {
     <Menu
       options={[
         {
-          title: 'Profile',
-          onClick: () => router.navigate({ pathname: '/user/[id]', params: { id: otherUser.id, beepId: item.id } }),
-          sfIcon: 'person.crop.circle',
+          title: "Profile",
+          onClick: () =>
+            router.navigate({
+              pathname: "/user/[id]",
+              params: { id: otherUser.id, beepId: item.id },
+            }),
+          sfIcon: "person.crop.circle",
         },
         {
           title: "Contact",
-          sfIcon: 'phone.fill',
+          sfIcon: "phone.fill",
           options: [
             {
               onClick: () => call(otherUser.id),
-              sfIcon: 'phone.fill',
+              sfIcon: "phone.fill",
               title: "Call",
               show: isAcceptedOrComplete,
             },
             {
               onClick: () => sms(otherUser.id),
-              sfIcon: 'message.fill',
+              sfIcon: "message.fill",
               title: "Text",
               show: isAcceptedOrComplete,
             },
@@ -75,12 +82,12 @@ export function Beep({ item }: Props) {
         {
           title: "Pay",
           show: isRider && isAcceptedOrComplete,
-          sfIcon: 'dollarsign',
+          sfIcon: "dollarsign",
           options: [
             {
               title: "Venmo",
               show: Boolean(item.beeper.venmo),
-              sfIcon: 'creditcard',
+              sfIcon: "creditcard",
               onClick: () =>
                 openVenmo(
                   item.beeper.venmo,
@@ -93,7 +100,7 @@ export function Beep({ item }: Props) {
             {
               title: "Cash App",
               show: Boolean(item.beeper.cashapp),
-              sfIcon: 'dollarsign',
+              sfIcon: "dollarsign",
               onClick: () =>
                 openCashApp(
                   item.beeper.cashapp,
@@ -102,17 +109,17 @@ export function Beep({ item }: Props) {
                   item.beeper.singlesRate,
                 ),
             },
-          ]
+          ],
         },
         {
           title: "Charge",
-          sfIcon: 'dollarsign',
+          sfIcon: "dollarsign",
           show: isBeeper && isAcceptedOrComplete,
           options: [
             {
               title: "Venmo",
               show: Boolean(item.rider.venmo),
-              sfIcon: 'creditcard',
+              sfIcon: "creditcard",
               onClick: () =>
                 openVenmo(
                   item.rider.venmo,
@@ -125,7 +132,7 @@ export function Beep({ item }: Props) {
             {
               title: "Cash App",
               show: Boolean(item.rider.cashapp),
-              sfIcon: 'dollarsign',
+              sfIcon: "dollarsign",
               onClick: () =>
                 openCashApp(
                   item.rider.cashapp,
@@ -134,22 +141,30 @@ export function Beep({ item }: Props) {
                   item.beeper.singlesRate,
                 ),
             },
-          ]
+          ],
         },
         {
           title: "Rate",
           show: !myRating && item.status === "complete", // only allow rating if you haven't already left a rating and the beep is complete
-          sfIcon: 'star.fill',
-          onClick: () => router.navigate({ pathname: '/user/[id]/rate', params: { id: otherUser.id, beepId: item.id } }),
+          sfIcon: "star.fill",
+          onClick: () =>
+            router.navigate({
+              pathname: "/user/[id]/rate",
+              params: { id: otherUser.id, beepId: item.id },
+            }),
         },
         {
           title: "Report",
-          sfIcon: 'exclamationmark.bubble.fill',
-          onClick: () => router.navigate({ pathname: '/user/[id]/report', params: { id: otherUser.id, beepId: item.id } }),
+          sfIcon: "exclamationmark.bubble.fill",
+          onClick: () =>
+            router.navigate({
+              pathname: "/user/[id]/report",
+              params: { id: otherUser.id, beepId: item.id },
+            }),
         },
         {
           onClick: () => deleteRating({ ratingId: myRating!.id }),
-          sfIcon: 'trash',
+          sfIcon: "trash",
           show: Boolean(myRating),
           destructive: true,
           title: "Delete Rating",
@@ -157,14 +172,15 @@ export function Beep({ item }: Props) {
       ]}
       activationMethod="longPress"
       trigger={
-        <Link href={{ pathname: '/profile/beeps/[id]', params: { id: item.id } }} asChild>
+        <Link
+          href={{ pathname: "/profile/beeps/[id]", params: { id: item.id } }}
+          asChild
+        >
           <Link.Trigger withAppleZoom>
-            <Card
-              style={{ padding: 16, gap: 8 }}
-              pressable
-              onLongPress={() => { }}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Card style={{ padding: 16, gap: 8 }} onLongPress={() => null}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+              >
                 <Avatar size="xs" src={otherUser.photo ?? undefined} />
                 <View style={{ flexShrink: 1 }}>
                   <Text weight="bold" size="lg">
@@ -207,7 +223,10 @@ export function Beep({ item }: Props) {
                   </Text>
                 </View>
                 <View
-                  style={{ flexDirection: "row", justifyContent: "space-between" }}
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
                 >
                   <Text weight="bold">Group size</Text>
                   <Text>{item.groupSize}</Text>
@@ -221,7 +240,9 @@ export function Beep({ item }: Props) {
                       }}
                     >
                       <Text weight="bold">Your Rating</Text>
-                      <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
+                      <Text>
+                        {myRating ? printStars(myRating.stars) : "N/A"}
+                      </Text>
                     </View>
                     <View
                       style={{

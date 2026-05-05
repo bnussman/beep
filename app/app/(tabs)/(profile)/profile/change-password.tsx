@@ -66,7 +66,7 @@ export default function ChangePasswordScreen() {
       </View>
       <Button
         onPress={handlePasswordChange}
-        disabled={!password || password !== confirmPassword}
+        isDisabled={!password || password !== confirmPassword}
         isLoading={isPending}
       >
         Change Password

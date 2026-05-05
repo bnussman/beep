@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "./Button";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { Alert, PressableProps } from "react-native";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -61,6 +60,7 @@ export function AcceptDenyButton(props: Props) {
     <Button
       isLoading={isPending}
       onPress={isAccept ? onSubmit : onConfirm}
+      variant={isAccept ? "primary" : "danger-soft"}
       style={props.style}
     >
       {isAccept ? "Accept" : "Deny"}

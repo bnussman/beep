@@ -97,6 +97,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
 
   return (
     <Card
+      variant="tertiary"
       style={{
         paddingHorizontal: 8,
         paddingVertical: 8,
@@ -105,7 +106,6 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
         flexDirection: "row",
         alignItems: "center",
       }}
-      variant="outlined"
     >
       <Text weight="bold">{p.identifier}</Text>
       {payment && (
@@ -118,7 +118,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
       <Button
         isLoading={isPurchasing}
         onPress={() => onBuy(p)}
-        disabled={disabled}
+        isDisabled={disabled}
       >
         {p.product.priceString}
       </Button>
