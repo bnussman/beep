@@ -5,6 +5,7 @@ import {
   useColorScheme,
 } from "react-native";
 import React from "react";
+import { cn } from "heroui-native";
 
 const fontSizeMap = {
   xs: 12,
@@ -36,7 +37,7 @@ export interface TextProps extends _TextProps {
 }
 
 export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
-  const { size, weight, color, ...rest } = props;
+  const { size, weight, color, className, ...rest } = props;
 
   const colorScheme = useColorScheme();
 
@@ -53,11 +54,22 @@ export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
       ref={ref}
       {...rest}
       style={[
-        colorScheme === "dark" ? { color: "white" } : { color: "black" },
         weight ? { fontWeight: weight } : {},
         size ? { fontSize: fontSizeMap[size] } : {},
         rest.style,
       ]}
+      className={cn(
+        {
+          "text-white": colorScheme === "dark",
+        },
+        {
+          "text-black": colorScheme === "light",
+        },
+        {
+          "text-muted": color === "subtle",
+        },
+        className,
+      )}
     />
   );
 });

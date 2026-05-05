@@ -18,10 +18,7 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="profile/index" options={{ headerTitle: "Profile" }} />
-      <Stack.Screen
-        name="profile/premium"
-        options={{ headerTitle: "Premium" }}
-      />
+      <Stack.Screen name="premium" options={{ headerTitle: "Premium" }} />
       <Stack.Screen
         name="profile/edit"
         options={{

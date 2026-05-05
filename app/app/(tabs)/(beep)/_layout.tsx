@@ -1,11 +1,16 @@
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isWeb } from "@/utils/constants";
-import { Stack } from "expo-router"
+import { Stack } from "expo-router";
 
 export default function Layout() {
   return (
-    <Stack screenOptions={{ headerTransparent: true, contentStyle: isWeb ? { paddingTop: 72 } : {} }}>
+    <Stack
+      screenOptions={{
+        headerTransparent: true,
+        contentStyle: isWeb ? { paddingTop: 72 } : {},
+      }}
+    >
       <Stack.Screen name="beep/index" options={{ headerTitle: "Beep" }} />
       <Stack.Screen name="beep/queue" options={{ headerTitle: "Queue" }} />
       <Stack.Screen
@@ -19,17 +24,24 @@ export default function Layout() {
               const options = useUserMenuOptions(params.id);
               return getNavigationMenuFromOptions(options);
             },
-            headerTitle: "User"
-          }
+            headerTitle: "User",
+          };
         }}
         name="user/[id]/index"
       />
-      <Stack.Screen options={{ headerTitle: "Report" }} name="user/[id]/report" />
+      <Stack.Screen
+        options={{ headerTitle: "Report" }}
+        name="user/[id]/report"
+      />
       <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
+      <Stack.Screen
+        options={{ headerTitle: "Premium", presentation: "formSheet" }}
+        name="premium"
+      />
     </Stack>
   );
 }
 
 export const unstable_settings = {
-  initialRouteName: 'beep/index',
+  initialRouteName: "beep/index",
 };

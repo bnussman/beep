@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/Button";
 import { MoneyInput } from "@/components/MoneyInput";
 import { CarSelect } from "@/components/CarSelect";
-import { useActivePayments } from "../../(profile)/profile/premium";
+import { useActivePayments } from "../../(beep,ride,profile)/premium";
 import { Description, FieldError, TextField } from "heroui-native";
 
 export default function StartBeepingScreen() {
@@ -206,7 +206,7 @@ export default function StartBeepingScreen() {
             {!payments?.[0] && (
               <Stack.Toolbar.MenuAction
                 icon="crown.fill"
-                onPress={() => router.push("/profile/premium")}
+                onPress={() => router.push("/premium")}
               >
                 Get Premium
               </Stack.Toolbar.MenuAction>
