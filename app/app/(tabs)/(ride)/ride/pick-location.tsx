@@ -1,6 +1,6 @@
 import { useLocation } from "@/utils/location";
 import { useTRPC } from "@/utils/trpc";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PressableFeedback, SearchField } from "heroui-native";
 import { useState } from "react";
 import { FlatList, SafeAreaView, View } from "react-native";
@@ -19,33 +19,18 @@ export default function PickLocation() {
 
   const field = useController({ name: params.type, shouldUnregister: false });
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(field.field.value);
 
-  const { data } = useQuery(
-    trpc.location.getSuggestions.queryOptions({
-      query,
-      location: location?.coords,
-    }),
-  );
-
-  return (
-    <SafeAreaView>
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={48}
-        className="px-4 gap-4"
-      >
-        <SearchField value={query} onChange={setQuery}>
-          <SearchField.Group>
-            <SearchField.SearchIcon />
-            <SearchField.Input autoFocus />
-            <SearchField.ClearButton />
-          </SearchField.Group>
-        </SearchField>
-        <FlatList
-          data={data ?? []}
-          ItemSeparatorComponent={<Separator className="my-2" />}
-          renderItem={({ item }) => {
+  const { data, isFetching } = useQuery(
+    trpc.location.getSuggestions.queryOptions(
+      {
+        query,
+        location: location?.coords,
+      },
+      {
+        placeholderData: keepPreviousData,
+        select(data) {
+          return data.map((item) => {
             const addressParts = [
               item.properties.housenumber,
               item.properties.street,
@@ -57,17 +42,65 @@ export default function PickLocation() {
               .filter((part) => part !== undefined)
               .join(" ");
 
-            const value = item.properties.name ?? address;
+            if (item.properties.name) {
+              return {
+                name: item.properties.name,
+                address,
+              };
+            }
 
+            return { address };
+          });
+        },
+      },
+    ),
+  );
+
+  const placeholderOption = { address: query, name: undefined };
+
+  const options =
+    query && query !== (data?.[0]?.name ?? data?.[0]?.address)
+      ? [placeholderOption, ...(data ?? [])]
+      : data;
+
+  return (
+    <SafeAreaView>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={48}
+        className="px-4 gap-4"
+      >
+        <SearchField value={query} onChange={setQuery}>
+          <SearchField.Group>
+            <SearchField.SearchIcon />
+            <SearchField.Input autoFocus autoCorrect={false} />
+            <SearchField.ClearButton />
+          </SearchField.Group>
+        </SearchField>
+        <FlatList
+          data={options ?? []}
+          ItemSeparatorComponent={<Separator />}
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item }) => {
             return (
               <PressableFeedback
+                className="rounded-xl"
                 onPress={() => {
-                  field.field.onChange(value);
+                  field.field.onChange(item.name ?? item.address);
                   router.back();
                 }}
               >
-                <Text>{item.properties.name}</Text>
-                <Text color="subtle">{address}</Text>
+                <View className="p-4 px-2">
+                  <PressableFeedback.Highlight />
+                  {item.name ? (
+                    <>
+                      <Text>{item.name}</Text>
+                      <Text color="subtle">{item.address}</Text>
+                    </>
+                  ) : (
+                    <Text>{item.address}</Text>
+                  )}
+                </View>
               </PressableFeedback>
             );
           }}

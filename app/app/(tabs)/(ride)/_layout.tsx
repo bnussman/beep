@@ -2,10 +2,12 @@ import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { RideMenu } from "@/components/RideMenu";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isAndroid, isWeb } from "@/utils/constants";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { CloseButton } from "heroui-native";
 import { FormProvider, useForm } from "react-hook-form";
 
 export default function Layout() {
+  const router = useRouter();
   const params = useLocalSearchParams<{
     groupSize?: string;
     origin?: string;
@@ -44,6 +46,17 @@ export default function Layout() {
             return {
               headerTitle: `${pickLocationTitleMap[params.type]} Location`,
               presentation: "formSheet",
+              unstable_headerRightItems: (context) => [
+                {
+                  type: "button",
+                  label: "Close",
+                  icon: { name: "xmark", type: "sfSymbol" },
+                  onPress: () => router.back(),
+                },
+              ],
+              headerRight: () => (
+                <CloseButton className="mr-2" onPress={() => router.back()} />
+              ),
             };
           }}
           name="ride/pick-location"
