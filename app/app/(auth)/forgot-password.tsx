@@ -14,7 +14,9 @@ export default function ForgotPasswordScreen() {
   const { mutate: sendForgotEmail, isPending } = useMutation(
     trpc.auth.forgotPassword.mutationOptions({
       onSuccess() {
-        alert("Check your email for a link to reset your password!");
+        alert(
+          "Check your email! We sent you a link to a page where you can reset your password!",
+        );
       },
       onError(error) {
         alert(error.message);
@@ -40,7 +42,7 @@ export default function ForgotPasswordScreen() {
         />
       </TextField>
       <Button isLoading={isPending} isDisabled={!email}>
-        Click me
+        Reset Password
       </Button>
     </KeyboardAwareScrollView>
   );

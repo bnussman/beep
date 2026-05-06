@@ -1,9 +1,12 @@
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isWeb } from "@/utils/constants";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { CloseButton } from "heroui-native";
 
 export default function Layout() {
+  const router = useRouter();
+
   return (
     <Stack
       screenOptions={{
@@ -35,7 +38,21 @@ export default function Layout() {
       />
       <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
       <Stack.Screen
-        options={{ headerTitle: "Premium", presentation: "formSheet" }}
+        options={{
+          headerTitle: "Premium",
+          presentation: "formSheet",
+          unstable_headerRightItems: (context) => [
+            {
+              type: "button",
+              label: "Close",
+              icon: { name: "xmark", type: "sfSymbol" },
+              onPress: () => router.back(),
+            },
+          ],
+          headerRight: () => (
+            <CloseButton className="mr-2" onPress={() => router.back()} />
+          ),
+        }}
         name="premium"
       />
     </Stack>
