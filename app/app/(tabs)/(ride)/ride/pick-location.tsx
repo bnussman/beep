@@ -28,6 +28,7 @@ export default function PickLocation() {
         location: location?.coords,
       },
       {
+        refetchOnMount: false,
         placeholderData: keepPreviousData,
         select(data) {
           return data.map((item) => {
@@ -59,7 +60,7 @@ export default function PickLocation() {
   const placeholderOption = { address: query, name: undefined };
 
   const options =
-    query && query !== (data?.[0]?.name ?? data?.[0]?.address)
+    query && !data?.some((item) => query === (item.name ?? item.address))
       ? [placeholderOption, ...(data ?? [])]
       : data;
 
