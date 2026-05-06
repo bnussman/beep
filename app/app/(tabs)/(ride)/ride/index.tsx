@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { Pressable, View } from "react-native";
 import { RideMap } from "@/components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useFormContext } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Input, TextField, FieldError } from "heroui-native";
 import { LocationInput } from "@/components/LocationInput";
@@ -64,19 +64,8 @@ export default function MainFindBeepScreen() {
   }, []);
 
   const router = useRouter();
-  const params = useLocalSearchParams<{
-    groupSize?: string;
-    origin?: string;
-    destination?: string;
-  }>();
 
-  const { control, handleSubmit, setFocus, getValues } = useForm({
-    values: {
-      groupSize: params.groupSize ? String(params.groupSize) : "",
-      origin: params.origin ?? "",
-      destination: params.destination ?? "",
-    },
-  });
+  const { control, handleSubmit, setFocus, getValues } = useFormContext();
 
   const findBeep = handleSubmit((values) => {
     router.navigate({ pathname: "/ride/pick", params: values });
@@ -123,7 +112,7 @@ export default function MainFindBeepScreen() {
             <Link
               href={{
                 pathname: "/ride/pick-location",
-                params: { type: "origin", ...getValues() },
+                params: { type: "origin" },
               }}
               asChild
             >
@@ -158,7 +147,7 @@ export default function MainFindBeepScreen() {
             <Link
               href={{
                 pathname: "/ride/pick-location",
-                params: { type: "destination", ...getValues() },
+                params: { type: "destination" },
               }}
               asChild
             >

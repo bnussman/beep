@@ -6,6 +6,9 @@ import { useState } from "react";
 import { FlatList, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Separator } from "heroui-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useController } from "react-hook-form";
 
 export default function PickLocation() {
   const params = useLocalSearchParams<{ type: "origin" | "destination" }>();
@@ -13,6 +16,8 @@ export default function PickLocation() {
   const router = useRouter();
 
   const { location } = useLocation(true);
+
+  const field = useController({ name: params.type, shouldUnregister: false });
 
   const [query, setQuery] = useState("");
 
@@ -25,7 +30,11 @@ export default function PickLocation() {
 
   return (
     <SafeAreaView>
-      <View className="px-4 gap-4">
+      <KeyboardAvoidingView
+        // behavior="height"
+        // keyboardVerticalOffset={32}
+        className="px-4 gap-4"
+      >
         <SearchField value={query} onChange={setQuery}>
           <SearchField.Group>
             <SearchField.SearchIcon />
@@ -35,29 +44,35 @@ export default function PickLocation() {
         </SearchField>
         <FlatList
           data={data ?? []}
-          contentContainerClassName="gap-2"
-          renderItem={({ item }) => (
-            <PressableFeedback
-              onPress={() =>
-                router.navigate({
-                  pathname: "/ride",
-                  params: {
-                    ...params,
-                    type: undefined,
-                    [params.type]: item.properties.name,
-                  },
-                })
-              }
-            >
-              <Text>{item.properties.name}</Text>
-              <Text color="subtle">
-                {item.properties.housenumber} {item.properties.street}{" "}
-                {item.properties.city} {item.properties.state}
-              </Text>
-            </PressableFeedback>
-          )}
+          ItemSeparatorComponent={<Separator className="my-2" />}
+          renderItem={({ item }) => {
+            const addressParts = [
+              item.properties.housenumber,
+              item.properties.street,
+              item.properties.city,
+              item.properties.state,
+            ];
+
+            const address = addressParts
+              .filter((part) => part !== undefined)
+              .join(" ");
+
+            const value = item.properties.name ?? address;
+
+            return (
+              <PressableFeedback
+                onPress={() => {
+                  field.field.onChange(value);
+                  router.back();
+                }}
+              >
+                <Text>{item.properties.name}</Text>
+                <Text color="subtle">{address}</Text>
+              </PressableFeedback>
+            );
+          }}
         />
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
