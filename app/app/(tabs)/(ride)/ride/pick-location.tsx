@@ -31,8 +31,8 @@ export default function PickLocation() {
   return (
     <SafeAreaView>
       <KeyboardAvoidingView
-        // behavior="height"
-        // keyboardVerticalOffset={32}
+        behavior="padding"
+        keyboardVerticalOffset={48}
         className="px-4 gap-4"
       >
         <SearchField value={query} onChange={setQuery}>
