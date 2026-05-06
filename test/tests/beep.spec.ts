@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { signup } from "../utilities/auth";
 import { createCar } from "../utilities/car";
+import { startRide } from "../utilities/ride";
 
 test("a beep can happen between a rider and driver", async ({ browser }) => {
   const riderContext = await browser.newContext();
@@ -20,13 +21,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByRole("tab", { name: "Beep" }).click();
   await beeperPage.getByRole("button", { name: "Start Beeping" }).click();
 
-  await riderPage.getByLabel("Group Size").click();
-  await riderPage.getByLabel("Group Size").fill("3");
-  await riderPage.getByLabel("Pick Up Location").click();
-  await riderPage.getByLabel("Pick Up Location").fill("The Cottages");
-  await riderPage.getByLabel("Destination Location").click();
-  await riderPage.getByLabel("Destination Location").fill("Boone Saloon");
-  await riderPage.getByRole("button", { name: "Find Beep" }).click();
+  await startRide(riderPage);
 
   await riderPage.getByText(beeper.name, { exact: false }).click();
 
@@ -122,13 +117,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await beeperPage.getByRole("button", { name: "Start beeping" }).click();
 
   // As rider 1, get a beep.
-  await rider1Page.getByLabel("Group Size").click();
-  await rider1Page.getByLabel("Group Size").fill("3");
-  await rider1Page.getByLabel("Pick Up Location").click();
-  await rider1Page.getByLabel("Pick Up Location").fill("The Cottages");
-  await rider1Page.getByLabel("Destination Location").click();
-  await rider1Page.getByLabel("Destination Location").fill("Boone Saloon");
-  await rider1Page.getByRole("button", { name: "Find Beep" }).click();
+  await startRide(rider1Page);
 
   await rider1Page.getByText(beeper.name, { exact: false }).click();
 
@@ -145,13 +134,11 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await expect(beeperPage.getByText("Boone Saloon")).toBeVisible();
 
   // As rider 2, get a beep.
-  await rider2Page.getByLabel("Group Size").click();
-  await rider2Page.getByLabel("Group Size").fill("1");
-  await rider2Page.getByLabel("Pick Up Location").click();
-  await rider2Page.getByLabel("Pick Up Location").fill("Mountaineer Village");
-  await rider2Page.getByLabel("Destination Location").click();
-  await rider2Page.getByLabel("Destination Location").fill("Macado's");
-  await rider2Page.getByRole("button", { name: "Find Beep" }).click();
+  await startRide(rider2Page, {
+    origin: "Mountaineer Village",
+    destination: "Macado's",
+    groupSize: 1,
+  });
 
   await rider2Page.getByText(beeper.name, { exact: false }).click();
 
@@ -168,13 +155,11 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await beeperPage.getByLabel("Beep, back").click();
 
   // As rider 3, get a beep.
-  await rider3Page.getByLabel("Group Size").click();
-  await rider3Page.getByLabel("Group Size").fill("4");
-  await rider3Page.getByLabel("Pick Up Location").click();
-  await rider3Page.getByLabel("Pick Up Location").fill("East Village");
-  await rider3Page.getByLabel("Destination Location").click();
-  await rider3Page.getByLabel("Destination Location").fill("Black Cat");
-  await rider3Page.getByRole("button", { name: "Find Beep" }).click();
+  await startRide(rider3Page, {
+    origin: "East Village",
+    destination: "Black Cat",
+    groupSize: 4,
+  });
 
   await rider3Page.getByText(beeper.name, { exact: false }).click();
 
