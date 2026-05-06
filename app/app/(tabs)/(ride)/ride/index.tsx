@@ -5,7 +5,7 @@ import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { RideDetails } from "@/components/RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { RideMap } from "@/components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Controller, useForm } from "react-hook-form";
@@ -70,7 +70,7 @@ export default function MainFindBeepScreen() {
     destination?: string;
   }>();
 
-  const { control, handleSubmit, setFocus, formState } = useForm({
+  const { control, handleSubmit, setFocus, getValues } = useForm({
     values: {
       groupSize: params.groupSize ? String(params.groupSize) : "",
       origin: params.origin ?? "",
@@ -120,20 +120,34 @@ export default function MainFindBeepScreen() {
           rules={{ required: "Pick up location is required" }}
           control={control}
           render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
-            <TextField isInvalid={Boolean(fieldState.error)}>
-              <Label htmlFor="origin">Pick Up Location</Label>
-              <LocationInput
-                id="origin"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("destination")}
-              />
-              <FieldError>{fieldState.error?.message}</FieldError>
-            </TextField>
+            <Link
+              href={{
+                pathname: "/ride/pick-location",
+                params: { type: "origin", ...getValues() },
+              }}
+              asChild
+            >
+              <Pressable>
+                <TextField isInvalid={Boolean(fieldState.error)}>
+                  <Label pointerEvents="none" htmlFor="origin">
+                    Pick Up Location
+                  </Label>
+                  <LocationInput
+                    readOnly
+                    pointerEvents="none"
+                    id="origin"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    ref={ref}
+                    returnKeyLabel="next"
+                    returnKeyType="next"
+                    onSubmitEditing={() => setFocus("destination")}
+                  />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
+              </Pressable>
+            </Link>
           )}
         />
         <Controller
@@ -141,20 +155,35 @@ export default function MainFindBeepScreen() {
           rules={{ required: "Destination location is required" }}
           control={control}
           render={({ field: { onChange, onBlur, value, ref }, fieldState }) => (
-            <TextField isInvalid={Boolean(fieldState.error)}>
-              <Label htmlFor="destination">Destination Location</Label>
-              <Input
-                id="destination"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                ref={ref}
-                returnKeyType="go"
-                onSubmitEditing={() => findBeep()}
-                textContentType="fullStreetAddress"
-              />
-              <FieldError>{fieldState.error?.message}</FieldError>
-            </TextField>
+            <Link
+              href={{
+                pathname: "/ride/pick-location",
+                params: { type: "destination", ...getValues() },
+              }}
+              asChild
+            >
+              <Pressable>
+                <TextField
+                  pointerEvents="none"
+                  isInvalid={Boolean(fieldState.error)}
+                >
+                  <Label htmlFor="destination">Destination Location</Label>
+                  <Input
+                    id="destination"
+                    onBlur={onBlur}
+                    readOnly
+                    pointerEvents="none"
+                    onChangeText={onChange}
+                    value={value}
+                    ref={ref}
+                    returnKeyType="go"
+                    onSubmitEditing={() => findBeep()}
+                    textContentType="fullStreetAddress"
+                  />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
+              </Pressable>
+            </Link>
           )}
         />
         <Button onPress={() => findBeep()}>Find Beep</Button>
