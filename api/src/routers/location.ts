@@ -3,6 +3,7 @@ import { authedProcedure, router } from "../utils/trpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { osrm } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
+import { photon } from "@banksnussman/photon";
 
 export const locationRouter = router({
   getETA: authedProcedure
@@ -112,5 +113,36 @@ export const locationRouter = router({
       }
 
       return data;
+    }),
+  getSuggestions: authedProcedure
+    .input(
+      z.object({
+        query: z.string(),
+        location: z
+          .object({
+            latitude: z.number(),
+            longitude: z.number(),
+          })
+          .optional(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const bias = input.location ?? ctx.user.location;
+
+      const { data, error } = await photon.GET("/api", {
+        params: {
+          query: {
+            q: input.query,
+            lat: bias?.latitude,
+            lon: bias?.longitude,
+          },
+        },
+      });
+
+      if (error || !data.features[0]) {
+        return [];
+      }
+
+      return data.features;
     }),
 });
