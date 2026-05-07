@@ -85,3 +85,6 @@ export const CAR_COLOR_OPTIONS = [
   "silver",
   "yellow",
 ];
+
+export const PHOTON_BASE_URL = "http://192.168.0.110:2322";
+export const OSRM_BASE_URL = "http://192.168.0.104:5000";

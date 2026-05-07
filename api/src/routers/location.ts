@@ -4,6 +4,7 @@ import { getCoordinatesFromAddress } from "../logic/location";
 import { osrm } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
 import { photon } from "@banksnussman/photon";
+import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
 
 export const locationRouter = router({
   getETA: authedProcedure
@@ -17,6 +18,7 @@ export const locationRouter = router({
       const { data, error } = await osrm.GET(
         "/route/{version}/{profile}/{coordinates}",
         {
+          baseUrl: OSRM_BASE_URL,
           params: {
             path: {
               profile: "driving",
@@ -91,6 +93,7 @@ export const locationRouter = router({
       const { data, error } = await osrm.GET(
         "/route/{version}/{profile}/{coordinates}",
         {
+          baseUrl: OSRM_BASE_URL,
           params: {
             path: {
               profile: "driving",
@@ -130,6 +133,7 @@ export const locationRouter = router({
       const bias = input.location ?? ctx.user.location;
 
       const { data, error } = await photon.GET("/api", {
+        baseUrl: PHOTON_BASE_URL,
         params: {
           query: {
             q: input.query,
