@@ -1,11 +1,13 @@
 import { photon } from "@banksnussman/photon";
 import { user } from "../../drizzle/schema";
+import { PHOTON_BASE_URL } from "../utils/constants";
 
 export async function getCoordinatesFromAddress(
   address: string,
   bias: (typeof user.$inferSelect)["location"],
 ) {
   const { data, error } = await photon.GET("/api", {
+    baseUrl: PHOTON_BASE_URL,
     params: {
       query: {
         q: address,
