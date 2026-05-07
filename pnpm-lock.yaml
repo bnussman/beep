@@ -87,8 +87,8 @@ importers:
   app:
     dependencies:
       '@expo/ui':
-        specifier: ^55.0.6
-        version: 55.0.6(expo@55.0.20)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
+        specifier: ^55.0.15
+        version: 55.0.15(expo@55.0.20)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
       '@gorhom/bottom-sheet':
         specifier: 5.2.9
         version: 5.2.9(@types/react@19.2.14)(react-native-gesture-handler@2.30.0(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native-reanimated@4.2.1(react-native-worklets@0.7.4(@babel/core@7.28.4)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)
@@ -131,6 +131,9 @@ importers:
       expo-device:
         specifier: ~55.0.15
         version: 55.0.15(expo@55.0.20)
+      expo-haptics:
+        specifier: ~55.0.14
+        version: 55.0.14(expo@55.0.20)
       expo-image-picker:
         specifier: ~55.0.19
         version: 55.0.19(expo@55.0.20)
@@ -1561,8 +1564,8 @@ packages:
   '@expo/sudo-prompt@9.3.2':
     resolution: {integrity: sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw==}
 
-  '@expo/ui@55.0.6':
-    resolution: {integrity: sha512-VfKqr5gS21Y055mfmJBJqAzcDBy4edv0w0GBjZGaPOX1GtZRDA8hcZXwmeojD4tAofbFw+JiJcyYJ2CG+QjJVQ==}
+  '@expo/ui@55.0.15':
+    resolution: {integrity: sha512-9oIeGIIHmzMLuvw8fKq68HSmv/Rvt3km1DIP5is/P6RJvc+Bt2xIFGWehLaK3bRoyVtcfeiz4TrF2fG79Vft1g==}
     peerDependencies:
       expo: '*'
       react: 19.2.0
@@ -4763,6 +4766,11 @@ packages:
       expo: '*'
       react: 19.2.0
       react-native: '*'
+
+  expo-haptics@55.0.14:
+    resolution: {integrity: sha512-KjDItBsA9mi1f5nRwf8g1wOdfEcLHwvEdt5Jl1sMCDETR/homcGOl+F3QIiPOl/PRlbGVieQsjTtF4DGtHOj6g==}
+    peerDependencies:
+      expo: '*'
 
   expo-image-loader@55.0.0:
     resolution: {integrity: sha512-NOjp56wDrfuA5aiNAybBIjqIn1IxKeGJ8CECWZncQ/GzjZfyTYAHTCyeApYkdKkMBLHINzI4BbTGSlbCa0fXXQ==}
@@ -9276,7 +9284,7 @@ snapshots:
 
   '@expo/sudo-prompt@9.3.2': {}
 
-  '@expo/ui@55.0.6(expo@55.0.20)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
+  '@expo/ui@55.0.15(expo@55.0.20)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)':
     dependencies:
       expo: 55.0.20(@babel/core@7.28.4)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.10)(expo-router@55.0.13)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.28.4)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@5.9.2)
       react: 19.2.0
@@ -12848,6 +12856,10 @@ snapshots:
       expo: 55.0.20(@babel/core@7.28.4)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.10)(expo-router@55.0.13)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.28.4)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@5.9.2)
       react: 19.2.0
       react-native: 0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0)
+
+  expo-haptics@55.0.14(expo@55.0.20):
+    dependencies:
+      expo: 55.0.20(@babel/core@7.28.4)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.10)(expo-router@55.0.13)(react-dom@19.2.0(react@19.2.0))(react-native-worklets@0.7.4(@babel/core@7.28.4)(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0))(react-native@0.83.6(@babel/core@7.28.4)(@types/react@19.2.14)(react@19.2.0))(react@19.2.0)(typescript@5.9.2)
 
   expo-image-loader@55.0.0(expo@55.0.20):
     dependencies:
