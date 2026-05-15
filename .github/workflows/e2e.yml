@@ -22,6 +22,7 @@ jobs:
           bun-version: latest
       - uses: actions/setup-node@v6
         with:
+          node-version: latest
           cache: pnpm
       - run: docker compose up -d
       - run: pnpm i --frozen-lockfile
