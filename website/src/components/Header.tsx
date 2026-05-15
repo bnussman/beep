@@ -13,7 +13,6 @@ import {
   Typography,
   Button,
   Link,
-  useColorScheme,
 } from "@mui/material";
 
 export function Header() {
