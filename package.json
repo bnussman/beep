@@ -6,7 +6,7 @@
   },
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "pnpm --filter \"*\" --stream --color dev",
+    "dev": "pnpm --color always --stream --filter \"*\" dev",
     "start:api": "pnpm --filter @beep/api start",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
