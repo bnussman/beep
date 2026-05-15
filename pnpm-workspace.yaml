@@ -4,3 +4,9 @@ packages:
   - "api"
   - "test"
   - "deploy"
+allowBuilds:
+  '@pulumi/kubernetes': false
+  '@sentry/cli': false
+  '@swc/core': false
+  esbuild: false
+  protobufjs: false
