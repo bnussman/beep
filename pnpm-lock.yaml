@@ -254,14 +254,14 @@ importers:
   deploy:
     dependencies:
       '@pulumi/docker':
-        specifier: ^4.11.2
-        version: 4.11.2(typescript@5.9.2)
+        specifier: 5.0.0
+        version: 5.0.0(typescript@5.9.2)
       '@pulumi/kubernetes':
-        specifier: ^4.28.0
-        version: 4.28.0(typescript@5.9.2)
+        specifier: 4.31.1
+        version: 4.31.1(typescript@5.9.2)
       '@pulumi/pulumi':
-        specifier: ^3.230.0
-        version: 3.230.0(typescript@5.9.2)
+        specifier: 3.242.0
+        version: 3.242.0(typescript@5.9.2)
     devDependencies:
       '@types/node':
         specifier: ^25.5.2
@@ -2299,14 +2299,26 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@pulumi/docker@4.11.2':
-    resolution: {integrity: sha512-mm8Uscb/3S7OieYyg1E/vvFx3OS4bAkZvtFvi1yTqYda9NbnYOMbJi7a5fU5xB0N0Kd/uliS8olJ/e6nnvVVPg==}
+  '@pulumi/docker@5.0.0':
+    resolution: {integrity: sha512-SZZv7DjqZYaXP5ZHyxQMTkLXcGE37fq1N8d3st4MgvUPKzRUdx+PD0EZLI7eSGzuAxVYP42q+tHRuKmi3CDRnA==}
 
-  '@pulumi/kubernetes@4.28.0':
-    resolution: {integrity: sha512-tdoUN7blJv1rrwr+2Pc55CP/+L1sMkH3z5Y7DI2yfNiGgdeaOHYia+hYsnLgR4HtBSfIfuBVWxGkZwGWOgUmOQ==}
+  '@pulumi/kubernetes@4.31.1':
+    resolution: {integrity: sha512-EaDBJBKXrvBVvsuN1UbN8WMXyKy4K3g7VfiSb5eCTq2sgql8wWIMZw6vIYyh9tc9b5UONq/LgoNINGJT0uvX9w==}
 
   '@pulumi/pulumi@3.230.0':
     resolution: {integrity: sha512-wWHP65RKj2zz8R8N4sImPie4bQM/walrCOeNUl46TkdHOOihFdg6cMO2l1IPufh/EBBLtiUBrzpP0wi8OWqhsQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      ts-node: '>= 7.0.1 < 12'
+      typescript: '>= 3.8.3 < 7'
+    peerDependenciesMeta:
+      ts-node:
+        optional: true
+      typescript:
+        optional: true
+
+  '@pulumi/pulumi@3.242.0':
+    resolution: {integrity: sha512-3ij+fKfCbepOWMQH63UJ/9LNiDQvob10kZ8uLZ+gpYZHFe53PAPl7wqtxYWLrb3WcBSXgyDVjC+IUbo0jyDrMA==}
     engines: {node: '>=20'}
     peerDependencies:
       ts-node: '>= 7.0.1 < 12'
@@ -9658,7 +9670,7 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@pulumi/docker@4.11.2(typescript@5.9.2)':
+  '@pulumi/docker@5.0.0(typescript@5.9.2)':
     dependencies:
       '@pulumi/pulumi': 3.230.0(typescript@5.9.2)
       semver: 5.7.2
@@ -9667,7 +9679,7 @@ snapshots:
       - ts-node
       - typescript
 
-  '@pulumi/kubernetes@4.28.0(typescript@5.9.2)':
+  '@pulumi/kubernetes@4.31.1(typescript@5.9.2)':
     dependencies:
       '@pulumi/pulumi': 3.230.0(typescript@5.9.2)
       glob: 12.0.0
@@ -9702,6 +9714,40 @@ snapshots:
       minimist: 1.2.8
       normalize-package-data: 6.0.2
       package-directory: 8.2.0
+      picomatch: 4.0.4
+      require-from-string: 2.0.2
+      semver: 7.7.4
+      source-map-support: 0.5.21
+      tmp: 0.2.5
+      upath: 1.2.0
+    optionalDependencies:
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@pulumi/pulumi@3.242.0(typescript@5.9.2)':
+    dependencies:
+      '@grpc/grpc-js': 1.14.3
+      '@logdna/tail-file': 2.2.0
+      '@npmcli/arborist': 9.4.2
+      '@opentelemetry/api': 1.9.1
+      '@opentelemetry/exporter-trace-otlp-grpc': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/exporter-zipkin': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/instrumentation-grpc': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/resources': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-trace-node': 1.30.1(@opentelemetry/api@1.9.1)
+      '@types/google-protobuf': 3.15.12
+      '@types/semver': 7.7.1
+      '@types/tmp': 0.2.6
+      execa: 5.1.1
+      fdir: 6.5.0(picomatch@4.0.4)
+      google-protobuf: 3.21.4
+      ini: 2.0.0
+      js-yaml: 3.14.2
+      minimist: 1.2.8
+      normalize-package-data: 6.0.2
       picomatch: 4.0.4
       require-from-string: 2.0.2
       semver: 7.7.4
