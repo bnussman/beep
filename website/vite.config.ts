@@ -11,6 +11,10 @@ export default defineConfig({
       prerender: {
         enabled: true,
       },
+      sitemap: {
+        enabled: true,
+        host: "https://ridebeep.app",
+      },
     }),
     react(),
   ],

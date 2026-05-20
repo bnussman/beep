@@ -1,6 +1,6 @@
 import React from "react";
-import iPhoneDark from "../assets/dark.png?url";
-import iPhoneLight from "../assets/light.png?url";
+import iPhoneDark from "../assets/dark.webp?url";
+import iPhoneLight from "../assets/light.webp?url";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -66,11 +66,6 @@ function Home() {
               maxHeight: "min(max(80vh, 500px), 700px)",
               maxWidth: "calc(100vw - 64px)",
               objectFit: "contain",
-              cursor: "zoom-in",
-              transition: "transform 0.15s ease-in-out",
-              ":hover": {
-                transform: "scale(1.1)",
-              },
             }}
             src={iPhoneLight}
             alt="iPhone Mockup of the Beep App"

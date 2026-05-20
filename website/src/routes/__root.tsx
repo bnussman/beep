@@ -22,6 +22,8 @@ export const Route = createRootRoute({
   head: () => ({
     links: [
       { rel: "icon", href: faviconUrl },
+      { rel: "preload", href: fontUrl, as: "style" },
+      { rel: "preload", href: fontUrlBold, as: "style" },
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
     ],
@@ -76,7 +78,7 @@ function Providers({ children }: { children: React.ReactNode }) {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
