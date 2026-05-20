@@ -1,19 +1,25 @@
 import React, { useEffect } from "react";
-import * as Sentry from '@sentry/react';
+import * as Sentry from "@sentry/react";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { useTRPC } from "../utils/trpc";
-import { AppBar, Stack, Toolbar, Typography, Button, Link, useColorScheme } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
+import {
+  AppBar,
+  Stack,
+  Toolbar,
+  Typography,
+  Button,
+  Link,
+} from "@mui/material";
 
 export function Header() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { colorScheme } = useColorScheme();
 
-  const { data: user, isLoading } = useQuery(
+  const { data: user } = useQuery(
     trpc.user.me.queryOptions(undefined, {
       retry: false,
       refetchOnWindowFocus: false,
@@ -39,14 +45,11 @@ export function Header() {
     <AppBar
       color="transparent"
       sx={(theme) => ({
-        boxShadow: 'none',
+        boxShadow: "none",
         borderBottom: 1,
-        borderColor: theme.palette.divider,
-        backdropFilter: 'blur(5px)',
-        ...(colorScheme === 'dark' && ({
-          borderColor: 'rgba(131, 131, 131, 0.1)',
-          backgroundColor: 'rgba(44, 44, 44, 0.1)'
-        }))
+        borderColor: `light-dark(${theme.palette.divider}, rgba(131, 131, 131, 0.1))`,
+        backgroundColor: "light-dark(transparent, rgba(44, 44, 44, 0.1))",
+        backdropFilter: "blur(5px)",
       })}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
