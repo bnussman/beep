@@ -15,7 +15,7 @@
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",
     "@types/validator": "^13.15.10",
-    "drizzle-kit": "1.0.0-beta.22",
+    "drizzle-kit": "1.0.0-rc.3",
     "typescript": "^5.8.2"
   },
   "dependencies": {
@@ -26,10 +26,10 @@
     "@sentry/bun": "^10.47.0",
     "@trpc/server": "^11.16.0",
     "car-info": "0.2.5",
-    "drizzle-orm": "1.0.0-beta.22",
+    "drizzle-orm": "1.0.0-rc.3",
     "ioredis": "^5.10.1",
     "nodemailer": "^8.0.5",
-    "pg": "^8.20.0",
+    "pg": "^8.21.0",
     "redlock-universal": "^0.8.4",
     "validator": "^13.15.35",
     "wkx": "^0.5.0",
