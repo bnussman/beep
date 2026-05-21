@@ -18,9 +18,10 @@ import {
   Alert,
   useTheme,
   Tooltip,
+  Card,
 } from "@mui/material";
 
-export const Route = createFileRoute('/admin/beeps/$beepId')({
+export const Route = createFileRoute("/admin/beeps/$beepId")({
   component: Beep,
 });
 
@@ -37,7 +38,11 @@ function Beep() {
   } = useQuery(trpc.beep.beep.queryOptions(beepId));
 
   const { data: beeper } = useSubscription(
-    trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken)
+    trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken),
+  );
+
+  const { data: rider } = useSubscription(
+    trpc.user.updates.subscriptionOptions(beep ? beep.rider_id : skipToken),
   );
 
   const { data: route } = useQuery(
@@ -83,7 +88,7 @@ function Beep() {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} pb={4}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h4" fontWeight="bold">
           Beep
@@ -96,7 +101,72 @@ function Beep() {
           Delete
         </Button>
       </Stack>
-      <Box height="500px">
+      <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
+        <Typography variant="h5" fontWeight="bold">
+          Details
+        </Typography>
+        <Box>
+          <Typography>
+            <b>Beeper</b>
+          </Typography>
+          <BasicUser user={beep.beeper} />
+        </Box>
+        <Box>
+          <Typography>
+            <b>Rider</b>
+          </Typography>
+          <BasicUser user={beep.rider} />
+        </Box>
+        <Box>
+          <Typography>
+            <b>Status</b>
+          </Typography>
+          <Typography textTransform="capitalize">
+            {beep.status.replaceAll("_", " ")}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <b>Origin</b>
+          </Typography>
+          <Typography>{beep.origin}</Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <b>Destination</b>
+          </Typography>
+          <Typography>{beep.destination}</Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <b>Group Size</b>
+          </Typography>
+          <Typography>{beep.groupSize}</Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <b>Beep Started</b>
+          </Typography>
+          <Typography>
+            {new Date(beep.start).toLocaleString()} -{" "}
+            {DateTime.fromISO(beep.start).toRelative()}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            <b>Beep Ended</b>
+          </Typography>
+          {beep.end ? (
+            <Typography>
+              {new Date(beep.end).toLocaleString()} -{" "}
+              {DateTime.fromISO(beep.end).toRelative()}
+            </Typography>
+          ) : (
+            <Typography>Beep is still in progress</Typography>
+          )}
+        </Box>
+      </Card>
+      <Card sx={{ height: "500px" }}>
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
@@ -122,6 +192,16 @@ function Beep() {
               name={`${beeper.first} ${beeper.last}`}
             />
           )}
+          {rider?.location && (
+            <BeeperMarker
+              latitude={rider.location?.latitude}
+              longitude={rider.location?.longitude}
+              username={rider.username}
+              userId={rider.id}
+              photo={rider.photo}
+              name={`${rider.first} ${rider.last}`}
+            />
+          )}
           <Source
             type="geojson"
             data={{
@@ -138,65 +218,7 @@ function Beep() {
             />
           </Source>
         </Map>
-      </Box>
-      <Box>
-        <Typography>
-          <b>Beeper</b>
-        </Typography>
-        <BasicUser user={beep.beeper} />
-      </Box>
-      <Box>
-        <Typography>
-          <b>Rider</b>
-        </Typography>
-        <BasicUser user={beep.rider} />
-      </Box>
-      <Box>
-        <Typography>
-          <b>Status</b>
-        </Typography>
-        <Typography>{beep.status.replaceAll("_", " ")}</Typography>
-      </Box>
-      <Box>
-        <Typography>
-          <b>Origin</b>
-        </Typography>
-        <Typography>{beep.origin}</Typography>
-      </Box>
-      <Box>
-        <Typography>
-          <b>Destination</b>
-        </Typography>
-        <Typography>{beep.destination}</Typography>
-      </Box>
-      <Box>
-        <Typography>
-          <b>Group Size</b>
-        </Typography>
-        <Typography>{beep.groupSize}</Typography>
-      </Box>
-      <Box>
-        <Typography>
-          <b>Beep Started</b>
-        </Typography>
-        <Typography>
-          {new Date(beep.start).toLocaleString()} -{" "}
-          {DateTime.fromISO(beep.start).toRelative()}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          <b>Beep Ended</b>
-        </Typography>
-        {beep.end ? (
-          <Typography>
-            {new Date(beep.end).toLocaleString()} -{" "}
-            {DateTime.fromISO(beep.end).toRelative()}
-          </Typography>
-        ) : (
-          <Typography>Beep is still in progress</Typography>
-        )}
-      </Box>
+      </Card>
       <DeleteBeepDialog
         id={beep.id}
         isOpen={isOpen}
