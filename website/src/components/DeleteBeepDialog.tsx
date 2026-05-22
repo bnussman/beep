@@ -31,7 +31,7 @@ export function DeleteBeepDialog({ isOpen, onClose, id, onSuccess }: Props) {
       onSuccess() {
         queryClient.invalidateQueries(trpc.beep.beeps.queryFilter());
         onClose();
-        onSuccess();
+        onSuccess?.();
       },
     }),
   );
