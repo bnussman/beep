@@ -1,20 +1,26 @@
 import React from "react";
+import { beepStatusMap, decodePolyline } from "../../../../utils/utils";
 import { Map } from "../../../../components/Map";
-import { createFileRoute, createRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useTRPC } from "../../../../utils/trpc";
 import { Loading } from "../../../../components/Loading";
-import { Alert, Box, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
 import { Marker as BeeperMarker } from "../../../../components/Marker";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
-import { decodePolyline } from "../../beeps/$beepId";
 import { BasicUser } from "../../../../components/BasicUser";
 import { DateTime } from "luxon";
 import { Indicator } from "../../../../components/Indicator";
-import { beepStatusMap } from "../../beeps";
+import {
+  Alert,
+  Box,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
-export const Route = createFileRoute('/admin/users/$userId/ride')({
+export const Route = createFileRoute("/admin/users/$userId/ride")({
   component: Ride,
 });
 
@@ -24,14 +30,16 @@ function Ride() {
 
   const { userId } = useParams({ from: Route.id });
 
-  const { data: ride, error } = useSubscription(trpc.rider.currentRideUpdates.subscriptionOptions(userId));
+  const { data: ride, error } = useSubscription(
+    trpc.rider.currentRideUpdates.subscriptionOptions(userId),
+  );
 
   const { data: rider } = useSubscription(
-    trpc.user.updates.subscriptionOptions(userId)
+    trpc.user.updates.subscriptionOptions(userId),
   );
 
   const { data: beeper } = useSubscription(
-    trpc.user.updates.subscriptionOptions(ride ? ride.beeper.id : skipToken)
+    trpc.user.updates.subscriptionOptions(ride ? ride.beeper.id : skipToken),
   );
 
   const { data: route } = useQuery(
@@ -92,7 +100,9 @@ function Ride() {
         <Box>
           <Typography fontWeight="bold">Status</Typography>
           <Stack direction="row" alignItems="center" gap={1}>
-            <Typography textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Typography>
+            <Typography textTransform="capitalize">
+              {ride.status.replaceAll("_", " ")}
+            </Typography>
             <Indicator color={beepStatusMap[ride.status]} />
           </Stack>
         </Box>
@@ -110,12 +120,10 @@ function Ride() {
         </Box>
         <Box>
           <Typography fontWeight="bold">Started</Typography>
-          <Typography style={{ textWrap: 'nowrap' }}>
+          <Typography style={{ textWrap: "nowrap" }}>
             {new Date(ride.start).toLocaleString()}
           </Typography>
-          <Typography>
-            {DateTime.fromISO(ride.start).toRelative()}
-          </Typography>
+          <Typography>{DateTime.fromISO(ride.start).toRelative()}</Typography>
         </Box>
       </Stack>
       <Box width="100%">
@@ -170,7 +178,7 @@ function Ride() {
             />
           </Source>
         </Map>
-      </Box>   
+      </Box>
     </Stack>
   );
 }

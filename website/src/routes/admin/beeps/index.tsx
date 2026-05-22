@@ -23,20 +23,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-
-export const beepStatusMap: Record<
-  RouterOutput["beep"]["beep"]["status"],
-  string
-> = {
-  waiting: "orange",
-  on_the_way: "orange",
-  accepted: "green",
-  in_progress: "green",
-  here: "green",
-  denied: "red",
-  canceled: "red",
-  complete: "green",
-};
+import { beepStatusMap } from "../../../utils/utils";
 
 export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
@@ -106,8 +93,14 @@ function Beeps() {
             {data?.results === 0 && <TableEmpty colSpan={10} />}
             {data?.beeps.map((beep) => (
               <TableRow key={beep.id}>
-                <TableCellUser user={beep.beeper} linkProps={{ to: "/admin/users/$userId/queue" }} />
-                <TableCellUser user={beep.rider} linkProps={{ to: "/admin/users/$userId/ride" }} />
+                <TableCellUser
+                  user={beep.beeper}
+                  linkProps={{ to: "/admin/users/$userId/queue" }}
+                />
+                <TableCellUser
+                  user={beep.rider}
+                  linkProps={{ to: "/admin/users/$userId/ride" }}
+                />
                 <TableCell>{beep.origin}</TableCell>
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>

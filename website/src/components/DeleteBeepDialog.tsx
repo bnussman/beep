@@ -14,10 +14,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   id: string;
 }
 
-export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
+export function DeleteBeepDialog({ isOpen, onClose, id, onSuccess }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
@@ -30,6 +31,7 @@ export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
       onSuccess() {
         queryClient.invalidateQueries(trpc.beep.beeps.queryFilter());
         onClose();
+        onSuccess?.();
       },
     }),
   );
