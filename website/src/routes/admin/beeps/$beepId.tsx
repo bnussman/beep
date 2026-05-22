@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Indicator } from "../../../components/Indicator";
+import { beepStatusMap, decodePolyline } from "../../../utils/utils";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
@@ -6,19 +8,19 @@ import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import { createFileRoute, createRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
-import { DateTime } from "luxon";
+import { DateTime, Interval } from "luxon";
 import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import {
   Typography,
   Button,
-  Box,
   Stack,
   Alert,
   useTheme,
   Tooltip,
   Card,
+  Grid,
 } from "@mui/material";
 
 export const Route = createFileRoute("/admin/beeps/$beepId")({
@@ -87,6 +89,74 @@ function Beep() {
     return <Alert severity="error">{error.message}</Alert>;
   }
 
+  const items = [
+    {
+      title: "Beeper",
+      content: <BasicUser user={beep.beeper} />,
+    },
+    {
+      title: "Rider",
+      content: <BasicUser user={beep.rider} />,
+    },
+    {
+      title: "Status",
+      content: (
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Typography sx={{ textTransform: "capitalize" }}>
+            {beep.status.replaceAll("_", " ")}
+          </Typography>
+          <Indicator color={beepStatusMap[beep.status]} />
+        </Stack>
+      ),
+    },
+    {
+      title: "Group Size",
+      content: beep.groupSize,
+    },
+    {
+      title: "Origin",
+      content: beep.origin,
+    },
+    {
+      title: "Destination",
+      content: beep.destination,
+    },
+    {
+      title: "Started",
+      content: (
+        <Typography>
+          {new Date(beep.start).toLocaleString()} -{" "}
+          {DateTime.fromISO(beep.start).toRelative()}
+        </Typography>
+      ),
+    },
+    {
+      title: "Ended",
+      content: beep.end ? (
+        <Typography>
+          {new Date(beep.end).toLocaleString()} -{" "}
+          {DateTime.fromISO(beep.end).toRelative()}
+        </Typography>
+      ) : (
+        <Typography>Beep is still in progress</Typography>
+      ),
+    },
+    {
+      title: "Duration",
+      content: beep.end
+        ? Interval.fromDateTimes(
+            DateTime.fromISO(beep.start),
+            DateTime.fromISO(beep.end),
+          )
+            .toDuration()
+            .rescale()
+            .set({ milliseconds: 0 })
+            .rescale()
+            .toHuman()
+        : "N/A",
+    },
+  ];
+
   return (
     <Stack spacing={2} pb={4}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -102,69 +172,16 @@ function Beep() {
         </Button>
       </Stack>
       <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
-        <Typography variant="h5" fontWeight="bold">
-          Details
-        </Typography>
-        <Box>
-          <Typography>
-            <b>Beeper</b>
-          </Typography>
-          <BasicUser user={beep.beeper} />
-        </Box>
-        <Box>
-          <Typography>
-            <b>Rider</b>
-          </Typography>
-          <BasicUser user={beep.rider} />
-        </Box>
-        <Box>
-          <Typography>
-            <b>Status</b>
-          </Typography>
-          <Typography textTransform="capitalize">
-            {beep.status.replaceAll("_", " ")}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography>
-            <b>Origin</b>
-          </Typography>
-          <Typography>{beep.origin}</Typography>
-        </Box>
-        <Box>
-          <Typography>
-            <b>Destination</b>
-          </Typography>
-          <Typography>{beep.destination}</Typography>
-        </Box>
-        <Box>
-          <Typography>
-            <b>Group Size</b>
-          </Typography>
-          <Typography>{beep.groupSize}</Typography>
-        </Box>
-        <Box>
-          <Typography>
-            <b>Beep Started</b>
-          </Typography>
-          <Typography>
-            {new Date(beep.start).toLocaleString()} -{" "}
-            {DateTime.fromISO(beep.start).toRelative()}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography>
-            <b>Beep Ended</b>
-          </Typography>
-          {beep.end ? (
-            <Typography>
-              {new Date(beep.end).toLocaleString()} -{" "}
-              {DateTime.fromISO(beep.end).toRelative()}
-            </Typography>
-          ) : (
-            <Typography>Beep is still in progress</Typography>
-          )}
-        </Box>
+        <Grid container rowSpacing={2} columnSpacing={2}>
+          {items.map((item) => (
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography fontWeight="bold" fontSize="0.95rem">
+                {item.title}
+              </Typography>
+              {item.content}
+            </Grid>
+          ))}
+        </Grid>
       </Card>
       <Card sx={{ height: "500px" }}>
         <Map>
@@ -226,54 +243,4 @@ function Beep() {
       />
     </Stack>
   );
-}
-
-/**
- * Full credit to https://github.com/huextrat/react-native-maps-routes/blob/main/src/utils/decoder.ts
- */
-export const decodePolyline = (polyline: string) => {
-  const points = [];
-  const encoded = polyline;
-  let index = 0;
-  const len = encoded.length;
-  let lat = 0;
-  let lng = 0;
-  while (index < len) {
-    let b: number;
-    let shift = 0;
-    let result = 0;
-    do {
-      b = encoded.charAt(index++).charCodeAt(0) - 63;
-      result |= (b & 0x1f) << shift;
-      shift += 5;
-    } while (b >= 0x20);
-
-    const dLat = (result & 1) !== 0 ? ~(result >> 1) : result >> 1;
-    lat += dLat;
-    shift = 0;
-    result = 0;
-    do {
-      b = encoded.charAt(index++).charCodeAt(0) - 63;
-      result |= (b & 0x1f) << shift;
-      shift += 5;
-    } while (b >= 0x20);
-    const dLng = (result & 1) !== 0 ? ~(result >> 1) : result >> 1;
-    lng += dLng;
-
-    points.push({ lat: lat / 1e5, lng: lng / 1e5 });
-  }
-  return points;
-};
-
-export function getMiles(meters: number, round = false) {
-  const miles = meters * 0.000621;
-
-  if (round) {
-    return new Intl.NumberFormat(undefined, {
-      maximumFractionDigits: 2,
-      minimumFractionDigits: 0,
-    }).format(miles);
-  }
-
-  return miles;
 }

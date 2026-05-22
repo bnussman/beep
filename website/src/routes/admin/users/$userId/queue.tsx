@@ -1,12 +1,12 @@
 import React from "react";
-import { createFileRoute } from "@tanstack/react-router"
+import { beepStatusMap } from "../../../../utils/utils";
+import { createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../../../utils/trpc";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
 import { TableCellUser } from "../../../../components/TableCellUser";
 import { Indicator } from "../../../../components/Indicator";
-import { beepStatusMap } from "../../beeps";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
@@ -33,13 +33,17 @@ function QueueTable() {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery(trpc.beeper.queue.queryOptions(userId));
+  const { data, isLoading, error } = useQuery(
+    trpc.beeper.queue.queryOptions(userId),
+  );
 
-  useSubscription(trpc.beeper.watchQueue.subscriptionOptions(userId, {
-    onData(queue) {
-      queryClient.setQueryData(trpc.beeper.queue.queryKey(userId), queue);
-    },
-  }));
+  useSubscription(
+    trpc.beeper.watchQueue.subscriptionOptions(userId, {
+      onData(queue) {
+        queryClient.setQueryData(trpc.beeper.queue.queryKey(userId), queue);
+      },
+    }),
+  );
 
   return (
     <TableContainer component={Paper} variant="outlined">

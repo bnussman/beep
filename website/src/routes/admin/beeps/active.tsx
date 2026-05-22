@@ -1,6 +1,6 @@
 import React from "react";
 import { Indicator } from "../../../components/Indicator";
-import { beepStatusMap } from ".";
+import { beepStatusMap } from "../../../utils/utils";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
@@ -11,7 +11,7 @@ import { TableError } from "../../../components/TableError";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
-import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   TableBody,
   TableCell,
@@ -92,14 +92,20 @@ function ActiveBeeps() {
               <TableCell />
             </TableRow>
           </TableHead>
-          <TableBody ref={data !== undefined ? parent: undefined}>
+          <TableBody ref={data !== undefined ? parent : undefined}>
             {isLoading && <TableLoading colSpan={8} />}
             {error && <TableError colSpan={8} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.beeps.map((beep) => (
               <TableRow key={beep.id}>
-                <TableCellUser user={beep.beeper} linkProps={{ to: "/admin/users/$userId/queue" }} />
-                <TableCellUser user={beep.rider} linkProps={{ to: "/admin/users/$userId/ride" }} />
+                <TableCellUser
+                  user={beep.beeper}
+                  linkProps={{ to: "/admin/users/$userId/queue" }}
+                />
+                <TableCellUser
+                  user={beep.rider}
+                  linkProps={{ to: "/admin/users/$userId/ride" }}
+                />
                 <TableCell>{beep.origin}</TableCell>
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>
