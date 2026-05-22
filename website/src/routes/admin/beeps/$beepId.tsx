@@ -6,7 +6,11 @@ import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
 import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
-import { createFileRoute, createRoute } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  createRoute,
+  useRouter,
+} from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { DateTime, Interval } from "luxon";
 import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
@@ -30,6 +34,7 @@ export const Route = createFileRoute("/admin/beeps/$beepId")({
 function Beep() {
   const trpc = useTRPC();
   const theme = useTheme();
+  const router = useRouter();
 
   const { beepId } = Route.useParams();
 
@@ -240,6 +245,7 @@ function Beep() {
         id={beep.id}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        onSuccess={() => router.history.back()}
       />
     </Stack>
   );
