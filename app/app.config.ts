@@ -1,5 +1,6 @@
 import type { ExpoConfig } from "expo/config";
 import packageJson from "./package.json";
+import splashScreen from "expo-splash-screen/plugin";
 
 const config: ExpoConfig = {
   experiments: {
@@ -36,7 +37,15 @@ const config: ExpoConfig = {
   plugins: [
     ["expo-router"],
     ["expo-notifications"],
-    ["expo-splash-screen"],
+    splashScreen({
+      image: "./assets/splash.png",
+      resizeMode: "cover",
+      backgroundColor: "#ffffff",
+      dark: {
+        image: "./assets/splash.png",
+        backgroundColor: "#000000",
+      },
+    }),
     [
       "react-native-maps",
       {
@@ -83,16 +92,6 @@ const config: ExpoConfig = {
       dark: "./assets/icon-transparent.png",
       tinted: "./assets/icon-tinted.png",
     },
-    splash: {
-      image: "./assets/splash.png",
-      resizeMode: "cover",
-      backgroundColor: "#ffffff",
-      dark: {
-        image: "./assets/splash.png",
-        resizeMode: "cover",
-        backgroundColor: "#000000",
-      },
-    },
   },
   android: {
     package: "app.ridebeep.App",
@@ -109,16 +108,6 @@ const config: ExpoConfig = {
     config: {
       googleMaps: {
         apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
-      },
-    },
-    splash: {
-      image: "./assets/splash.png",
-      resizeMode: "cover",
-      backgroundColor: "#ffffff",
-      dark: {
-        image: "./assets/splash.png",
-        resizeMode: "cover",
-        backgroundColor: "#000000",
       },
     },
   },
