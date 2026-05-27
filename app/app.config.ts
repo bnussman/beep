@@ -1,6 +1,9 @@
 import type { ExpoConfig } from "expo/config";
 import packageJson from "./package.json";
-import splashScreen from "expo-splash-screen/plugin";
+import expoSplashScreen from "expo-splash-screen/plugin";
+import expoRouter from "expo-router/plugin";
+import expoNotifications from "expo-notifications/plugin";
+import expoLocation from "expo-location/plugin";
 
 const config: ExpoConfig = {
   experiments: {
@@ -35,9 +38,14 @@ const config: ExpoConfig = {
     bundler: "metro",
   },
   plugins: [
-    ["expo-router"],
-    ["expo-notifications"],
-    splashScreen({
+    expoRouter(),
+    expoNotifications(),
+    expoLocation({
+      isIosBackgroundLocationEnabled: true,
+      isAndroidBackgroundLocationEnabled: true,
+      isAndroidForegroundServiceEnabled: true,
+    }),
+    expoSplashScreen({
       image: "./assets/splash.png",
       resizeMode: "cover",
       backgroundColor: "#ffffff",
@@ -51,14 +59,6 @@ const config: ExpoConfig = {
       {
         iosGoogleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
         androidGoogleMapsApiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
-      },
-    ],
-    [
-      "expo-location",
-      {
-        isIosBackgroundLocationEnabled: true,
-        isAndroidBackgroundLocationEnabled: true,
-        isAndroidForegroundServiceEnabled: true,
       },
     ],
     [
