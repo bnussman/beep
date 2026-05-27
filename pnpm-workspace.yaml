@@ -9,4 +9,5 @@ allowBuilds:
   '@sentry/cli': false
   '@swc/core': false
   esbuild: false
+  msgpackr-extract: false
   protobufjs: false

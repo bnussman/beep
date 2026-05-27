@@ -36,6 +36,7 @@ const config: ExpoConfig = {
   plugins: [
     ["expo-router"],
     ["expo-notifications"],
+    ["expo-splash-screen"],
     [
       "react-native-maps",
       {
