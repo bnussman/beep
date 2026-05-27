@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@expo/ui": "^55.0.15",
+    "@expo/ui": "^56.0.14",
     "@gorhom/bottom-sheet": "5.2.9",
     "@react-native-async-storage/async-storage": "~2.2.0",
     "@react-native-menu/menu": "^2.0.0",
@@ -44,7 +44,7 @@
     "react-native-ios-context-menu": "^3.2.1",
     "react-native-ios-utilities": "^5.2.0",
     "react-native-keyboard-controller": "1.21.6",
-    "react-native-maps": "1.26.14",
+    "react-native-maps": "1.27.2",
     "react-native-purchases": "^9.1.0",
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "5.7.0",
@@ -77,12 +77,6 @@
       "reactNativeDirectoryCheck": {
         "listUnknownPackages": false
       }
-    },
-    "install": {
-      "exclude": [
-        "react-native-maps",
-        "@expo/ui"
-      ]
     }
   }
 }
