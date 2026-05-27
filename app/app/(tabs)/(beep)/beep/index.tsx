@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router/react-navigation";
 import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";

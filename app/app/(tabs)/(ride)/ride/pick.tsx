@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router/react-navigation";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";

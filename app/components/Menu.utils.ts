@@ -1,4 +1,4 @@
-import type { NativeStackHeaderItem } from "@react-navigation/native-stack";
+import { NativeStackHeaderItem } from "expo-router/build/react-navigation/native-stack";
 import type { Option } from "./Menu";
 
 const state = "off";

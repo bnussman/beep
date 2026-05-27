@@ -1,5 +1,5 @@
 import GorhomBottomSheet, { BottomSheetProps } from "@gorhom/bottom-sheet";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "expo-router/react-navigation";
 import { Ref } from "react";
 
 interface Props extends BottomSheetProps {
