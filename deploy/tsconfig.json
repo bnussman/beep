@@ -2,12 +2,10 @@
   "compilerOptions": {
     "strict": true,
     "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
   },
-  "files": [
-    "index.ts"
-  ]
+  "files": ["index.ts"],
 }
