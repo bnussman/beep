@@ -6,6 +6,7 @@
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
     "noEmit": true,
+    "types": ["node"],
   },
   "files": ["index.ts"],
 }
