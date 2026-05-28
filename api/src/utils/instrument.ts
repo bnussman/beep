@@ -10,6 +10,7 @@ Sentry.init({
   },
   integrations(integrations) {
     return [
+      Sentry.bunRuntimeMetricsIntegration(),
       Sentry.bunServerIntegration(),
       Sentry.postgresIntegration(),
       Sentry.redisIntegration(),

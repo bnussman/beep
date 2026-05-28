@@ -23,7 +23,7 @@
     "@banksnussman/photon": "^0.0.4",
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
-    "@sentry/bun": "^10.47.0",
+    "@sentry/bun": "^10.54.0",
     "@trpc/server": "^11.16.0",
     "car-info": "0.2.5",
     "drizzle-orm": "1.0.0-rc.3",
