@@ -66,5 +66,5 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - run: cp pnpm-lock.yaml app/pnpm-lock.yaml
       - run: bunx expo-doctor --verbose
-        continue-on-error: true
+        # continue-on-error: true
         working-directory: app

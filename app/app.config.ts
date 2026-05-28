@@ -1,5 +1,9 @@
 import type { ExpoConfig } from "expo/config";
 import packageJson from "./package.json";
+import expoSplashScreen from "expo-splash-screen/plugin";
+import expoRouter from "expo-router/plugin";
+import expoNotifications from "expo-notifications/plugin";
+import expoLocation from "expo-location/plugin";
 
 const config: ExpoConfig = {
   experiments: {
@@ -34,21 +38,27 @@ const config: ExpoConfig = {
     bundler: "metro",
   },
   plugins: [
-    ["expo-router"],
-    ["expo-notifications"],
+    expoRouter(),
+    expoNotifications(),
+    expoLocation({
+      isIosBackgroundLocationEnabled: true,
+      isAndroidBackgroundLocationEnabled: true,
+      isAndroidForegroundServiceEnabled: true,
+    }),
+    expoSplashScreen({
+      image: "./assets/splash.png",
+      resizeMode: "cover",
+      backgroundColor: "#ffffff",
+      dark: {
+        image: "./assets/splash.png",
+        backgroundColor: "#000000",
+      },
+    }),
     [
       "react-native-maps",
       {
         iosGoogleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
         androidGoogleMapsApiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
-      },
-    ],
-    [
-      "expo-location",
-      {
-        isIosBackgroundLocationEnabled: true,
-        isAndroidBackgroundLocationEnabled: true,
-        isAndroidForegroundServiceEnabled: true,
       },
     ],
     [
@@ -82,16 +92,6 @@ const config: ExpoConfig = {
       dark: "./assets/icon-transparent.png",
       tinted: "./assets/icon-tinted.png",
     },
-    splash: {
-      image: "./assets/splash.png",
-      resizeMode: "cover",
-      backgroundColor: "#ffffff",
-      dark: {
-        image: "./assets/splash.png",
-        resizeMode: "cover",
-        backgroundColor: "#000000",
-      },
-    },
   },
   android: {
     package: "app.ridebeep.App",
@@ -108,16 +108,6 @@ const config: ExpoConfig = {
     config: {
       googleMaps: {
         apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
-      },
-    },
-    splash: {
-      image: "./assets/splash.png",
-      resizeMode: "cover",
-      backgroundColor: "#ffffff",
-      dark: {
-        image: "./assets/splash.png",
-        resizeMode: "cover",
-        backgroundColor: "#000000",
       },
     },
   },

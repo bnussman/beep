@@ -1,6 +1,6 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router/react-navigation";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";

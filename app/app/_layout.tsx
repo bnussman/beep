@@ -20,7 +20,7 @@ import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
-} from "@react-navigation/native";
+} from "expo-router/react-navigation";
 import { navigationIntegration } from "../utils/instrument";
 import { HeroUINativeProvider } from "heroui-native";
 
