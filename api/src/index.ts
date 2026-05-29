@@ -77,6 +77,12 @@ Bun.serve({
       router: appRouter,
       createContext,
       onError(error) {
+        if (error.req.url.includes("syncPayments")) {
+          console.error("Error syncing payments", error);
+          captureException(error.error, {
+            extra: { input: error.input, type: error.type },
+          });
+        }
         if (getHTTPStatusCodeFromError(error.error) >= 500) {
           console.error(error.error);
           captureException(error.error, {
