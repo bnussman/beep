@@ -5,9 +5,10 @@ packages:
   - "test"
   - "deploy"
 allowBuilds:
-  '@pulumi/kubernetes': false
-  '@sentry/cli': false
-  '@swc/core': false
+  "@pulumi/kubernetes": false
+  "@sentry/cli": false
+  "@swc/core": false
   esbuild: false
   msgpackr-extract: false
   protobufjs: false
+minimumReleaseAge: 120
