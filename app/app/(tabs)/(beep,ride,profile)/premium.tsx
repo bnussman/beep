@@ -82,7 +82,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
       const Purchases: typeof import("react-native-purchases").default =
         require("react-native-purchases").default;
       await Purchases.purchasePackage(item);
-      await syncPayments();
+      await syncPayments({});
     } catch (e: any) {
       if (!e.userCancelled) {
         captureException(e);

@@ -263,7 +263,7 @@ export const userRouter = router({
       return u[0];
     }),
   syncPayments: authedProcedure
-    .input(z.object({ userId: z.string() }).optional())
+    .input(z.object({ userId: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       const userId = input?.userId ?? ctx.user.id;
 
