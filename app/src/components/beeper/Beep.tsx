@@ -1,0 +1,369 @@
+import MapView from "react-native-maps";
+import { useEffect, useRef } from "react";
+import { Separator, Surface } from "heroui-native";
+import { useUser } from "@/utils/useUser";
+import { ActionButton } from "../../components/ActionButton";
+import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+import { Alert, Pressable, View } from "react-native";
+import { Button } from "@/components/Button";
+import { Avatar } from "@/components/Avatar";
+import { Text } from "@/components/Text";
+import { Map } from "@/components/Map";
+import { useTRPC, type RouterOutput } from "@/utils/trpc";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { decodePolyline } from "@/utils/location";
+import { Marker } from "@/components/Marker";
+import { Polyline } from "@/components/Polyline";
+import { isMobile, isWeb } from "@/utils/constants";
+import { Menu } from "@/components/Menu";
+import { Elipsis } from "@/components/Elipsis";
+import { Link, useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  call,
+  openCashApp,
+  openDirections,
+  openMaps,
+  openVenmo,
+  sms,
+} from "@/utils/links";
+
+interface Props {
+  beep: RouterOutput["beeper"]["queue"][number];
+}
+
+export function Beep(props: Props) {
+  const { beep } = props;
+  const { user } = useUser();
+  const router = useRouter();
+  const trpc = useTRPC();
+
+  const { data: beepRoute } = useQuery(
+    trpc.location.getRoute.queryOptions({
+      origin: beep.origin,
+      destination: beep.destination,
+    }),
+  );
+
+  const route = beepRoute?.routes[0];
+
+  const polylineCoordinates = route?.legs
+    .flatMap((leg) => leg.steps)
+    .map((step) => decodePolyline(step.geometry))
+    .flat();
+
+  const origin = beepRoute && {
+    latitude: beepRoute.waypoints[0].location[1],
+    longitude: beepRoute.waypoints[0].location[0],
+  };
+
+  const destination = beepRoute && {
+    latitude: beepRoute.waypoints[1].location[1],
+    longitude: beepRoute.waypoints[1].location[0],
+  };
+
+  const queryClient = useQueryClient();
+
+  const { mutate: cancel } = useMutation(
+    trpc.beeper.updateBeep.mutationOptions({
+      onSuccess(data) {
+        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
+
+  const ref = useRef<MapView>(null);
+
+  useEffect(() => {
+    if (ref.current && origin && destination) {
+      ref.current.fitToCoordinates([origin, destination], {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }
+  }, [origin, destination]);
+
+  const onPress = () => {
+    if (isMobile) {
+      Alert.alert(
+        "Cancel Beep?",
+        "Are you sure you want to cancel this beep?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            style: "destructive",
+            onPress: onCancel,
+          },
+        ],
+        { cancelable: true },
+      );
+    } else {
+      onCancel();
+    }
+  };
+
+  const onCancel = () => {
+    cancel({ beepId: beep.id, data: { status: "canceled" } });
+  };
+
+  return (
+    <SafeAreaView
+      style={{
+        padding: 16,
+        gap: 16,
+        height: "100%",
+        paddingBottom: isWeb ? 64 : 12,
+        paddingTop: 56,
+      }}
+    >
+      <Surface className="gap-4">
+        <Link
+          href={{
+            pathname: "/user/[id]",
+            params: { id: beep.rider.id, beepId: beep.id },
+          }}
+          asChild
+        >
+          <Link.Trigger>
+            <Pressable>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <View style={{ flexShrink: 1 }}>
+                  <Text weight="800" size="xl">
+                    {beep.rider.first} {beep.rider.last}
+                  </Text>
+                  {/*{beep.rider.rating && (
+                    <Text size="xs">
+                      {printStars(Number(beep.rider.rating))}
+                    </Text>
+                  )}*/}
+                </View>
+                <Avatar size="sm" src={beep.rider.photo ?? undefined} />
+              </View>
+            </Pressable>
+          </Link.Trigger>
+        </Link>
+        <Separator />
+        <Pressable
+          onPress={() => openMaps(beep.origin)}
+          onLongPress={() => null}
+          style={{ width: "50%", gap: 4 }}
+        >
+          <Text weight="800">Pick Up</Text>
+          <Text style={{ flexShrink: 1 }} selectable>
+            {beep.origin}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => openMaps(beep.destination)}
+          onLongPress={() => null}
+          style={{ width: "50%", gap: 4 }}
+        >
+          <Text weight="800">Drop Off</Text>
+          <Text style={{ flexShrink: 1 }} selectable>
+            {beep.destination}
+          </Text>
+        </Pressable>
+        <Separator />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ width: "50%", gap: 4 }}>
+            <Text weight="800">Group Size</Text>
+            <Text>
+              {beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}
+            </Text>
+          </View>
+          <View style={{ gap: 4 }}>
+            <Text weight="800">Started at</Text>
+            <Text>
+              {new Date(beep.start).toLocaleTimeString(undefined, {
+                timeStyle: "short",
+              })}
+            </Text>
+          </View>
+        </View>
+        {route && (
+          <View style={{ flexDirection: "row" }}>
+            <View
+              style={{
+                flexShrink: 1,
+                justifyContent: "center",
+                gap: 4,
+                width: "50%",
+              }}
+            >
+              <Text weight="bold" style={{ flexShrink: 1 }}>
+                Duration
+              </Text>
+              <Text style={{ flexShrink: 1 }}>
+                {Math.round(route.duration / 60)} min
+              </Text>
+            </View>
+            <View style={{ flexShrink: 1, justifyContent: "center", gap: 4 }}>
+              <Text weight="bold" style={{ flexShrink: 1 }}>
+                Distance
+              </Text>
+              <Text style={{ flexShrink: 1 }}>
+                {Math.round(route.distance * 0.000621371)} miles
+              </Text>
+            </View>
+          </View>
+        )}
+      </Surface>
+      <View style={{ flexGrow: 1 }}>
+        {polylineCoordinates && origin && destination && (
+          <Map
+            key={beep.id}
+            ref={ref}
+            style={{ borderRadius: 16, flexGrow: 1, overflow: "hidden" }}
+            onStartShouldSetResponder={(event) => true}
+            showsUserLocation
+          >
+            <Marker
+              coordinate={origin}
+              title="Pick Up"
+              description={beep.origin}
+              identifier="origin"
+            />
+            <Marker
+              coordinate={destination}
+              title="Drop Off"
+              description={beep.destination}
+              identifier="destination"
+            />
+            <Polyline
+              coordinates={polylineCoordinates ?? []}
+              strokeWidth={5}
+              strokeColor="#3d8ae3"
+              lineCap="round"
+            />
+          </Map>
+        )}
+      </View>
+      <View style={{ flexDirection: "row", gap: 8 }}>
+        <Menu
+          label="Beeper actions"
+          trigger={
+            <Button
+              style={{ paddingHorizontal: 16, paddingVertical: 6 }}
+              size="md"
+              variant="tertiary"
+            >
+              <Elipsis />
+            </Button>
+          }
+          options={[
+            {
+              title: "Contact",
+              sfIcon: "phone.fill",
+              show: beep.status !== "waiting",
+              options: [
+                {
+                  title: "Call",
+                  sfIcon: "phone.fill",
+                  show: beep.status !== "waiting",
+                  onClick: () => call(beep.rider.id),
+                },
+                {
+                  title: "Text",
+                  sfIcon: "message.fill",
+                  show: beep.status !== "waiting",
+                  onClick: () => sms(beep.rider.id),
+                },
+              ],
+            },
+            {
+              title: "Directions",
+              sfIcon: "map.fill",
+              options: [
+                {
+                  title: "Directions to Rider",
+                  sfIcon: "figure.wave",
+                  onClick: () =>
+                    openDirections("Current+Location", beep.origin),
+                },
+                {
+                  title: "Directions for Beep",
+                  sfIcon: "map.fill",
+                  onClick: () => openDirections(beep.origin, beep.destination),
+                },
+              ],
+            },
+            {
+              title: "Request Money",
+              sfIcon: "dollarsign",
+              show: beep.status === "here" || beep.status === "in_progress",
+              options: [
+                {
+                  title: "Venmo",
+                  sfIcon: "creditcard.fill",
+                  show: Boolean(beep.rider.venmo),
+                  onClick: () =>
+                    openVenmo(
+                      beep.rider.venmo,
+                      beep.groupSize,
+                      user?.groupRate,
+                      user?.singlesRate,
+                      "charge",
+                    ),
+                },
+                {
+                  title: "Cash App",
+                  sfIcon: "dollarsign",
+                  show: Boolean(beep.rider.cashapp),
+                  onClick: () =>
+                    openCashApp(
+                      beep.rider.cashapp,
+                      beep.groupSize,
+                      user?.groupRate,
+                      user?.singlesRate,
+                    ),
+                },
+              ],
+            },
+            {
+              title: "Report",
+              sfIcon: "exclamationmark.bubble.fill",
+              onClick: () =>
+                router.push({
+                  pathname: "/user/[id]/report",
+                  params: { id: beep.rider.id, beepId: beep.id },
+                }),
+              show: beep.status !== "waiting" && beep.status !== "in_progress",
+            },
+            {
+              title: "Cancel Beep",
+              sfIcon: "xmark",
+              onClick: onPress,
+              destructive: true,
+              show: beep.status !== "waiting" && beep.status !== "in_progress",
+            },
+          ]}
+        />
+        {beep.status === "waiting" ? (
+          <View style={{ flexDirection: "row", gap: 8, flexGrow: 1 }}>
+            <AcceptDenyButton item={beep} type="deny" />
+            <AcceptDenyButton
+              style={{ flexGrow: 1 }}
+              item={beep}
+              type="accept"
+            />
+          </View>
+        ) : (
+          <ActionButton beep={beep} />
+        )}
+      </View>
+    </SafeAreaView>
+  );
+}
