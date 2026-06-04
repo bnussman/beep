@@ -99,7 +99,7 @@ function Rating() {
       <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
         <Grid container rowSpacing={2} columnSpacing={2}>
           {items.map((item) => (
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }} key={item.title}>
               <Typography fontWeight="bold" fontSize="0.95rem">
                 {item.title}
               </Typography>

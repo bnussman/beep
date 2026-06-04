@@ -34,16 +34,18 @@ function CarsTable() {
   const [selectedCarId, setSelectedCarId] = useState<string>();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const { data, isLoading, error } = useQuery(trpc.car.cars.queryOptions(
-    {
-      userId,
-      cursor: currentPage,
-      pageSize: 10,
-    },
-    {
-      placeholderData: keepPreviousData,
-    },
-  ));
+  const { data, isLoading, error } = useQuery(
+    trpc.car.cars.queryOptions(
+      {
+        userId,
+        cursor: currentPage,
+        pageSize: 10,
+      },
+      {
+        placeholderData: keepPreviousData,
+      },
+    ),
+  );
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 
@@ -93,6 +95,7 @@ function CarsTable() {
                 <TableCell>
                   <img
                     src={car.photo}
+                    alt={`${car.user.first}'s ${car.year} ${car.make} ${car.model}`}
                     style={{ width: 84, borderRadius: 10 }}
                   />
                 </TableCell>

@@ -17,8 +17,8 @@ import {
 type Values = RouterInput["user"]["editAdmin"]["data"];
 
 export const Route = createFileRoute("/admin/users/$userId/edit/$")({
-  component: EditDetails
-})
+  component: EditDetails,
+});
 
 function EditDetails() {
   const trpc = useTRPC();
@@ -50,24 +50,26 @@ function EditDetails() {
     values,
   });
 
-  const { mutateAsync: editUser } = useMutation(trpc.user.editAdmin.mutationOptions({
-    onSuccess(user) {
-      notifications.show(`Successfully edited ${user.first}'s profile`, {
-        severity: "success",
-      });
-    },
-    onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          setError(field as keyof Values, {
-            message: error.data?.fieldErrors[field]?.[0],
-          });
+  const { mutateAsync: editUser } = useMutation(
+    trpc.user.editAdmin.mutationOptions({
+      onSuccess(user) {
+        notifications.show(`Successfully edited ${user.first}'s profile`, {
+          severity: "success",
+        });
+      },
+      onError(error) {
+        if (error.data?.fieldErrors) {
+          for (const field in error.data?.fieldErrors) {
+            setError(field as keyof Values, {
+              message: error.data?.fieldErrors[field]?.[0],
+            });
+          }
+        } else {
+          setError("root", { message: error.message });
         }
-      } else {
-        setError("root", { message: error.message });
-      }
-    },
-  }));
+      },
+    }),
+  );
 
   const onSubmit = async (data: Values) => {
     await editUser({ userId, data });
@@ -89,6 +91,7 @@ function EditDetails() {
             <Controller
               control={control}
               name={key}
+              key={key}
               render={({ field, fieldState }) => {
                 if (type === "boolean") {
                   return (

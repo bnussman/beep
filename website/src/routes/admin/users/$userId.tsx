@@ -242,10 +242,10 @@ function User() {
       </Stack>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={currentTabIndex}>
-          {tabs.map((tab, idx) => (
+          {tabs.map((tab) => (
             <Tab
               label={tab}
-              key={idx}
+              key={tab}
               LinkComponent={Link}
               href={`/admin/users/${user.id}/${tab}`}
             />

@@ -5,15 +5,17 @@ import { useTRPC } from "../../utils/trpc";
 import { Stack, Alert, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
-export const Route = createFileRoute('/admin/redis')({
+export const Route = createFileRoute("/admin/redis")({
   component: Redis,
 });
 
 function Redis() {
   const trpc = useTRPC();
-  const { data, isLoading, error } = useQuery(trpc.redis.channels.queryOptions(undefined, {
-    refetchInterval: 2_000,
-  }));
+  const { data, isLoading, error } = useQuery(
+    trpc.redis.channels.queryOptions(undefined, {
+      refetchInterval: 2_000,
+    }),
+  );
 
   if (isLoading) {
     return <Loading />;
@@ -29,7 +31,9 @@ function Redis() {
         Redis Channels
       </Typography>
       <ul style={{ paddingLeft: 20 }}>
-        {data?.map((channel) => <li>{channel}</li>)}
+        {data?.map((channel) => (
+          <li key={channel}>{channel}</li>
+        ))}
       </ul>
     </Stack>
   );

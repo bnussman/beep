@@ -77,7 +77,11 @@ export function QueuePreview({ userId }: Props) {
   return (
     <Stack spacing={1}>
       {data?.map((beep) => (
-        <Link component={RouterLink} to={`/admin/users/${beep.rider.id}`}>
+        <Link
+          component={RouterLink}
+          to={`/admin/users/${beep.rider.id}`}
+          key={beep.id}
+        >
           <Stack key={beep.id} direction="row" spacing={1} alignItems="center">
             <Avatar
               src={beep.rider.photo || ""}
