@@ -1,9 +1,8 @@
-import React from "react";
 import { Image } from "react-native";
 import type { ImageProps } from "react-native";
-import AvatarImage from "../assets/avatar.png";
+import AvatarImage from "../../assets/avatar.png";
 
-type Size = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+type Size = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
 const SIZE_MAP: Record<Size, number> = {
   xxs: 32,
@@ -12,7 +11,7 @@ const SIZE_MAP: Record<Size, number> = {
   md: 64,
   lg: 80,
   xl: 112,
-  '2xl': 192,
+  "2xl": 192,
 };
 
 interface Props extends ImageProps {
@@ -20,7 +19,7 @@ interface Props extends ImageProps {
 }
 
 export function Avatar(props: Props) {
-  const { src, size = 'md', ...rest } = props;
+  const { src, size = "md", ...rest } = props;
 
   const px = SIZE_MAP[size];
 
@@ -34,9 +33,9 @@ export function Avatar(props: Props) {
           borderRadius: px / 2,
           width: px,
           height: px,
-          backgroundColor: 'gray',
+          backgroundColor: "gray",
         },
-        rest.style
+        rest.style,
       ]}
     />
   );

@@ -1,21 +1,20 @@
-import React from "react";
+import PremiumImage from "../../../../assets/premium.png";
 import { useEffect, useState } from "react";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { View, ActivityIndicator } from "react-native";
-import type {
-  PurchasesOffering,
-  PurchasesPackage,
-} from "react-native-purchases";
-import PremiumImage from "@/assets/premium.png";
 import { Countdown } from "@/components/CountDown";
 import { FlatList } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
+import type {
+  PurchasesOffering,
+  PurchasesPackage,
+} from "react-native-purchases";
 
 interface Props {
   item: PurchasesOffering;
