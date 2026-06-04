@@ -81,24 +81,24 @@ export default function User() {
                 : "N/A"}
             </Text>
           </View>
-          {userDetails && (
+          {userDetails?.phone ? (
             <View>
               <Text weight="800">Phone Number</Text>
               <Text selectable>{userDetails.phone}</Text>
             </View>
-          )}
-          {user.venmo && (
+          ) : null}
+          {user.venmo ? (
             <View>
               <Text weight="800">Venmo</Text>
               <Text selectable>{user.venmo}</Text>
             </View>
-          )}
-          {user.cashapp && (
+          ) : null}
+          {user.cashapp ? (
             <View>
               <Text weight="800">Cash App</Text>
               <Text selectable>{user.cashapp}</Text>
             </View>
-          )}
+          ) : null}
           {car && (
             <View>
               <Text weight="800">Car</Text>

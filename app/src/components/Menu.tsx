@@ -76,7 +76,7 @@ export const Menu = (props: MenuProps) => {
 
     if (option.options) {
       return (
-        <Component.Sub>
+        <Component.Sub key={option.title}>
           <Component.SubTrigger key={option.title}>
             <Component.ItemIcon
               ios={{ name: option.sfIcon }}
