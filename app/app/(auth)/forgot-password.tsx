@@ -4,19 +4,21 @@ import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
-import { View } from "react-native";
 import { Button } from "@/components/Button";
-import { TextField } from "heroui-native";
+import { Description, TextField } from "heroui-native";
 
 export default function ForgotPasswordScreen() {
   const trpc = useTRPC();
+
+  const [email, setEmail] = useState<string>("");
 
   const { mutate: sendForgotEmail, isPending } = useMutation(
     trpc.auth.forgotPassword.mutationOptions({
       onSuccess() {
         alert(
-          "Check your email! We sent you a link to a page where you can reset your password!",
+          "Success! Please Check your email 📧\nWe sent you a link to a page where you can reset your password.",
         );
+        setEmail("");
       },
       onError(error) {
         alert(error.message);
@@ -24,7 +26,9 @@ export default function ForgotPasswordScreen() {
     }),
   );
 
-  const [email, setEmail] = useState<string>("");
+  const onSubmit = () => {
+    sendForgotEmail({ email });
+  };
 
   return (
     <KeyboardAwareScrollView
@@ -37,11 +41,15 @@ export default function ForgotPasswordScreen() {
           textContentType="emailAddress"
           placeholder="example@ridebeep.app"
           returnKeyType="go"
+          value={email}
           onChangeText={(text) => setEmail(text)}
-          onSubmitEditing={() => sendForgotEmail({ email })}
+          onSubmitEditing={onSubmit}
         />
       </TextField>
-      <Button isLoading={isPending} isDisabled={!email}>
+      <Description>
+        We will send you an email with a link to reset your password.
+      </Description>
+      <Button isLoading={isPending} isDisabled={!email} onPress={onSubmit}>
         Reset Password
       </Button>
     </KeyboardAwareScrollView>
