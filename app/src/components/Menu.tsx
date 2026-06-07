@@ -1,8 +1,7 @@
-import * as DropdownMenu from "zeego/dropdown-menu";
-import * as ContextMenu from "zeego/context-menu";
-import { isWeb } from "@/utils/constants";
+import { Menu as HeroMenu, SubMenu } from "heroui-native";
+import { Text } from "@/components/Text";
 import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
-import { useColorScheme } from "react-native";
+import { Pressable, useColorScheme } from "react-native";
 
 export interface Option {
   /**
@@ -66,9 +65,6 @@ export const Menu = (props: MenuProps) => {
     return props.trigger;
   }
 
-  const Component =
-    props.activationMethod === "longPress" ? ContextMenu : DropdownMenu;
-
   const renderOption = (option: Option) => {
     if (option.show !== undefined && !option.show) {
       return null;
@@ -76,80 +72,36 @@ export const Menu = (props: MenuProps) => {
 
     if (option.options) {
       return (
-        <Component.Sub key={option.title}>
-          <Component.SubTrigger key={option.title}>
-            <Component.ItemIcon
-              ios={{ name: option.sfIcon }}
-            ></Component.ItemIcon>
-            <Component.ItemTitle
-              className={
-                isWeb
-                  ? colorScheme === "dark"
-                    ? "text-white"
-                    : "text-black"
-                  : undefined
-              }
-            >
+        <SubMenu key={option.title}>
+          <SubMenu.Trigger textValue="Focus">
+            <SubMenu.TriggerIndicator />
+            <Text className="flex-1 text-base font-medium text-foreground">
               {option.title}
-            </Component.ItemTitle>
-          </Component.SubTrigger>
-          <Component.SubContent>
-            {option.options.map(renderOption)}
-          </Component.SubContent>
-        </Component.Sub>
+            </Text>
+          </SubMenu.Trigger>
+          <SubMenu.Content>{option.options.map(renderOption)}</SubMenu.Content>
+        </SubMenu>
       );
     }
 
-    const C =
-      option.checked !== undefined ? Component.CheckboxItem : Component.Item;
-
-    const moreProps =
-      option.checked !== undefined
-        ? {
-            onValueChange: option.onClick,
-          }
-        : {};
-
     return (
-      <C
-        value={option.checked ? "on" : "off"}
-        key={option.title}
-        destructive={isWeb ? undefined : option.destructive}
-        disabled={option.disabled}
-        onSelect={option.onClick}
-        {...moreProps}
-      >
-        <Component.ItemIcon ios={{ name: option.sfIcon }}></Component.ItemIcon>
-        <Component.ItemTitle
-          className={
-            isWeb
-              ? colorScheme === "dark"
-                ? "text-white"
-                : "text-black"
-              : undefined
-          }
-        >
-          {option.title}
-        </Component.ItemTitle>
-      </C>
+      <HeroMenu.Item key={option.title} onPress={option.onClick}>
+        <HeroMenu.ItemTitle>{option.title}</HeroMenu.ItemTitle>
+      </HeroMenu.Item>
     );
   };
 
   return (
-    <Component.Root>
-      <Component.Trigger
-        aria-label={props.label}
-        className={
-          isWeb
-            ? colorScheme === "dark"
-              ? "text-white *:w-full"
-              : "text-black *:w-full"
-            : undefined
-        }
-      >
-        {props.trigger}
-      </Component.Trigger>
-      <Component.Content>{props.options.map(renderOption)}</Component.Content>
-    </Component.Root>
+    <HeroMenu isOpen>
+      <HeroMenu.Trigger asChild>
+        <Pressable>{props.trigger}</Pressable>
+      </HeroMenu.Trigger>
+      <HeroMenu.Portal>
+        <HeroMenu.Overlay />
+        <HeroMenu.Content presentation="popover" width={240}>
+          {props.options.map(renderOption)}
+        </HeroMenu.Content>
+      </HeroMenu.Portal>
+    </HeroMenu>
   );
 };
