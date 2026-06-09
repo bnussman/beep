@@ -106,7 +106,9 @@ export const Menu = (props: MenuProps) => {
 
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger>{props.trigger}</MenuComponent.Trigger>
+      <MenuComponent.Trigger aria-label={props.label}>
+        {props.trigger}
+      </MenuComponent.Trigger>
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
           <MenuComponent.Popup>

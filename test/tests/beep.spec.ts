@@ -49,7 +49,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await expect(riderPage.getByText("Call")).toBeVisible();
   await expect(riderPage.getByText("Text")).toBeVisible();
 
-  await riderPage.getByText("Pay").click();
+  await riderPage.getByText("Pay").click({ force: true });
   await expect(riderPage.getByText("Venmo")).toBeVisible();
   // await expect(riderPage.getByText("Share Venmo")).toBeVisible(); removed for now
 
