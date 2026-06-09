@@ -17,7 +17,11 @@ export function Menu(props: MenuProps) {
 
     if (option.options) {
       return (
-        <ExpoUIMenu label={option.title} systemImage={option.sfIcon}>
+        <ExpoUIMenu
+          key={option.title}
+          label={option.title}
+          systemImage={option.sfIcon}
+        >
           {option.options.map(renderMenuOption)}
         </ExpoUIMenu>
       );
@@ -25,6 +29,7 @@ export function Menu(props: MenuProps) {
 
     return (
       <Button
+        key={option.title}
         systemImage={option.sfIcon}
         label={option.title}
         onPress={option.onClick}
