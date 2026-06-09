@@ -1,6 +1,7 @@
 import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { ContextMenu } from "@base-ui/react/context-menu";
+import { cx } from "tailwind-variants";
 
 export interface Option {
   /**
@@ -78,12 +79,12 @@ export const Menu = (props: MenuProps) => {
     if (option.options) {
       return (
         <MenuComponent.SubmenuRoot key={option.title}>
-          <MenuComponent.SubmenuTrigger className="text-foreground">
+          <MenuComponent.SubmenuTrigger className={itemClasses}>
             {option.title}
           </MenuComponent.SubmenuTrigger>
           <MenuComponent.Portal>
             <MenuComponent.Positioner>
-              <MenuComponent.Popup>
+              <MenuComponent.Popup className={popupClasses}>
                 {option.options.map(renderOption)}
               </MenuComponent.Popup>
             </MenuComponent.Positioner>
@@ -95,7 +96,7 @@ export const Menu = (props: MenuProps) => {
     return (
       <MenuComponent.Item
         onClick={option.onClick}
-        className="text-foreground"
+        className={cx(itemClasses, { "text-red-400": option.destructive })}
         disabled={option.disabled}
         key={option.title}
       >
@@ -106,12 +107,12 @@ export const Menu = (props: MenuProps) => {
 
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger aria-label={props.label}>
+      <MenuComponent.Trigger className="*:w-full" aria-label={props.label}>
         {props.trigger}
       </MenuComponent.Trigger>
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
-          <MenuComponent.Popup>
+          <MenuComponent.Popup className={popupClasses}>
             {props.options.map(renderOption)}
           </MenuComponent.Popup>
         </MenuComponent.Positioner>
@@ -119,3 +120,8 @@ export const Menu = (props: MenuProps) => {
     </MenuComponent.Root>
   );
 };
+
+const popupClasses =
+  "bg-surface border-border border rounded-xl p-2 shadow min-w-[200px] max-h-[var(--available-height)] overflow-y-auto";
+const itemClasses =
+  "text-foreground p-2 cursor-pointer hover:bg-surface-hover rounded-xl";
