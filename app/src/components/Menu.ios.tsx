@@ -3,21 +3,22 @@ import {
   Menu as ExpoUIMenu,
   Button,
   RNHostView,
+  ContextMenu,
 } from "@expo/ui/swift-ui";
 import { MenuProps, Option } from "./Menu";
 import type { JSX } from "react/jsx-runtime";
-import { disabled } from "@expo/ui/swift-ui/modifiers";
+import { disabled, fixedSize } from "@expo/ui/swift-ui/modifiers";
 
 export function Menu(props: MenuProps) {
-  const renderOption = (option: Option) => {
+  const renderMenuOption = (option: Option) => {
     if (option.show !== undefined && !option.show) {
       return null;
     }
 
     if (option.options) {
       return (
-        <ExpoUIMenu label={undefined}>
-          {option.options.map(renderOption)}
+        <ExpoUIMenu label={option.title} systemImage={option.sfIcon}>
+          {option.options.map(renderMenuOption)}
         </ExpoUIMenu>
       );
     }
@@ -33,6 +34,23 @@ export function Menu(props: MenuProps) {
     );
   };
 
+  if (props.activationMethod === "longPress") {
+    return (
+      <Host matchContents modifiers={[fixedSize()]}>
+        <ContextMenu>
+          <ContextMenu.Trigger>
+            <RNHostView matchContents>
+              {props.trigger as JSX.Element}
+            </RNHostView>
+          </ContextMenu.Trigger>
+          <ContextMenu.Items>
+            {props.options.map(renderMenuOption)}
+          </ContextMenu.Items>
+        </ContextMenu>
+      </Host>
+    );
+  }
+
   return (
     <Host matchContents>
       <ExpoUIMenu
@@ -40,7 +58,7 @@ export function Menu(props: MenuProps) {
           <RNHostView matchContents>{props.trigger as JSX.Element}</RNHostView>
         }
       >
-        {props.options.map(renderOption)}
+        {props.options.map(renderMenuOption)}
       </ExpoUIMenu>
     </Host>
   );
