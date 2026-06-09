@@ -1,13 +1,17 @@
-import { Menu as HeroMenu, SubMenu } from "heroui-native";
-import { Text } from "@/components/Text";
 import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
-import { Pressable, useColorScheme } from "react-native";
+import { Menu as BaseMenu } from "@base-ui/react/menu";
+import { ContextMenu } from "@base-ui/react/context-menu";
 
 export interface Option {
   /**
    * The text content of the option
    */
   title: string;
+  /**
+   * An SF Symbol name to show alongside the option. Only works on iOS.
+   *
+   * @platform ios
+   */
   sfIcon?: Extract<SFSymbolIcon["sf"], string>;
   /**
    * Called when the option is chosen/clicked/pressed
@@ -59,7 +63,8 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
-  const colorScheme = useColorScheme();
+  const MenuComponent =
+    props.activationMethod === "longPress" ? ContextMenu : BaseMenu;
 
   if (props.disabled) {
     return props.trigger;
@@ -72,36 +77,43 @@ export const Menu = (props: MenuProps) => {
 
     if (option.options) {
       return (
-        <SubMenu key={option.title}>
-          <SubMenu.Trigger textValue="Focus">
-            <SubMenu.TriggerIndicator />
-            <Text className="flex-1 text-base font-medium text-foreground">
-              {option.title}
-            </Text>
-          </SubMenu.Trigger>
-          <SubMenu.Content>{option.options.map(renderOption)}</SubMenu.Content>
-        </SubMenu>
+        <MenuComponent.SubmenuRoot key={option.title}>
+          <MenuComponent.SubmenuTrigger className="text-foreground">
+            {option.title}
+          </MenuComponent.SubmenuTrigger>
+          <MenuComponent.Portal>
+            <MenuComponent.Positioner>
+              <MenuComponent.Popup>
+                {option.options.map(renderOption)}
+              </MenuComponent.Popup>
+            </MenuComponent.Positioner>
+          </MenuComponent.Portal>
+        </MenuComponent.SubmenuRoot>
       );
     }
 
     return (
-      <HeroMenu.Item key={option.title} onPress={option.onClick}>
-        <HeroMenu.ItemTitle>{option.title}</HeroMenu.ItemTitle>
-      </HeroMenu.Item>
+      <MenuComponent.Item
+        onClick={option.onClick}
+        className="text-foreground"
+        disabled={option.disabled}
+        key={option.title}
+      >
+        {option.title}
+      </MenuComponent.Item>
     );
   };
 
   return (
-    <HeroMenu isOpen>
-      <HeroMenu.Trigger asChild>
-        <Pressable>{props.trigger}</Pressable>
-      </HeroMenu.Trigger>
-      <HeroMenu.Portal>
-        <HeroMenu.Overlay />
-        <HeroMenu.Content presentation="popover" width={240}>
-          {props.options.map(renderOption)}
-        </HeroMenu.Content>
-      </HeroMenu.Portal>
-    </HeroMenu>
+    <MenuComponent.Root>
+      <MenuComponent.Trigger>{props.trigger}</MenuComponent.Trigger>
+      <MenuComponent.Portal>
+        <MenuComponent.Positioner>
+          <MenuComponent.Popup>
+            {props.options.map(renderOption)}
+          </MenuComponent.Popup>
+        </MenuComponent.Positioner>
+      </MenuComponent.Portal>
+    </MenuComponent.Root>
   );
 };
