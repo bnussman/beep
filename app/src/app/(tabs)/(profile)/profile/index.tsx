@@ -8,8 +8,6 @@ import { Link, LinkProps } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/utils/trpc";
 import { Button } from "@/components/Button";
-import { useHeaderHeight } from "expo-router/react-navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface LinkItem {
   icon: string | React.JSX.Element;
@@ -21,8 +19,6 @@ interface LinkItem {
 export default function EditProfileScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
-  const headerHeight = useHeaderHeight();
-  const inset = useSafeAreaInsets();
 
   const links: LinkItem[] = [
     {
@@ -77,10 +73,7 @@ export default function EditProfileScreen() {
   );
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ paddingTop: inset.top + headerHeight }}
-    >
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       <View
         style={{
           paddingHorizontal: 16,
