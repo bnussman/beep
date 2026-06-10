@@ -1,6 +1,6 @@
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
-import { isWeb } from "@/utils/constants";
+import { isAndroid, isWeb } from "@/utils/constants";
 import { Stack, useRouter } from "expo-router";
 import { CloseButton } from "heroui-native";
 
@@ -40,7 +40,7 @@ export default function Layout() {
       <Stack.Screen
         options={{
           headerTitle: "Premium",
-          presentation: "formSheet",
+          presentation: isAndroid ? undefined : "formSheet", // formSheet causes a crash on android (java.lang.NullPointerException com.swmansion.rnscreens.ScreenStackFragment.handleInsetsUpdateAndNotifyTransition)
           unstable_headerRightItems: (context) => [
             {
               type: "button",

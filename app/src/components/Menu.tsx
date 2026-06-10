@@ -1,14 +1,18 @@
-import * as DropdownMenu from "zeego/dropdown-menu";
-import * as ContextMenu from "zeego/context-menu";
-import { isWeb } from "@/utils/constants";
 import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
-import { useColorScheme } from "react-native";
+import { Menu as BaseMenu } from "@base-ui/react/menu";
+import { ContextMenu } from "@base-ui/react/context-menu";
+import { cx } from "tailwind-variants";
 
 export interface Option {
   /**
    * The text content of the option
    */
   title: string;
+  /**
+   * An SF Symbol name to show alongside the option. Only works on iOS.
+   *
+   * @platform ios
+   */
   sfIcon?: Extract<SFSymbolIcon["sf"], string>;
   /**
    * Called when the option is chosen/clicked/pressed
@@ -60,14 +64,12 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
-  const colorScheme = useColorScheme();
+  const MenuComponent =
+    props.activationMethod === "longPress" ? ContextMenu : BaseMenu;
 
   if (props.disabled) {
     return props.trigger;
   }
-
-  const Component =
-    props.activationMethod === "longPress" ? ContextMenu : DropdownMenu;
 
   const renderOption = (option: Option) => {
     if (option.show !== undefined && !option.show) {
@@ -76,80 +78,50 @@ export const Menu = (props: MenuProps) => {
 
     if (option.options) {
       return (
-        <Component.Sub key={option.title}>
-          <Component.SubTrigger key={option.title}>
-            <Component.ItemIcon
-              ios={{ name: option.sfIcon }}
-            ></Component.ItemIcon>
-            <Component.ItemTitle
-              className={
-                isWeb
-                  ? colorScheme === "dark"
-                    ? "text-white"
-                    : "text-black"
-                  : undefined
-              }
-            >
-              {option.title}
-            </Component.ItemTitle>
-          </Component.SubTrigger>
-          <Component.SubContent>
-            {option.options.map(renderOption)}
-          </Component.SubContent>
-        </Component.Sub>
+        <MenuComponent.SubmenuRoot key={option.title}>
+          <MenuComponent.SubmenuTrigger className={itemClasses}>
+            {option.title}
+          </MenuComponent.SubmenuTrigger>
+          <MenuComponent.Portal>
+            <MenuComponent.Positioner>
+              <MenuComponent.Popup className={popupClasses}>
+                {option.options.map(renderOption)}
+              </MenuComponent.Popup>
+            </MenuComponent.Positioner>
+          </MenuComponent.Portal>
+        </MenuComponent.SubmenuRoot>
       );
     }
 
-    const C =
-      option.checked !== undefined ? Component.CheckboxItem : Component.Item;
-
-    const moreProps =
-      option.checked !== undefined
-        ? {
-            onValueChange: option.onClick,
-          }
-        : {};
-
     return (
-      <C
-        value={option.checked ? "on" : "off"}
-        key={option.title}
-        destructive={isWeb ? undefined : option.destructive}
+      <MenuComponent.Item
+        onClick={option.onClick}
+        className={cx(itemClasses, { "text-red-400": option.destructive })}
         disabled={option.disabled}
-        onSelect={option.onClick}
-        {...moreProps}
+        key={option.title}
       >
-        <Component.ItemIcon ios={{ name: option.sfIcon }}></Component.ItemIcon>
-        <Component.ItemTitle
-          className={
-            isWeb
-              ? colorScheme === "dark"
-                ? "text-white"
-                : "text-black"
-              : undefined
-          }
-        >
-          {option.title}
-        </Component.ItemTitle>
-      </C>
+        {option.title}
+      </MenuComponent.Item>
     );
   };
 
   return (
-    <Component.Root>
-      <Component.Trigger
-        aria-label={props.label}
-        className={
-          isWeb
-            ? colorScheme === "dark"
-              ? "text-white *:w-full"
-              : "text-black *:w-full"
-            : undefined
-        }
-      >
+    <MenuComponent.Root>
+      <MenuComponent.Trigger className="*:w-full" aria-label={props.label}>
         {props.trigger}
-      </Component.Trigger>
-      <Component.Content>{props.options.map(renderOption)}</Component.Content>
-    </Component.Root>
+      </MenuComponent.Trigger>
+      <MenuComponent.Portal>
+        <MenuComponent.Positioner>
+          <MenuComponent.Popup className={popupClasses}>
+            {props.options.map(renderOption)}
+          </MenuComponent.Popup>
+        </MenuComponent.Positioner>
+      </MenuComponent.Portal>
+    </MenuComponent.Root>
   );
 };
+
+const popupClasses =
+  "bg-surface border-border border rounded-xl p-2 shadow min-w-[200px] max-h-[var(--available-height)] overflow-y-auto";
+const itemClasses =
+  "text-foreground p-2 cursor-pointer hover:bg-surface-hover rounded-xl";

@@ -175,7 +175,7 @@ export function Beep({ item }: Props) {
           href={{ pathname: "/profile/beeps/[id]", params: { id: item.id } }}
           asChild
         >
-          <Link.Trigger withAppleZoom>
+          <Link.Trigger>
             <Card style={{ padding: 16, gap: 8 }} onLongPress={() => null}>
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}

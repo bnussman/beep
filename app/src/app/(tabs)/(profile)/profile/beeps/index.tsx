@@ -34,6 +34,7 @@ export default function BeepsScreen() {
           }
           return page.page + 1;
         },
+        refetchOnMount: false,
       },
     ),
   );
@@ -84,7 +85,11 @@ export default function BeepsScreen() {
       contentContainerStyle={getContentContainerStyle(beeps?.length === 0)}
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
-      onEndReached={() => fetchNextPage()}
+      onEndReached={() => {
+        if (!isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       contentInsetAdjustmentBehavior="automatic"

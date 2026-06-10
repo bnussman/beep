@@ -1,4 +1,5 @@
 import { AddCarButton } from "@/components/AddCarButton";
+import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { useProfileMenu } from "@/components/ProfileMenu";
@@ -24,7 +25,7 @@ export default function Layout() {
         options={{
           headerTitle: "Edit",
           unstable_headerRightItems: () => getNavigationMenuFromOptions(menu),
-          headerRight: () => <Menu trigger="..." options={menu} />,
+          headerRight: () => <Menu trigger={<Elipsis />} options={menu} />,
         }}
       />
       <Stack.Screen
@@ -90,3 +91,7 @@ export default function Layout() {
     </Stack>
   );
 }
+
+export const unstable_settings = {
+  initialRouteName: "profile/index",
+};
