@@ -61,7 +61,6 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@sentry/cli": "3.1.0",
-    "@expo/metro-runtime": "56.0.14",
     "@trpc/server": "^11.16.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "~19.2.0",
