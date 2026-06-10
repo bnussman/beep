@@ -27,18 +27,18 @@ export default function Layout() {
     <NativeTabs minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="(ride)">
         <NativeTabs.Trigger.Label>Ride</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="car.fill" />
+        <NativeTabs.Trigger.Icon sf="car.fill" md="directions_car" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="(beep)">
         <NativeTabs.Trigger.Label>Beep</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="steeringwheel" />
+        <NativeTabs.Trigger.Icon sf="steeringwheel" md="local_taxi" />
         <NativeTabs.Trigger.Badge hidden={!user?.isBeeping}>
           {queue?.length ? String(queue.length) : ""}
         </NativeTabs.Trigger.Badge>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="(profile)">
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf="person.fill" />
+        <NativeTabs.Trigger.Icon sf="person.fill" md="person" />
         {!user?.isEmailVerified && <NativeTabs.Trigger.Badge />}
         {/* <NativeTabs.Trigger.Icon src={{ uri: user?.photo ?? undefined, width: 24, height: 24,  }} /> */}
       </NativeTabs.Trigger>

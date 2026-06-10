@@ -45,7 +45,7 @@ export default function Layout() {
 
             return {
               headerTitle: `${pickLocationTitleMap[params.type]} Location`,
-              presentation: "formSheet",
+              presentation: isAndroid ? undefined : "formSheet", // formSheet causes a crash on android (java.lang.NullPointerException com.swmansion.rnscreens.ScreenStackFragment.handleInsetsUpdateAndNotifyTransition)
               unstable_headerRightItems: (context) => [
                 {
                   type: "button",

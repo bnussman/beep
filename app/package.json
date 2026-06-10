@@ -11,10 +11,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@base-ui/react": "^1.5.0",
     "@expo/ui": "^56.0.16",
     "@gorhom/bottom-sheet": "5.2.9",
     "@react-native-async-storage/async-storage": "~2.2.0",
-    "@react-native-menu/menu": "^2.0.0",
     "@sentry/react-native": "7.11.0",
     "@tanstack/react-query": "^5.96.2",
     "@trpc/client": "^11.16.0",
@@ -42,8 +42,6 @@
     "react-hook-form": "^7.69.0",
     "react-native": "0.85.3",
     "react-native-gesture-handler": "~2.31.2",
-    "react-native-ios-context-menu": "^3.2.1",
-    "react-native-ios-utilities": "^5.2.0",
     "react-native-keyboard-controller": "1.21.6",
     "react-native-maps": "1.27.2",
     "react-native-purchases": "^9.1.0",
@@ -56,13 +54,12 @@
     "tailwind-merge": "^3.5.0",
     "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4.2.4",
-    "uniwind": "^1.6.3",
-    "zeego": "^3.0.6"
+    "uniwind": "^1.6.3"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
-    "@sentry/cli": "3.1.0",
     "@expo/metro-runtime": "56.0.14",
+    "@sentry/cli": "3.1.0",
     "@trpc/server": "^11.16.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "~19.2.0",
