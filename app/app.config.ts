@@ -4,6 +4,7 @@ import expoSplashScreen from "expo-splash-screen/plugin";
 import expoRouter from "expo-router/plugin";
 import expoNotifications from "expo-notifications/plugin";
 import expoLocation from "expo-location/plugin";
+import expoWidgets from "expo-widgets/plugin";
 
 const config: ExpoConfig = {
   experiments: {
@@ -53,6 +54,9 @@ const config: ExpoConfig = {
         image: "./assets/splash.png",
         backgroundColor: "#000000",
       },
+    }),
+    expoWidgets({
+      enablePushNotifications: true,
     }),
     [
       "react-native-maps",
