@@ -14,6 +14,8 @@ import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException, captureMessage } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
+import RiderActivity from "@/live-activities/rider-activity";
+import { getCurrentStatusMessage } from "@/utils/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -43,11 +45,19 @@ export default function PickBeepScreen() {
     ),
   );
 
+  const startLiveActivity = (data: RouterOutput["rider"]["startBeep"]) => {
+    const instance = RiderActivity.start({
+      status: getCurrentStatusMessage(data),
+      name: `${data.beeper.first} ${data.beeper.last}`,
+    });
+  };
+
   const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(
     trpc.rider.startBeep.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
         navigation.goBack();
+        startLiveActivity(data);
       },
       onError(error) {
         alert(error.message);

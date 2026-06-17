@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useTRPC } from "@/utils/trpc";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
@@ -8,7 +8,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { Pressable, View } from "react-native";
 import { RideMap } from "@/components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Controller, useForm, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Input, TextField, FieldError } from "heroui-native";
 import { LocationInput } from "@/components/LocationInput";
@@ -16,13 +16,7 @@ import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
 import { RideMenu } from "@/components/RideToolbar";
 import { Label } from "@/components/Label";
-import {
-  Link,
-  SplashScreen,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
-// import { RateLastBeeper } from "@/components/RateLastBeeper";
+import { Link, SplashScreen, useRouter } from "expo-router";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
