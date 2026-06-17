@@ -14,6 +14,7 @@ import {
   getQueueSize,
   sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
+import { sendRiderLiveActivityUpdate } from "../utils/live-activities";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -120,6 +121,8 @@ export const beeperRouter = router({
       };
 
       await db.update(beep).set(values).where(eq(beep.id, queueEntry.id));
+
+      sendRiderLiveActivityUpdate(queueEntry);
 
       queueEntry.status = input.data.status;
 
