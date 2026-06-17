@@ -1,3 +1,10 @@
-export default function RiderActivity() {
-  return null;
-}
+const RiderActivity = {
+  start: () => {
+    return {
+      addPushTokenListener: () => {},
+      end: () => {},
+    };
+  },
+};
+
+export default RiderActivity;
