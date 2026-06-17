@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigation } from "expo-router/react-navigation";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, trpcClient, useTRPC } from "@/utils/trpc";
+import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -12,10 +12,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { printStars } from "@/components/Stars";
 import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
-import { captureException, captureMessage } from "@sentry/react-native";
+import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
-import RiderActivity from "@/live-activities/rider-activity";
-import { getCurrentStatusMessage } from "@/utils/utils";
+import { startLiveActivity } from "@/live-activities/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -44,27 +43,6 @@ export default function PickBeepScreen() {
         : skipToken,
     ),
   );
-
-  const startLiveActivity = async (
-    data: RouterOutput["rider"]["startBeep"],
-  ) => {
-    const instance = RiderActivity.start({
-      status: getCurrentStatusMessage(data),
-      name: `${data.beeper.first} ${data.beeper.last}`,
-    });
-
-    const token = await instance.getPushToken();
-
-    if (token) {
-      await trpcClient.rider.setBeepLiveActivityToken.mutate({
-        beepId: data.id,
-        token,
-      });
-      alert(`Live Activity Token sent to the API ${token}`);
-    } else {
-      alert("No token available to send to API");
-    }
-  };
 
   const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(
     trpc.rider.startBeep.mutationOptions({

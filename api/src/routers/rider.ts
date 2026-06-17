@@ -492,6 +492,7 @@ export const riderRouter = router({
             "You must be the rider of the beep to set the rider live activity token",
         });
       }
+      console.log("Got token", input.token);
 
       await db
         .update(beep)
