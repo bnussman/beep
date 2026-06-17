@@ -155,6 +155,7 @@ export const riderRouter = router({
         start: new Date(),
         status: "waiting",
         end: null,
+        rider_live_activity_token: null,
       } as const;
 
       const currentRide = await db.query.beep.findFirst({
