@@ -474,4 +474,30 @@ export const riderRouter = router({
 
     return mostRecentCompletedBeep;
   }),
+  setBeepLiveActivityToken: authedProcedure
+    .input(z.object({ beepId: z.string(), token: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const b = await db.query.beep.findFirst({
+        where: { id: input.beepId },
+      });
+
+      if (!b) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found." });
+      }
+
+      if (ctx.user.id !== b.rider_id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You must be the rider of the beep to set the rider live activity token",
+        });
+      }
+
+      await db
+        .update(beep)
+        .set({ rider_live_activity_token: input.token })
+        .where(eq(beep.id, b.id));
+
+      return {};
+    }),
 });

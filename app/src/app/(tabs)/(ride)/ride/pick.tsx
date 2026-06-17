@@ -4,7 +4,7 @@ import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
+import { RouterOutput, trpcClient, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -45,11 +45,25 @@ export default function PickBeepScreen() {
     ),
   );
 
-  const startLiveActivity = (data: RouterOutput["rider"]["startBeep"]) => {
+  const startLiveActivity = async (
+    data: RouterOutput["rider"]["startBeep"],
+  ) => {
     const instance = RiderActivity.start({
       status: getCurrentStatusMessage(data),
       name: `${data.beeper.first} ${data.beeper.last}`,
     });
+
+    const token = await instance.getPushToken();
+
+    if (token) {
+      await trpcClient.rider.setBeepLiveActivityToken.mutate({
+        beepId: data.id,
+        token,
+      });
+      alert(`Live Activity Token sent to the API ${token}`);
+    } else {
+      alert("No token available to send to API");
+    }
   };
 
   const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(

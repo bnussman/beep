@@ -1,0 +1,1 @@
+ALTER TABLE "beep" ADD COLUMN "rider_live_activity_token" varchar(255);
