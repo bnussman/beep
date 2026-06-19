@@ -2,7 +2,7 @@ import { HStack, Spacer, Text, VStack } from "@expo/ui/swift-ui";
 import { font, padding } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
 
-interface RiderActivityProps {
+export interface RiderActivityProps {
   name: string;
   etaMinutes?: number;
   status: string;

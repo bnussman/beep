@@ -14,7 +14,6 @@ import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
-import { startLiveActivity } from "@/live-activities/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -49,7 +48,6 @@ export default function PickBeepScreen() {
       onSuccess(data) {
         queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
         navigation.goBack();
-        startLiveActivity(data);
       },
       onError(error) {
         alert(error.message);

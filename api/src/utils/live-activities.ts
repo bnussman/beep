@@ -35,6 +35,11 @@ export async function sendRiderLiveActivityUpdate(beep: Beep) {
           etaMinutes: 0,
         }),
       },
+      alert: {
+        title: `Beep Update ${beep.status}`,
+        body: beep.status,
+        sound: "default",
+      },
     },
   };
 

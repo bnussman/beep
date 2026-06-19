@@ -1,4 +1,5 @@
 const RiderActivity = {
+  getInstances: () => [],
   start: () => {
     return {
       addPushTokenListener: () => {},

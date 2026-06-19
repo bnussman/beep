@@ -122,8 +122,6 @@ export const beeperRouter = router({
 
       await db.update(beep).set(values).where(eq(beep.id, queueEntry.id));
 
-      sendRiderLiveActivityUpdate(queueEntry);
-
       queueEntry.status = input.data.status;
 
       if (isStartingBeep || isEndingBeep) {
@@ -139,7 +137,8 @@ export const beeperRouter = router({
 
       sendBeepUpdateNotificationToRider(
         queueEntry.rider.id,
-        queueEntry.status,
+        queueEntry.rider_live_activity_token,
+        queueEntry,
         ctx.user,
       );
 

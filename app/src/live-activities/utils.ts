@@ -1,33 +1,67 @@
 import { RouterOutput, trpcClient } from "@/utils/trpc";
-import RiderActivity from "@/live-activities/rider-activity";
 import { getCurrentStatusMessage } from "@/utils/utils";
-import { LiveActivity } from "expo-widgets";
+import { LiveActivity, PushTokenEvent } from "expo-widgets";
+import RiderActivity, {
+  RiderActivityProps,
+} from "@/live-activities/rider-activity";
 
-const liveActivities = new Map<string, LiveActivity>();
+type Beep = RouterOutput["rider"]["startBeep"];
 
-export async function startLiveActivity(
-  beep: RouterOutput["rider"]["startBeep"],
-) {
-  // end all previous rider live activies before starting a new one
-  for (const [beepId, liveActivity] of liveActivities) {
-    liveActivity.end("immediate");
+let riderActivity: LiveActivity<RiderActivityProps> | null =
+  RiderActivity.getInstances()[0] ?? null;
+let riderActivityTokenListener: { remove(): void } | null = null;
+
+async function handleRiderPushTokenUpdate(event: PushTokenEvent, beep: Beep) {
+  trpcClient.rider.setBeepLiveActivityToken
+    .mutate({
+      beepId: beep.id,
+      token: event.pushToken,
+    })
+    .then(() => {
+      alert(
+        `Live Activity Token sent to the API ${event.pushToken} from listener`,
+      );
+    });
+}
+
+export async function ensureRiderLiveActivity(beep: Beep | null | undefined) {
+  if (beep === undefined) {
+    return;
   }
 
-  const instance = RiderActivity.start({
+  // If the user is not in a beep, ensure there is no live activity and listener
+  if (beep === null) {
+    if (riderActivityTokenListener) {
+      riderActivityTokenListener.remove();
+      riderActivityTokenListener = null;
+    }
+    if (riderActivity) {
+      riderActivity.end("immediate");
+      riderActivity = null;
+    }
+    return;
+  }
+
+  if (riderActivity && !riderActivityTokenListener) {
+    // If there is an active live activity, but a listener is not setup, setup one.
+    // This is so that we continue listening for tokens after the app is killed and re-opened.
+    riderActivityTokenListener = riderActivity.addPushTokenListener((event) =>
+      handleRiderPushTokenUpdate(event, beep),
+    );
+    return;
+  }
+
+  if (riderActivity && riderActivityTokenListener) {
+    return;
+  }
+
+  // User is in a beep. Start a live activity and listen for token updates
+  riderActivity = RiderActivity.start({
     status: getCurrentStatusMessage(beep),
     name: `${beep.beeper.first} ${beep.beeper.last}`,
   });
 
-  liveActivities.set(beep.id, instance);
-
-  instance.addPushTokenListener(({ pushToken }) => {
-    trpcClient.rider.setBeepLiveActivityToken
-      .mutate({
-        beepId: beep.id,
-        token: pushToken,
-      })
-      .then(() => {
-        alert(`Live Activity Token sent to the API ${pushToken} from listener`);
-      });
-  });
+  riderActivityTokenListener = riderActivity.addPushTokenListener((event) =>
+    handleRiderPushTokenUpdate(event, beep),
+  );
 }

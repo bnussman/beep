@@ -4,6 +4,7 @@ import { db } from "../utils/db";
 import { beep } from "../../drizzle/schema";
 import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
+import { sendRiderLiveActivityUpdate } from "../utils/live-activities";
 
 type Beep = typeof beep.$inferSelect;
 type BeepStatus = Beep["status"];
@@ -104,9 +105,15 @@ export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
 
 export async function sendBeepUpdateNotificationToRider(
   riderId: string,
-  status: BeepStatus,
+  riderLiveActivityToken: string | null,
+  beep: Beep,
   beeper: User,
 ) {
+  if (riderLiveActivityToken) {
+    sendRiderLiveActivityUpdate(beep);
+    return;
+  }
+
   const rider = await db.query.user.findFirst({
     columns: {
       pushToken: true,
