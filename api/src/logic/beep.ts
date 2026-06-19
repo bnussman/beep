@@ -7,7 +7,6 @@ import { sendNotification } from "../utils/notifications";
 import { sendRiderLiveActivityUpdate } from "../utils/live-activities";
 
 type Beep = typeof beep.$inferSelect;
-type BeepStatus = Beep["status"];
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),

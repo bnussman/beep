@@ -14,7 +14,6 @@ import {
   getQueueSize,
   sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
-import { sendRiderLiveActivityUpdate } from "../utils/live-activities";
 
 export const beeperRouter = router({
   queue: authedProcedure
