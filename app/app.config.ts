@@ -57,6 +57,7 @@ const config: ExpoConfig = {
     }),
     expoWidgets({
       enablePushNotifications: true,
+      frequentUpdates: true,
     }),
     [
       "react-native-maps",
