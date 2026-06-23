@@ -36,10 +36,10 @@ export async function sendRiderLiveActivityUpdate(beep: Beep) {
         }),
       },
       alert: {
-        title: `Beep Update ${beep.status}`,
-        body: beep.status,
-        sound: "default",
+        title: `Beep status is now ${beep.status}`,
+        body: `Beep ${beep.origin}`,
       },
+      sound: "default",
     },
   };
 
