@@ -2,10 +2,11 @@ import { importPKCS8, SignJWT } from "jose";
 import http2 from "http2";
 import { beep } from "../../drizzle/schema";
 import { APPLE_APN_KEY, APPLE_APN_KEY_ID, APPLE_TEAM_ID } from "./constants";
+import { User } from "./pubsub";
 
 type Beep = typeof beep.$inferSelect;
 
-export async function sendRiderLiveActivityUpdate(beep: Beep) {
+export async function sendRiderLiveActivityUpdate(beep: Beep, beeper: User) {
   const devicePath = `/3/device/${beep.rider_live_activity_token}`;
 
   if (!APPLE_APN_KEY || !APPLE_TEAM_ID) {
@@ -31,7 +32,7 @@ export async function sendRiderLiveActivityUpdate(beep: Beep) {
         name: "RiderActivity",
         props: JSON.stringify({
           status: beep.status,
-          name: `Banks OMG`,
+          name: `${beeper.first} ${beeper.last}`,
           etaMinutes: 0,
         }),
       },

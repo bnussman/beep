@@ -109,7 +109,7 @@ export async function sendBeepUpdateNotificationToRider(
   beeper: User,
 ) {
   if (riderLiveActivityToken) {
-    sendRiderLiveActivityUpdate(beep);
+    sendRiderLiveActivityUpdate(beep, beeper);
     return;
   }
 
@@ -124,7 +124,7 @@ export async function sendBeepUpdateNotificationToRider(
     return;
   }
 
-  switch (status) {
+  switch (beep.status) {
     case "canceled":
       sendNotification({
         to: rider.pushToken,
