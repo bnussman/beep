@@ -134,12 +134,7 @@ export const beeperRouter = router({
         pubSub.publish("ride", queueEntry.rider.id, { ride: null });
       }
 
-      sendBeepUpdateNotificationToRider(
-        queueEntry.rider.id,
-        queueEntry.rider_live_activity_token,
-        queueEntry,
-        ctx.user,
-      );
+      sendBeepUpdateNotificationToRider(queueEntry, ctx.user);
 
       queue = queue.filter(getIsInProgressBeep);
 

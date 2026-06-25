@@ -1,13 +1,26 @@
 import { importPKCS8, SignJWT } from "jose";
 import http2 from "http2";
-import { beep } from "../../drizzle/schema";
 import { APPLE_APN_KEY, APPLE_APN_KEY_ID, APPLE_TEAM_ID } from "./constants";
-import { User } from "./pubsub";
 
-type Beep = typeof beep.$inferSelect;
+type ActivityUpdate =
+  | {
+      name: "RiderActivity";
+      action: "update";
+      props: { status: string; etaMinutes?: number; name: string };
+      alert?: { title: string; body: string };
+    }
+  | {
+      name: "RiderActivity";
+      action: "end";
+      props?: never;
+      alert?: never;
+    };
 
-export async function sendRiderLiveActivityUpdate(beep: Beep, beeper: User) {
-  const devicePath = `/3/device/${beep.rider_live_activity_token}`;
+export async function updateLiveActivity(
+  deviceToken: string,
+  options: ActivityUpdate,
+) {
+  const devicePath = `/3/device/${deviceToken}`;
 
   if (!APPLE_APN_KEY || !APPLE_TEAM_ID) {
     throw new Error("Apple Keys not setup in the Beep API.");
@@ -27,19 +40,20 @@ export async function sendRiderLiveActivityUpdate(beep: Beep, beeper: User) {
   const body = {
     aps: {
       timestamp: Date.now(),
-      event: "update",
-      "content-state": {
-        name: "RiderActivity",
-        props: JSON.stringify({
-          status: beep.status,
-          name: `${beeper.first} ${beeper.last}`,
-          etaMinutes: 0,
-        }),
-      },
-      alert: {
-        title: `Beep status is now ${beep.status}`,
-        body: `Beep ${beep.origin}`,
-      },
+      event: options.action,
+      "content-state":
+        options.action === "update"
+          ? {
+              name: options.name,
+              props: JSON.stringify(options.props),
+            }
+          : {},
+      alert: options.alert,
+      ...(options.action === "end"
+        ? {
+            "dismissal-date": Date.now() / 1000,
+          }
+        : {}),
       sound: "default",
     },
   };
@@ -62,6 +76,9 @@ export async function sendRiderLiveActivityUpdate(beep: Beep, beeper: User) {
 
   request.on("response", (headers, flags) => {
     console.log("From APN:", headers, flags);
+  });
+  request.on("data", (data) => {
+    console.log(data);
   });
 
   request.setEncoding("utf8");
