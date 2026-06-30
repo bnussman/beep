@@ -1,15 +1,58 @@
 import RiderActivity from "@/live-activities/rider-activity";
-import { trpcClient } from "@/utils/trpc";
+import { RouterOutput, trpcClient } from "@/utils/trpc";
+import { getCurrentStatusMessage } from "@/utils/utils";
+
+const riderLiveActivities = RiderActivity.getInstances();
+const riderLiveActivityListeners: { remove(): void }[] = [];
 
 export function setupLiveActivityListeners() {
-  const activities = RiderActivity.getInstances();
-
-  for (const activity of activities) {
-    activity.addPushTokenListener((event) => {
-      trpcClient.rider.updateLiveActivityToken.mutate({
-        activityId: event.activityId,
-        token: event.pushToken,
-      });
+  for (const activity of riderLiveActivities) {
+    const listener = activity.addPushTokenListener((event) => {
+      trpcClient.rider.updateLiveActivityToken
+        .mutate({
+          activityId: event.activityId,
+          token: event.pushToken,
+        })
+        .then(() => alert(`Sent token for activity id ${event.activityId}`));
     });
+    alert("Listener has been setup");
+    riderLiveActivityListeners.push(listener);
+  }
+}
+
+export function startBeepLiveActivity(
+  beep: RouterOutput["rider"]["startBeep"],
+) {
+  const riderActivity = RiderActivity.start({
+    status: getCurrentStatusMessage(beep),
+    name: `${beep.beeper.first} ${beep.beeper.last}`,
+  });
+
+  riderLiveActivities.push(riderActivity);
+
+  const listener = riderActivity.addPushTokenListener((event) => {
+    trpcClient.rider.setBeepLiveActivityToken
+      .mutate({
+        activityId: event.activityId,
+        beepId: beep.id,
+        token: event.pushToken,
+      })
+      .then(() => {
+        alert(
+          `Beep live activity started. Activity ID ${event.activityId} | Beep ID ${beep.id}`,
+        );
+      });
+  });
+
+  riderLiveActivityListeners.push(listener);
+}
+
+export function endRiderLiveActivities() {
+  for (const listener of riderLiveActivityListeners) {
+    listener.remove();
+  }
+
+  for (const activity of riderLiveActivities) {
+    activity.end("immediate");
   }
 }

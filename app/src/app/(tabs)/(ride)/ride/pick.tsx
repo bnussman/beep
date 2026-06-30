@@ -16,6 +16,7 @@ import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
 import RiderActivity from "@/live-activities/rider-activity";
 import { getCurrentStatusMessage } from "@/utils/utils";
+import { startBeepLiveActivity } from "@/live-activities/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -55,25 +56,7 @@ export default function PickBeepScreen() {
         queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
 
         if (flags?.liveActivities) {
-          // User is in a beep. Start a live activity and listen for token updates
-          const riderActivity = RiderActivity.start({
-            status: getCurrentStatusMessage(data),
-            name: `${data.beeper.first} ${data.beeper.last}`,
-          });
-
-          riderActivity.addPushTokenListener((event) => {
-            trpcClient.rider.setBeepLiveActivityToken
-              .mutate({
-                activityId: event.activityId,
-                beepId: data.id,
-                token: event.pushToken,
-              })
-              .then(() => {
-                alert(
-                  `Live Activity Token sent to the API ${event.pushToken} from listener`,
-                );
-              });
-          });
+          startBeepLiveActivity(data);
         }
 
         navigation.goBack();

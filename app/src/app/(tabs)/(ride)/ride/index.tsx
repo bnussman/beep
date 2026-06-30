@@ -17,6 +17,7 @@ import { BeepersMap } from "@/components/BeepersMap";
 import { RideMenu } from "@/components/RideToolbar";
 import { Label } from "@/components/Label";
 import { Link, SplashScreen, useRouter } from "expo-router";
+import { endRiderLiveActivities } from "@/live-activities/utils";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -57,9 +58,15 @@ export default function MainFindBeepScreen() {
     SplashScreen.hide();
   }, []);
 
+  useEffect(() => {
+    if (beep === null) {
+      endRiderLiveActivities();
+    }
+  }, [beep]);
+
   const router = useRouter();
 
-  const { control, handleSubmit, setFocus, getValues } = useFormContext();
+  const { control, handleSubmit, setFocus } = useFormContext();
 
   const findBeep = handleSubmit((values) => {
     router.navigate({ pathname: "/ride/pick", params: values });
