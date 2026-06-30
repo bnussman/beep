@@ -16,8 +16,6 @@ import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
 import RiderActivity from "@/live-activities/rider-activity";
 import { getCurrentStatusMessage } from "@/utils/utils";
-import riderActivity from "@/live-activities/rider-activity";
-import { handleRiderPushTokenUpdate } from "@/live-activities/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
