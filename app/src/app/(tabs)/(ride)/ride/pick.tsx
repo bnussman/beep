@@ -4,7 +4,7 @@ import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
+import { RouterOutput, trpcClient, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -14,10 +14,14 @@ import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
+import RiderActivity from "@/live-activities/rider-activity";
+import { getCurrentStatusMessage } from "@/utils/utils";
+import riderActivity from "@/live-activities/rider-activity";
+import { handleRiderPushTokenUpdate } from "@/live-activities/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
-  const trpc = useTRPC();
+
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{
@@ -25,6 +29,10 @@ export default function PickBeepScreen() {
     destination: string;
     groupSize: string;
   }>();
+
+  const trpc = useTRPC();
+
+  const { data: flags } = useQuery(trpc.flags.flags.queryOptions());
 
   const {
     data: beepers,
@@ -47,6 +55,29 @@ export default function PickBeepScreen() {
     trpc.rider.startBeep.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+
+        if (flags?.liveActivities) {
+          // User is in a beep. Start a live activity and listen for token updates
+          const riderActivity = RiderActivity.start({
+            status: getCurrentStatusMessage(data),
+            name: `${data.beeper.first} ${data.beeper.last}`,
+          });
+
+          riderActivity.addPushTokenListener((event) => {
+            trpcClient.rider.setBeepLiveActivityToken
+              .mutate({
+                activityId: event.activityId,
+                beepId: data.id,
+                token: event.pushToken,
+              })
+              .then(() => {
+                alert(
+                  `Live Activity Token sent to the API ${event.pushToken} from listener`,
+                );
+              });
+          });
+        }
+
         navigation.goBack();
       },
       onError(error) {

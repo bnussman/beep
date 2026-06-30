@@ -17,7 +17,6 @@ import { BeepersMap } from "@/components/BeepersMap";
 import { RideMenu } from "@/components/RideToolbar";
 import { Label } from "@/components/Label";
 import { Link, SplashScreen, useRouter } from "expo-router";
-import { ensureRiderLiveActivity } from "@/live-activities/utils";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -57,10 +56,6 @@ export default function MainFindBeepScreen() {
   useEffect(() => {
     SplashScreen.hide();
   }, []);
-
-  useEffect(() => {
-    ensureRiderLiveActivity(beep);
-  }, [beep]);
 
   const router = useRouter();
 

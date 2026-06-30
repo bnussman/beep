@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "721eac3e-185b-4bec-80b2-241c9c707b16",
+  "id": "b74ab5c6-74df-4845-8746-e8e967e42867",
   "prevIds": [
     "927a46d5-918f-49f9-ae18-0a4ea2ccf091"
   ],
@@ -244,6 +244,19 @@
       "generated": null,
       "identity": null,
       "name": "rider_live_activity_token",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "beep"
+    },
+    {
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "rider_live_activity_id",
       "entityType": "columns",
       "schema": "public",
       "table": "beep"
