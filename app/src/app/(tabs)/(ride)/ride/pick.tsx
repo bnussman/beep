@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigation } from "expo-router/react-navigation";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
+import { RouterOutput, trpcClient, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -12,12 +12,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { printStars } from "@/components/Stars";
 import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
-import { captureException, captureMessage } from "@sentry/react-native";
+import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
+import RiderActivity from "@/live-activities/rider-activity";
+import { getCurrentStatusMessage } from "@/utils/utils";
+import { startBeepLiveActivity } from "@/live-activities/utils";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
-  const trpc = useTRPC();
+
   const navigation = useNavigation();
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{
@@ -25,6 +28,10 @@ export default function PickBeepScreen() {
     destination: string;
     groupSize: string;
   }>();
+
+  const trpc = useTRPC();
+
+  const { data: flags } = useQuery(trpc.flags.flags.queryOptions());
 
   const {
     data: beepers,
@@ -47,6 +54,11 @@ export default function PickBeepScreen() {
     trpc.rider.startBeep.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+
+        if (flags?.liveActivities) {
+          startBeepLiveActivity(data);
+        }
+
         navigation.goBack();
       },
       onError(error) {

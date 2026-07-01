@@ -14,6 +14,7 @@ import {
   getQueueSize,
   sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
+import { updateLiveActivity } from "../utils/live-activities";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -111,6 +112,7 @@ export const beeperRouter = router({
         input.data.status === "denied" ||
         input.data.status === "complete" ||
         input.data.status === "canceled";
+      const isQueueSizeChanging = isStartingBeep || isEndingBeep;
 
       const values = {
         status: input.data.status,
@@ -123,30 +125,38 @@ export const beeperRouter = router({
 
       queueEntry.status = input.data.status;
 
-      if (isStartingBeep || isEndingBeep) {
+      if (isQueueSizeChanging) {
         await db
           .update(user)
           .set({ queueSize: getQueueSize(queue) })
           .where(eq(user.id, ctx.user.id));
       }
 
-      if (isEndingBeep) {
-        pubSub.publish("ride", queueEntry.rider.id, { ride: null });
-      }
+      for (const beep of queue) {
+        const ride = { ...beep, ...getDerivedRiderFields(beep, queue) };
 
-      sendBeepUpdateNotificationToRider(
-        queueEntry.rider.id,
-        queueEntry.status,
-        ctx.user,
-      );
+        if (beep.id === input.beepId && isEndingBeep) {
+          pubSub.publish("ride", beep.rider_id, { ride: null });
+        } else {
+          pubSub.publish("ride", beep.rider_id, { ride });
+        }
+
+        if (beep.id === input.beepId) {
+          sendBeepUpdateNotificationToRider(ride, ctx.user);
+        } else if (ride.rider_live_activity_token && isQueueSizeChanging) {
+          updateLiveActivity(ride.rider_live_activity_token, {
+            action: "update",
+            name: "RiderActivity",
+            props: {
+              name: `${beep.beeper.first} ${beep.beeper.last}`,
+              positionInQueue: ride.position,
+              status: ride.status,
+            },
+          });
+        }
+      }
 
       queue = queue.filter(getIsInProgressBeep);
-
-      for (const beep of queue) {
-        pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
-        });
-      }
 
       pubSub.publish("queue", ctx.user.id, { queue });
 

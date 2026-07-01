@@ -19,6 +19,7 @@ import { createBunWSHandler } from "./utils/ws";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { CORS_HEADERS } from "./utils/cors";
+import { flagsRouter } from "./routers/flags";
 
 const appRouter = router({
   user: userRouter,
@@ -35,6 +36,7 @@ const appRouter = router({
   beeper: beeperRouter,
   location: locationRouter,
   health: healthRouter,
+  flags: flagsRouter,
 });
 
 export type AppRouter = typeof appRouter;

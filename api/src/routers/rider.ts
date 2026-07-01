@@ -155,6 +155,8 @@ export const riderRouter = router({
         start: new Date(),
         status: "waiting",
         end: null,
+        rider_live_activity_token: null,
+        rider_live_activity_id: null,
       } as const;
 
       const currentRide = await db.query.beep.findFirst({
@@ -474,4 +476,69 @@ export const riderRouter = router({
 
     return mostRecentCompletedBeep;
   }),
+  setBeepLiveActivityToken: authedProcedure
+    .input(
+      z.object({
+        beepId: z.string(),
+        token: z.string(),
+        activityId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const b = await db.query.beep.findFirst({
+        where: { id: input.beepId },
+      });
+
+      if (!b) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found." });
+      }
+
+      if (ctx.user.id !== b.rider_id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You must be the rider of the beep to set the rider live activity token",
+        });
+      }
+
+      console.log("Got new push token for activity", input.activityId);
+
+      await db
+        .update(beep)
+        .set({
+          rider_live_activity_token: input.token,
+          rider_live_activity_id: input.activityId,
+        })
+        .where(eq(beep.id, b.id));
+
+      return {};
+    }),
+  updateLiveActivityToken: authedProcedure
+    .input(z.object({ activityId: z.string(), token: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const b = await db.query.beep.findFirst({
+        where: { rider_live_activity_id: input.activityId },
+      });
+
+      if (!b) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found." });
+      }
+
+      if (b.rider_id !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You must be the rider of the beep to set the rider live activity token",
+        });
+      }
+
+      console.log("Got updated push token for activity", input.activityId);
+
+      await db
+        .update(beep)
+        .set({ rider_live_activity_token: input.token })
+        .where(eq(beep.id, b.id));
+
+      return {};
+    }),
 });

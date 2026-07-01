@@ -5,7 +5,7 @@ import { eventTarget } from "./redis";
 import z from "zod";
 
 export type User = NonNullable<Context["user"]>;
-type Ride = z.infer<typeof rideResponseSchema> | null;
+export type Ride = z.infer<typeof rideResponseSchema> | null;
 type Queue = z.infer<typeof queueResponseSchema>;
 
 type PubSubChannels = {
