@@ -1,6 +1,6 @@
 import RiderActivity from "@/live-activities/rider-activity";
+import { isIOS } from "@/utils/constants";
 import { RouterOutput, trpcClient } from "@/utils/trpc";
-import { getCurrentStatusMessage } from "@/utils/utils";
 
 const riderLiveActivities = RiderActivity.getInstances();
 const riderLiveActivityListeners: { remove(): void }[] = [];
@@ -24,7 +24,7 @@ export function startBeepLiveActivity(
   beep: RouterOutput["rider"]["startBeep"],
 ) {
   const riderActivity = RiderActivity.start({
-    status: getCurrentStatusMessage(beep),
+    status: beep.status,
     name: `${beep.beeper.first} ${beep.beeper.last}`,
   });
 
@@ -48,11 +48,13 @@ export function startBeepLiveActivity(
 }
 
 export function endRiderLiveActivities() {
-  for (const listener of riderLiveActivityListeners) {
-    listener.remove();
-  }
+  if (isIOS) {
+    for (const listener of riderLiveActivityListeners) {
+      listener.remove();
+    }
 
-  for (const activity of riderLiveActivities) {
-    activity.end("immediate");
+    for (const activity of riderLiveActivities) {
+      activity.end("immediate");
+    }
   }
 }
