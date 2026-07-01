@@ -21,18 +21,39 @@ const RiderActivity = (
 ) => {
   "widget";
 
-  const getCurrentStatusMessage = () => {
+  const getHeading = () => {
     switch (props.status) {
       case "waiting":
-        return "Waiting for beeper to accept or deny you.";
+        return "Waiting for response";
       case "accepted":
-        return "Beeper is getting ready to come get you. They will be on the way soon.";
+        return "Accepted";
       case "on_the_way":
-        return "Beeper is on their way to get you.";
+        return "On the way";
       case "here":
-        return `Beeper is here to pick you up.`;
+        return "Here";
       case "in_progress":
-        return "You are currently in the car with your beeper.";
+        return "In progress";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getSubHeading = () => {
+    switch (props.status) {
+      case "waiting":
+        return `Waiting on ${props.name} to accept or deny`;
+      case "accepted": {
+        if (props.positionInQueue === 0) {
+          return `${props.name} will be on the way soon`;
+        }
+        return `You are in ${props.name}'s rider queue`;
+      }
+      case "on_the_way":
+        return `${props.name} is on the way in a`;
+      case "here":
+        return `${props.name} is here in a`;
+      case "in_progress":
+        return `Your ride with ${props.name} is in progress`;
       default:
         return "Unknown";
     }
@@ -63,10 +84,8 @@ const RiderActivity = (
       <HStack modifiers={[padding({ all: 16 })]} spacing={16}>
         <Text modifiers={[font({ size: 32 })]}>🚕</Text>
         <VStack alignment="leading">
-          <Text modifiers={[font({ weight: "heavy" })]}>{props.name}</Text>
-          <Text modifiers={[font({ size: 12 })]}>
-            {getCurrentStatusMessage()}
-          </Text>
+          <Text modifiers={[font({ weight: "heavy" })]}>{getHeading()}</Text>
+          <Text modifiers={[font({ size: 12 })]}>{getSubHeading()}</Text>
           {props.car && (
             <HStack spacing={8}>
               <Text modifiers={[font({ size: 12 })]}>
@@ -85,14 +104,21 @@ const RiderActivity = (
           )}
         </VStack>
         <Spacer />
-        {props.etaMinutes !== undefined && (
+        {props.status === "accepted" && props.positionInQueue > 0 ? (
+          <VStack modifiers={[padding({ all: 12 })]}>
+            <Text modifiers={[font({ weight: "bold", size: 20 })]}>
+              {props.positionInQueue}
+            </Text>
+            <Text modifiers={[font({ size: 10 })]}>riders ahead</Text>
+          </VStack>
+        ) : props.etaMinutes !== undefined ? (
           <VStack modifiers={[padding({ all: 12 })]}>
             <Text modifiers={[font({ weight: "bold", size: 20 })]}>
               {props.etaMinutes}
             </Text>
             <Text modifiers={[font({ size: 12 })]}>minutes</Text>
           </VStack>
-        )}
+        ) : null}
       </HStack>
     ),
     compactLeading: <Text modifiers={[font({ size: 16 })]}>🚕</Text>,
@@ -109,7 +135,14 @@ const RiderActivity = (
       </VStack>
     ),
     expandedTrailing:
-      props.etaMinutes !== undefined ? (
+      props.status === "accepted" && props.positionInQueue > 0 ? (
+        <VStack modifiers={[padding({ all: 12 })]}>
+          <Text modifiers={[font({ weight: "bold", size: 20 })]}>
+            {props.positionInQueue}
+          </Text>
+          <Text modifiers={[font({ size: 10 })]}>riders ahead</Text>
+        </VStack>
+      ) : props.etaMinutes !== undefined ? (
         <VStack modifiers={[padding({ all: 12 })]}>
           <Text modifiers={[font({ weight: "bold", size: 20 })]}>
             {props.etaMinutes}
@@ -124,10 +157,8 @@ const RiderActivity = (
         ]}
       >
         <VStack alignment="leading">
-          <Text modifiers={[font({ weight: "heavy" })]}>{props.name}</Text>
-          <Text modifiers={[font({ size: 12 })]}>
-            {getCurrentStatusMessage()}
-          </Text>
+          <Text modifiers={[font({ weight: "heavy" })]}>{getHeading()}</Text>
+          <Text modifiers={[font({ size: 12 })]}>{getSubHeading()}</Text>
           {props.car && (
             <HStack spacing={8}>
               <Text modifiers={[font({ size: 12 })]}>

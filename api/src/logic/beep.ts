@@ -157,7 +157,7 @@ export async function sendBeepUpdateNotificationToRider(
           name: "RiderActivity",
           props: {
             positionInQueue: beep.position,
-            name: `${beeper.first} ${beeper.last}`,
+            name: beeper.first,
             status: beep.status,
           },
           alert,
@@ -199,7 +199,7 @@ export async function sendBeepUpdateNotificationToRider(
               : undefined,
             positionInQueue: beep.position,
             etaMinutes: 5,
-            name: `${beeper.first} ${beeper.last}`,
+            name: beeper.first,
             status: beep.status,
           },
         });
@@ -241,7 +241,7 @@ export async function sendBeepUpdateNotificationToRider(
               ? { make: c.make, model: c.model, color: c.color }
               : undefined,
             positionInQueue: beep.position,
-            name: `${beeper.first} ${beeper.last}`,
+            name: beeper.first,
             status: beep.status,
           },
         });
@@ -264,7 +264,7 @@ export async function sendBeepUpdateNotificationToRider(
           name: "RiderActivity",
           props: {
             positionInQueue: beep.position,
-            name: `${beeper.first} ${beeper.last}`,
+            name: beeper.first,
             status: beep.status,
           },
         });
