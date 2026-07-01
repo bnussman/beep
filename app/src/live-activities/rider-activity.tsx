@@ -1,6 +1,10 @@
-import { RouterOutput } from "@/utils/trpc";
-import { HStack, Spacer, Text, VStack } from "@expo/ui/swift-ui";
-import { font, padding } from "@expo/ui/swift-ui/modifiers";
+import { HStack, Spacer, Text, VStack, Circle } from "@expo/ui/swift-ui";
+import {
+  font,
+  padding,
+  foregroundStyle,
+  frame,
+} from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
 
 export interface RiderActivityProps {
@@ -34,6 +38,26 @@ const RiderActivity = (
     }
   };
 
+  const colorMap = {
+    red: "#ca3f3f",
+    green: "#62be62",
+    blue: "#4285ea",
+    purple: "#a837b7",
+    black: "#2b2b2b",
+    gray: "#a8a8a8",
+    pink: "#d36ecb",
+    white: "#e2e2e2",
+    orange: "#d8670a",
+    tan: "#c69567",
+    brown: "#78513edd",
+    silver: "#7e7e7e",
+    yellow: "#ffc72f",
+  };
+
+  const capitalize = (s: string) => {
+    return `${s.charAt(0).toUpperCase()}${s.slice(1, s.length)}`;
+  };
+
   return {
     banner: (
       <HStack modifiers={[padding({ all: 16 })]} spacing={16}>
@@ -44,9 +68,20 @@ const RiderActivity = (
             {getCurrentStatusMessage()}
           </Text>
           {props.car && (
-            <Text modifiers={[font({ size: 10 })]}>
-              {props.car.color} {props.car.make} {props.car.model}
-            </Text>
+            <HStack spacing={8}>
+              <Text modifiers={[font({ size: 12 })]}>
+                {capitalize(props.car.color)} {props.car.make} {props.car.model}
+              </Text>
+              <Circle
+                modifiers={[
+                  foregroundStyle(
+                    colorMap[props.car.color as keyof typeof colorMap] ??
+                      "#fffff",
+                  ),
+                  frame({ width: 12, height: 12 }),
+                ]}
+              />
+            </HStack>
           )}
         </VStack>
         <Spacer />
@@ -61,7 +96,12 @@ const RiderActivity = (
       </HStack>
     ),
     compactLeading: <Text modifiers={[font({ size: 16 })]}>🚕</Text>,
-    compactTrailing: <Text>{props.etaMinutes} min</Text>,
+    compactTrailing:
+      props.status === "here" ? (
+        <Text modifiers={[font({ size: 16 })]}>👋🏼</Text>
+      ) : props.etaMinutes !== undefined ? (
+        <Text>{props.etaMinutes} min</Text>
+      ) : null,
     minimal: <Text modifiers={[font({ size: 16 })]}>🚕</Text>,
     expandedLeading: (
       <VStack modifiers={[padding({ all: 12 })]}>
@@ -89,9 +129,20 @@ const RiderActivity = (
             {getCurrentStatusMessage()}
           </Text>
           {props.car && (
-            <Text modifiers={[font({ size: 10 })]}>
-              {props.car.color} {props.car.make} {props.car.model}
-            </Text>
+            <HStack spacing={8}>
+              <Text modifiers={[font({ size: 12 })]}>
+                {capitalize(props.car.color)} {props.car.make} {props.car.model}
+              </Text>
+              <Circle
+                modifiers={[
+                  foregroundStyle(
+                    colorMap[props.car.color as keyof typeof colorMap] ??
+                      "#fffff",
+                  ),
+                  frame({ width: 12, height: 12 }),
+                ]}
+              />
+            </HStack>
           )}
         </VStack>
         <Spacer />
