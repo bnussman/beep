@@ -26,6 +26,8 @@ export function startBeepLiveActivity(
   const riderActivity = RiderActivity.start({
     status: beep.status,
     name: `${beep.beeper.first} ${beep.beeper.last}`,
+    car: undefined,
+    positionInQueue: beep.position,
   });
 
   riderLiveActivities.push(riderActivity);
