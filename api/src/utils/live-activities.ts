@@ -6,7 +6,13 @@ type ActivityUpdate =
   | {
       name: "RiderActivity";
       action: "update";
-      props: { status: string; etaMinutes?: number; name: string };
+      props: {
+        status: string;
+        etaMinutes?: number;
+        name: string;
+        positionInQueue: number;
+        car?: { make: string; model: string; color: string };
+      };
       alert?: { title: string; body: string };
     }
   | {

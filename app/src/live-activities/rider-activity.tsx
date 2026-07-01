@@ -7,6 +7,8 @@ export interface RiderActivityProps {
   name: string;
   etaMinutes?: number;
   status: string;
+  positionInQueue: number;
+  car?: { make: string; model: string; color: string };
 }
 
 const RiderActivity = (
@@ -41,6 +43,11 @@ const RiderActivity = (
           <Text modifiers={[font({ size: 12 })]}>
             {getCurrentStatusMessage()}
           </Text>
+          {props.car && (
+            <Text modifiers={[font({ size: 10 })]}>
+              {props.car.color} {props.car.make} {props.car.model}
+            </Text>
+          )}
         </VStack>
         <Spacer />
         {props.etaMinutes !== undefined && (
@@ -78,7 +85,14 @@ const RiderActivity = (
       >
         <VStack alignment="leading">
           <Text modifiers={[font({ weight: "heavy" })]}>{props.name}</Text>
-          <Text modifiers={[font({ size: 12 })]}>{props.status}</Text>
+          <Text modifiers={[font({ size: 12 })]}>
+            {getCurrentStatusMessage()}
+          </Text>
+          {props.car && (
+            <Text modifiers={[font({ size: 10 })]}>
+              {props.car.color} {props.car.make} {props.car.model}
+            </Text>
+          )}
         </VStack>
         <Spacer />
       </HStack>

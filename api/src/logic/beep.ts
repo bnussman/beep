@@ -103,7 +103,7 @@ export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
 }
 
 export async function sendBeepUpdateNotificationToRider(
-  beep: Beep,
+  beep: Beep & ReturnType<typeof getDerivedRiderFields>,
   beeper: User,
 ) {
   switch (beep.status) {
@@ -156,6 +156,7 @@ export async function sendBeepUpdateNotificationToRider(
           action: "update",
           name: "RiderActivity",
           props: {
+            positionInQueue: beep.position,
             name: `${beeper.first} ${beeper.last}`,
             status: beep.status,
           },
@@ -193,6 +194,10 @@ export async function sendBeepUpdateNotificationToRider(
           alert,
           name: "RiderActivity",
           props: {
+            car: c
+              ? { make: c.make, model: c.model, color: c.color }
+              : undefined,
+            positionInQueue: beep.position,
             etaMinutes: 5,
             name: `${beeper.first} ${beeper.last}`,
             status: beep.status,
@@ -232,6 +237,10 @@ export async function sendBeepUpdateNotificationToRider(
           alert,
           name: "RiderActivity",
           props: {
+            car: c
+              ? { make: c.make, model: c.model, color: c.color }
+              : undefined,
+            positionInQueue: beep.position,
             name: `${beeper.first} ${beeper.last}`,
             status: beep.status,
           },
@@ -254,6 +263,7 @@ export async function sendBeepUpdateNotificationToRider(
           action: "update",
           name: "RiderActivity",
           props: {
+            positionInQueue: beep.position,
             name: `${beeper.first} ${beeper.last}`,
             status: beep.status,
           },
