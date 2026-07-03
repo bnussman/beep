@@ -77,6 +77,8 @@ export default function MainFindBeepScreen() {
       <KeyboardAwareScrollView
         contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
         contentInsetAdjustmentBehavior="automatic"
+        scrollEnabled={false}
+        mode="layout"
       >
         <Controller
           name="groupSize"
