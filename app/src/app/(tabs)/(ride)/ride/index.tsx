@@ -99,7 +99,12 @@ export default function MainFindBeepScreen() {
                 ref={ref}
                 returnKeyLabel="next"
                 returnKeyType="next"
-                onSubmitEditing={() => setFocus("origin")}
+                onSubmitEditing={() =>
+                  router.navigate({
+                    pathname: "/ride/pick-location",
+                    params: { type: "origin" },
+                  })
+                }
               />
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
