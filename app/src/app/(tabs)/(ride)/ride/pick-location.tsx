@@ -68,13 +68,17 @@ export default function PickLocation() {
     <SafeAreaView>
       <KeyboardAvoidingView
         behavior="padding"
-        keyboardVerticalOffset={48}
-        className="px-4 gap-4"
+        keyboardVerticalOffset={64}
+        className="px-4 h-full gap-4"
       >
         <SearchField value={query} onChange={setQuery}>
           <SearchField.Group>
             <SearchField.SearchIcon />
-            <SearchField.Input autoFocus autoCorrect={false} />
+            <SearchField.Input
+              autoFocus
+              textContentType="fullStreetAddress"
+              autoCorrect={false}
+            />
             <SearchField.ClearButton />
           </SearchField.Group>
         </SearchField>
