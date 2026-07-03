@@ -24,6 +24,7 @@ import {
   publishBeepsCount,
 } from "../logic/beep";
 import { rideResponseSchema } from "../schemas/beep";
+import { updateLiveActivity } from "../utils/live-activities";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -408,6 +409,13 @@ export const riderRouter = router({
           to: beeper.pushToken,
           title: `${ctx.user.first} ${ctx.user.last} left your queue 🥹`,
           body: "They decided they did not want a beep from you!",
+        });
+      }
+
+      if (entry.rider_live_activity_token) {
+        updateLiveActivity(entry.rider_live_activity_token, {
+          action: "end",
+          name: "RiderActivity",
         });
       }
 
