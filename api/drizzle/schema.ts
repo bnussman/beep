@@ -183,6 +183,12 @@ export const beep = pgTable(
     start: timestamp("start", { withTimezone: true, mode: "date" }).notNull(),
     end: timestamp("end", { withTimezone: true, mode: "date" }),
     status: beepStatusEnum("status").default("waiting").notNull(),
+    rider_live_activity_token: varchar("rider_live_activity_token", {
+      length: 255,
+    }),
+    rider_live_activity_id: varchar("rider_live_activity_id", {
+      length: 255,
+    }),
   },
   (table) => [
     index("beeper_id_idx").using("btree", table.beeper_id),

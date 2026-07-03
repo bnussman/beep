@@ -23,11 +23,13 @@ import {
 } from "expo-router/react-navigation";
 import { navigationIntegration } from "@/utils/instrument";
 import { HeroUINativeProvider } from "heroui-native";
+import { setupLiveActivityListeners } from "@/live-activities/utils";
 
 SplashScreen.preventAutoHideAsync();
 
 setupPurchase();
 setupNotifications();
+setupLiveActivityListeners();
 
 function App() {
   const trpc = useTRPC();

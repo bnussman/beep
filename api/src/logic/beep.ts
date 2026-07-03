@@ -4,9 +4,9 @@ import { db } from "../utils/db";
 import { beep } from "../../drizzle/schema";
 import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
+import { updateLiveActivity } from "../utils/live-activities";
 
 type Beep = typeof beep.$inferSelect;
-type BeepStatus = Beep["status"];
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
@@ -103,94 +103,205 @@ export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
 }
 
 export async function sendBeepUpdateNotificationToRider(
-  riderId: string,
-  status: BeepStatus,
+  beep: Beep & ReturnType<typeof getDerivedRiderFields>,
   beeper: User,
 ) {
-  const rider = await db.query.user.findFirst({
-    columns: {
-      pushToken: true,
-    },
-    where: { id: riderId },
-  });
+  switch (beep.status) {
+    case "canceled": {
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "end",
+          name: "RiderActivity",
+        });
+      }
 
-  if (!rider?.pushToken) {
-    return;
-  }
+      const riderPushToken = await getUsersPushToken(beep.rider_id);
 
-  switch (status) {
-    case "canceled":
-      sendNotification({
-        to: rider.pushToken,
-        title: `${beeper.first} ${beeper.last} has canceled your beep 🚫`,
-        body: "Open your app to find a new beep",
-      });
+      if (riderPushToken) {
+        sendNotification({
+          to: riderPushToken,
+          title: `${beeper.first} ${beeper.last} has canceled your beep`,
+          body: "Open your app to find a new beep",
+        });
+      }
       break;
-    case "denied":
-      sendNotification({
-        to: rider.pushToken,
-        title: `${beeper.first} ${beeper.last} has denied your beep request 🚫`,
-        body: "Open your app to find a different beeper",
-      });
+    }
+    case "denied": {
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "end",
+          name: "RiderActivity",
+        });
+      }
+
+      const riderPushToken = await getUsersPushToken(beep.rider_id);
+
+      if (riderPushToken) {
+        sendNotification({
+          to: riderPushToken,
+          title: `${beeper.first} ${beeper.last} has denied your beep`,
+          body: "Open your app to find a different beeper",
+        });
+      }
       break;
-    case "accepted":
-      sendNotification({
-        to: rider.pushToken,
-        title: `${beeper.first} ${beeper.last} has accepted your beep request ✅`,
+    }
+    case "accepted": {
+      const alert = {
+        title: `${beeper.first} ${beeper.last} has accepted your beep request`,
         body: "You will receive another notification when they are on their way to pick you up",
-      });
+      };
+
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "update",
+          name: "RiderActivity",
+          props: {
+            positionInQueue: beep.position,
+            name: beeper.first,
+            status: beep.status,
+          },
+          alert,
+        });
+      } else {
+        const riderPushToken = await getUsersPushToken(beep.rider_id);
+
+        if (riderPushToken) {
+          sendNotification({
+            to: riderPushToken,
+            ...alert,
+          });
+        }
+      }
       break;
+    }
     case "on_the_way": {
+      const alert = {
+        title: `${beeper.first} ${beeper.last} is on their way 🚕`,
+        body: "Your beeper is on their way.",
+      };
+
       const c = await db.query.car.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
-      let body = "Your beeper is on their way.";
-
       if (c) {
-        body = `Your beeper is on their way in a ${c.color} ${c.make} ${c.model}`;
+        alert.body = `Your beeper is on their way in a ${c.color} ${c.make} ${c.model}`;
       }
 
-      sendNotification({
-        to: rider.pushToken,
-        title: `${beeper.first} ${beeper.last} is on their way 🚕`,
-        body,
-      });
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "update",
+          alert,
+          name: "RiderActivity",
+          props: {
+            car: c
+              ? { make: c.make, model: c.model, color: c.color }
+              : undefined,
+            positionInQueue: beep.position,
+            etaMinutes: undefined, // @todo
+            name: beeper.first,
+            status: beep.status,
+          },
+        });
+      } else {
+        const riderPushToken = await getUsersPushToken(beep.rider_id);
+
+        if (riderPushToken) {
+          sendNotification({
+            to: riderPushToken,
+            ...alert,
+          });
+        }
+      }
       break;
     }
     case "here": {
+      const alert = {
+        title: `${beeper.first} ${beeper.last} is here`,
+        body: "Your beeper is here to pick you up.",
+      };
       const c = await db.query.car.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
-      let body = "Your beeper is here to pick you up.";
-
       if (c) {
-        body = `Look for a ${c.color} ${c.make} ${c.model}`;
+        alert.body = `Look for a ${c.color} ${c.make} ${c.model}`;
       }
 
-      sendNotification({
-        to: rider.pushToken,
-        title: `${beeper.first} ${beeper.last} is here 📍`,
-        body,
-      });
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "update",
+          alert,
+          name: "RiderActivity",
+          props: {
+            car: c
+              ? { make: c.make, model: c.model, color: c.color }
+              : undefined,
+            positionInQueue: beep.position,
+            name: beeper.first,
+            status: beep.status,
+          },
+        });
+      } else {
+        const riderPushToken = await getUsersPushToken(beep.rider_id);
+
+        if (riderPushToken) {
+          sendNotification({
+            to: riderPushToken,
+            ...alert,
+          });
+        }
+      }
       break;
     }
     case "in_progress":
-      // Beep is in progress - no notification needed at this stage.
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "update",
+          name: "RiderActivity",
+          props: {
+            positionInQueue: beep.position,
+            name: beeper.first,
+            status: beep.status,
+          },
+        });
+      }
       break;
-    case "complete":
-      sendNotification({
-        to: rider.pushToken,
-        title: `Your beep with ${beeper.first} ${beeper.last} is complete 🎉`,
-        body: "Please rate your beeper in the app.",
-      });
+    case "complete": {
+      if (beep.rider_live_activity_token) {
+        updateLiveActivity(beep.rider_live_activity_token, {
+          action: "end",
+          name: "RiderActivity",
+        });
+      }
+
+      const riderPushToken = await getUsersPushToken(beep.rider_id);
+
+      if (riderPushToken) {
+        sendNotification({
+          to: riderPushToken,
+          title: `Your beep with ${beeper.first} ${beeper.last} is complete 🎉`,
+          body: "Please rate your beeper in the app.",
+        });
+      }
       break;
+    }
     default:
       Sentry.captureException(
         "Our beeper's state notification switch statement reached a point that is should not have",
       );
   }
+}
+
+async function getUsersPushToken(userId: string) {
+  const rider = await db.query.user.findFirst({
+    columns: {
+      pushToken: true,
+    },
+    where: { id: userId },
+  });
+
+  return rider?.pushToken ?? null;
 }
 
 export async function getBeepsCount() {

@@ -250,7 +250,6 @@ export default function StartBeepingScreen() {
           gap: 8,
         }}
       >
-        {/*{toolbar}*/}
         <Text size="2xl" weight="800">
           Waiting for riders
         </Text>

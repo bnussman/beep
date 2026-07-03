@@ -24,6 +24,7 @@ import {
   inProgressBeepNew,
 } from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { updateLiveActivity } from "../utils/live-activities";
 
 export const beepRouter = router({
   beeps: authedProcedure
@@ -266,6 +267,13 @@ export const beepRouter = router({
 
       for (const beep of beeper.beeps) {
         pubSub.publish("ride", beep.rider.id, { ride: null });
+
+        if (beep.rider_live_activity_token) {
+          updateLiveActivity(beep.rider_live_activity_token, {
+            action: "end",
+            name: "RiderActivity",
+          });
+        }
 
         if (beep.rider.pushToken) {
           notifications.push({
