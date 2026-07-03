@@ -198,7 +198,7 @@ export async function sendBeepUpdateNotificationToRider(
               ? { make: c.make, model: c.model, color: c.color }
               : undefined,
             positionInQueue: beep.position,
-            etaMinutes: 5,
+            etaMinutes: undefined, // @todo
             name: beeper.first,
             status: beep.status,
           },

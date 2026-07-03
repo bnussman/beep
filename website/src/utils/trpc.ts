@@ -7,6 +7,7 @@ import {
   createTRPCClient,
 } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
+import * as Sentry from "@sentry/react";
 import type { AppRouter } from "../../../api";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
@@ -22,7 +23,7 @@ export function getAuthToken() {
       const auth = JSON.parse(stored) as RouterOutput["auth"]["login"];
       return auth.tokens.id;
     } catch (error) {
-      // @todo log to Sentry
+      Sentry.captureException(error);
       return undefined;
     }
   }
