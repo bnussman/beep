@@ -229,9 +229,6 @@ export async function sendBeepUpdateNotificationToRider(
       }
 
       if (beep.rider_live_activity_token) {
-      }
-
-      if (beep.rider_live_activity_token) {
         updateLiveActivity(beep.rider_live_activity_token, {
           action: "update",
           alert,
