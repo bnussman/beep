@@ -80,7 +80,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "38",
+    buildNumber: "39",
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
@@ -102,7 +102,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 58,
+    versionCode: 59,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",
