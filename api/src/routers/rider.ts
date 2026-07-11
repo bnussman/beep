@@ -430,9 +430,21 @@ export const riderRouter = router({
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
+        const ride = { ...beep, ...getDerivedRiderFields(beep, queue) }
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+          ride,
         });
+        if (ride.rider_live_activity_token) {
+          updateLiveActivity(ride.rider_live_activity_token, {
+            action: "update",
+            name: "RiderActivity",
+            props: {
+              name: beep.beeper.first,
+              positionInQueue: ride.position,
+              status: ride.status
+            },
+          });
+        }
       }
 
       await db
