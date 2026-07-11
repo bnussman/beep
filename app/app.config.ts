@@ -5,6 +5,7 @@ import expoRouter from "expo-router/plugin";
 import expoNotifications from "expo-notifications/plugin";
 import expoLocation from "expo-location/plugin";
 import expoWidgets from "expo-widgets/plugin";
+import expoStatusBar from "expo-status-bar/plugin";
 
 const config: ExpoConfig = {
   experiments: {
@@ -59,6 +60,7 @@ const config: ExpoConfig = {
       enablePushNotifications: true,
       frequentUpdates: true,
     }),
+    expoStatusBar(),
     [
       "react-native-maps",
       {
