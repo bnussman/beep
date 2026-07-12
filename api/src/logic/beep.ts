@@ -331,6 +331,11 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
   // If the beeper does not have an in-progress beep, we don't need to update the ETA
   if (!currentBeep) return;
 
+  // If the beep status isn't "on_the_way", don't do anything
+  if (currentBeep.status !== 'on_the_way') {
+    return;
+  }
+
   // If the beep's eta has been updated within the last 30 seconds, we don't need to update it again
   if (currentBeep.eta_updated_at && (Date.now() - currentBeep.eta_updated_at.getTime()) < 30000) {
     return;
