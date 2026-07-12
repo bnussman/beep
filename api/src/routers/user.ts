@@ -11,7 +11,7 @@ import { email } from "../utils/email";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
-import { inProgressBeep, inProgressBeepNew, updateEta } from "../logic/beep";
+import { inProgressBeep, updateEta } from "../logic/beep";
 import { userSchema } from "../schemas/user";
 import { zAsyncIterable } from "../utils/zAsyncIterable";
 import { getActivePayments } from "../logic/payments";
