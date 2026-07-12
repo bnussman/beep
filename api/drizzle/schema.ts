@@ -189,8 +189,8 @@ export const beep = pgTable(
     rider_live_activity_id: varchar("rider_live_activity_id", {
       length: 255,
     }),
-    eta: timestamp("eta", { withTimezone: true, mode: "date" }),
-    eta_updated_at: timestamp("eta_updated_at", { withTimezone: true, mode: "date" }),
+    pick_up_eta: timestamp("pick_up_eta", { withTimezone: true, mode: "date" }),
+    pick_up_eta_updated_at: timestamp("pick_up_eta_updated_at", { withTimezone: true, mode: "date" }),
   },
   (table) => [
     index("beeper_id_idx").using("btree", table.beeper_id),

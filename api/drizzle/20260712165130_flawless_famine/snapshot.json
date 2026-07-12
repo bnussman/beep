@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "94d2d187-af26-4b3f-ae67-d719b70f5bbc",
+  "id": "1bff52fb-1496-4220-812f-8a033b1f607c",
   "prevIds": [
     "b74ab5c6-74df-4845-8746-e8e967e42867"
   ],
@@ -269,7 +269,7 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "eta",
+      "name": "pick_up_eta",
       "entityType": "columns",
       "schema": "public",
       "table": "beep"
@@ -282,7 +282,7 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "eta_updated_at",
+      "name": "pick_up_eta_updated_at",
       "entityType": "columns",
       "schema": "public",
       "table": "beep"
