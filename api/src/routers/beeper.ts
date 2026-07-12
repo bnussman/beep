@@ -126,8 +126,8 @@ export const beeperRouter = router({
         const eta = await getETA([ctx.user.location, queueEntry.rider.location]);
 
         if (eta) {
-          values.eta = eta;
-          values.eta_updated_at = new Date();
+          values.pick_up_eta = eta;
+          values.pick_up_eta_updated_at = new Date();
         }
       }
 

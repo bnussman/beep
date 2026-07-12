@@ -337,7 +337,7 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
   }
 
   // If the beep's eta has been updated within the last 30 seconds, we don't need to update it again
-  if (currentBeep.eta_updated_at && (Date.now() - currentBeep.eta_updated_at.getTime()) < 30000) {
+  if (currentBeep.pick_up_eta_updated_at && (Date.now() - currentBeep.pick_up_eta_updated_at.getTime()) < 30000) {
     return;
   }
 
@@ -375,7 +375,7 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
 
   const eta = new Date(Date.now() + durationMs);
 
-  await db.update(beep).set({ eta, eta_updated_at: new Date() }).where(eq(beep.id, currentBeep.id));
+  await db.update(beep).set({ pick_up_eta: eta, pick_up_eta_updated_at: new Date() }).where(eq(beep.id, currentBeep.id));
 }
 
 export async function getETA(locations: { latitude: number;  longitude: number }[]) {
