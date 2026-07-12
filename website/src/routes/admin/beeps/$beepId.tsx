@@ -8,7 +8,6 @@ import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import {
   createFileRoute,
-  createRoute,
   useRouter,
 } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
@@ -159,6 +158,26 @@ function Beep() {
             .rescale()
             .toHuman()
         : "N/A",
+    },
+    {
+      title: "ETA",
+      content: beep.eta ? (
+        <Typography>
+          {DateTime.fromISO(beep.eta).toRelative()}
+        </Typography>
+      ) : (
+        <Typography>N/A</Typography>
+      )
+    },
+    {
+      title: "ETA updated",
+      content: beep.eta_updated_at ? (
+        <Typography>
+          {DateTime.fromISO(beep.eta_updated_at).toRelative()}
+        </Typography>
+      ) : (
+        <Typography>N/A</Typography>
+      )
     },
   ];
 

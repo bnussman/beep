@@ -372,3 +372,33 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
 
   await db.update(beep).set({ eta, eta_updated_at: new Date() }).where(eq(beep.id, currentBeep.id));
 }
+
+export async function getETA(locations: { latitude: number;  longitude: number }[]) {
+  const { data, error } = await osrm.GET(
+    "/route/{version}/{profile}/{coordinates}",
+    {
+      baseUrl: OSRM_BASE_URL,
+      params: {
+        path: {
+          profile: "driving",
+          coordinates: locations.map((location) => `${location.longitude},${location.latitude}`).join(';'),
+          version: "v1",
+        },
+      },
+    },
+  );
+
+  if (error) {
+    return null;
+  }
+
+  const route = data.routes[0];
+
+  if (!route) {
+    return null;
+  }
+
+  const durationMs = route.duration * 1000;
+
+  return new Date(Date.now() + durationMs);
+}
