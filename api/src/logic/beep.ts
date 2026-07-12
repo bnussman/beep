@@ -347,33 +347,10 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
     return;
   }
 
-  const { data, error } = await osrm.GET(
-    "/route/{version}/{profile}/{coordinates}",
-    {
-      baseUrl: OSRM_BASE_URL,
-      params: {
-        path: {
-          profile: "driving",
-          coordinates: `${location.longitude},${location.latitude};${currentBeep.rider.location.longitude},${currentBeep.rider.location.latitude}`,
-          version: "v1",
-        },
-      },
-    },
-  );
+  const eta = await getETA([location, currentBeep.rider.location]);
 
-  if (error) {
-    return;
-  }
-
-  const route = data.routes[0];
-
-  if (!route) {
-    return;
-  }
-
-  const durationMs = route.duration * 1000;
-
-  const eta = new Date(Date.now() + durationMs);
+  // If we can't calculate an ETA for whatever reason, don't do anything
+  if (!eta) return;
 
   const values = { pick_up_eta: eta, pick_up_eta_updated_at: new Date() };
 
@@ -386,6 +363,7 @@ export async function getETA(locations: { latitude: number;  longitude: number }
   const { data, error } = await osrm.GET(
     "/route/{version}/{profile}/{coordinates}",
     {
+      signal: AbortSignal.timeout(5_000),
       baseUrl: OSRM_BASE_URL,
       params: {
         path: {
