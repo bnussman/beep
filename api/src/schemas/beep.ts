@@ -21,7 +21,8 @@ export const rideResponseSchema = z.object({
   }),
   position: z.number(),
   queue: z.array(z.object({ status: z.enum(beepStatuses) })),
-  riders_waiting: z.number()
+  riders_waiting: z.number(),
+  pick_up_eta: z.union([z.string(), z.date()]).nullable(),
 });
 
 export const queueResponseSchema = z.array(
