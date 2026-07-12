@@ -228,8 +228,8 @@ export const riderRouter = router({
     .input(z.string().optional())
     .output(
       zAsyncIterable({
-        yield: rideResponseSchema.nullable(),
-        return: rideResponseSchema.nullable(),
+        yield: rideResponseSchema.partial().nullable(),
+        return: rideResponseSchema.partial().nullable(),
       }),
     )
     .subscription(async function* ({ ctx, signal, input }) {

@@ -259,6 +259,8 @@ export const userRouter = router({
           location: u[0].location,
         };
 
+        updateEta(input.userId, data.location);
+
         pubSub.publish("locations", data);
       }
 

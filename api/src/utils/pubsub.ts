@@ -10,7 +10,7 @@ type Queue = z.infer<typeof queueResponseSchema>;
 
 type PubSubChannels = {
   user: [userId: string, payload: { user: User }];
-  ride: [userId: string, payload: { ride: Ride }];
+  ride: [userId: string, payload: { ride: Partial<Ride> }];
   queue: [userId: string, payload: { queue: Queue }];
   locations: [
     payload: { id: string; location: { latitude: number; longitude: number } },

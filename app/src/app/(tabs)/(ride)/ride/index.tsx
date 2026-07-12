@@ -39,7 +39,17 @@ export default function MainFindBeepScreen() {
             trpc.rider.getLastBeepToRate.pathFilter(),
           );
         }
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), (prev) => {
+          if (data === null) {
+            return null;
+          }
+          if (!prev) {
+            return data as typeof beep;
+          }
+          const updatedBeep = { ...prev };
+          Object.assign(updatedBeep, data);
+          return updatedBeep;
+        });
       },
       enabled: Boolean(beep),
     }),

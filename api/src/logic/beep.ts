@@ -375,7 +375,11 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
 
   const eta = new Date(Date.now() + durationMs);
 
-  await db.update(beep).set({ pick_up_eta: eta, pick_up_eta_updated_at: new Date() }).where(eq(beep.id, currentBeep.id));
+  const values = { pick_up_eta: eta, pick_up_eta_updated_at: new Date() };
+
+  pubSub.publish("ride", currentBeep.rider_id, { ride: values });
+
+  await db.update(beep).set(values).where(eq(beep.id, currentBeep.id));
 }
 
 export async function getETA(locations: { latitude: number;  longitude: number }[]) {
