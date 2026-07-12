@@ -14,7 +14,7 @@ export function ETA(props: Props) {
 
       return (
         <Text>
-          <Countdown date={props.eta} /> ({pickUpAt})
+          Pick up <Countdown date={props.eta} /> ({pickUpAt})
         </Text>
       );
     }
