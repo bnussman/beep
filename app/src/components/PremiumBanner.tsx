@@ -22,7 +22,7 @@ export function PremiumBanner() {
             You are premium! 👑
           </Text>
           <Text>
-            Expires in <Countdown date={new Date(payment.expires)} />
+            Expires in <Countdown date={payment.expires} />
           </Text>
         </>
       ) : (

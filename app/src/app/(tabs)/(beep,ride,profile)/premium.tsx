@@ -109,7 +109,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
       <Text weight="bold">{p.identifier}</Text>
       {payment && (
         <Text size="sm">
-          Expires in <Countdown date={new Date(payment.expires)} />
+          Expires in <Countdown date={payment.expires} />
         </Text>
       )}
       <View style={{ flexGrow: 1 }} />
