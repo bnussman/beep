@@ -1,12 +1,8 @@
+import { getTimeRemaining } from "@/utils/date";
 import { useState, useEffect } from "react";
-import { DateTime } from "luxon";
 
 interface Props {
   date: string;
-}
-
-function getTimeRemaining(date: string) {
-  return DateTime.fromISO(date).toRelative();
 }
 
 export const Countdown = (props: Props) => {
