@@ -364,7 +364,7 @@ export async function getETA(locations: { latitude: number; longitude: number }[
     const { data, error } = await osrm.GET(
       "/route/{version}/{profile}/{coordinates}",
       {
-        signal: AbortSignal.timeout(5_000),
+        signal: AbortSignal.timeout(4_000),
         baseUrl: OSRM_BASE_URL,
         params: {
           path: {
