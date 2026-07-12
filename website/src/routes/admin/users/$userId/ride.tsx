@@ -5,7 +5,7 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useTRPC } from "../../../../utils/trpc";
 import { Loading } from "../../../../components/Loading";
 import { useSubscription } from "@trpc/tanstack-react-query";
-import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Marker as BeeperMarker } from "../../../../components/Marker";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { BasicUser } from "../../../../components/BasicUser";
@@ -27,11 +27,26 @@ export const Route = createFileRoute("/admin/users/$userId/ride")({
 function Ride() {
   const trpc = useTRPC();
   const theme = useTheme();
+  const queryClient = useQueryClient();
 
   const { userId } = useParams({ from: Route.id });
 
-  const { data: ride, error } = useSubscription(
-    trpc.rider.currentRideUpdates.subscriptionOptions(userId),
+  const { data: ride, isLoading, error } = useQuery(trpc.rider.currentRide.queryOptions(userId));
+
+  useSubscription(
+    trpc.rider.currentRideUpdates.subscriptionOptions(userId, {
+      onData(data) {
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(userId), (prev) => {
+          if (data === null) {
+            return null;
+          }
+          if (!prev) {
+            return data as typeof ride;
+          }
+          return { ...prev, ...data };
+        });
+      }
+    }),
   );
 
   const { data: rider } = useSubscription(
@@ -74,7 +89,7 @@ function Ride() {
     lng: route.waypoints[1].location[0],
   };
 
-  if (ride === undefined) {
+  if (isLoading) {
     return <Loading />;
   }
 
