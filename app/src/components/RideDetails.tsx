@@ -111,7 +111,7 @@ export function RideDetails(props: Props) {
           <Text>{getCurrentStatusMessage(beep)}</Text>
         )}
       </View>
-      {beep.status === "on_the_way" && beep.pick_up_eta && (
+      {beep.status === "on_the_way" && (
         <ETA eta={beep.pick_up_eta} />
       )}
       {car && (
