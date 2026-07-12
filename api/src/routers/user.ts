@@ -11,7 +11,7 @@ import { email } from "../utils/email";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
-import { inProgressBeep } from "../logic/beep";
+import { inProgressBeep, inProgressBeepNew, updateEta } from "../logic/beep";
 import { userSchema } from "../schemas/user";
 import { zAsyncIterable } from "../utils/zAsyncIterable";
 import { getActivePayments } from "../logic/payments";
@@ -177,6 +177,8 @@ export const userRouter = router({
           id: ctx.user.id,
           location: input.location,
         };
+
+        updateEta(ctx.user.id, input.location);
 
         pubSub.publish("locations", data);
       }

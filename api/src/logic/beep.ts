@@ -5,6 +5,8 @@ import { beep } from "../../drizzle/schema";
 import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 import { updateLiveActivity } from "../utils/live-activities";
+import { OSRM_BASE_URL } from "../utils/constants";
+import { osrm } from "@banksnussman/osrm";
 
 type Beep = typeof beep.$inferSelect;
 
@@ -315,4 +317,58 @@ export async function getInProgressBeepsCount() {
 export async function publishBeepsCount() {
   const count = await getBeepsCount();
   pubSub.publish("beepsCount", count);
+}
+
+export async function updateEta(beeperId: string, location: { latitude: number; longitude: number }) {
+  const currentBeep = await db.query.beep.findFirst({
+    where: { AND: [{ beeper_id: beeperId }, inProgressBeepNew] },
+    orderBy: { start: 'asc' },
+    with: {
+      rider: { columns: { location: true } }
+    }
+  })
+
+  // If the beeper does not have an in-progress beep, we don't need to update the ETA
+  if (!currentBeep) return;
+
+  // If the beep's eta has been updated within the last 30 seconds, we don't need to update it again
+  if (currentBeep.eta_updated_at && (Date.now() - currentBeep.eta_updated_at.getTime()) < 30000) {
+    return;
+  }
+
+  // If the rider doesn't have a location, we can't calculate an ETA
+  // @todo we could fallback to using the pick up location
+  if (!currentBeep.rider.location) {
+    return;
+  }
+
+  const { data, error } = await osrm.GET(
+    "/route/{version}/{profile}/{coordinates}",
+    {
+      baseUrl: OSRM_BASE_URL,
+      params: {
+        path: {
+          profile: "driving",
+          coordinates: `${location.longitude},${location.latitude};${currentBeep.rider.location.longitude},${currentBeep.rider.location.latitude}`,
+          version: "v1",
+        },
+      },
+    },
+  );
+
+  if (error) {
+    return;
+  }
+
+  const route = data.routes[0];
+
+  if (!route) {
+    return;
+  }
+
+  const durationMs = route.duration * 1000;
+
+  const eta = new Date(Date.now() + durationMs);
+
+  await db.update(beep).set({ eta, eta_updated_at: new Date() }).where(eq(beep.id, currentBeep.id));
 }
