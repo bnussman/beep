@@ -97,7 +97,7 @@ export default function AddCar() {
 
     for (const key in variables) {
       if (key === "photo") {
-        formData.append("photo", (await getFile(variables[key])) as Blob);
+        formData.append("photo", getFile(variables[key]) as File);
       } else {
         formData.append(
           key,

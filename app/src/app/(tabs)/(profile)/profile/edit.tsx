@@ -84,7 +84,7 @@ export default function EditProfileScreen() {
 
     const formData = new FormData();
 
-    formData.append("photo", (await getFile(result.assets[0])) as Blob);
+    formData.append("photo", getFile(result.assets[0]) as File);
 
     upload(formData);
   };

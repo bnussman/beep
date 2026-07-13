@@ -65,7 +65,7 @@ export default function SignUpScreen() {
       if (key === "photo") {
         formData.append(
           "photo",
-          (await getFile(variables[key as "photo"])) as Blob,
+          getFile(variables[key as "photo"]) as File,
         );
       } else {
         formData.append(
