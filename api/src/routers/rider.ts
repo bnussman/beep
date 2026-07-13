@@ -187,6 +187,9 @@ export const riderRouter = router({
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
+        pubSub.publish("rideAllowPartial", beep.rider_id, {
+          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+        });
         pubSub.publish("ride", beep.rider_id, {
           ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
         });
@@ -228,6 +231,43 @@ export const riderRouter = router({
     .input(z.string().optional())
     .output(
       zAsyncIterable({
+        yield: rideResponseSchema.nullable(),
+        return: rideResponseSchema.nullable(),
+      }),
+    )
+    .subscription(async function* ({ ctx, signal, input }) {
+      const userId = input ?? ctx.user.id;
+
+      if (ctx.user.role === "user" && userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You must be an admin to view the current ride of another user",
+        });
+      }
+
+      console.log("➕ Rider subscribed", userId);
+
+      const eventSource = pubSub.subscribe("ride", userId);
+
+      yield await getRidersCurrentRide(userId);
+
+      if (signal) {
+        signal.onabort = () => {
+          console.log("➖ Rider unsubscribed", userId);
+          eventSource.return();
+        };
+      }
+
+      for await (const { ride } of eventSource) {
+        if (signal?.aborted) return;
+        yield ride;
+      }
+    }),
+  currentRideUpdatesAllowPartial: authedProcedure
+    .input(z.string().optional())
+    .output(
+      zAsyncIterable({
         yield: rideResponseSchema.partial().nullable(),
         return: rideResponseSchema.partial().nullable(),
       }),
@@ -245,7 +285,7 @@ export const riderRouter = router({
 
       console.log("➕ Rider subscribed", userId);
 
-      const eventSource = pubSub.subscribe("ride", userId);
+      const eventSource = pubSub.subscribe("rideAllowPartial", userId);
 
       yield await getRidersCurrentRide(userId);
 
@@ -428,11 +468,15 @@ export const riderRouter = router({
 
       queue = queue.filter((beep) => beep.id !== entry.id);
 
+      pubSub.publish("rideAllowPartial", ctx.user.id, { ride: null });
       pubSub.publish("ride", ctx.user.id, { ride: null });
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
         const ride = { ...beep, ...getDerivedRiderFields(beep, queue) }
+        pubSub.publish("rideAllowPartial", beep.rider_id, {
+          ride,
+        });
         pubSub.publish("ride", beep.rider_id, {
           ride,
         });

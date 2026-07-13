@@ -32,7 +32,7 @@ export default function MainFindBeepScreen() {
     beep?.status === "on_the_way";
 
   useSubscription(
-    trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
+    trpc.rider.currentRideUpdatesAllowPartial.subscriptionOptions(undefined, {
       onData(data) {
         if (data === null) {
           queryClient.invalidateQueries(

@@ -34,7 +34,7 @@ function Ride() {
   const { data: ride, isLoading, error } = useQuery(trpc.rider.currentRide.queryOptions(userId));
 
   useSubscription(
-    trpc.rider.currentRideUpdates.subscriptionOptions(userId, {
+    trpc.rider.currentRideUpdatesAllowPartial.subscriptionOptions(userId, {
       onData(data) {
         queryClient.setQueryData(trpc.rider.currentRide.queryKey(userId), (prev) => {
           if (data === null) {

@@ -354,7 +354,7 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
 
   const values = { pick_up_eta: eta, pick_up_eta_updated_at: new Date() };
 
-  pubSub.publish("ride", currentBeep.rider_id, { ride: values });
+  pubSub.publish("rideAllowPartial", currentBeep.rider_id, { ride: values });
 
   await db.update(beep).set(values).where(eq(beep.id, currentBeep.id));
 }

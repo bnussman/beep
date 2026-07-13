@@ -147,8 +147,10 @@ export const beeperRouter = router({
 
         if (beep.id === input.beepId && isEndingBeep) {
           pubSub.publish("ride", beep.rider_id, { ride: null });
+          pubSub.publish("rideAllowPartial", beep.rider_id, { ride: null });
         } else {
           pubSub.publish("ride", beep.rider_id, { ride });
+          pubSub.publish("rideAllowPartial", beep.rider_id, { ride });
         }
 
         if (beep.id === input.beepId) {
