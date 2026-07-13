@@ -10,6 +10,7 @@ import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
+  getETA,
   getIsInProgressBeep,
   getQueueSize,
   sendBeepUpdateNotificationToRider,
@@ -114,16 +115,25 @@ export const beeperRouter = router({
         input.data.status === "canceled";
       const isQueueSizeChanging = isStartingBeep || isEndingBeep;
 
-      const values = {
+      const values: Partial<typeof beep.$inferInsert> = {
         status: input.data.status,
         ...(isEndingBeep && {
           end: new Date(),
         }),
       };
 
+      if (input.data.status === 'on_the_way' && ctx.user.location && queueEntry.rider.location) {
+        const eta = await getETA([ctx.user.location, queueEntry.rider.location]);
+
+        if (eta) {
+          values.pick_up_eta = eta;
+          values.pick_up_eta_updated_at = new Date();
+        }
+      }
+
       await db.update(beep).set(values).where(eq(beep.id, queueEntry.id));
 
-      queueEntry.status = input.data.status;
+      Object.assign(queueEntry, values);
 
       if (isQueueSizeChanging) {
         await db

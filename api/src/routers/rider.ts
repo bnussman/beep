@@ -158,6 +158,8 @@ export const riderRouter = router({
         end: null,
         rider_live_activity_token: null,
         rider_live_activity_id: null,
+        pick_up_eta: null,
+        pick_up_eta_updated_at: null
       } as const;
 
       const currentRide = await db.query.beep.findFirst({
@@ -226,8 +228,8 @@ export const riderRouter = router({
     .input(z.string().optional())
     .output(
       zAsyncIterable({
-        yield: rideResponseSchema.nullable(),
-        return: rideResponseSchema.nullable(),
+        yield: rideResponseSchema.partial().nullable(),
+        return: rideResponseSchema.partial().nullable(),
       }),
     )
     .subscription(async function* ({ ctx, signal, input }) {

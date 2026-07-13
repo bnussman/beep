@@ -8,7 +8,6 @@ import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import {
   createFileRoute,
-  createRoute,
   useRouter,
 } from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
@@ -56,10 +55,10 @@ function Beep() {
     trpc.location.getRoute.queryOptions(
       beep
         ? {
-            origin: beep.origin,
-            destination: beep.destination,
-            bias: beeper?.location,
-          }
+          origin: beep.origin,
+          destination: beep.destination,
+          bias: beeper?.location,
+        }
         : skipToken,
       {
         placeholderData: keepPreviousData,
@@ -150,15 +149,35 @@ function Beep() {
       title: "Duration",
       content: beep.end
         ? Interval.fromDateTimes(
-            DateTime.fromISO(beep.start),
-            DateTime.fromISO(beep.end),
-          )
-            .toDuration()
-            .rescale()
-            .set({ milliseconds: 0 })
-            .rescale()
-            .toHuman()
+          DateTime.fromISO(beep.start),
+          DateTime.fromISO(beep.end),
+        )
+          .toDuration()
+          .rescale()
+          .set({ milliseconds: 0 })
+          .rescale()
+          .toHuman()
         : "N/A",
+    },
+    {
+      title: "Pick Up ETA",
+      content: beep.pick_up_eta ? (() => {
+        const date = DateTime.fromISO(beep.pick_up_eta!);
+        const isInThePast = date < DateTime.now();
+
+        return (
+          <Stack>
+            <Typography>
+              {isInThePast ? date.toLocaleString({ timeStyle: "short" }) : date.toRelative()}
+            </Typography>
+            <Typography variant="caption">
+              updated {DateTime.fromISO(beep.pick_up_eta_updated_at!).toRelative()}
+            </Typography>
+          </Stack>
+        );
+      })() : (
+        <Typography>N/A</Typography>
+      )
     },
   ];
 

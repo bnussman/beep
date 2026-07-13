@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import { useNavigation } from "expo-router/react-navigation";
-import { Alert, View, Switch, ActivityIndicator } from "react-native";
+import { Alert, View } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
@@ -11,12 +11,11 @@ import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { getTimeRemainingString } from "@/components/CountDown";
-import { isAndroid, isIOS, isWeb } from "@/utils/constants";
+import { isAndroid, isWeb } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
-import { Link, SplashScreen, Stack, useRouter } from "expo-router";
+import { Link, SplashScreen, useRouter } from "expo-router";
 import {
   startLocationTracking,
   stopLocationTracking,
@@ -30,6 +29,7 @@ import { Description, FieldError, TextField } from "heroui-native";
 import { Menu, Option } from "@/components/Menu";
 import { Elipsis } from "@/components/Elipsis";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
+import { getTimeRemaining } from "@/utils/date";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -189,7 +189,7 @@ export default function StartBeepingScreen() {
                       onPress: () => {
                         Alert.alert(
                           "You are premium!",
-                          `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                          `Your premium status will expire ${getTimeRemaining(payments[0].expires)}`,
                         );
                       },
                     },
@@ -222,7 +222,7 @@ export default function StartBeepingScreen() {
                   onPress={() =>
                     Alert.alert(
                       "You are premium!",
-                      `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                      `Your premium status will expire ${getTimeRemaining(payments[0].expires)}`,
                     )
                   }
                 >

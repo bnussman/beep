@@ -1,69 +1,30 @@
-import React, { useState, useEffect } from "react";
+import { getTimeRemaining } from "@/utils/date";
+import { useState, useEffect } from "react";
 
-export const calculateTimeRemaining = (targetDate: Date) => {
-  const now = new Date().getTime();
-  const targetTime = new Date(targetDate).getTime();
-  const timeDifference = targetTime - now;
-
-  if (timeDifference <= 0) {
-    return null;
-  }
-
-  const hours = Math.floor(
-    (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-  );
-  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-  return { hours, minutes, seconds };
-};
-
-export function getTimeRemainingString(date: Date) {
-  const reminaing = calculateTimeRemaining(date);
-
-  if (!reminaing) {
-    return "";
-  }
-
-  const { hours, minutes, seconds } = reminaing;
-
-  const parts = [];
-
-  if (hours) {
-    parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
-  }
-
-  if (minutes) {
-    parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
-  }
-
-  if (seconds) {
-    parts.push(`${seconds} ${seconds === 1 ? "second" : "seconds"}`);
-  }
-
-  return parts.join(" ");
+interface Props {
+  date: string;
 }
 
-export const Countdown = ({ date }: { date: Date }) => {
+export const Countdown = (props: Props) => {
   const [timeRemaining, setTimeRemaining] = useState(
-    calculateTimeRemaining(date),
+    getTimeRemaining(props.date)
   );
 
   useEffect(() => {
+    setTimeRemaining(getTimeRemaining(props.date));
+
     const interval = setInterval(() => {
-      setTimeRemaining(calculateTimeRemaining(date));
+      setTimeRemaining(getTimeRemaining(props.date));
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [date]);
+  }, [props.date]);
 
   if (timeRemaining === null) {
-    return null;
+    return "N/A";
   }
 
-  const { hours, minutes, seconds } = timeRemaining;
-
-  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  return timeRemaining;
 };

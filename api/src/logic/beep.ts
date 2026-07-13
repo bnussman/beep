@@ -5,6 +5,8 @@ import { beep } from "../../drizzle/schema";
 import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 import { updateLiveActivity } from "../utils/live-activities";
+import { OSRM_BASE_URL } from "../utils/constants";
+import { osrm } from "@banksnussman/osrm";
 
 type Beep = typeof beep.$inferSelect;
 
@@ -315,4 +317,79 @@ export async function getInProgressBeepsCount() {
 export async function publishBeepsCount() {
   const count = await getBeepsCount();
   pubSub.publish("beepsCount", count);
+}
+
+export async function updateEta(beeperId: string, location: { latitude: number; longitude: number }) {
+  const currentBeep = await db.query.beep.findFirst({
+    where: { AND: [{ beeper_id: beeperId }, inProgressBeepNew] },
+    orderBy: { start: 'asc' },
+    with: {
+      rider: { columns: { location: true } }
+    }
+  })
+
+  // If the beeper does not have an in-progress beep, we don't need to update the ETA
+  if (!currentBeep) return;
+
+  // If the beep status isn't "on_the_way", don't do anything
+  if (currentBeep.status !== 'on_the_way') {
+    return;
+  }
+
+  // If the beep's eta has been updated within the last 30 seconds, we don't need to update it again
+  if (currentBeep.pick_up_eta_updated_at && (Date.now() - currentBeep.pick_up_eta_updated_at.getTime()) < 30000) {
+    return;
+  }
+
+  // If the rider doesn't have a location, we can't calculate an ETA
+  // @todo we could fallback to using the pick up location
+  if (!currentBeep.rider.location) {
+    return;
+  }
+
+  const eta = await getETA([location, currentBeep.rider.location]);
+
+  // If we can't calculate an ETA for whatever reason, don't do anything
+  if (!eta) return;
+
+  const values = { pick_up_eta: eta, pick_up_eta_updated_at: new Date() };
+
+  pubSub.publish("ride", currentBeep.rider_id, { ride: values });
+
+  await db.update(beep).set(values).where(eq(beep.id, currentBeep.id));
+}
+
+export async function getETA(locations: { latitude: number; longitude: number }[]) {
+  try {
+    const { data, error } = await osrm.GET(
+      "/route/{version}/{profile}/{coordinates}",
+      {
+        signal: AbortSignal.timeout(4_000),
+        baseUrl: OSRM_BASE_URL,
+        params: {
+          path: {
+            profile: "driving",
+            coordinates: locations.map((location) => `${location.longitude},${location.latitude}`).join(';'),
+            version: "v1",
+          },
+        },
+      },
+    );
+
+    if (error) {
+      return null;
+    }
+
+    const route = data.routes[0];
+
+    if (!route) {
+      return null;
+    }
+
+    const durationMs = route.duration * 1000;
+
+    return new Date(Date.now() + durationMs);
+  } catch (error) {
+    return null;
+  }
 }

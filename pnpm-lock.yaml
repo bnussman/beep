@@ -161,6 +161,9 @@ importers:
       heroui-native:
         specifier: ^1.0.2
         version: 1.0.2(cde50ce2f1144584753bcb793ea03420)
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -231,6 +234,9 @@ importers:
       '@trpc/server':
         specifier: ^11.16.0
         version: 11.16.0(typescript@6.0.3)
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.1
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14

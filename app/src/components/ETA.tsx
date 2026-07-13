@@ -1,50 +1,31 @@
 import { Text } from "@/components/Text";
-import { useTRPC } from "@/utils/trpc";
-import { useLocation } from "@/utils/location";
-import { ActivityIndicator, View } from "react-native";
-import { skipToken, useQuery } from "@tanstack/react-query";
-
-interface Location {
-  latitude: number;
-  longitude: number;
-}
+import { View } from "react-native";
+import { Countdown } from "./CountDown";
 
 interface Props {
-  beeperLocation: Location | null | undefined;
+  eta: string | null;
 }
 
 export function ETA(props: Props) {
-  const trpc = useTRPC();
-  const { beeperLocation } = props;
-  const { location } = useLocation();
 
-  const { data, error, isPending } = useQuery(
-    trpc.location.getETA.queryOptions(
-      beeperLocation && location
-        ? {
-            start: `${beeperLocation.longitude},${beeperLocation.latitude}`,
-            end: `${location.coords.longitude},${location.coords.latitude}`,
-          }
-        : skipToken,
-    ),
-  );
+  const renderBody = () => {
+    if (props.eta) {
+      const pickUpAt = new Date(props.eta).toLocaleTimeString([], { timeStyle: 'short' });
 
-  const renderContent = () => {
-    if (isPending) {
-      return <ActivityIndicator />;
+      return (
+        <Text>
+          Pick up <Countdown date={props.eta} /> ({pickUpAt})
+        </Text>
+      );
     }
 
-    if (error) {
-      return <Text>{error.message}</Text>;
-    }
-
-    return <Text>{data}</Text>;
+    return "N/A";
   };
 
   return (
     <View>
       <Text weight="800">ETA</Text>
-      {renderContent()}
+      <Text>{renderBody()}</Text>
     </View>
   );
 }
