@@ -46,9 +46,7 @@ export default function MainFindBeepScreen() {
           if (!prev) {
             return data as typeof beep;
           }
-          const updatedBeep = { ...prev };
-          Object.assign(updatedBeep, data);
-          return updatedBeep;
+          return { ...prev, ...data };
         });
       },
       enabled: Boolean(beep),
