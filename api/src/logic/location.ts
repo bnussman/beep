@@ -1,27 +1,25 @@
-import { photon } from "@banksnussman/photon";
 import { user } from "../../drizzle/schema.ts";
 import { PHOTON_BASE_URL } from "../utils/constants.ts";
+import { geocoding } from "@banksnussman/photon";
 
 export async function getCoordinatesFromAddress(
   address: string,
   bias: (typeof user.$inferSelect)["location"],
 ) {
-  const { data, error } = await photon.GET("/api", {
+  const { data, error } = await geocoding({
     baseUrl: PHOTON_BASE_URL,
-    params: {
-      query: {
-        q: address,
-        ...(bias && {
-          // zoom: 10,
-          // location_bias_scale: 0.5,
-          lat: bias.latitude,
-          lon: bias.longitude,
-        }),
-      },
+    query: {
+      q: address,
+      ...(bias && {
+        // zoom: 10,
+        // location_bias_scale: 0.5,
+        lat: bias.latitude,
+        lon: bias.longitude,
+      }),
     },
   });
 
-  if (error || !data.features[0]) {
+  if (error || !data?.features[0]) {
     return null;
   }
 

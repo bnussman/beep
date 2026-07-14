@@ -14,8 +14,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       '@banksnussman/photon':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: ^0.0.5
+        version: 0.0.5
       '@graphql-yoga/redis-event-target':
         specifier: ^3.0.3
         version: 3.0.3(ioredis@5.10.1)
@@ -811,8 +811,8 @@ packages:
   '@banksnussman/osrm@0.0.4':
     resolution: {integrity: sha512-Cd89S+p7YxRSFMyCKVd+TkNMw7q676Aut75URjniIB9lP+xaQxaqC/teuK3IcWJJ1ln83bE7q9atTHtHj/gGjg==}
 
-  '@banksnussman/photon@0.0.4':
-    resolution: {integrity: sha512-YUVVCRQgpQJ+ACXhdwb5j288uNNoXtSHd1Q9G8amq85ugq7bjQiWKdYOwZSqJufGM25amyde8NwUodF4acSbRw==}
+  '@banksnussman/photon@0.0.5':
+    resolution: {integrity: sha512-AeLw3KfK66sbOQwTjZF3Gz0phzpytUFQMEngWElG8IZDqjiwi5fmDyEr3a8HEuIQK8ONvq70wHAhXWMwJtYyYA==}
 
   '@base-ui/react@1.5.0':
     resolution: {integrity: sha512-z1gSAlced1yY+iM+mHDEtIkD8UI3Ebs52MuBPxvV6f5hRutk+xvCH/wuB7hDqDzK9JG5FoMz5nhrqtSs1wjt1A==}
@@ -5325,12 +5325,6 @@ packages:
     resolution: {integrity: sha512-MVHddDVweXZF3awtlAS+6pgKLlm/JgxZ90+/NBurBoQctVOOB/zDdVjcyPzQ+0laDGbsWgrRkflI65sQeOgT9Q==}
     engines: {node: '>=8'}
 
-  openapi-fetch@0.14.0:
-    resolution: {integrity: sha512-PshIdm1NgdLvb05zp8LqRQMNSKzIlPkyMxYFxwyHR+UlKD4t2nUjkDhNxeRbhRSEd3x5EUNh2w5sJYwkhOH4fg==}
-
-  openapi-typescript-helpers@0.0.15:
-    resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
-
   oppa@0.4.0:
     resolution: {integrity: sha512-DFvM3+F+rB/igo3FRnkDWitjZgBH9qZAn68IacYHsqbZBKwuTA+LdD4zSJiQtgQpWq7M08we5FlGAVHz0yW7PQ==}
     engines: {node: '>=10'}
@@ -7207,9 +7201,7 @@ snapshots:
 
   '@banksnussman/osrm@0.0.4': {}
 
-  '@banksnussman/photon@0.0.4':
-    dependencies:
-      openapi-fetch: 0.14.0
+  '@banksnussman/photon@0.0.5': {}
 
   '@base-ui/react@1.5.0(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
@@ -12062,12 +12054,6 @@ snapshots:
     dependencies:
       is-docker: 2.2.1
       is-wsl: 2.2.0
-
-  openapi-fetch@0.14.0:
-    dependencies:
-      openapi-typescript-helpers: 0.0.15
-
-  openapi-typescript-helpers@0.0.15: {}
 
   oppa@0.4.0:
     dependencies:
