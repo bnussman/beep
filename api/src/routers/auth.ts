@@ -1,6 +1,7 @@
 import { authedProcedure, publicProcedure, router } from "../utils/trpc.ts";
 import { z, ZodError } from "zod";
 import { db } from "../utils/db.ts";
+import bcrypt from 'bcrypt';
 import {
   forgot_password,
   token,
@@ -9,7 +10,6 @@ import {
 } from "../../drizzle/schema.ts";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3.ts";
 import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants.ts";
 import { email } from "../utils/email.ts";
@@ -62,10 +62,9 @@ export const authRouter = router({
           isPasswordCorrect = hasher.digest("hex") === u.password;
           break;
         case "bcrypt":
-          isPasswordCorrect = await bunPassword.verify(
+          isPasswordCorrect = await bcrypt.compare(
             password,
             u.password,
-            "bcrypt",
           );
           break;
         default:
@@ -173,7 +172,7 @@ export const authRouter = router({
         acl: "public-read",
       });
 
-      const password = await bunPassword.hash(input.password, "bcrypt");
+      const password = await bcrypt.hash(input.password, 10);
 
       const u = await db
         .insert(user)
@@ -343,7 +342,7 @@ export const authRouter = router({
       await db
         .update(user)
         .set({
-          password: await bunPassword.hash(input.password, "bcrypt"),
+          password: await bcrypt.hash(input.password, 10),
           passwordType: "bcrypt",
         })
         .where(eq(user.id, forgotPassword.user_id));
@@ -457,7 +456,7 @@ export const authRouter = router({
     )
     .output(userSchema)
     .mutation(async ({ input, ctx }) => {
-      const password = await bunPassword.hash(input.password, "bcrypt");
+      const password = await bcrypt.hash(input.password, 10);
 
       await db
         .update(user)
