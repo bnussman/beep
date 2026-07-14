@@ -242,7 +242,7 @@ export const userRouter = router({
       ) {
         // If an admin changes a user's photo URL, delete the old photo from S3
         // to prevent storing unreferenced images.
-        await s3.delete(existingUser.photo);
+        await s3.deleteObject(existingUser.photo);
       }
 
       const u = await db
@@ -326,13 +326,13 @@ export const userRouter = router({
 
       const objectKey = "images/" + filename;
 
-      await s3.write(objectKey, input.photo, { acl: "public-read" });
+      await s3.putObject(objectKey, input.photo.stream(), { metadata: { "x-amz-acl": "public-read" } });
 
       if (ctx.user.photo) {
         const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
         if (key) {
-          s3.delete(key);
+          s3.deleteObject(key);
         } else {
           Sentry.captureMessage(
             "Unable to delete profile photo from S3 due to invalid URL format",

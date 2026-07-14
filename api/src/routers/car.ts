@@ -107,7 +107,7 @@ export const carRouter = router({
       await db.delete(car).where(eq(car.id, c.id));
 
       const key = c.photo.split(S3_BUCKET_URL)[1];
-      await s3.delete(key);
+      await s3.deleteObject(key);
 
       if (input.reason && c.user.pushToken) {
         await sendNotification({
@@ -159,8 +159,8 @@ export const carRouter = router({
 
       const objectKey = `cars/${carId}${extention}`;
 
-      await s3.write(objectKey, input.photo, {
-        acl: "public-read",
+      await s3.putObject(objectKey, input.photo.stream(), {
+        metadata: { "x-amz-acl": "public-read" },
       });
 
       const newCar = {

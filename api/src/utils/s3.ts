@@ -4,11 +4,12 @@ import {
   S3_BUCKET,
   S3_ENDPOINT,
 } from "./constants.ts";
-import { S3Client } from "bun";
+import { S3Client } from "@bradenmacdonald/s3-lite-client";
 
 export const s3 = new S3Client({
-  endpoint: S3_ENDPOINT,
-  secretAccessKey: S3_ACCESS_KEY_SECRET,
-  accessKeyId: S3_ACCESS_KEY_ID,
+  endPoint: S3_ENDPOINT,
+  secretKey: S3_ACCESS_KEY_SECRET,
+  accessKey: S3_ACCESS_KEY_ID,
   bucket: S3_BUCKET,
+  region: 'idk',
 });

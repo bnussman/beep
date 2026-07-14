@@ -16,6 +16,9 @@ importers:
       '@banksnussman/photon':
         specifier: ^0.0.5
         version: 0.0.5
+      '@bradenmacdonald/s3-lite-client':
+        specifier: ^0.9.6
+        version: 0.9.6
       '@graphql-yoga/redis-event-target':
         specifier: ^3.0.3
         version: 3.0.3(ioredis@5.10.1)
@@ -854,6 +857,9 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@bradenmacdonald/s3-lite-client@0.9.6':
+    resolution: {integrity: sha512-Ec7u0jGd8BoaBdK847JFaWja6xeRtVPPe0faMuPaIVeE9Szecu16vNyUJNRrIMwLwsEM3ghLSgnkHySh399pUg==}
 
   '@drizzle-team/brocli@0.11.0':
     resolution: {integrity: sha512-hD3pekGiPg0WPCCGAZmusBBJsDqGUR66Y452YgQsZOnkdQ7ViEPKuyP4huUGEZQefp8g34RRodXYmJ2TbCH+tg==}
@@ -7306,6 +7312,8 @@ snapshots:
       use-sync-external-store: 1.6.0(react@19.2.3)
     optionalDependencies:
       '@types/react': 19.2.14
+
+  '@bradenmacdonald/s3-lite-client@0.9.6': {}
 
   '@drizzle-team/brocli@0.11.0': {}
 
