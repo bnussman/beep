@@ -6,7 +6,7 @@ import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 import { updateLiveActivity } from "../utils/live-activities";
 import { OSRM_BASE_URL } from "../utils/constants";
-import { osrm } from "@banksnussman/osrm";
+import { route } from "@banksnussman/osrm";
 
 type Beep = typeof beep.$inferSelect;
 
@@ -361,18 +361,15 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
 
 export async function getETA(locations: { latitude: number; longitude: number }[]) {
   try {
-    const { data, error } = await osrm.GET(
-      "/route/{version}/{profile}/{coordinates}",
+    const { data, error } = await route(
       {
+        path: {
+          profile: "driving",
+          coordinates: locations.map((location) => `${location.longitude},${location.latitude}`).join(';'),
+          version: "v1",
+        },
         signal: AbortSignal.timeout(4_000),
         baseUrl: OSRM_BASE_URL,
-        params: {
-          path: {
-            profile: "driving",
-            coordinates: locations.map((location) => `${location.longitude},${location.latitude}`).join(';'),
-            version: "v1",
-          },
-        },
       },
     );
 
@@ -380,13 +377,13 @@ export async function getETA(locations: { latitude: number; longitude: number }[
       return null;
     }
 
-    const route = data.routes[0];
+    const routeData = data.routes[0];
 
-    if (!route) {
+    if (!routeData) {
       return null;
     }
 
-    const durationMs = route.duration * 1000;
+    const durationMs = routeData.duration * 1000;
 
     return new Date(Date.now() + durationMs);
   } catch (error) {

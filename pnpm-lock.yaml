@@ -11,8 +11,8 @@ importers:
   api:
     dependencies:
       '@banksnussman/osrm':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.4
+        version: 0.0.4
       '@banksnussman/photon':
         specifier: ^0.0.4
         version: 0.0.4
@@ -802,8 +802,8 @@ packages:
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
 
-  '@banksnussman/osrm@0.0.2':
-    resolution: {integrity: sha512-SypYMvDgWQW7PmGOGkHU5c0wvvXIov+DnUDcXf886oDDeRtGNoDH55LHJrE1WL8b5bgnJBD9eiwXMmhRX2u4cg==}
+  '@banksnussman/osrm@0.0.4':
+    resolution: {integrity: sha512-Cd89S+p7YxRSFMyCKVd+TkNMw7q676Aut75URjniIB9lP+xaQxaqC/teuK3IcWJJ1ln83bE7q9atTHtHj/gGjg==}
 
   '@banksnussman/photon@0.0.4':
     resolution: {integrity: sha512-YUVVCRQgpQJ+ACXhdwb5j288uNNoXtSHd1Q9G8amq85ugq7bjQiWKdYOwZSqJufGM25amyde8NwUodF4acSbRw==}
@@ -7184,9 +7184,7 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@banksnussman/osrm@0.0.2':
-    dependencies:
-      openapi-fetch: 0.14.0
+  '@banksnussman/osrm@0.0.4': {}
 
   '@banksnussman/photon@0.0.4':
     dependencies:

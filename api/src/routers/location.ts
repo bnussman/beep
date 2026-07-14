@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { getCoordinatesFromAddress } from "../logic/location";
-import { osrm } from "@banksnussman/osrm";
+import { route } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
 import { photon } from "@banksnussman/photon";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
@@ -15,16 +15,12 @@ export const locationRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const { data, error } = await osrm.GET(
-        "/route/{version}/{profile}/{coordinates}",
-        {
+      const { data, error } = await route({
           baseUrl: OSRM_BASE_URL,
-          params: {
-            path: {
-              profile: "driving",
-              coordinates: `${input.start};${input.end}`,
-              version: "v1",
-            },
+          path: {
+            profile: "driving",
+            coordinates: `${input.start};${input.end}`,
+            version: "v1",
           },
         },
       );
@@ -37,16 +33,16 @@ export const locationRouter = router({
         });
       }
 
-      const route = data.routes[0];
+      const routeData = data.routes[0];
 
-      if (!route) {
+      if (!routeData) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Unabe to find a route.",
         });
       }
 
-      const eta = route.duration;
+      const eta = routeData.duration;
 
       const etaMinutes = Math.round(eta / 60);
 
@@ -90,22 +86,17 @@ export const locationRouter = router({
         );
       }
 
-      const { data, error } = await osrm.GET(
-        "/route/{version}/{profile}/{coordinates}",
-        {
-          baseUrl: OSRM_BASE_URL,
-          params: {
-            path: {
-              profile: "driving",
-              coordinates: `${originCoordinates.longitude},${originCoordinates.latitude};${destinationCoordinates.longitude},${destinationCoordinates.latitude}`,
-              version: "v1",
-            },
-            query: {
-              steps: true,
-            },
-          },
+      const { data, error } = await route({
+        baseUrl: OSRM_BASE_URL,
+        path: {
+          profile: "driving",
+          coordinates: `${originCoordinates.longitude},${originCoordinates.latitude};${destinationCoordinates.longitude},${destinationCoordinates.latitude}`,
+          version: "v1",
         },
-      );
+        query: {
+          steps: true,
+        },
+      });
 
       if (error) {
         throw new TRPCError({
