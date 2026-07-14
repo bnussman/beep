@@ -8,7 +8,7 @@ allowBuilds:
   "@pulumi/kubernetes": false
   "@sentry/cli": false
   "@swc/core": false
-  bcrypt: set this to true or false
+  bcrypt: false
   esbuild: false
   msgpackr-extract: false
   protobufjs: false
