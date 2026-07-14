@@ -3,8 +3,8 @@ import { authedProcedure, router } from "../utils/trpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { route } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
-import { photon } from "@banksnussman/photon";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
+import { geocoding } from "@banksnussman/photon";
 
 export const locationRouter = router({
   getETA: authedProcedure
@@ -123,18 +123,16 @@ export const locationRouter = router({
     .query(async ({ input, ctx }) => {
       const bias = input.location ?? ctx.user.location;
 
-      const { data, error } = await photon.GET("/api", {
+      const { data, error } = await geocoding({
         baseUrl: PHOTON_BASE_URL,
-        params: {
-          query: {
-            q: input.query,
-            lat: bias?.latitude,
-            lon: bias?.longitude,
-          },
+        query: {
+          q: input.query,
+          lat: bias?.latitude,
+          lon: bias?.longitude,
         },
       });
 
-      if (error || !data.features[0]) {
+      if (error || !data?.features[0]) {
         return [];
       }
 
