@@ -13,13 +13,13 @@ import { redisRouter } from "./routers/redis.ts";
 import { riderRouter } from "./routers/rider.ts";
 import { beeperRouter } from "./routers/beeper.ts";
 import { locationRouter } from "./routers/location.ts";
-import { handlePaymentWebook } from "./utils/payments.ts";
 import { healthRouter } from "./routers/health.ts";
-import { createBunWSHandler } from "./utils/ws.ts";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { CORS_HEADERS } from "./utils/cors.ts";
 import { flagsRouter } from "./routers/flags.ts";
+import { WebSocketServer } from 'ws';
+import { applyWSSHandler } from '@trpc/server/adapters/ws';
+import { createHTTPServer } from "@trpc/server/adapters/standalone";
 
 const appRouter = router({
   user: userRouter,
@@ -41,7 +41,28 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const websocket = createBunWSHandler({
+// http server
+const server = createHTTPServer({
+  router: appRouter,
+  createContext,
+  onError(error) {
+    if (getHTTPStatusCodeFromError(error.error) >= 500) {
+      console.error(error.error);
+      captureException(error.error, {
+        extra: { input: error.input, type: error.type },
+      });
+    }
+  },
+  responseMeta() {
+    return { headers: CORS_HEADERS };
+  },
+});
+
+// ws server
+const wss = new WebSocketServer({ server });
+
+applyWSSHandler<AppRouter>({
+  wss,
   router: appRouter,
   createContext,
   onError(error) {
@@ -54,51 +75,13 @@ const websocket = createBunWSHandler({
   },
 });
 
-Bun.serve({
-  routes: {
-    "/payments/webhook": handlePaymentWebook,
-  },
-  fetch(request, server) {
-    if (request.method === "OPTIONS") {
-      return new Response("Departed", { headers: CORS_HEADERS });
-    }
-    if (
-      server.upgrade(request, {
-        data: {
-          req: request,
-          abortController: new AbortController(),
-          abortControllers: new Map(),
-        },
-      })
-    ) {
-      return;
-    }
-    return fetchRequestHandler({
-      endpoint: "/",
-      req: request,
-      router: appRouter,
-      createContext,
-      onError(error) {
-        if (error.req.url.includes("syncPayments")) {
-          console.error("Error syncing payments", error);
-          captureException(error.error, {
-            extra: { input: error.input, type: error.type },
-          });
-        }
-        if (getHTTPStatusCodeFromError(error.error) >= 500) {
-          console.error(error.error);
-          captureException(error.error, {
-            extra: { input: error.input, type: error.type },
-          });
-        }
-      },
-      responseMeta() {
-        return { headers: CORS_HEADERS };
-      },
-    });
-  },
-  websocket,
-});
+server.listen(3000);
+
+// @todo handle payment webhook with node http server
+// routes: {
+//   "/payments/webhook": handlePaymentWebook,
+// },
+
 
 console.info("🚕 Beep API Server Started");
 console.info("➡️  Listening on http://0.0.0.0:3000");
