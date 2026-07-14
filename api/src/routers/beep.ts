@@ -4,17 +4,17 @@ import {
   authedProcedure,
   publicProcedure,
   router,
-} from "../utils/trpc";
-import { db } from "../utils/db";
+} from "../utils/trpc.ts";
+import { db } from "../utils/db.ts";
 import { count, eq, and } from "drizzle-orm";
-import { beep, user } from "../../drizzle/schema";
+import { beep, user } from "../../drizzle/schema.ts";
 import { TRPCError } from "@trpc/server";
 import {
   PushNotification,
   sendNotification,
   sendNotifications,
-} from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
+} from "../utils/notifications.ts";
+import { pubSub } from "../utils/pubsub.ts";
 import {
   getBeeperQueue,
   getBeepsCount,
@@ -22,9 +22,9 @@ import {
   getIsInProgressBeep,
   inProgressBeep,
   inProgressBeepNew,
-} from "../logic/beep";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
-import { updateLiveActivity } from "../utils/live-activities";
+} from "../logic/beep.ts";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants.ts";
+import { updateLiveActivity } from "../utils/live-activities.ts";
 
 export const beepRouter = router({
   beeps: authedProcedure

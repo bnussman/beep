@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
-import { db } from "../utils/db";
+import { authedProcedure, router } from "../utils/trpc.ts";
+import { db } from "../utils/db.ts";
 import { count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants.ts";
 
 export const paymentRouter = router({
   payments: authedProcedure

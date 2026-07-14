@@ -1,19 +1,19 @@
 import { z } from "zod";
-import { db } from "../utils/db";
-import { car } from "../../drizzle/schema";
+import { db } from "../utils/db.ts";
+import { car } from "../../drizzle/schema.ts";
 import { and, count, eq, ne } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { sendNotification } from "../utils/notifications";
-import { s3 } from "../utils/s3";
-import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
+import { sendNotification } from "../utils/notifications.ts";
+import { s3 } from "../utils/s3.ts";
+import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants.ts";
 import { getMakes, getModels } from "car-info";
-import { CAR_COLOR_OPTIONS } from "../utils/constants";
+import { CAR_COLOR_OPTIONS } from "../utils/constants.ts";
 import {
   authedProcedure,
   publicProcedure,
   router,
   verifiedProcedure,
-} from "../utils/trpc";
+} from "../utils/trpc.ts";
 
 export const carRouter = router({
   cars: authedProcedure

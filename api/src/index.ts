@@ -1,25 +1,25 @@
 import { captureException } from "@sentry/bun";
-import { createContext, router } from "./utils/trpc";
-import { userRouter } from "./routers/user";
-import { authRouter } from "./routers/auth";
-import { reportRouter } from "./routers/report";
-import { ratingRouter } from "./routers/rating";
-import { carRouter } from "./routers/car";
-import { beepRouter } from "./routers/beep";
-import { paymentRouter } from "./routers/payment";
-import { feedbackRouter } from "./routers/feedback";
-import { notificationRouter } from "./routers/notification";
-import { redisRouter } from "./routers/redis";
-import { riderRouter } from "./routers/rider";
-import { beeperRouter } from "./routers/beeper";
-import { locationRouter } from "./routers/location";
-import { handlePaymentWebook } from "./utils/payments";
-import { healthRouter } from "./routers/health";
-import { createBunWSHandler } from "./utils/ws";
+import { createContext, router } from "./utils/trpc.ts";
+import { userRouter } from "./routers/user.ts";
+import { authRouter } from "./routers/auth.ts";
+import { reportRouter } from "./routers/report.ts";
+import { ratingRouter } from "./routers/rating.ts";
+import { carRouter } from "./routers/car.ts";
+import { beepRouter } from "./routers/beep.ts";
+import { paymentRouter } from "./routers/payment.ts";
+import { feedbackRouter } from "./routers/feedback.ts";
+import { notificationRouter } from "./routers/notification.ts";
+import { redisRouter } from "./routers/redis.ts";
+import { riderRouter } from "./routers/rider.ts";
+import { beeperRouter } from "./routers/beeper.ts";
+import { locationRouter } from "./routers/location.ts";
+import { handlePaymentWebook } from "./utils/payments.ts";
+import { healthRouter } from "./routers/health.ts";
+import { createBunWSHandler } from "./utils/ws.ts";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
-import { CORS_HEADERS } from "./utils/cors";
-import { flagsRouter } from "./routers/flags";
+import { CORS_HEADERS } from "./utils/cors.ts";
+import { flagsRouter } from "./routers/flags.ts";
 
 const appRouter = router({
   user: userRouter,

@@ -1,10 +1,10 @@
 import { count, eq } from "drizzle-orm";
-import { report } from "../../drizzle/schema";
-import { db } from "../utils/db";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { report } from "../../drizzle/schema.ts";
+import { db } from "../utils/db.ts";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc.ts";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants.ts";
 
 export const reportRouter = router({
   reports: adminProcedure

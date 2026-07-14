@@ -10,7 +10,7 @@ import {
   token,
   user,
   verify_email,
-} from "./schema";
+} from "./schema.ts";
 
 export const relations = defineRelations(
   {

@@ -1,6 +1,6 @@
 import { photon } from "@banksnussman/photon";
-import { user } from "../../drizzle/schema";
-import { PHOTON_BASE_URL } from "../utils/constants";
+import { user } from "../../drizzle/schema.ts";
+import { PHOTON_BASE_URL } from "../utils/constants.ts";
 
 export async function getCoordinatesFromAddress(
   address: string,

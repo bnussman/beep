@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { ENVIRONMENT, SENTRY_DSN } from "./constants";
+import { ENVIRONMENT, SENTRY_DSN } from "./constants.ts";
 
 Sentry.init({
   dsn: SENTRY_DSN,

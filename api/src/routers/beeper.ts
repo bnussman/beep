@@ -1,12 +1,12 @@
 import { TRPCError } from "@trpc/server";
-import { queueResponseSchema } from "../schemas/beep";
+import { queueResponseSchema } from "../schemas/beep.ts";
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
-import { db } from "../utils/db";
+import { authedProcedure, router } from "../utils/trpc.ts";
+import { db } from "../utils/db.ts";
 import { eq } from "drizzle-orm";
-import { beep, beepStatuses, user } from "../../drizzle/schema";
-import { pubSub } from "../utils/pubsub";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
+import { beep, beepStatuses, user } from "../../drizzle/schema.ts";
+import { pubSub } from "../utils/pubsub.ts";
+import { zAsyncIterable } from "../utils/zAsyncIterable.ts";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
@@ -14,8 +14,8 @@ import {
   getIsInProgressBeep,
   getQueueSize,
   sendBeepUpdateNotificationToRider,
-} from "../logic/beep";
-import { updateLiveActivity } from "../utils/live-activities";
+} from "../logic/beep.ts";
+import { updateLiveActivity } from "../utils/live-activities.ts";
 
 export const beeperRouter = router({
   queue: authedProcedure

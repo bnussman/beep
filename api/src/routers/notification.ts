@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
-import { db } from "../utils/db";
-import { user } from "../../drizzle/schema";
+import { adminProcedure, router } from "../utils/trpc.ts";
+import { db } from "../utils/db.ts";
+import { user } from "../../drizzle/schema.ts";
 import { like, and, isNotNull } from "drizzle-orm";
 import {
   sendNotification,
   sendNotificationsBatch,
-} from "../utils/notifications";
+} from "../utils/notifications.ts";
 import { TRPCError } from "@trpc/server";
 
 export const notificationRouter = router({

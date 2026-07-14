@@ -3,7 +3,7 @@ import {
   S3_ACCESS_KEY_SECRET,
   S3_BUCKET,
   S3_ENDPOINT,
-} from "./constants";
+} from "./constants.ts";
 import { S3Client } from "bun";
 
 export const s3 = new S3Client({

@@ -1,5 +1,5 @@
 const Redis = require("ioredis"); // I have to use `require` to make Sentry's Redis integration work
-import { REDIS_HOST, REDIS_PASSWROD } from "./constants";
+import { REDIS_HOST, REDIS_PASSWROD } from "./constants.ts";
 import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
 
 export const redis = new Redis({

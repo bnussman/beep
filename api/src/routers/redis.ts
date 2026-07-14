@@ -1,5 +1,5 @@
-import { publishClient } from "../utils/redis";
-import { adminProcedure, router } from "../utils/trpc";
+import { publishClient } from "../utils/redis.ts";
+import { adminProcedure, router } from "../utils/trpc.ts";
 
 export const redisRouter = router({
   channels: adminProcedure

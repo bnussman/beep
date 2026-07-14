@@ -1,24 +1,24 @@
-import { authedProcedure, publicProcedure, router } from "../utils/trpc";
+import { authedProcedure, publicProcedure, router } from "../utils/trpc.ts";
 import { z, ZodError } from "zod";
-import { db } from "../utils/db";
+import { db } from "../utils/db.ts";
 import {
   forgot_password,
   token,
   user,
   verify_email,
-} from "../../drizzle/schema";
+} from "../../drizzle/schema.ts";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
-import { s3 } from "../utils/s3";
-import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
-import { email } from "../utils/email";
+import { s3 } from "../utils/s3.ts";
+import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants.ts";
+import { email } from "../utils/email.ts";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from "@sentry/bun";
-import { pubSub } from "../utils/pubsub";
+import { pubSub } from "../utils/pubsub.ts";
 import { isAlpha, isMobilePhone } from "validator";
-import { authSchema } from "../schemas/auth";
-import { userSchema } from "../schemas/user";
+import { authSchema } from "../schemas/auth.ts";
+import { userSchema } from "../schemas/user.ts";
 
 export const authRouter = router({
   login: publicProcedure

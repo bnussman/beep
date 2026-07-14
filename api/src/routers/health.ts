@@ -1,6 +1,6 @@
-import { db as dbClient } from "../utils/db";
-import { publishClient } from "../utils/redis";
-import { publicProcedure, router } from "../utils/trpc";
+import { db as dbClient } from "../utils/db.ts";
+import { publishClient } from "../utils/redis.ts";
+import { publicProcedure, router } from "../utils/trpc.ts";
 import { sql } from "drizzle-orm";
 
 export const healthRouter = router({

@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
-import { getCoordinatesFromAddress } from "../logic/location";
+import { authedProcedure, router } from "../utils/trpc.ts";
+import { getCoordinatesFromAddress } from "../logic/location.ts";
 import { osrm } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
 import { photon } from "@banksnussman/photon";
-import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
+import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants.ts";
 
 export const locationRouter = router({
   getETA: authedProcedure

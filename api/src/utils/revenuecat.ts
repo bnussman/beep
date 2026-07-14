@@ -1,4 +1,4 @@
-import { productEnum } from "../../drizzle/schema"
+import { productEnum } from "../../drizzle/schema.ts"
 
 /**
  * Type for the RevenueCat https://api.revenuecat.com/v1/subscribers response

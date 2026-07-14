@@ -1,20 +1,20 @@
 import { z } from "zod";
-import { db } from "../utils/db";
-import { beep, payment, user } from "../../drizzle/schema";
+import { db } from "../utils/db.ts";
+import { beep, payment, user } from "../../drizzle/schema.ts";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
-import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
-import { getDistance } from "../logic/location";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
+import { sendNotification } from "../utils/notifications.ts";
+import { pubSub } from "../utils/pubsub.ts";
+import { DEFAULT_LOCATION_RADIUS } from "../utils/constants.ts";
+import { getDistance } from "../logic/location.ts";
+import { zAsyncIterable } from "../utils/zAsyncIterable.ts";
 import {
   authedProcedure,
   mustBeInAcceptedBeep,
   router,
   verifiedProcedure,
   withLock,
-} from "../utils/trpc";
+} from "../utils/trpc.ts";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
@@ -22,9 +22,9 @@ import {
   getRidersCurrentRide,
   inProgressBeepNew,
   publishBeepsCount,
-} from "../logic/beep";
-import { rideResponseSchema } from "../schemas/beep";
-import { updateLiveActivity } from "../utils/live-activities";
+} from "../logic/beep.ts";
+import { rideResponseSchema } from "../schemas/beep.ts";
+import { updateLiveActivity } from "../utils/live-activities.ts";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
