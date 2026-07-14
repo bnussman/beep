@@ -16,3 +16,4 @@ minimumReleaseAge: 120
 minimumReleaseAgeExclude:
   - '@banksnussman/osrm@0.0.4'
   - '@banksnussman/photon@0.0.5'
+  - car-info@0.2.6
