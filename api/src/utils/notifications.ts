@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+import { setTimeout } from 'node:timers/promises';
 
 export interface PushNotification {
   to: string;
@@ -67,7 +68,7 @@ export async function sendNotificationsBatch(
       Sentry.captureException(error);
     }
 
-    await Bun.sleep(3000);
+    await setTimeout(3000);
   }
 }
 

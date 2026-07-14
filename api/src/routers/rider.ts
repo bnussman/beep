@@ -25,6 +25,7 @@ import {
 } from "../logic/beep.ts";
 import { rideResponseSchema } from "../schemas/beep.ts";
 import { updateLiveActivity } from "../utils/live-activities.ts";
+import { createHash } from "node:crypto";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -359,9 +360,7 @@ export const riderRouter = router({
         );
 
       return users.map((user) => {
-        const hasher = new Bun.CryptoHasher("sha256");
-        hasher.update(user.id);
-        const hashedId = hasher.digest("hex");
+        const hashedId = createHash('sha256').update(user.id).digest('hex');;
 
         return {
           id: hashedId,
@@ -404,9 +403,8 @@ export const riderRouter = router({
             data.location.longitude,
           ) < DEFAULT_LOCATION_RADIUS
         ) {
-          const hasher = new Bun.CryptoHasher("sha256");
-          hasher.update(data.id);
-          yield { id: hasher.digest("hex"), location: data.location };
+          const hashedId = createHash('sha256').update(data.id).digest('hex');
+          yield { id: hashedId, location: data.location };
         }
       }
     }),

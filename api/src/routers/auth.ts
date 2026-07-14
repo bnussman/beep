@@ -19,6 +19,7 @@ import { pubSub } from "../utils/pubsub.ts";
 import { isAlpha, isMobilePhone } from "validator";
 import { authSchema } from "../schemas/auth.ts";
 import { userSchema } from "../schemas/user.ts";
+import { createHash } from 'node:crypto';
 
 export const authRouter = router({
   login: publicProcedure
@@ -56,10 +57,9 @@ export const authRouter = router({
 
       switch (u.passwordType) {
         case "sha256":
-          const hasher = new Bun.CryptoHasher("sha256");
-          hasher.update(password);
+          const hash = createHash('sha256').update(password).digest('hex');
 
-          isPasswordCorrect = hasher.digest("hex") === u.password;
+          isPasswordCorrect = hash === u.password;
           break;
         case "bcrypt":
           isPasswordCorrect = await bcrypt.compare(
