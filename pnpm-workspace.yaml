@@ -13,3 +13,5 @@ allowBuilds:
   msgpackr-extract: false
   protobufjs: false
 minimumReleaseAge: 120
+minimumReleaseAgeExclude:
+  - '@banksnussman/osrm@0.0.4'
