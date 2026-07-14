@@ -1,5 +1,5 @@
 import type { ClientConfig } from "pg";
-const { Client } = require("pg"); // we must use `require` because of Bun / Sentry / OpenTelementry weirdness
+import { Client } from "pg"; // we must use `require` because of Bun / Sentry / OpenTelementry weirdness
 import { drizzle } from "drizzle-orm/node-postgres";
 import { DB_URL } from "./constants.ts";
 import { relations } from "../../drizzle/relations.ts";

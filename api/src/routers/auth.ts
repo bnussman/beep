@@ -13,10 +13,10 @@ import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3.ts";
 import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants.ts";
 import { email } from "../utils/email.ts";
-import { SendMailOptions } from "nodemailer";
+import type { SendMailOptions } from "nodemailer";
 import * as Sentry from "@sentry/node";
 import { pubSub } from "../utils/pubsub.ts";
-import { isAlpha, isMobilePhone } from "validator";
+import validator from "validator";
 import { authSchema } from "../schemas/auth.ts";
 import { userSchema } from "../schemas/user.ts";
 import { createHash } from 'node:crypto';
@@ -110,16 +110,16 @@ export const authRouter = router({
           .string()
           .min(1)
           .max(64)
-          .refine(isAlpha, "Must only contain letters"),
+          .refine(validator.isAlpha, "Must only contain letters"),
         last: z
           .string()
           .min(1)
           .max(64)
-          .refine(isAlpha, "Must only contain letters"),
+          .refine(validator.isAlpha, "Must only contain letters"),
         username: z.string().min(3).max(64),
         password: z.string().min(6).max(255),
         email: z.email().endsWith(".edu", "You must use a .edu email"),
-        phone: z.string().refine(isMobilePhone, "Invalid phone number"),
+        phone: z.string().refine(validator.isMobilePhone, "Invalid phone number"),
         venmo: z.string().max(30).optional(),
         cashapp: z.string().max(40).optional(),
         pushToken: z.string().optional(),

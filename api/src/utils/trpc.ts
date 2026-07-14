@@ -1,13 +1,14 @@
 import * as Sentry from "@sentry/node";
-import { TRPCError, inferRouterInputs, initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
+import type { inferRouterInputs } from "@trpc/server";
 import z, { ZodError } from "zod";
-import { AppRouter } from "../index.ts";
+import type { AppRouter } from "../index.ts";
 import { db } from "./db.ts";
 import { isAcceptedBeepNew } from "../logic/beep.ts";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis.ts";
-import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
-import { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
+import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 
 function getErrorData(error: TRPCError) {
   return {

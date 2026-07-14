@@ -9,11 +9,8 @@ import { db } from "../utils/db.ts";
 import { count, eq, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema.ts";
 import { TRPCError } from "@trpc/server";
-import {
-  PushNotification,
-  sendNotification,
-  sendNotifications,
-} from "../utils/notifications.ts";
+import { sendNotification, sendNotifications } from "../utils/notifications.ts";
+import type { PushNotification } from "../utils/notifications.ts";
 import { pubSub } from "../utils/pubsub.ts";
 import {
   getBeeperQueue,

@@ -20,6 +20,7 @@ import { flagsRouter } from "./routers/flags.ts";
 import { WebSocketServer } from 'ws';
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import cors from 'cors';
 
 const appRouter = router({
   user: userRouter,
@@ -45,6 +46,7 @@ export type AppRouter = typeof appRouter;
 const server = createHTTPServer({
   router: appRouter,
   createContext,
+  middleware: cors(),
   onError(error) {
     if (getHTTPStatusCodeFromError(error.error) >= 500) {
       console.error(error.error);

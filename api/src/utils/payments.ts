@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/node";
 import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants.ts";
 import { db } from "./db.ts";
 import { productEnum, payment, storeEnum } from "../../drizzle/schema.ts";
-import { SubscriberResponse, Webhook } from "./revenuecat.ts";
+import type { SubscriberResponse, Webhook } from "./revenuecat.ts";
 import { getActivePayments } from "../logic/payments.ts";
 
 type Product = (typeof productEnum.enumValues)[number];

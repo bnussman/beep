@@ -1,4 +1,4 @@
-import { Context } from "./trpc.ts";
+import type { Context } from "./trpc.ts";
 import { queueResponseSchema, rideResponseSchema } from "../schemas/beep.ts";
 import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis.ts";

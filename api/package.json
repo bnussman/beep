@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",
     "@types/validator": "^13.15.10",
@@ -29,6 +30,7 @@
     "@trpc/server": "^11.16.0",
     "bcrypt": "^6.0.0",
     "car-info": "0.2.6",
+    "cors": "^2.8.6",
     "drizzle-orm": "1.0.0-rc.3",
     "ioredis": "^5.10.1",
     "jose": "^6.2.3",

@@ -6,11 +6,11 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3.ts";
 import { syncUserPayments } from "../utils/payments.ts";
-import { SendMailOptions } from "nodemailer";
+import type { SendMailOptions } from "nodemailer";
 import { email } from "../utils/email.ts";
 import { sendNotification } from "../utils/notifications.ts";
 import { pubSub } from "../utils/pubsub.ts";
-import { isAlpha, isMobilePhone } from "validator";
+import validator from "validator";
 import { inProgressBeep, updateEta } from "../logic/beep.ts";
 import { userSchema } from "../schemas/user.ts";
 import { zAsyncIterable } from "../utils/zAsyncIterable.ts";
@@ -74,10 +74,10 @@ export const userRouter = router({
     .input(
       z
         .object({
-          first: z.string().refine(isAlpha, "Must be letters only.").min(1),
-          last: z.string().refine(isAlpha, "Must be letters only.").min(1),
+          first: z.string().refine(validator.isAlpha, "Must be letters only.").min(1),
+          last: z.string().refine(validator.isAlpha, "Must be letters only.").min(1),
           email: z.email().endsWith(".edu", "Email must end with .edu"),
-          phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
+          phone: z.string().refine(validator.isMobilePhone, "Not a valid phone number."),
           venmo: z.string().nullable(),
           cashapp: z.string().nullable(),
           pushToken: z.string(),
