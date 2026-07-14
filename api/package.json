@@ -6,7 +6,7 @@
   "type": "module",
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "node --import ./src/utils/instrument.ts --watch src/index.ts",
+    "dev": "node --env-file=.env --import ./src/utils/instrument.ts --watch src/index.ts",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },
