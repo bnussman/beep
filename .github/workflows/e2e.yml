@@ -30,8 +30,6 @@ jobs:
         working-directory: ./test
       - run: pnpm drizzle-kit push --force
         working-directory: ./api
-      - run: touch .env
-        working-directory: ./api
       - run: pnpm --filter @beep/test test
       - uses: actions/upload-artifact@v7
         if: always()
