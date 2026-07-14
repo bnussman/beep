@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { TRPCError, inferRouterInputs, initTRPC } from "@trpc/server";
 import z, { ZodError } from "zod";
 import { AppRouter } from "../index.ts";

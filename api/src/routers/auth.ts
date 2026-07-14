@@ -14,7 +14,7 @@ import { s3 } from "../utils/s3.ts";
 import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants.ts";
 import { email } from "../utils/email.ts";
 import { SendMailOptions } from "nodemailer";
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { pubSub } from "../utils/pubsub.ts";
 import { isAlpha, isMobilePhone } from "validator";
 import { authSchema } from "../schemas/auth.ts";

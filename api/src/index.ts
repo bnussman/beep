@@ -1,4 +1,4 @@
-import { captureException } from "@sentry/bun";
+import { captureException } from "@sentry/node";
 import { createContext, router } from "./utils/trpc.ts";
 import { userRouter } from "./routers/user.ts";
 import { authRouter } from "./routers/auth.ts";

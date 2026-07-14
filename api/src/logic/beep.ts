@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { eq, or } from "drizzle-orm";
 import { db } from "../utils/db.ts";
 import { beep } from "../../drizzle/schema.ts";

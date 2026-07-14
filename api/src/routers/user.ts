@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { beep, user, verify_email } from "../../drizzle/schema.ts";
 import { db } from "../utils/db.ts";
 import { count, eq, sql, like, and, or } from "drizzle-orm";

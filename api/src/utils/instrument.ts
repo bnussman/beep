@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { ENVIRONMENT, SENTRY_DSN } from "./constants.ts";
 
 Sentry.init({
@@ -7,13 +7,5 @@ Sentry.init({
   debug: false,
   tracesSampler(samplingContext) {
     return true;
-  },
-  integrations(integrations) {
-    return [
-      Sentry.bunRuntimeMetricsIntegration(),
-      Sentry.bunServerIntegration(),
-      Sentry.postgresIntegration(),
-      Sentry.redisIntegration(),
-    ];
   },
 });

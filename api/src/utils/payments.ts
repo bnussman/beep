@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants.ts";
 import { db } from "./db.ts";
 import { productEnum, payment, storeEnum } from "../../drizzle/schema.ts";
