@@ -1,5 +1,5 @@
 import z from "zod";
-import { beepStatuses } from "../../drizzle/schema";
+import { beepStatuses } from "../../drizzle/schema.ts";
 
 export const rideResponseSchema = z.object({
   id: z.string(),

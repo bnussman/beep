@@ -1,12 +1,14 @@
-import * as Sentry from "@sentry/bun";
-import { TRPCError, inferRouterInputs, initTRPC } from "@trpc/server";
+import * as Sentry from "@sentry/node";
+import { TRPCError, initTRPC } from "@trpc/server";
+import type { inferRouterInputs } from "@trpc/server";
 import z, { ZodError } from "zod";
-import { AppRouter } from "..";
-import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-import { db } from "./db";
-import { isAcceptedBeepNew } from "../logic/beep";
+import type { AppRouter } from "../index.ts";
+import { db } from "./db.ts";
+import { isAcceptedBeepNew } from "../logic/beep.ts";
 import { createLock, IoredisAdapter } from "redlock-universal";
-import { redis } from "./redis";
+import { redis } from "./redis.ts";
+import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 
 function getErrorData(error: TRPCError) {
   return {
@@ -201,10 +203,10 @@ export const withLock = t.middleware(async function handleLock(opts) {
 });
 
 export async function createContext(
-  data: Omit<FetchCreateContextFnOptions, "resHeaders">,
+  data: CreateHTTPContextOptions | CreateWSSContextFnOptions,
 ) {
   const bearerToken =
-    data.req?.headers.get("authorization")?.split(" ")[1] ??
+    data.req.headers["authorization"]?.split(" ")[1] ??
     data.info?.connectionParams?.token;
 
   if (!bearerToken) {

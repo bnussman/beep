@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/bun";
-import { ENVIRONMENT, SENTRY_DSN } from "./constants";
+import * as Sentry from "@sentry/node";
+import { ENVIRONMENT, SENTRY_DSN } from "./constants.ts";
 
 const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
 
@@ -41,16 +41,9 @@ globalThis.fetch = (async (...args: Parameters<typeof globalThis.fetch>) => {
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
-  debug: false,
+  debug: true,
+  tracesSampleRate: 1.0,
   tracesSampler(samplingContext) {
     return true;
-  },
-  integrations(integrations) {
-    return [
-      Sentry.bunRuntimeMetricsIntegration(),
-      Sentry.bunServerIntegration(),
-      Sentry.postgresIntegration(),
-      Sentry.redisIntegration(),
-    ];
   },
 });

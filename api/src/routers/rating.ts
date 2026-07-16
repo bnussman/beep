@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
-import { db } from "../utils/db";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc.ts";
+import { db } from "../utils/db.ts";
 import { count, eq } from "drizzle-orm";
-import { rating, user } from "../../drizzle/schema";
+import { rating, user } from "../../drizzle/schema.ts";
 import { TRPCError } from "@trpc/server";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
-import { getUsersAverageRating } from "../logic/rating";
+import { sendNotification } from "../utils/notifications.ts";
+import { pubSub } from "../utils/pubsub.ts";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants.ts";
+import { getUsersAverageRating } from "../logic/rating.ts";
 
 export const ratingRouter = router({
   ratings: authedProcedure

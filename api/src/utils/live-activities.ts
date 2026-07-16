@@ -1,6 +1,6 @@
 import { importPKCS8, SignJWT } from "jose";
 import http2 from "http2";
-import { APPLE_APN_KEY, APPLE_APN_KEY_ID, APPLE_TEAM_ID } from "./constants";
+import { APPLE_APN_KEY, APPLE_APN_KEY_ID, APPLE_TEAM_ID } from "./constants.ts";
 
 type ActivityUpdate =
   | {

@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
-import { db } from "../utils/db";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc.ts";
+import { db } from "../utils/db.ts";
 import { count, eq } from "drizzle-orm";
-import { feedback } from "../../drizzle/schema";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { feedback } from "../../drizzle/schema.ts";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants.ts";
 
 export const feedbackRouter = router({
   feedback: adminProcedure

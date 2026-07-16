@@ -1,24 +1,25 @@
-import { authedProcedure, publicProcedure, router } from "../utils/trpc";
+import { authedProcedure, publicProcedure, router } from "../utils/trpc.ts";
 import { z, ZodError } from "zod";
-import { db } from "../utils/db";
+import { db } from "../utils/db.ts";
+import bcrypt from 'bcrypt';
 import {
   forgot_password,
   token,
   user,
   verify_email,
-} from "../../drizzle/schema";
+} from "../../drizzle/schema.ts";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { password as bunPassword } from "bun";
-import { s3 } from "../utils/s3";
-import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
-import { email } from "../utils/email";
-import { SendMailOptions } from "nodemailer";
-import * as Sentry from "@sentry/bun";
-import { pubSub } from "../utils/pubsub";
-import { isAlpha, isMobilePhone } from "validator";
-import { authSchema } from "../schemas/auth";
-import { userSchema } from "../schemas/user";
+import { s3 } from "../utils/s3.ts";
+import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants.ts";
+import { email } from "../utils/email.ts";
+import type { SendMailOptions } from "nodemailer";
+import * as Sentry from "@sentry/node";
+import { pubSub } from "../utils/pubsub.ts";
+import validator from "validator";
+import { authSchema } from "../schemas/auth.ts";
+import { userSchema } from "../schemas/user.ts";
+import { createHash } from 'node:crypto';
 
 export const authRouter = router({
   login: publicProcedure
@@ -56,16 +57,14 @@ export const authRouter = router({
 
       switch (u.passwordType) {
         case "sha256":
-          const hasher = new Bun.CryptoHasher("sha256");
-          hasher.update(password);
+          const hash = createHash('sha256').update(password).digest('hex');
 
-          isPasswordCorrect = hasher.digest("hex") === u.password;
+          isPasswordCorrect = hash === u.password;
           break;
         case "bcrypt":
-          isPasswordCorrect = await bunPassword.verify(
+          isPasswordCorrect = await bcrypt.compare(
             password,
             u.password,
-            "bcrypt",
           );
           break;
         default:
@@ -111,16 +110,16 @@ export const authRouter = router({
           .string()
           .min(1)
           .max(64)
-          .refine(isAlpha, "Must only contain letters"),
+          .refine(validator.isAlpha, "Must only contain letters"),
         last: z
           .string()
           .min(1)
           .max(64)
-          .refine(isAlpha, "Must only contain letters"),
+          .refine(validator.isAlpha, "Must only contain letters"),
         username: z.string().min(3).max(64),
         password: z.string().min(6).max(255),
         email: z.email().endsWith(".edu", "You must use a .edu email"),
-        phone: z.string().refine(isMobilePhone, "Invalid phone number"),
+        phone: z.string().refine(validator.isMobilePhone, "Invalid phone number"),
         venmo: z.string().max(30).optional(),
         cashapp: z.string().max(40).optional(),
         pushToken: z.string().optional(),
@@ -169,11 +168,11 @@ export const authRouter = router({
 
       const objectKey = `images/${userId}-${Date.now()}${extention}`;
 
-      await s3.write(objectKey, input.photo, {
-        acl: "public-read",
+      await s3.putObject(objectKey, input.photo.stream(), {
+        metadata: { "x-amz-acl": "public-read" },
       });
 
-      const password = await bunPassword.hash(input.password, "bcrypt");
+      const password = await bcrypt.hash(input.password, 10);
 
       const u = await db
         .insert(user)
@@ -343,7 +342,7 @@ export const authRouter = router({
       await db
         .update(user)
         .set({
-          password: await bunPassword.hash(input.password, "bcrypt"),
+          password: await bcrypt.hash(input.password, 10),
           passwordType: "bcrypt",
         })
         .where(eq(user.id, forgotPassword.user_id));
@@ -457,7 +456,7 @@ export const authRouter = router({
     )
     .output(userSchema)
     .mutation(async ({ input, ctx }) => {
-      const password = await bunPassword.hash(input.password, "bcrypt");
+      const password = await bcrypt.hash(input.password, 10);
 
       await db
         .update(user)

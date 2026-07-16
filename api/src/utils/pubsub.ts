@@ -1,7 +1,7 @@
-import { Context } from "./trpc";
-import { queueResponseSchema, rideResponseSchema } from "../schemas/beep";
+import type { Context } from "./trpc.ts";
+import { queueResponseSchema, rideResponseSchema } from "../schemas/beep.ts";
 import { createPubSub } from "@graphql-yoga/subscription";
-import { eventTarget } from "./redis";
+import { eventTarget } from "./redis.ts";
 import z from "zod";
 
 export type User = NonNullable<Context["user"]>;

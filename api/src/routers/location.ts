@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
-import { getCoordinatesFromAddress } from "../logic/location";
+import { authedProcedure, router } from "../utils/trpc.ts";
+import { getCoordinatesFromAddress } from "../logic/location.ts";
 import { route } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
-import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
+import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants.ts";
 import { geocoding } from "@banksnussman/photon";
 
 export const locationRouter = router({

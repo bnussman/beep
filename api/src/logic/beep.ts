@@ -1,11 +1,12 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 import { eq, or } from "drizzle-orm";
-import { db } from "../utils/db";
-import { beep } from "../../drizzle/schema";
-import { pubSub, User } from "../utils/pubsub";
-import { sendNotification } from "../utils/notifications";
-import { updateLiveActivity } from "../utils/live-activities";
-import { OSRM_BASE_URL } from "../utils/constants";
+import { db } from "../utils/db.ts";
+import { beep } from "../../drizzle/schema.ts";
+import type { User } from "../utils/pubsub.ts";
+import { pubSub } from "../utils/pubsub.ts";
+import { sendNotification } from "../utils/notifications.ts";
+import { updateLiveActivity } from "../utils/live-activities.ts";
+import { OSRM_BASE_URL } from "../utils/constants.ts";
 import { route } from "@banksnussman/osrm";
 
 type Beep = typeof beep.$inferSelect;

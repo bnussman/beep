@@ -1,31 +1,31 @@
-import * as Sentry from "@sentry/bun";
-import { beep, user, verify_email } from "../../drizzle/schema";
-import { db } from "../utils/db";
+import * as Sentry from "@sentry/node";
+import { beep, user, verify_email } from "../../drizzle/schema.ts";
+import { db } from "../utils/db.ts";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { s3 } from "../utils/s3";
-import { syncUserPayments } from "../utils/payments";
-import { SendMailOptions } from "nodemailer";
-import { email } from "../utils/email";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
-import { isAlpha, isMobilePhone } from "validator";
-import { inProgressBeep, updateEta } from "../logic/beep";
-import { userSchema } from "../schemas/user";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
-import { getActivePayments } from "../logic/payments";
+import { s3 } from "../utils/s3.ts";
+import { syncUserPayments } from "../utils/payments.ts";
+import type { SendMailOptions } from "nodemailer";
+import { email } from "../utils/email.ts";
+import { sendNotification } from "../utils/notifications.ts";
+import { pubSub } from "../utils/pubsub.ts";
+import validator from "validator";
+import { inProgressBeep, updateEta } from "../logic/beep.ts";
+import { userSchema } from "../schemas/user.ts";
+import { zAsyncIterable } from "../utils/zAsyncIterable.ts";
+import { getActivePayments } from "../logic/payments.ts";
 import {
   adminProcedure,
   authedProcedure,
   mustHaveBeenInAcceptedBeep,
   router,
-} from "../utils/trpc";
+} from "../utils/trpc.ts";
 import {
   DEFAULT_PAGE_SIZE,
   S3_BUCKET_URL,
   WEB_BASE_URL,
-} from "../utils/constants";
+} from "../utils/constants.ts";
 
 export const userRouter = router({
   me: authedProcedure.output(userSchema).query(async ({ ctx }) => {
@@ -74,10 +74,10 @@ export const userRouter = router({
     .input(
       z
         .object({
-          first: z.string().refine(isAlpha, "Must be letters only.").min(1),
-          last: z.string().refine(isAlpha, "Must be letters only.").min(1),
+          first: z.string().refine(validator.isAlpha, "Must be letters only.").min(1),
+          last: z.string().refine(validator.isAlpha, "Must be letters only.").min(1),
           email: z.email().endsWith(".edu", "Email must end with .edu"),
-          phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
+          phone: z.string().refine(validator.isMobilePhone, "Not a valid phone number."),
           venmo: z.string().nullable(),
           cashapp: z.string().nullable(),
           pushToken: z.string(),
@@ -242,7 +242,7 @@ export const userRouter = router({
       ) {
         // If an admin changes a user's photo URL, delete the old photo from S3
         // to prevent storing unreferenced images.
-        await s3.delete(existingUser.photo);
+        await s3.deleteObject(existingUser.photo);
       }
 
       const u = await db
@@ -326,13 +326,13 @@ export const userRouter = router({
 
       const objectKey = "images/" + filename;
 
-      await s3.write(objectKey, input.photo, { acl: "public-read" });
+      await s3.putObject(objectKey, input.photo.stream(), { metadata: { "x-amz-acl": "public-read" } });
 
       if (ctx.user.photo) {
         const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
         if (key) {
-          s3.delete(key);
+          s3.deleteObject(key);
         } else {
           Sentry.captureMessage(
             "Unable to delete profile photo from S3 due to invalid URL format",
