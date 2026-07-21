@@ -345,16 +345,12 @@ export const riderRouter = router({
         .select({
           id: user.id,
           location: user.location,
-          distance:
-            sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude}))`.as(
-              "distance",
-            ),
         })
         .from(user)
-        .where(({ distance }) =>
+        .where(
           and(
             eq(user.isBeeping, true),
-            lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34),
+            sql`ST_DWithin(location::geography, ST_MakePoint(${input.latitude},${input.longitude})::geography, ${DEFAULT_LOCATION_RADIUS * 1609.34})`,
           ),
         );
 
@@ -366,7 +362,6 @@ export const riderRouter = router({
         return {
           id: hashedId,
           location: user.location,
-          distance: user.distance,
         };
       });
     }),
