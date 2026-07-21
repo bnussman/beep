@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import {
   pgTable,
   integer,
@@ -91,8 +90,6 @@ export const user = pgTable(
   (table) => [
     unique("user_username_unique").on(table.username),
     unique("user_email_unique").on(table.email),
-    index("user_is_beeping_idx").on(table.isBeeping)
-      .where(sql`${table.isBeeping} IS TRUE`),
   ],
 );
 

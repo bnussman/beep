@@ -1,1 +1,0 @@
-CREATE INDEX "user_is_beeping_idx" ON "user" ("is_beeping") WHERE "is_beeping" IS TRUE;
