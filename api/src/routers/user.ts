@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/bun";
 import { beep, user, verify_email } from "../../drizzle/schema";
-import { db } from "../utils/db";
+import { db, writeDB } from "../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -164,10 +164,14 @@ export const userRouter = router({
         }
       }
 
-      await db
-        .update(user)
-        .set(values)
-        .where(eq(user.id, ctx.user.id));
+      if ("location" in values) {
+        await writeDB.update(user).set(values).where(eq(user.id, ctx.user.id));
+      } else {
+        await db
+          .update(user)
+          .set(values)
+          .where(eq(user.id, ctx.user.id));
+      }
 
       Object.assign(ctx.user, values);
 
