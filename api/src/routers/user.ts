@@ -164,13 +164,14 @@ export const userRouter = router({
         }
       }
 
-      const u = await db
+      await db
         .update(user)
         .set(values)
-        .where(eq(user.id, ctx.user.id))
-        .returning();
+        .where(eq(user.id, ctx.user.id));
 
-      pubSub.publish("user", ctx.user.id, { user: u[0] });
+      Object.assign(ctx.user, values);
+
+      pubSub.publish("user", ctx.user.id, { user: ctx.user });
 
       if (input.location) {
         const data = {
@@ -183,7 +184,7 @@ export const userRouter = router({
         pubSub.publish("locations", data);
       }
 
-      return u[0];
+      return ctx.user;
     }),
   editAdmin: adminProcedure
     .input(
