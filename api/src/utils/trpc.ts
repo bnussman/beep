@@ -7,6 +7,8 @@ import { db } from "./db";
 import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
+import { token, user } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 function getErrorData(error: TRPCError) {
   return {
@@ -211,25 +213,21 @@ export async function createContext(
     return {};
   }
 
-  const session = await db.query.token.findFirst({
-    where: { id: bearerToken },
-    with: {
-      user: {
-        columns: {
-          password: false,
-          passwordType: false,
-        },
-      },
-    },
-  });
+  const result = await db
+    .select()
+    .from(token)
+    .leftJoin(user, eq(token.user_id, user.id))
+    .where(eq(token.id, bearerToken));
 
-  if (!session) {
+  const session = result[0];
+
+  if (!session.user) {
     return {};
   }
 
   Sentry.setUser(session.user);
 
-  return { user: session.user, token: session };
+  return { user: session.user, token: session.token };
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
