@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "^7.1.7",
     "@types/bun": "^1.3.11",
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",
@@ -23,6 +24,9 @@
     "@banksnussman/photon": "^0.0.5",
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
+    "@mikro-orm/core": "^7.1.7",
+    "@mikro-orm/entity-generator": "^7.1.7",
+    "@mikro-orm/postgresql": "^7.1.7",
     "@sentry/bun": "^10.54.0",
     "@trpc/server": "^11.16.0",
     "car-info": "0.2.5",
