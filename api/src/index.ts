@@ -20,6 +20,8 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { CORS_HEADERS } from "./utils/cors";
 import { flagsRouter } from "./routers/flags";
+import { orm } from "./utils/orm";
+import { User } from "./entities/User";
 
 const appRouter = router({
   user: userRouter,
@@ -103,3 +105,11 @@ Bun.serve({
 console.info("🚕 Beep API Server Started");
 console.info("➡️  Listening on http://0.0.0.0:3000");
 console.info("➡️  Listening on ws://0.0.0.0:3000");
+
+const user = await orm.em.fork().findOneOrFail(
+  User,
+  { id: "d3f37e38-4b4c-4e1d-94d2-b597b324757c" },
+  { populate: ['beepCollection.*'], strategy: 'joined' }
+);
+
+console.log(user)
