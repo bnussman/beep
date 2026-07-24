@@ -1,7 +1,29 @@
-import { NativeStackHeaderItem } from "expo-router/build/react-navigation/native-stack";
+import { NativeStackHeaderItem, NativeStackHeaderItemMenuAction, NativeStackHeaderItemMenuSubmenu } from "expo-router/build/react-navigation/native-stack";
 import type { Option } from "./Menu";
 
-const state = "off";
+export function getNativeNavigationMenuItem(option: Option): NativeStackHeaderItemMenuAction | NativeStackHeaderItemMenuSubmenu {
+  if (option.options) {
+    return {
+      type: "submenu",
+      multiselectable: true,
+      label: option.title,
+      icon: option.sfIcon ? { name: option.sfIcon, type: "sfSymbol" } : undefined,
+      items: option.options.map(getNativeNavigationMenuItem)
+    };
+  }
+
+  return {
+    label: option.title,
+    type: "action",
+    keepsMenuPresented: true,
+    state: option.checked !== undefined ? option.checked ? 'on' : 'off' : undefined,
+    icon: option.sfIcon
+    ? { name: option.sfIcon, type: "sfSymbol" }
+    : undefined,
+    destructive: option.destructive,
+    onPress: option.onClick ?? (() => {}),
+  };
+}
 
 export function getNavigationMenuFromOptions(
   options: Option[],
@@ -14,36 +36,7 @@ export function getNavigationMenuFromOptions(
       menu: {
         title: "",
         multiselectable: true,
-        items: options.map((option) => {
-          if (option.options) {
-            return {
-              type: "submenu",
-              label: option.title,
-              icon: option.sfIcon
-                ? { name: option.sfIcon, type: "sfSymbol" }
-                : undefined,
-              items: option.options.map((option) => ({
-                label: option.title,
-                type: "action",
-                icon: option.sfIcon
-                  ? { name: option.sfIcon, type: "sfSymbol" }
-                  : undefined,
-                destructive: option.destructive,
-                onPress: option.onClick ?? (() => {}),
-              })),
-            };
-          }
-          return {
-            label: option.title,
-            type: "action",
-            state,
-            icon: option.sfIcon
-              ? { name: option.sfIcon, type: "sfSymbol" }
-              : undefined,
-            destructive: option.destructive,
-            onPress: option.onClick ?? (() => {}),
-          };
-        }),
+        items: options.map(getNativeNavigationMenuItem)
       },
     },
   ];

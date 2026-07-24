@@ -96,6 +96,7 @@ export const Menu = (props: MenuProps) => {
     if (option.checked !== undefined) {
       return (
         <MenuComponent.CheckboxItem
+          key={option.title}
           checked={option.checked}
           onCheckedChange={option.onClick}
           className={itemClasses}

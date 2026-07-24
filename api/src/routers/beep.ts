@@ -7,7 +7,7 @@ import {
 } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
-import { beep, user } from "../../drizzle/schema";
+import { beep, beepStatuses, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import {
   PushNotification,
@@ -34,6 +34,7 @@ export const beepRouter = router({
         page: z.number().min(1).optional(),
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         inProgress: z.boolean().optional(),
+        status: z.array(z.enum(beepStatuses)).optional(),
         userId: z.string().optional(),
       }),
     )
@@ -47,6 +48,7 @@ export const beepRouter = router({
 
       const where = {
         ...(input.inProgress && inProgressBeepNew),
+        ...(input.status && { status: { in: input.status } }),
         ...(input.userId && {
           OR: [{ rider_id: input.userId }, { beeper_id: input.userId }],
         }),
