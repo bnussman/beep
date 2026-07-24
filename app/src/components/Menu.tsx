@@ -93,6 +93,21 @@ export const Menu = (props: MenuProps) => {
       );
     }
 
+    if (option.checked !== undefined) {
+      return (
+        <MenuComponent.CheckboxItem
+          checked={option.checked}
+          onCheckedChange={option.onClick}
+          className={itemClasses}
+        >
+          <MenuComponent.CheckboxItemIndicator className="mr-2">
+            ✔️
+          </MenuComponent.CheckboxItemIndicator>
+          <span>{option.title}</span>
+        </MenuComponent.CheckboxItem>
+      );
+    }
+
     return (
       <MenuComponent.Item
         onClick={option.onClick}

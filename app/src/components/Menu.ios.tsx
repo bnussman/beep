@@ -4,6 +4,7 @@ import {
   Button,
   RNHostView,
   ContextMenu,
+  Toggle,
 } from "@expo/ui/swift-ui";
 import { MenuProps, Option } from "./Menu";
 import type { JSX } from "react/jsx-runtime";
@@ -24,6 +25,18 @@ export function Menu(props: MenuProps) {
         >
           {option.options.map(renderMenuOption)}
         </ExpoUIMenu>
+      );
+    }
+
+    if (option.checked !== undefined) {
+      return (
+        <Toggle
+          key={option.title}
+          isOn={option.checked}
+          label={option.title}
+          systemImage={option.sfIcon}
+          onIsOnChange={option.onClick}
+        />
       );
     }
 
