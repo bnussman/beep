@@ -44,6 +44,19 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           ACTOR: ${{ github.actor }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: pulumi/actions@v6
+        with:
+          command: up
+          stack-name: production-container
+          work-dir: deploy
+        env:
+          PULUMI_K8S_DELETE_UNREACHABLE: true
+          secrets: ${{ toJSON(secrets) }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG_2 }}
+          ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish:
     runs-on: ubuntu-latest

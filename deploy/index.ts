@@ -25,7 +25,7 @@ const apiImageResource = new docker.Image("apiImageResource", {
 });
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
-  kubeconfig: pulumi.secret(env.KUBECONFIG),
+  kubeconfig: pulumi.secret(process.env.KUBECONFIG),
 });
 
 const namespace = new k8s.core.v1.Namespace(
