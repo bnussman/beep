@@ -221,7 +221,7 @@ export async function createContext(
 
   const session = result[0];
 
-  if (!session.user) {
+  if (!session?.user) {
     return {};
   }
 
