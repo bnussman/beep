@@ -11,6 +11,8 @@ const namespaceName = `beep-${envName}`;
 const apiAppName = "api";
 const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 
+const isProduction = envName.includes("production");
+
 const apiImageResource = new docker.Image("apiImageResource", {
   imageName: apiImageName,
   build: {
@@ -66,7 +68,7 @@ const apiIngress = new k8s.networking.v1.Ingress(
       rules: [
         {
           host:
-            envName === "production"
+            isProduction
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
           http: {
@@ -144,7 +146,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
     },
     spec: {
       selector: { matchLabels: { app: apiAppName } },
-      replicas: envName === "production" ? 5 : 3,
+      replicas: isProduction ? 4 : 3,
       template: {
         metadata: { labels: { app: apiAppName } },
         spec: {
