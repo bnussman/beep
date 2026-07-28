@@ -7,7 +7,7 @@ import {
   user,
   verify_email,
 } from "../../drizzle/schema";
-import { and, DrizzleQueryError, eq, ne, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
