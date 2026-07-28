@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/bun";
 import { TRPCError, inferRouterInputs, initTRPC } from "@trpc/server";
-import z, { ZodError } from "zod";
+import z from "zod/v4";
 import { AppRouter } from "..";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "./db";
@@ -8,11 +8,11 @@ import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 import { token, user } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { DrizzleQueryError, eq } from "drizzle-orm";
 
 function getErrorData(error: TRPCError) {
   return {
-    fieldErrors: error.code === "BAD_REQUEST" && error.cause instanceof ZodError
+    fieldErrors: error.code === "BAD_REQUEST" && error.cause instanceof z.ZodError
       ? (z.flattenError(error.cause).fieldErrors as Record<
         string,
         string[]
@@ -53,7 +53,29 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-export const publicProcedure = t.procedure.use(sentryMiddleware);
+const errorTransformerMiddleware = t.middleware(async (opts) => {
+  const result = await opts.next();
+
+  if (!result.ok) {
+    const error = result.error;
+
+    // Return a human readable error message for PostgreSQL duplicate key errors
+    if (
+      error.cause instanceof DrizzleQueryError &&
+      error.cause.cause &&
+      'code' in error.cause.cause &&
+      'detail' in error.cause.cause &&
+      typeof error.cause.cause.detail === 'string' &&
+      error.cause.cause.code === "23505"
+    ) {
+      throw new TRPCError({ code: "CONFLICT", message: error.cause.cause.detail });
+    }
+  }
+
+  return result;
+});
+
+export const publicProcedure = t.procedure.use(sentryMiddleware).use(errorTransformerMiddleware);
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
