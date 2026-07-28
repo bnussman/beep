@@ -3,4 +3,4 @@ runtime:
   name: nodejs
   options:
     packagemanager: pnpm
-description: Beep Linode Deployment
+description: Beep Kubernetes Deployment
