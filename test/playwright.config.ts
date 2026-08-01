@@ -27,6 +27,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     permissions: ['geolocation'],
     geolocation: { latitude: 36.215735, longitude: -81.674205 },
+    channel: process.env.CI ? 'chrome' : undefined,
   },
   /* Use a big timeout */
   timeout: 180_000,
