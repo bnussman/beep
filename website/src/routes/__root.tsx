@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import createCache from "@emotion/cache";
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
@@ -17,6 +17,9 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import appCss from '../styles.css?url'
+import { ThemeProvider as HeroThemeProvider } from 'tanstack-theme-kit'
+
 
 export const Route = createRootRoute({
   head: () => ({
@@ -26,6 +29,7 @@ export const Route = createRootRoute({
       { rel: "preload", href: fontUrlBold, as: "style" },
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
+      { rel: 'stylesheet', href: appCss },
     ],
     meta: [
       { title: "Ride Beep App" },
@@ -59,8 +63,9 @@ function Providers({ children }: { children: React.ReactNode }) {
   const emotionCache = createCache({ key: "css" });
 
   return (
+    <HeroThemeProvider>
     <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme} >
         <NotificationsProvider
           slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
         >
@@ -72,7 +77,8 @@ function Providers({ children }: { children: React.ReactNode }) {
           </TRPCProvider>
         </NotificationsProvider>
       </ThemeProvider>
-    </CacheProvider>
+      </CacheProvider>
+    </HeroThemeProvider>
   );
 }
 

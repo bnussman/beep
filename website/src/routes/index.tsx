@@ -3,15 +3,14 @@ import iPhoneDark from "../assets/dark.webp?url";
 import iPhoneLight from "../assets/light.webp?url";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from '@heroui/react';
 import {
   Box,
-  Button,
   Container,
   Stack,
   Typography,
   useColorScheme,
 } from "@mui/material";
-// import { BeepsCount } from "../components/BeepsCount";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -45,17 +44,21 @@ function Home() {
           </Typography>
           <Box>
             <Button
-              component="a"
-              href={getDownloadLink()}
-              target="_blank"
-              size="large"
-              color="primary"
-              variant="contained"
+              render={(props) => (
+                <a
+                  className={props.className}
+                  ref={props.ref}
+                  children={props.children}
+                  href={getDownloadLink()}
+                  target="_blank"
+                />
+              )}
+              variant="primary"
+              size="lg"
             >
               Download
             </Button>
           </Box>
-          {/*<BeepsCount />*/}
         </Stack>
         <picture>
           <source srcSet={iPhoneLight} media="(prefers-color-scheme: light)" />

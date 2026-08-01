@@ -5,6 +5,7 @@ import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, View } from "react-native";
+import { Button } from "./Button";
 
 export function RideMenu() {
   const trpc = useTRPC();

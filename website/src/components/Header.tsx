@@ -11,9 +11,9 @@ import {
   Stack,
   Toolbar,
   Typography,
-  Button,
   Link,
 } from "@mui/material";
+import { Button } from "@heroui/react";
 
 export function Header() {
   const trpc = useTRPC();
@@ -73,10 +73,10 @@ export function Header() {
           {user && <UserMenu />}
           {!user && (
             <>
-              <Button component={RouterLink} to="/login">
+              <Button variant="tertiary" render={(props) => <RouterLink {...props} to="/login" />}>
                 Login
               </Button>
-              <Button component={RouterLink} to="/signup" variant="contained">
+              <Button variant="primary" render={(props) => <RouterLink {...props} to="/signup" />}>
                 Sign Up
               </Button>
             </>

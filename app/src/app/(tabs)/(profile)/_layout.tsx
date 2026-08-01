@@ -1,4 +1,5 @@
 import { AddCarButton } from "@/components/AddCarButton";
+import { Button } from "@/components/Button";
 import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
@@ -25,7 +26,7 @@ export default function Layout() {
         options={{
           headerTitle: "Edit",
           unstable_headerRightItems: () => getNavigationMenuFromOptions(menu),
-          headerRight: () => <Menu trigger={<Elipsis />} options={menu} />,
+          headerRight: () => <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={menu} />,
         }}
       />
       <Stack.Screen

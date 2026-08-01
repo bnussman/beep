@@ -34,16 +34,18 @@ export function CarSelect() {
       <Label htmlFor="car">Car</Label>
       <Menu
         trigger={
-          <Input
-            id="car"
-            readOnly
-            value={
-              defaultCar
-                ? ` ${defaultCar.year} ${defaultCar.make} ${defaultCar.model}`
+          <button>
+            <Input
+              id="car"
+              readOnly
+              value={
+                defaultCar
+                ? `${defaultCar.year} ${defaultCar.make} ${defaultCar.model}`
                 : ""
-            }
-            placeholder="Select a car"
-          />
+              }
+              placeholder="Select a car"
+            />
+          </button>
         }
         options={
           cars?.results === 0

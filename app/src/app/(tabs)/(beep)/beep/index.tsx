@@ -161,7 +161,7 @@ export default function StartBeepingScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: user?.isBeeping
-        ? () => <Menu trigger={<Elipsis />} options={headerLeftMenuOptions} />
+        ? () => <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={headerLeftMenuOptions} />
         : null,
       unstable_headerLeftItems: () =>
         user?.isBeeping
