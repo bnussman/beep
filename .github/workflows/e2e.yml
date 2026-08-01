@@ -26,6 +26,7 @@ jobs:
           cache: pnpm
       - run: docker compose up -d
       - run: pnpm i --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
         working-directory: ./test
       - run: pnpm drizzle-kit push --force
         working-directory: ./api
