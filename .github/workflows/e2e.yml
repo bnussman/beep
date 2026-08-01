@@ -11,6 +11,8 @@ jobs:
   test:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.0-noble
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
@@ -26,8 +28,6 @@ jobs:
           cache: pnpm
       - run: docker compose up -d
       - run: pnpm i --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps --only-shell chromium
-        working-directory: ./test
       - run: pnpm drizzle-kit push --force
         working-directory: ./api
       - run: pnpm --filter @beep/test test
