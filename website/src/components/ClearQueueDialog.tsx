@@ -55,7 +55,7 @@ export function ClearQueueDialog(props: Props) {
           control={<Checkbox />}
           label="Turn off user's Beeping status after clear?"
           checked={stopBeeping}
-          onChange={() => setStopBeeping(!stopBeeping)}
+          onChange={() => setStopBeeping((prev) => !prev)}
         />
       </DialogContent>
       <DialogActions>
