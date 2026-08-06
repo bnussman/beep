@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { Alert } from "react-native";
 
-export function RideMenu() {
+export function RideToolbar() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 

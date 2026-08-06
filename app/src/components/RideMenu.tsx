@@ -1,5 +1,6 @@
 import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
+import { Text } from "@/components/Text";
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";

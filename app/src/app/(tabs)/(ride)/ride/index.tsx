@@ -14,11 +14,12 @@ import { Input, TextField, FieldError } from "heroui-native";
 import { LocationInput } from "@/components/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
-import { RideMenu } from "@/components/RideToolbar";
+import { RideToolbar } from "@/components/RideToolbar";
 import { Label } from "@/components/Label";
 import { Link, SplashScreen, useRouter } from "expo-router";
 import { endRiderLiveActivities } from "@/live-activities/utils";
 import { paddedContainerStyle } from "@/utils/styles";
+import { isIOS } from "@/utils/constants";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -206,7 +207,7 @@ export default function MainFindBeepScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <RideMenu />
+      {isIOS && <RideToolbar />}
       <RideMap beepersLocation={beepersLocation} />
       <BottomSheet enableDynamicSizing snapPoints={["30%", "50%"]}>
         <BottomSheetView>
