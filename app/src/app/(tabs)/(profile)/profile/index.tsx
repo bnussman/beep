@@ -8,6 +8,7 @@ import { Link, LinkProps } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/utils/trpc";
 import { Button } from "@/components/Button";
+import { paddedContainerStyle } from "@/utils/styles";
 
 interface LinkItem {
   icon: string | React.JSX.Element;
@@ -73,7 +74,7 @@ export default function EditProfileScreen() {
   );
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView contentContainerStyle={paddedContainerStyle}>
       <View
         style={{
           paddingHorizontal: 16,

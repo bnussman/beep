@@ -30,6 +30,7 @@ import { Menu, Option } from "@/components/Menu";
 import { Elipsis } from "@/components/Elipsis";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { getTimeRemaining } from "@/utils/date";
+import { paddedContainerStyle } from "@/utils/styles";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -55,7 +56,7 @@ export default function StartBeepingScreen() {
     }),
   );
 
-  const { mutateAsync: updateBeepSettings } = useMutation(
+  const { mutate: updateBeepSettings } = useMutation(
     trpc.user.edit.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.user.me.queryKey(), data);
@@ -125,7 +126,7 @@ export default function StartBeepingScreen() {
       };
     }
 
-    await updateBeepSettings({
+    updateBeepSettings({
       isBeeping: willBeBeeping,
       ...values,
       location,
@@ -272,7 +273,7 @@ export default function StartBeepingScreen() {
 
   return (
     <KeyboardAwareScrollView
-      contentContainerStyle={{ paddingHorizontal: 16, gap: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 16, gap: 16, ...paddedContainerStyle }}
       contentInsetAdjustmentBehavior="automatic"
     >
       <CarSelect />
@@ -353,6 +354,6 @@ export default function StartBeepingScreen() {
       {/* <Text size="sm" style={{ marginTop: 24, textAlign: 'center' }}>
         Use the toggle in the top right to start beeping
       </Text> */}
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
   );
 }

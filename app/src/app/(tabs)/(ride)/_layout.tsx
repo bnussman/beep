@@ -1,7 +1,7 @@
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { RideMenu } from "@/components/RideMenu";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
-import { isAndroid, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS, isWeb } from "@/utils/constants";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { CloseButton } from "heroui-native";
 import { FormProvider, useForm } from "react-hook-form";
@@ -24,12 +24,7 @@ export default function Layout() {
 
   return (
     <FormProvider {...rideForm}>
-      <Stack
-        screenOptions={{
-          headerTransparent: true,
-          contentStyle: isWeb ? { paddingTop: 72 } : {},
-        }}
-      >
+      <Stack screenOptions={{ headerTransparent: isIOS }}>
         <Stack.Screen
           name="ride/index"
           options={{

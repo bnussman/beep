@@ -120,7 +120,7 @@ export default function Cars() {
     <FlatList
       data={cars}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={getContentContainerStyle(cars?.length === 0)}
+      contentContainerStyle={{ ...getContentContainerStyle(cars?.length === 0), padding: 16 }}
       renderItem={({ item: car }) => (
         <Menu
           activationMethod="longPress"

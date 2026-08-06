@@ -1,6 +1,6 @@
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
-import { isAndroid, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS, isWeb } from "@/utils/constants";
 import { Stack, useRouter } from "expo-router";
 import { CloseButton } from "heroui-native";
 
@@ -8,12 +8,7 @@ export default function Layout() {
   const router = useRouter();
 
   return (
-    <Stack
-      screenOptions={{
-        headerTransparent: true,
-        contentStyle: isWeb ? { paddingTop: 72 } : {},
-      }}
-    >
+    <Stack screenOptions={{ headerTransparent: isIOS }}>
       <Stack.Screen name="beep/index" options={{ headerTitle: "Beep" }} />
       <Stack.Screen name="beep/queue" options={{ headerTitle: "Queue" }} />
       <Stack.Screen

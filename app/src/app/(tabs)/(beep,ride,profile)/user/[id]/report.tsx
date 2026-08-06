@@ -48,7 +48,7 @@ export default function ReportScreen() {
       <KeyboardAwareScrollView
         style={{ height: "100%" }}
         scrollEnabled={false}
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+        contentContainerStyle={{ padding: 16, gap: 8 }}
       >
         {user && (
           <UserHeader

@@ -18,6 +18,7 @@ import { RideMenu } from "@/components/RideToolbar";
 import { Label } from "@/components/Label";
 import { Link, SplashScreen, useRouter } from "expo-router";
 import { endRiderLiveActivities } from "@/live-activities/utils";
+import { paddedContainerStyle } from "@/utils/styles";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -83,7 +84,7 @@ export default function MainFindBeepScreen() {
   if (!beep) {
     return (
       <KeyboardAwareScrollView
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 12, ...paddedContainerStyle }}
         contentInsetAdjustmentBehavior="automatic"
         scrollEnabled={false}
         mode="layout"

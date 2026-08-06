@@ -1,4 +1,3 @@
-import React from "react";
 import { ActivityIndicator, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useQuery } from "@tanstack/react-query";
@@ -60,18 +59,19 @@ export default function User() {
   return (
     <SafeAreaView>
       <View style={{ padding: 16, gap: 8 }}>
-        <Avatar
-          src={user.photo ?? undefined}
-          size="xl"
-          style={{ position: "absolute", right: 16 }}
-        />
-        <Text
-          size="2xl"
-          weight="800"
-          style={{ letterSpacing: 0.2, maxWidth: "60%", marginBottom: 16 }}
-        >
-          {user.first} {user.last}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'space-between', gap: 16 }}>
+          <Text
+            size="2xl"
+            weight="800"
+            style={{ letterSpacing: 0.2, maxWidth: "60%", marginBottom: 16 }}
+          >
+            {user.first} {user.last}
+          </Text>
+          <Avatar
+            src={user.photo ?? undefined}
+            size="lg"
+          />
+        </View>
         <View style={{ gap: 24 }}>
           <View>
             <Text weight="800">Rating</Text>

@@ -14,7 +14,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { decodePolyline } from "@/utils/location";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
-import { isMobile, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS, isMobile, isWeb } from "@/utils/constants";
 import { Menu } from "@/components/Menu";
 import { Elipsis } from "@/components/Elipsis";
 import { Link, useRouter } from "expo-router";
@@ -116,11 +116,11 @@ export function Beep(props: Props) {
   return (
     <SafeAreaView
       style={{
-        padding: 16,
+        paddingHorizontal: 16,
         gap: 16,
-        height: "100%",
-        paddingBottom: isWeb ? 64 : 12,
-        paddingTop: 56,
+        height: '100%',
+        paddingTop: isIOS ? 56 : isAndroid ? 0 : 16,
+        paddingBottom: isIOS ? 20 : isAndroid ? 96 : 16,
       }}
     >
       <Surface className="gap-4">

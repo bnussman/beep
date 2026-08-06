@@ -145,7 +145,7 @@ export default function BeepsScreen() {
   return (
     <FlatList
       data={beeps}
-      contentContainerStyle={getContentContainerStyle(beeps?.length === 0)}
+      contentContainerStyle={{ ...getContentContainerStyle(beeps?.length === 0), padding: 16 }}
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
       onEndReached={() => {

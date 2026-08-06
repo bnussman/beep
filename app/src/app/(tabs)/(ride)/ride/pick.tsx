@@ -192,7 +192,7 @@ export default function PickBeepScreen() {
       refreshing={isRefetching}
       onRefresh={refetch}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={getContentContainerStyle(beepers?.length === 0)}
+      contentContainerStyle={{ ...getContentContainerStyle(beepers?.length === 0), padding: 16 }}
       ListEmptyComponent={
         <View style={{ alignItems: "center" }}>
           <Text weight="800" size="2xl">

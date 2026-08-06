@@ -6,6 +6,7 @@ import { isIOS, PAGE_SIZE } from "@/utils/constants";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { getContentContainerStyle } from "@/utils/styles";
 
 export default function RatingsScreen() {
   const trpc = useTRPC();
@@ -92,23 +93,10 @@ export default function RatingsScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={
-        ratings?.length === 0
-          ? {
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              ...(isIOS && {
-                flex: undefined,
-                height: "75%",
-              }),
-            }
-          : {
-              paddingHorizontal: 16,
-              gap: 8,
-            }
-      }
+      contentContainerStyle={{
+        ...getContentContainerStyle(ratings?.length === 0),
+        padding: 16,
+      }}
       contentInsetAdjustmentBehavior="automatic"
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
