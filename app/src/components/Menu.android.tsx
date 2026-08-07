@@ -18,6 +18,7 @@ export function Menu(props: MenuProps) {
       title: option.title,
       id: option.title,
       titleColor: option.destructive ? "red" : undefined,
+      state: option.checked !== undefined ? (option.checked ? "on" : "off") : undefined,
     };
   };
 
