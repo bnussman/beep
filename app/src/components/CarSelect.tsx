@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Label } from "./Label";
 import { Menu } from "./Menu";
 import { Input } from "./Input";
@@ -34,6 +34,7 @@ export function CarSelect() {
       <Label htmlFor="car">Car</Label>
       <Menu
         trigger={
+          <Pressable accessibilityRole="button">
           <Input
             id="car"
             readOnly
@@ -43,7 +44,8 @@ export function CarSelect() {
                 : ""
             }
             placeholder="Select a car"
-          />
+            />
+          </Pressable>
         }
         options={
           cars?.results === 0

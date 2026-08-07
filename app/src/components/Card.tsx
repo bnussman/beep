@@ -21,16 +21,9 @@ export function Card(props: Props) {
 
   if (onPress) {
     return (
-      <PressableFeedback
-        onPress={onPress}
-        onLongPress={onLongPress}
-        className="w-full overflow-auto"
-      >
         <HeroCard {...rest}>
-          <PressableFeedback.Highlight />
           {rest.children}
         </HeroCard>
-      </PressableFeedback>
     );
   }
 

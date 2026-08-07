@@ -5,6 +5,7 @@ import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useRouter } from "expo-router";
+import { Button } from "./Button";
 
 interface Props {
   userId: string;
@@ -75,5 +76,5 @@ export function useUserMenuOptions(userId: string): Option[] {
 export function UserMenu({ userId }: Props) {
   const options = useUserMenuOptions(userId);
 
-  return <Menu trigger={<Elipsis />} options={options} />;
+  return <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={options} />;
 }

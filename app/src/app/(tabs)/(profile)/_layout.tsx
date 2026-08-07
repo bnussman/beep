@@ -6,6 +6,7 @@ import { useProfileMenu } from "@/components/ProfileMenu";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isIOS } from "@/utils/constants";
 import { Stack, useRouter } from "expo-router";
+import { Button } from "heroui-native";
 
 export default function Layout() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function Layout() {
       options={{
         headerTitle: "Edit",
         unstable_headerRightItems: () => getNavigationMenuFromOptions(menu),
-        headerRight: () => <Menu trigger={<Elipsis />} options={menu} />,
+        headerRight: () => <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={menu} />,
       }}
       />
       <Stack.Screen

@@ -5,6 +5,7 @@ import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "heroui-native";
 import { Alert, View } from "react-native";
 
 export function RideMenu() {
@@ -82,7 +83,7 @@ export function RideMenu() {
   return (
     <View style={{ marginRight: 8 }}>
       <Menu
-        trigger={<Elipsis />}
+        trigger={<Button variant="ghost"><Elipsis /></Button>}
         options={[
           {
             title: "Contact",

@@ -2,6 +2,7 @@ import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { ContextMenu } from "@base-ui/react/context-menu";
 import { cx } from "tailwind-variants";
+import { JSX } from "react";
 
 export interface Option {
   /**
@@ -123,7 +124,7 @@ export const Menu = (props: MenuProps) => {
 
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger render={props.trigger} aria-label={props.label} />
+      <MenuComponent.Trigger render={props.trigger as JSX.Element} aria-label={props.label} />
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
           <MenuComponent.Popup className={popupClasses}>

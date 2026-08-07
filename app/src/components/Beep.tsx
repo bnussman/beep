@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
@@ -171,12 +171,11 @@ export function Beep({ item }: Props) {
       ]}
       activationMethod="longPress"
       trigger={
-        <Link
-          href={{ pathname: "/profile/beeps/[id]", params: { id: item.id } }}
-          asChild
+        <Pressable
+          onPress={() => router.navigate({ pathname: "/(tabs)/(profile)/profile/beeps/[id]", params: { id: item.id } })}
+          onLongPress={() => alert("long pressed")}
         >
-          <Link.Trigger>
-            <Card style={{ padding: 16, gap: 8 }} onLongPress={() => null}>
+          <Card style={{ padding: 16, gap: 8 }} >
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >
@@ -259,9 +258,8 @@ export function Beep({ item }: Props) {
                   </>
                 )}
               </View>
-            </Card>
-          </Link.Trigger>
-        </Link>
+          </Card>
+        </Pressable>
       }
     />
   );

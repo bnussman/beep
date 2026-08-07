@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { useColorScheme } from "react-native";
+import { LogBox, useColorScheme } from "react-native";
 import { useAutoUpdate } from "@/utils/updates";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
@@ -30,6 +30,12 @@ SplashScreen.preventAutoHideAsync();
 setupPurchase();
 setupNotifications();
 setupLiveActivityListeners();
+
+LogBox.ignoreAllLogs();
+LogBox.ignoreLogs([
+  'Base UI: A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics, which can impact forms and accessibility. Use a real <button> in the `render` prop, or set `nativeButton` to `false`.',
+  '[colorKit.RGB] An error occurred while attempting to convert the provided parameter into an `RGB` color. As a result, the default color "black" will be used instead.'
+]);
 
 function App() {
   const trpc = useTRPC();

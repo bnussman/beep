@@ -12,6 +12,7 @@ import { Menu, Option } from "@/components/Menu";
 import { capitalize } from "@/utils/strings";
 import { getNativeNavigationMenuItem, getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { Elipsis } from "@/components/Elipsis";
+import { Button } from "heroui-native";
 
 const beepStatuses: BeepStatus[] = [
   "canceled",
@@ -69,7 +70,7 @@ export default function BeepsScreen() {
           },
         },
       ]),
-      headerRight:  () => <Menu trigger={<Elipsis />} options={nativeOptions} />
+      headerRight:  () => <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={nativeOptions} />
     });
   }, [options]);
 
