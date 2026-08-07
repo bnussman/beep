@@ -123,9 +123,7 @@ export const Menu = (props: MenuProps) => {
 
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger className="*:w-full" aria-label={props.label}>
-        {props.trigger}
-      </MenuComponent.Trigger>
+      <MenuComponent.Trigger render={props.trigger} aria-label={props.label} />
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
           <MenuComponent.Popup className={popupClasses}>
