@@ -1,54 +1,119 @@
+import { useState } from "react";
 import { MenuProps, Option } from "./Menu";
-import { MenuAction, MenuView } from "@expo/ui/community/menu";
+import {
+  Host,
+  DropdownMenu,
+  DropdownMenuItem,
+  OutlinedButton,
+  Text,
+  RNHostView,
+  Icon,
+  Box,
+  Button,
+  Column,
+} from '@expo/ui/jetpack-compose';
+import { Pressable, View } from "react-native";
+import { background, combinedClickable } from "@expo/ui/jetpack-compose/modifiers";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { scheduleOnRN} from "react-native-worklets";
 
-export function Menu(props: MenuProps) {
-  const getOption = (option: Option): MenuAction | null => {
-    if (option.show !== undefined && !option.show) {
-      return null;
-    }
+function MenuItem(option: Option) {
+  const [submenuExpanded, setSubmenuExpanded] = useState(false);
 
-    if (option.options) {
-      return {
-        title: option.title,
-        subactions: option.options.map(getOption).filter(Boolean) as MenuAction[],
-      };
-    }
+  if (option.show !== undefined && !option.show) {
+    return null;
+  }
 
-    return {
-      title: option.title,
-      id: option.title,
-      titleColor: option.destructive ? "red" : undefined,
-      state: option.checked !== undefined ? (option.checked ? "on" : "off") : undefined,
-    };
-  };
-
-  const findOption = (options: Option[], title: string): Option | undefined => {
-    for (const option of options) {
-      if (option.title === title) {
-        return option;
-      }
-
-      if (option.options) {
-        const found = findOption(option.options, title);
-        if (found) {
-          return found;
-        }
-      }
-    }
-
-    return undefined;
-  };
+  if (option.options) {
+    return (
+      <DropdownMenu expanded={submenuExpanded} onDismissRequest={() => setSubmenuExpanded(false)}>
+        <DropdownMenu.Trigger>
+          <DropdownMenuItem
+            enabled={!option.disabled}
+            onClick={() => setSubmenuExpanded(true)}>
+              <DropdownMenuItem.Text>
+                <Text>{option.title}</Text>
+              </DropdownMenuItem.Text>
+            </DropdownMenuItem>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Items>
+          {option.options.map((option) => (
+            <MenuItem
+              key={option.title}
+              {...option}
+            />
+          ))}
+        </DropdownMenu.Items>
+      </DropdownMenu>
+    );
+  }
 
   return (
-    <MenuView
-      actions={props.options.map(getOption).filter(Boolean) as MenuAction[]}
-      shouldOpenOnLongPress={props.activationMethod === "longPress"}
-      onPressAction={(e) => {
-        const option = findOption(props.options, e.nativeEvent.event);
-        option?.onClick?.();
-      }}
+    <DropdownMenuItem
+      enabled={!option?.disabled}
+      onClick={option.onClick}
     >
-      {props.trigger}
-    </MenuView>
+      <DropdownMenuItem.Text>
+        <Text>{option.title}</Text>
+      </DropdownMenuItem.Text>
+      {option.checked !== undefined && option.checked && (
+        <DropdownMenuItem.TrailingIcon>
+          <Text>✓</Text>
+        </DropdownMenuItem.TrailingIcon>
+      )}
+    </DropdownMenuItem>
+  );
+}
+
+export function Menu(props: MenuProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const open = () => {
+    setIsExpanded(true)
+  };
+
+  const isOnPress = props.activationMethod === undefined || props.activationMethod === 'singlePress';
+
+
+  // Define the parent long press gesture
+  const longPressGesture = Gesture.LongPress()
+    .onStart(() => {
+      scheduleOnRN(() => open());
+    });
+
+  // Define child tap gesture and make it fail if long press activates
+  const tapGesture = Gesture.Tap()
+    .onEnd(() => {
+      scheduleOnRN(() => open());
+    });
+
+  return (
+    <Host matchContents>
+      <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
+        <DropdownMenu.Trigger>
+          <RNHostView matchContents>
+            <GestureDetector gesture={props.activationMethod === 'longPress' ? longPressGesture : tapGesture}>
+            <Pressable
+              onPress={isOnPress ? open : undefined}
+              onLongPress={props.activationMethod === 'longPress' ? open : undefined}
+
+            >
+              <View pointerEvents={props.activationMethod === 'longPress' ? undefined : "none"}>
+                {props.trigger}
+              </View>
+              </Pressable>
+            </GestureDetector>
+          </RNHostView>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Items>
+          {props.options.map((option) => (
+            <MenuItem
+              key={option.title}
+              {...option}
+            />
+          ))}
+        </DropdownMenu.Items>
+      </DropdownMenu>
+    </Host>
   );
 }
