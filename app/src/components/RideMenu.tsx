@@ -1,6 +1,5 @@
 import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
-import { Text } from "@/components/Text";
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";
@@ -83,7 +82,11 @@ export function RideMenu() {
   return (
     <View style={{ marginRight: 8 }}>
       <Menu
-        trigger={<Button variant="ghost"><Elipsis /></Button>}
+        trigger={({ onPress }) => (
+          <Button variant="ghost" onPress={onPress}>
+            <Elipsis />
+          </Button>
+        )}
         options={[
           {
             title: "Contact",

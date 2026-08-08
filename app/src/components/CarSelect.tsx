@@ -1,4 +1,3 @@
-import React from "react";
 import { Pressable, View } from "react-native";
 import { Label } from "./Label";
 import { Menu } from "./Menu";
@@ -33,20 +32,16 @@ export function CarSelect() {
     <View style={{ gap: 4 }}>
       <Label htmlFor="car">Car</Label>
       <Menu
-        trigger={
-          <Pressable accessibilityRole="button">
-          <Input
-            id="car"
-            readOnly
-            value={
-              defaultCar
-                ? ` ${defaultCar.year} ${defaultCar.make} ${defaultCar.model}`
-                : ""
-            }
-            placeholder="Select a car"
+        trigger={({ onPress }) => (
+          <Pressable accessibilityRole="button" onPress={onPress}>
+            <Input
+              id="car"
+              readOnly
+              value={defaultCar ? `${defaultCar.year} ${defaultCar.make} ${defaultCar.model}` : ""}
+              placeholder="Select a car"
             />
           </Pressable>
-        }
+        )}
         options={
           cars?.results === 0
             ? [

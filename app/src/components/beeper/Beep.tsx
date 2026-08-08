@@ -254,15 +254,16 @@ export function Beep(props: Props) {
       <View style={{ flexDirection: "row", gap: 8 }}>
         <Menu
           label="Beeper actions"
-          trigger={
+          trigger={({ onPress }) => (
             <Button
               style={{ paddingHorizontal: 16, paddingVertical: 6 }}
               size="md"
               variant="tertiary"
+              onPress={onPress}
             >
               <Elipsis />
             </Button>
-          }
+          )}
           options={[
             {
               title: "Contact",

@@ -75,10 +75,10 @@ export function Rating(props: Props) {
           show: isRater,
         },
       ]}
-      trigger={
+      trigger={({ onLongPress }) => (
         <Card
           style={{ padding: 16, gap: 16, display: "flex" }}
-          onLongPress={() => null}
+          onLongPress={onLongPress}
           onPress={() =>
             router.push({
               pathname: "/user/[id]",
@@ -121,7 +121,7 @@ export function Rating(props: Props) {
           </View>
           {item.message && <Text>{item.message}</Text>}
         </Card>
-      }
+      )}
     />
   );
 }

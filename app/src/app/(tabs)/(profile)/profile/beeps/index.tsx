@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Beep } from "@/components/Beep";
@@ -7,10 +7,10 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { getContentContainerStyle } from "@/utils/styles";
 import { PAGE_SIZE } from "@/utils/constants";
-import { useNavigation, useRoute } from "expo-router/react-navigation";
+import { useNavigation } from "expo-router/react-navigation";
 import { Menu, Option } from "@/components/Menu";
 import { capitalize } from "@/utils/strings";
-import { getNativeNavigationMenuItem, getNavigationMenuFromOptions } from "@/components/Menu.utils";
+import { getNativeNavigationMenuItem } from "@/components/Menu.utils";
 import { Elipsis } from "@/components/Elipsis";
 import { Button } from "heroui-native";
 
@@ -70,9 +70,18 @@ export default function BeepsScreen() {
           },
         },
       ]),
-      headerRight:  () => <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={nativeOptions} />
+      headerRight: () => (
+        <Menu
+          trigger={({ onPress }) => (
+            <Button variant="ghost" onPress={onPress}>
+              <Elipsis />
+            </Button>
+          )}
+          options={nativeOptions}
+        />
+      )
     });
-  }, [options]);
+  }, [options, nativeOptions]);
 
   const {
     data,

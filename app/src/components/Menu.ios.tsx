@@ -7,7 +7,6 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import { MenuProps, Option } from "./Menu";
-import type { JSX } from "react/jsx-runtime";
 import { disabled, fixedSize } from "@expo/ui/swift-ui/modifiers";
 
 export function Menu(props: MenuProps) {
@@ -61,7 +60,7 @@ export function Menu(props: MenuProps) {
         <ContextMenu>
           <ContextMenu.Trigger>
             <RNHostView matchContents>
-              {typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress })}
+              {props.trigger({ onPress, onLongPress })}
             </RNHostView>
           </ContextMenu.Trigger>
           <ContextMenu.Items>
@@ -77,7 +76,7 @@ export function Menu(props: MenuProps) {
       <ExpoUIMenu
         label={
           <RNHostView matchContents>
-            {typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress })}
+            {props.trigger({ onPress, onLongPress })}
           </RNHostView>
         }
       >

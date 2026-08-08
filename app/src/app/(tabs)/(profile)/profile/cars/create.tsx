@@ -1,4 +1,3 @@
-import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router/react-navigation";
 import { useForm, Controller, useWatch } from "react-hook-form";
@@ -123,8 +122,8 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="make">Make</Label>
             <Menu
-              trigger={
-                <Pressable accessibilityRole="button">
+              trigger={({ onPress }) => (
+                <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
                     id="make"
                     readOnly
@@ -132,7 +131,7 @@ export default function AddCar() {
                     placeholder="Select a make"
                   />
                 </Pressable>
-              }
+              )}
               options={makes.map((make) => ({
                 title: make,
                 onClick: () => field.onChange(make),
@@ -152,8 +151,8 @@ export default function AddCar() {
             <Label htmlFor="model">Model</Label>
             <Menu
               disabled={!make}
-              trigger={
-                <Pressable accessibilityRole="button">
+              trigger={({ onPress }) => (
+                <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
                     id="model"
                     readOnly
@@ -161,7 +160,7 @@ export default function AddCar() {
                     placeholder="Select a model"
                   />
                 </Pressable>
-              }
+              )}
               options={models!.map((model) => ({
                 title: model,
                 onClick: () => field.onChange(model),
@@ -179,8 +178,8 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="year">Year</Label>
             <Menu
-              trigger={
-                <Pressable accessibilityRole="button">
+              trigger={({ onPress }) => (
+                <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
                     id="year"
                     readOnly
@@ -188,7 +187,7 @@ export default function AddCar() {
                     placeholder="Select a year"
                   />
                 </Pressable>
-              }
+              )}
               options={years.map((year) => ({
                 title: String(year),
                 onClick: () => field.onChange(year),
@@ -207,8 +206,8 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="color">Color</Label>
             <Menu
-              trigger={
-                <Pressable accessibilityRole="button">
+              trigger={({ onPress }) => (
+                <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
                     id="color"
                     readOnly
@@ -216,7 +215,7 @@ export default function AddCar() {
                     placeholder="Select a color"
                   />
                 </Pressable>
-              }
+              )}
               options={colors.map((color) => ({
                 title: color,
                 onClick: () => field.onChange(color),

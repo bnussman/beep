@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
 import MapView from "react-native-maps";
+import { useEffect, useRef } from "react";
 import { Alert, View } from "react-native";
 import { isMobile } from "@/utils/constants";
 import { call, openDirections, sms } from "@/utils/links";
@@ -101,9 +101,8 @@ export function QueueItem({ item: beep }: Props) {
 
   return (
     <Menu
-      activationMethod="longPress"
-      trigger={
-        <Card style={{ padding: 16, gap: 16 }}>
+      trigger={({ onPress }) => (
+        <Card style={{ padding: 16, gap: 16 }} onPress={onPress}>
           <Link
             href={{
               pathname: "/user/[id]",
@@ -243,7 +242,7 @@ export function QueueItem({ item: beep }: Props) {
             </Map>
           )}
         </Card>
-      }
+      )}
       options={
         beep.status === "waiting"
           ? [

@@ -76,5 +76,14 @@ export function useUserMenuOptions(userId: string): Option[] {
 export function UserMenu({ userId }: Props) {
   const options = useUserMenuOptions(userId);
 
-  return <Menu trigger={() => <Button variant="ghost"><Elipsis /></Button>} options={options} />;
+  return (
+    <Menu
+      trigger={({ onPress }) => (
+        <Button variant="ghost" onPress={onPress}>
+          <Elipsis />
+        </Button>
+      )}
+      options={options}
+    />
+  );
 }

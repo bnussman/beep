@@ -124,8 +124,9 @@ export default function Cars() {
       renderItem={({ item: car }) => (
         <Menu
           activationMethod="longPress"
-          trigger={
+          trigger={({ onLongPress }) => (
             <Card
+              onLongPress={onLongPress}
               style={{
                 padding: 16,
                 gap: 16,
@@ -178,7 +179,7 @@ export default function Cars() {
                 alt={`car-${car.id}`}
               />
             </Card>
-          }
+          )}
           options={[
             {
               title: "Make Default",

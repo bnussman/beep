@@ -21,7 +21,16 @@ export default function Layout() {
       options={{
         headerTitle: "Edit",
         unstable_headerRightItems: () => getNavigationMenuFromOptions(menu),
-        headerRight: () => <Menu trigger={<Button variant="ghost"><Elipsis /></Button>} options={menu} />,
+        headerRight: () => (
+          <Menu
+            trigger={({ onPress }) => (
+              <Button variant="ghost" onPress={onPress}>
+                <Elipsis />
+              </Button>
+            )}
+            options={menu}
+          />
+        ),
       }}
       />
       <Stack.Screen

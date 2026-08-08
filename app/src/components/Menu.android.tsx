@@ -43,6 +43,7 @@ function MenuItem(option: Option) {
     <DropdownMenuItem
       enabled={!option?.disabled}
       onClick={option.onClick}
+      elementColors={option.destructive ? { textColor: '#d94e53' } : undefined}
     >
       <DropdownMenuItem.Text>
         <Text>{option.title}</Text>
@@ -76,15 +77,12 @@ export function Menu(props: MenuProps) {
       <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
         <DropdownMenu.Trigger>
           <RNHostView matchContents>
-            {typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress })}
+            {props.trigger({ onPress, onLongPress })}
           </RNHostView>
         </DropdownMenu.Trigger>
         <DropdownMenu.Items>
           {props.options.map((option) => (
-            <MenuItem
-              key={option.title}
-              {...option}
-            />
+            <MenuItem key={option.title} {...option} />
           ))}
         </DropdownMenu.Items>
       </DropdownMenu>
