@@ -69,7 +69,7 @@ export default function PickLocation() {
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={64}
-        className="px-4 h-full gap-4"
+        className="p-4 h-full gap-4"
       >
         <SearchField value={query} onChange={setQuery}>
           <SearchField.Group>
