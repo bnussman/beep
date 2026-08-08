@@ -52,13 +52,16 @@ export function Menu(props: MenuProps) {
     );
   };
 
+  const onPress = () => { };
+  const onLongPress = () => { };
+
   if (props.activationMethod === "longPress") {
     return (
       <Host matchContents modifiers={[fixedSize()]}>
         <ContextMenu>
           <ContextMenu.Trigger>
             <RNHostView matchContents>
-              {props.trigger as JSX.Element}
+              {typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress })}
             </RNHostView>
           </ContextMenu.Trigger>
           <ContextMenu.Items>
@@ -73,7 +76,9 @@ export function Menu(props: MenuProps) {
     <Host matchContents>
       <ExpoUIMenu
         label={
-          <RNHostView matchContents>{props.trigger as JSX.Element}</RNHostView>
+          <RNHostView matchContents>
+            {typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress })}
+          </RNHostView>
         }
       >
         {props.options.map(renderMenuOption)}

@@ -170,13 +170,13 @@ export function Beep({ item }: Props) {
         },
       ]}
       activationMethod="longPress"
-      trigger={
-        <Pressable
+      trigger={({ onLongPress }) => (
+        <Card
+          style={{ padding: 16, gap: 8 }}
           onPress={() => router.navigate({ pathname: "/(tabs)/(profile)/profile/beeps/[id]", params: { id: item.id } })}
-          onLongPress={() => alert("long pressed")}
+          onLongPress={onLongPress}
         >
-          <Card style={{ padding: 16, gap: 8 }} >
-              <View
+          <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >
                 <Avatar size="xs" src={otherUser.photo ?? undefined} />
@@ -259,8 +259,7 @@ export function Beep({ item }: Props) {
                 )}
               </View>
           </Card>
-        </Pressable>
-      }
+      )}
     />
   );
 }

@@ -19,11 +19,18 @@ interface Props extends CardRootProps {
 export function Card(props: Props) {
   const { onPress, onLongPress, ...rest } = props;
 
-  if (onPress) {
+  if (onPress || onLongPress) {
     return (
+      <PressableFeedback
+        onPress={onPress}
+        onLongPress={onLongPress}
+        className="w-full overflow-auto"
+      >
         <HeroCard {...rest}>
+          <PressableFeedback.Highlight />
           {rest.children}
         </HeroCard>
+      </PressableFeedback>
     );
   }
 

@@ -2,7 +2,7 @@ import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { ContextMenu } from "@base-ui/react/context-menu";
 import { cx } from "tailwind-variants";
-import { JSX } from "react";
+import React, { JSX, ReactElement, ReactNode } from "react";
 
 export interface Option {
   /**
@@ -48,7 +48,7 @@ export interface MenuProps {
   /**
    * The trigger for the menu
    */
-  trigger: React.ReactNode;
+  trigger: ((props: { onPress: () => void; onLongPress: () => void; }) => JSX.Element) | JSX.Element;
   /**
    * Options that render in the Menu
    */
@@ -68,8 +68,11 @@ export const Menu = (props: MenuProps) => {
   const MenuComponent =
     props.activationMethod === "longPress" ? ContextMenu : BaseMenu;
 
+  const onPress = () => { };
+  const onLongPress = () => { };
+
   if (props.disabled) {
-    return props.trigger;
+    return typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress });
   }
 
   const renderOption = (option: Option) => {
@@ -122,9 +125,10 @@ export const Menu = (props: MenuProps) => {
     );
   };
 
+
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger render={props.trigger as JSX.Element} aria-label={props.label} />
+      <MenuComponent.Trigger render={typeof props.trigger === 'object' ? props.trigger : props.trigger({ onPress, onLongPress })} aria-label={props.label} />
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
           <MenuComponent.Popup className={popupClasses}>

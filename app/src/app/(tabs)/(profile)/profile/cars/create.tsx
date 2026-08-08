@@ -124,12 +124,14 @@ export default function AddCar() {
             <Label htmlFor="make">Make</Label>
             <Menu
               trigger={
-                <Input
-                  id="make"
-                  readOnly
-                  value={field.value}
-                  placeholder="Select a make"
-                />
+                <Pressable accessibilityRole="button">
+                  <Input
+                    id="make"
+                    readOnly
+                    value={field.value}
+                    placeholder="Select a make"
+                  />
+                </Pressable>
               }
               options={makes.map((make) => ({
                 title: make,
@@ -151,12 +153,14 @@ export default function AddCar() {
             <Menu
               disabled={!make}
               trigger={
-                <Input
-                  id="model"
-                  readOnly
-                  value={field.value}
-                  placeholder="Select a model"
-                />
+                <Pressable accessibilityRole="button">
+                  <Input
+                    id="model"
+                    readOnly
+                    value={field.value}
+                    placeholder="Select a model"
+                  />
+                </Pressable>
               }
               options={models!.map((model) => ({
                 title: model,
@@ -176,12 +180,14 @@ export default function AddCar() {
             <Label htmlFor="year">Year</Label>
             <Menu
               trigger={
-                <Input
-                  id="year"
-                  readOnly
-                  value={field.value ? String(field.value) : ""}
-                  placeholder="Select a year"
-                />
+                <Pressable accessibilityRole="button">
+                  <Input
+                    id="year"
+                    readOnly
+                    value={field.value ? String(field.value) : ""}
+                    placeholder="Select a year"
+                  />
+                </Pressable>
               }
               options={years.map((year) => ({
                 title: String(year),
@@ -202,12 +208,14 @@ export default function AddCar() {
             <Label htmlFor="color">Color</Label>
             <Menu
               trigger={
-                <Input
-                  id="color"
-                  readOnly
-                  value={field.value ? String(field.value) : ""}
-                  placeholder="Select a color"
-                />
+                <Pressable accessibilityRole="button">
+                  <Input
+                    id="color"
+                    readOnly
+                    value={field.value ? String(field.value) : ""}
+                    placeholder="Select a color"
+                  />
+                </Pressable>
               }
               options={colors.map((color) => ({
                 title: color,
