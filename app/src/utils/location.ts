@@ -216,7 +216,7 @@ export function getMiles(meters: number, round = false) {
 
   if (round) {
     return new Intl.NumberFormat(undefined, {
-      maximumFractionDigits: 2,
+      maximumFractionDigits: miles > 3 ? 0 : 1,
       minimumFractionDigits: 0,
     }).format(miles);
   }

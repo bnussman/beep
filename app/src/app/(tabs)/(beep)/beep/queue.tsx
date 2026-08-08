@@ -5,7 +5,7 @@ import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
 import { FlatList, View } from "react-native";
 import { QueueItem } from "@/components/beeper/QueueItem";
-import { getContentContainerStyle } from "@/utils/styles";
+import { getContentContainerStyle, paddedContainerStyle } from "@/utils/styles";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -27,7 +27,7 @@ export default function StartBeepingScreen() {
       onRefresh={refetch}
       refreshing={isRefetching}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={getContentContainerStyle(queue.length === 0)}
+      contentContainerStyle={{ ...getContentContainerStyle(queue.length === 0), ...paddedContainerStyle }}
       ListEmptyComponent={
         <View style={{ gap: 8, alignItems: "center" }}>
           <Text size="5xl">⏳</Text>

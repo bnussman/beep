@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "@/components/Menu";
 import { getContentContainerStyle } from "@/utils/styles";
 import { colorMap } from "@/utils/cars";
+import { Color, Indicator } from "@/components/Indicator";
 
 export default function Cars() {
   const trpc = useTRPC();
@@ -147,16 +148,7 @@ export default function Cars() {
                     gap: 8,
                   }}
                 >
-                  <View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 16 / 2,
-                      backgroundColor:
-                        colorMap[car.color as keyof typeof colorMap] ??
-                        car.color,
-                    }}
-                  />
+                  <Indicator color={car.color as Color} />
                   {car.default && (
                     <View
                       style={{

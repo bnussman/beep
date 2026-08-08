@@ -1,6 +1,6 @@
 import MapView from "react-native-maps";
 import { useEffect, useRef } from "react";
-import { Alert, View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 import { isMobile } from "@/utils/constants";
 import { call, openDirections, sms } from "@/utils/links";
 import { printStars } from "@/components/Stars";
@@ -16,6 +16,8 @@ import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Menu } from "@/components/Menu";
 import { Link } from "expo-router";
+import { Separator } from "heroui-native";
+import { Indicator } from "../Indicator";
 
 interface Props {
   item: RouterOutput["beeper"]["queue"][number];
@@ -101,8 +103,9 @@ export function QueueItem({ item: beep }: Props) {
 
   return (
     <Menu
-      trigger={({ onPress }) => (
-        <Card style={{ padding: 16, gap: 16 }} onPress={onPress}>
+      activationMethod="longPress"
+      trigger={({ onLongPress }) => (
+        <Card style={{ padding: 16, gap: 16 }} onLongPress={onLongPress}>
           <Link
             href={{
               pathname: "/user/[id]",
@@ -119,112 +122,84 @@ export function QueueItem({ item: beep }: Props) {
                   alignItems: "center",
                 }}
               >
-                <View>
+                <View style={{ flexShrink: 1 }}>
                   <Text weight="800" size="xl">
                     {beep.rider.first} {beep.rider.last}
                   </Text>
                   <Text color="subtle" style={{ fontSize: 10 }}>
-                    {beep.rider.rating
-                      ? printStars(Number(beep.rider.rating))
-                      : "No Rating"}
+                    {beep.rider.rating && printStars(Number(beep.rider.rating))}
                   </Text>
+                  <Text size="xs">
+                    <Text color="subtle">
+                      Joined your queue at{" "}
+                    </Text>
+                    <Text color="subtle" weight="bold">
+                      {new Date(beep.start).toLocaleTimeString(undefined, {
+                        timeStyle: "short",
+                      })}
+                    </Text>
+                  </Text>
+                  {beep.status === 'waiting' && (
+                    <Text color="subtle" size="xs">
+                      Please accept or deny this rider.
+                    </Text>
+                  )}
                 </View>
-                <Avatar size="xs" src={beep.rider.photo ?? undefined} />
+                <Avatar size="md" src={beep.rider.photo ?? undefined} />
               </View>
             </Link.Trigger>
           </Link>
-          <View style={{ gap: 4 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ width: 90 }}>
+          <Separator />
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 16,
+              alignItems: 'center',
+            }}
+          >
+            <View style={{ flexGrow: 1 }}>
+              <Text weight="bold" >
                 Status
               </Text>
-              <Text
-                style={{
-                  textTransform: "capitalize",
-                  flexShrink: 1,
-                  textAlign: "right",
-                }}
-              >
-                {beep.status === "waiting"
-                  ? "Waiting for you to accept or deny"
-                  : beep.status}
-              </Text>
+              <View style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                <Text style={{ textTransform: "capitalize",  }}>
+                  {beep.status.replaceAll('_', ' ')}
+                </Text>
+                {beep.status === 'waiting' && <Indicator color="yellow" size={12} />}
+                {beep.status === 'accepted' && <Indicator color="green" size={12} />}
+              </View>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ width: 120 }}>
-                Group Size
-              </Text>
+            <Separator orientation="vertical" />
+            <View style={{ flexGrow: 1 }}>
+              <Text weight="bold">Group Size</Text>
               <Text>{beep.groupSize}</Text>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ width: 120 }}>
-                Pick Up
-              </Text>
-              <Text style={{ flexShrink: 1, textAlign: "right" }}>
-                {beep.origin}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ width: 120 }}>
-                Drop Off
-              </Text>
-              <Text style={{ flexShrink: 1, textAlign: "right" }}>
-                {beep.destination}
-              </Text>
-            </View>
-            {route && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text weight="bold" style={{ width: 120 }}>
-                  Beep Distance
-                </Text>
-                <Text style={{ flexShrink: 1, textAlign: "right" }}>
-                  {getMiles(route.distance, true)} miles (about a{" "}
-                  {Math.round(route.duration / 60)} min drive)
-                </Text>
-              </View>
+            {route && (route.duration / 60 < 60) && (
+              <>
+                <Separator orientation="vertical" />
+                <View>
+                  <Text weight="bold">
+                    Distance
+                  </Text>
+                  <Text >
+                    {getMiles(route.distance, true)} mi
+                    ({Math.round(route.duration / 60)} min)
+                  </Text>
+                </View>
+              </>
             )}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text weight="bold" style={{ width: 120 }}>
-                Joined Queue At
-              </Text>
-              <Text>
-                {new Date(beep.start).toLocaleTimeString(undefined, {
-                  timeStyle: "short",
-                })}
-              </Text>
-            </View>
           </View>
+          <Separator />
+          <View>
+            <Text weight="bold">Pick Up</Text>
+            <Text>{beep.origin}</Text>
+          </View>
+          <View>
+            <Text weight="bold">Drop Off</Text>
+            <Text>{beep.destination}</Text>
+          </View>
+
           {polylineCoordinates && origin && destination && (
             <Map
               ref={mapRef}
@@ -241,42 +216,69 @@ export function QueueItem({ item: beep }: Props) {
               />
             </Map>
           )}
-        </Card>
+          </Card>
       )}
       options={
-        beep.status === "waiting"
-          ? [
-              {
-                title: "Accept",
-                onClick: () =>
-                  mutate({ beepId: beep.id, data: { status: "accepted" } }),
-              },
-              {
-                title: "Deny",
-                destructive: true,
-                onClick: () =>
-                  mutate({ beepId: beep.id, data: { status: "denied" } }),
-              },
-            ]
-          : [
-              {
-                title: "Call",
-                onClick: () => call(beep.rider.id),
-              },
-              {
-                title: "Text",
-                onClick: () => sms(beep.rider.id),
-              },
+        [
+          ...(beep.status === 'waiting' ? [
+            {
+              title: "Accept",
+              sfIcon: "checkmark" as const,
+              onClick: () =>
+              mutate({ beepId: beep.id, data: { status: "accepted" } }),
+            },
+            {
+              title: "Deny",
+              sfIcon: "xmark" as const,
+              destructive: true,
+              onClick: () =>
+              mutate({ beepId: beep.id, data: { status: "denied" } }),
+            }
+          ] : []),
+          ...(beep.status === 'accepted' ? [
+            {
+              title: "Contact",
+              sfIcon: "phone.fill" as const,
+              options: [
+
+                {
+                  title: "Call",
+                  sfIcon: "phone.fill" as const,
+                  onClick: () => call(beep.rider.id),
+                },
+                {
+                  title: "Text",
+                  sfIcon: "message.fill" as const,
+                  onClick: () => sms(beep.rider.id),
+                },
+              ],
+            }] : []),
+          {
+            title: "Directions",
+            sfIcon: "map.fill",
+            options: [
               {
                 title: "Directions to Rider",
-                onClick: () => openDirections("Current+Location", beep.origin),
+                sfIcon: "figure.wave",
+                onClick: () =>
+                openDirections("Current+Location", beep.origin),
               },
               {
-                title: "Cancel Beep",
-                onClick: onPromptCancel,
-                destructive: true,
+                title: "Directions for Beep",
+                sfIcon: "map.fill",
+                onClick: () => openDirections(beep.origin, beep.destination),
               },
-            ]
+            ],
+          },
+          ...(beep.status === 'accepted' ? [
+            {
+              title: "Cancel Beep",
+              sfIcon: "xmark" as const,
+              onClick: onPromptCancel,
+              destructive: true,
+            },
+          ] : []),
+        ]
       }
     />
   );

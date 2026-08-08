@@ -24,6 +24,7 @@ export function Card(props: Props) {
       <PressableFeedback
         onPress={onPress}
         onLongPress={onLongPress}
+        accessibilityRole="button"
         className="w-full overflow-auto"
       >
         <HeroCard {...rest}>

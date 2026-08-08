@@ -3,10 +3,10 @@ import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { useProfileMenu } from "@/components/ProfileMenu";
+import { Button } from "@/components/Button";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isIOS } from "@/utils/constants";
 import { Stack, useRouter } from "expo-router";
-import { Button } from "heroui-native";
 
 export default function Layout() {
   const router = useRouter();
