@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { user } from "../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";
@@ -9,7 +9,7 @@ import {
 } from "../utils/notifications";
 import { TRPCError } from "@trpc/server";
 
-export const notificationRouter = router({
+export const notificationRouter = {
   sendNotification: adminProcedure
     .input(
       z.object({
@@ -18,7 +18,7 @@ export const notificationRouter = router({
         emailMatch: z.string().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const users = await db
         .select({ pushToken: user.pushToken })
         .from(user)
@@ -45,7 +45,7 @@ export const notificationRouter = router({
         userId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { id: input.userId },
       });
@@ -71,4 +71,4 @@ export const notificationRouter = router({
         body: input.body,
       });
     }),
-});
+};

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, eq } from "drizzle-orm";
 import { feedback } from "../../drizzle/schema";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
-export const feedbackRouter = router({
+export const feedbackRouter = {
   feedback: adminProcedure
     .input(
       z.object({
@@ -13,7 +13,7 @@ export const feedbackRouter = router({
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const [feedbacks, countData] = await Promise.all([
         db.query.feedback.findMany({
           orderBy: { created: "desc" },
@@ -49,12 +49,12 @@ export const feedbackRouter = router({
         message: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .handler(async ({ context, input }) => {
       const f = await db
         .insert(feedback)
         .values({
           id: crypto.randomUUID(),
-          user_id: ctx.user.id,
+          user_id: context.user.id,
           message: input.message,
           created: new Date(),
         })
@@ -64,7 +64,7 @@ export const feedbackRouter = router({
     }),
   deleteFeedback: adminProcedure
     .input(z.string())
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       await db.delete(feedback).where(eq(feedback.id, input));
     }),
-});
+};

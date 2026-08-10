@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
+import { authedProcedure } from "../utils/trpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { route } from "@banksnussman/osrm";
 import { TRPCError } from "@trpc/server";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
 import { geocoding } from "@banksnussman/photon";
 
-export const locationRouter = router({
+export const locationRouter = {
   getETA: authedProcedure
     .input(
       z.object({
@@ -14,7 +14,7 @@ export const locationRouter = router({
         end: z.string(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const { data, error } = await route({
           baseUrl: OSRM_BASE_URL,
           path: {
@@ -62,15 +62,15 @@ export const locationRouter = router({
           .nullable(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const [originCoordinates, destinationCoordinates] = await Promise.all([
         getCoordinatesFromAddress(
           input.origin,
-          input.bias ?? ctx.user.location,
+          input.bias ?? context.user.location,
         ),
         getCoordinatesFromAddress(
           input.destination,
-          input.bias ?? ctx.user.location,
+          input.bias ?? context.user.location,
         ),
       ]);
 
@@ -120,8 +120,8 @@ export const locationRouter = router({
           .optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
-      const bias = input.location ?? ctx.user.location;
+    .handler(async ({ input, context }) => {
+      const bias = input.location ?? context.user.location;
 
       const { data, error } = await geocoding({
         baseUrl: PHOTON_BASE_URL,
@@ -138,4 +138,4 @@ export const locationRouter = router({
 
       return data.features;
     }),
-});
+};
