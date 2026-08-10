@@ -22,6 +22,20 @@ jobs:
           cache: pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm --filter @beep/api typecheck
+  orpc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.10.0
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: latest
+          cache: pnpm
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm --filter @beep/orpc typecheck
   website:
     runs-on: ubuntu-latest
     steps:
