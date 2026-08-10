@@ -8,7 +8,7 @@ RUN bun install --production
 
 COPY / .
 
-EXPOSE 3000
+EXPOSE 3001
 
 ENV NODE_ENV=production
 
