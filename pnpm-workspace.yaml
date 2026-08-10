@@ -2,6 +2,7 @@ packages:
   - "app"
   - "website"
   - "api"
+  - "orpc"
   - "test"
   - "deploy"
 allowBuilds:

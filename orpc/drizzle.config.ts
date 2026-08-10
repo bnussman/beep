@@ -1,0 +1,17 @@
+import { DB_URL } from "./src/utils/constants";
+import { defineConfig } from "drizzle-kit";
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+export default defineConfig({
+  schema: "drizzle/schema.ts",
+  dialect: "postgresql",
+  extensionsFilters: ["postgis"],
+  dbCredentials: {
+    url: DB_URL + "?sslmode=require",
+  },
+  schemaFilter: ["public"],
+  tablesFilter: ["!geography_columns", "!geometry_columns", "!spatial_ref_sys"],
+  verbose: true,
+  strict: true,
+});
