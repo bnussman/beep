@@ -2,9 +2,9 @@ import { z } from "zod";
 import { authedProcedure } from "../utils/trpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { route } from "@banksnussman/osrm";
-import { TRPCError } from "@trpc/server";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
 import { geocoding } from "@banksnussman/photon";
+import { ORPCError } from "@orpc/server";
 
 export const locationRouter = {
   getETA: authedProcedure
@@ -26,8 +26,7 @@ export const locationRouter = {
       );
 
       if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
           message: `${error.code} ${error.message}`,
           cause: error,
         });
@@ -36,8 +35,7 @@ export const locationRouter = {
       const routeData = data.routes[0];
 
       if (!routeData) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
           message: "Unabe to find a route.",
         });
       }
@@ -99,8 +97,7 @@ export const locationRouter = {
       });
 
       if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
           message: `${error.code} ${error.message}`,
           cause: error,
         });

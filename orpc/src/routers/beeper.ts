@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { queueResponseSchema } from "../schemas/beep";
 import { z } from "zod";
 import { authedProcedure } from "../utils/trpc";
@@ -15,7 +14,7 @@ import {
   sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
 import { updateLiveActivity } from "../utils/live-activities";
-import { asyncIteratorObject } from "@orpc/server";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
 
 export const beeperRouter = {
   queue: authedProcedure
@@ -23,8 +22,7 @@ export const beeperRouter = {
     .input(z.string().optional())
     .handler(async ({ input, context }) => {
       if (input && input !== context.user.id && context.user.role !== "admin") {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You must be an admin to view other user's queue.",
         });
       }
@@ -38,8 +36,7 @@ export const beeperRouter = {
       const id = input ?? context.user.id;
 
       if (context.user.role === "user" && input && input !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message:
             "You do not have permission to subscribe to another user's queue",
         });
@@ -81,8 +78,7 @@ export const beeperRouter = {
       const queueEntry = queue.find((entry) => entry.id === input.beepId);
 
       if (!queueEntry) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Can't find that beep.",
         });
       }
@@ -97,8 +93,7 @@ export const beeperRouter = {
             entry.start < queueEntry.start && entry.status === "waiting",
         ).length !== 0
       ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "You must respond to the rider who first joined your queue.",
         });
       }

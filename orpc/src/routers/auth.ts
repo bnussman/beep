@@ -1,23 +1,18 @@
+import * as Sentry from "@sentry/bun";
 import { authedProcedure, o } from "../utils/trpc";
 import { z } from "zod";
 import { db } from "../utils/db";
-import {
-  forgot_password,
-  token,
-  user,
-  verify_email,
-} from "../../drizzle/schema";
+import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
 import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
-import * as Sentry from "@sentry/bun";
 import { pubSub } from "../utils/pubsub";
 import { authSchema } from "../schemas/auth";
 import { signupSchema, userSchema } from "../schemas/user";
+import { ORPCError } from "@orpc/server";
 
 export const authRouter = {
   login: o
@@ -45,8 +40,7 @@ export const authRouter = {
       });
 
       if (!u) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User does not exist or credentials are incorrect.",
         });
       }
@@ -68,15 +62,13 @@ export const authRouter = {
           );
           break;
         default:
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
+          throw new ORPCError("INTERNAL_SERVER_ERROR", {
             message: `Unknown password type ${u.passwordType}`,
           });
       }
 
       if (!isPasswordCorrect) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User does not exist or credentials are incorrect.",
         });
       }
@@ -113,8 +105,7 @@ export const authRouter = {
       });
 
       if (existing) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           cause: new z.ZodRealError([
             {
               code: "invalid_value",
@@ -287,8 +278,7 @@ export const authRouter = {
       });
 
       if (!forgotPassword) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Password reset request not found.",
         });
       }
@@ -298,8 +288,7 @@ export const authRouter = {
           .delete(forgot_password)
           .where(eq(forgot_password.id, forgotPassword.id));
 
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "This password reset request has expired.",
         });
       }
@@ -336,8 +325,7 @@ export const authRouter = {
       });
 
       if (!verifyAccountEntry) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Unable to find that email verification entry.",
         });
       }
@@ -347,8 +335,7 @@ export const authRouter = {
           .delete(verify_email)
           .where(eq(verify_email.id, verifyAccountEntry.id));
 
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message:
             "Your account verification link has expired. Login to your account to request another link.",
         });
@@ -359,8 +346,7 @@ export const authRouter = {
           .delete(verify_email)
           .where(eq(verify_email.id, verifyAccountEntry.id));
 
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You tried to verify your email, but your email has changed. Login to request a new verification link.",
         });

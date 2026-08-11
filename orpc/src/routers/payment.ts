@@ -2,8 +2,8 @@ import { z } from "zod";
 import { authedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { ORPCError } from "@orpc/server";
 
 export const paymentRouter = {
   payments: authedProcedure
@@ -19,8 +19,7 @@ export const paymentRouter = {
       const userId = input.userId ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You must be an admin to get purchases for other users",
         });
       }

@@ -7,7 +7,7 @@ import {
   sendNotification,
   sendNotificationsBatch,
 } from "../utils/notifications";
-import { TRPCError } from "@trpc/server";
+import { ORPCError } from "@orpc/server";
 
 export const notificationRouter = {
   sendNotification: adminProcedure
@@ -51,15 +51,13 @@ export const notificationRouter = {
       });
 
       if (!u) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User not found.",
         });
       }
 
       if (!u.pushToken) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "User does not have a push token. Can't send them a notification.",
         });

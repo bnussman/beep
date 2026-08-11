@@ -3,11 +3,11 @@ import { adminProcedure, authedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, eq } from "drizzle-orm";
 import { rating, user } from "../../drizzle/schema";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { getUsersAverageRating } from "../logic/rating";
+import { ORPCError } from "@orpc/server";
 
 export const ratingRouter = {
   ratings: authedProcedure
@@ -95,7 +95,7 @@ export const ratingRouter = {
     });
 
     if (!r) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return r;
@@ -112,15 +112,13 @@ export const ratingRouter = {
       });
 
       if (!r) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Rating not found",
         });
       }
 
       if (context.user.role === "user" && r.rater_id !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You can't delete a rating that you didn't create.",
         });
       }
@@ -149,8 +147,7 @@ export const ratingRouter = {
       });
 
       if (!u) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User not found",
         });
       }
@@ -160,23 +157,20 @@ export const ratingRouter = {
       });
 
       if (!b) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beep not found",
         });
       }
 
       if (![b.rider_id, b.beeper_id].includes(context.user.id)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You must be the rider or beeper of this beep to leave a rating about it.",
         });
       }
 
       if (b.status !== "complete") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `You can only leave a rating once the beep is complete. That this beep has a status of ${b.status}`,
         });
       }

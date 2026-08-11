@@ -7,7 +7,6 @@ import {
 import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
 import { beep, beepStatuses, user } from "../../drizzle/schema";
-import { TRPCError } from "@trpc/server";
 import {
   PushNotification,
   sendNotification,
@@ -24,6 +23,7 @@ import {
 } from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { updateLiveActivity } from "../utils/live-activities";
+import { ORPCError } from "@orpc/server";
 
 export const beepRouter = {
   beeps: authedProcedure
@@ -39,8 +39,7 @@ export const beepRouter = {
     )
     .handler(async ({ input, context }) => {
       if (context.user.role !== "admin" && input.userId !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You cannot view beeps for other users.",
         });
       }
@@ -131,8 +130,7 @@ export const beepRouter = {
     });
 
     if (!b) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
+      throw new ORPCError("NOT_FOUND", {
         message: "Beep not found",
       });
     }
@@ -141,8 +139,7 @@ export const beepRouter = {
       context.user.role === "user" &&
       ![b.beeper_id, b.rider_id].includes(context.user.id)
     ) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
+      throw new ORPCError("FORBIDDEN", {
         message: "You can't view a beep that you are not involved in.",
       });
     }
@@ -171,19 +168,17 @@ export const beepRouter = {
       });
 
       if (!b) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found" });
+        throw new ORPCError("NOT_FOUND", { message: "Beep not found" });
       }
 
       if (b.rider_id !== context.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+        throw new ORPCError("FORBIDDEN", {
           message: "You can't edit a beep that you are not involved in.",
         });
       }
 
       if (!getIsInProgressBeep(b)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `You can't edit beep with status ${beep.status}.`,
         });
       }
@@ -249,15 +244,13 @@ export const beepRouter = {
       });
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User not found.",
         });
       }
 
       if (beeper?.beeps.length === 0) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "User's queue is already empty.",
         });
       }

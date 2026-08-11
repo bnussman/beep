@@ -2,7 +2,6 @@ import { z } from "zod";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
 import { and, count, eq, ne } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
 import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
@@ -13,6 +12,7 @@ import {
   o,
   verifiedProcedure,
 } from "../utils/trpc";
+import { ORPCError } from "@orpc/server";
 
 export const carRouter = {
   cars: authedProcedure
@@ -69,8 +69,7 @@ export const carRouter = {
     )
     .handler(async ({ input, context }) => {
       if (context.user.role !== "admin" && input.reason) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST",  {
           message: "Only admins can specify a reason.",
         });
       }
@@ -83,22 +82,19 @@ export const carRouter = {
       });
 
       if (!c) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Car not found",
         });
       }
 
       if (c.default && c.user.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "Default car can not be deleted while beeping.",
         });
       }
 
       if (c.user_id !== context.user.id && context.user.role !== "admin") {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You don't have permission to delete another user's car.",
         });
       }
@@ -130,8 +126,7 @@ export const carRouter = {
       const validModels = getModels(input.make as string) as string[];
 
       if (!validModels.includes(input.model)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `The selected model (${input.model}) is not valid for the selected make (${input.make}).`,
         });
       }

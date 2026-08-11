@@ -2,7 +2,6 @@ import { z } from "zod";
 import { db } from "../utils/db";
 import { beep, payment, user } from "../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
@@ -23,7 +22,7 @@ import {
 } from "../logic/beep";
 import { rideResponseSchema } from "../schemas/beep";
 import { updateLiveActivity } from "../utils/live-activities";
-import { asyncIteratorObject } from "@orpc/server";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
 
 export const riderRouter = {
   beepers: verifiedProcedure
@@ -37,8 +36,7 @@ export const riderRouter = {
     )
     .handler(async ({ input, context }) => {
       if (context.user.role === "user" && input === undefined) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You must pass location infromation to get beepers. Only admins can pass no location.",
         });
@@ -112,8 +110,7 @@ export const riderRouter = {
       pubSub.publish("user", context.user.id, { user: { ...context.user, location } });
 
       if (context.user.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "You can't get a beep when you are beeping",
         });
       }
@@ -125,22 +122,19 @@ export const riderRouter = {
       const queue = await getBeeperQueue(input.beeperId);
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beeper not found",
         });
       }
 
       if (!beeper.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "That user is not beeping. Maybe they stopped beeping.",
         });
       }
 
       if (queue.some((beep) => beep.rider_id === context.user.id)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "You are already in that beeper's queue.",
         });
       }
@@ -166,8 +160,7 @@ export const riderRouter = {
       });
 
       if (currentRide) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You are already in an active beep. You can't start another beep until your current one is done.",
         });
@@ -217,8 +210,7 @@ export const riderRouter = {
       const userId = input ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+        throw new ORPCError("FORBIDDEN", {
           message:
             "You must be an admin to view the current ride of another user",
         });
@@ -235,8 +227,7 @@ export const riderRouter = {
       const userId = input ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+        throw new ORPCError("FORBIDDEN", {
           message:
             "You must be an admin to view the current ride of another user",
         });
@@ -269,8 +260,7 @@ export const riderRouter = {
       const userId = input ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+        throw new ORPCError("FORBIDDEN", {
           message:
             "You must be an admin to view the current ride of another user",
         });
@@ -304,7 +294,7 @@ export const riderRouter = {
       });
 
       if (!beeper) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       if (beeper.location) {
@@ -369,7 +359,7 @@ export const riderRouter = {
     )
     .handler(async function* ({ input, context, signal }) {
       if (input.admin && context.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+        throw new ORPCError("UNAUTHORIZED");
       }
 
       const eventSource = pubSub.subscribe("locations");
@@ -411,8 +401,7 @@ export const riderRouter = {
       });
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beeper not found.",
         });
       }
@@ -420,8 +409,7 @@ export const riderRouter = {
       let queue = await getBeeperQueue(input.beeperId);
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beeper not found.",
         });
       }
@@ -429,8 +417,7 @@ export const riderRouter = {
       const entry = queue.find((beep) => beep.rider.id === context.user.id);
 
       if (!entry) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "You are not in that beepers queue.",
         });
       }
@@ -545,12 +532,11 @@ export const riderRouter = {
       });
 
       if (!b) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found." });
+        throw new ORPCError("NOT_FOUND", { message: "Beep not found." });
       }
 
       if (context.user.id !== b.rider_id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+        throw new ORPCError("FORBIDDEN", {
           message:
             "You must be the rider of the beep to set the rider live activity token",
         });
@@ -576,12 +562,11 @@ export const riderRouter = {
       });
 
       if (!b) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found." });
+        throw new ORPCError("NOT_FOUND", { message: "Beep not found." });
       }
 
       if (b.rider_id !== context.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+        throw new ORPCError("FORBIDDEN", {
           message:
             "You must be the rider of the beep to set the rider live activity token",
         });

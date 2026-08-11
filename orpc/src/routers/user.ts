@@ -3,7 +3,6 @@ import { beep, user, verify_email } from "../../drizzle/schema";
 import { db, writeDB } from "../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
 import { syncUserPayments } from "../utils/payments";
 import { SendMailOptions } from "nodemailer";
@@ -35,8 +34,7 @@ export const userRouter = {
     .output(asyncIteratorObject(userSchema))
     .handler(async function* ({ context, input, signal }) {
       if (context.user.role === "user" && input && input !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError( "UNAUTHORIZED", {
           message:
             "You don't have permission to subscrbe to another user's user updates.",
         });
@@ -106,8 +104,7 @@ export const userRouter = {
         );
 
         if (countOfInProgressBeeps > 0) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
+          throw new ORPCError("BAD_REQUEST", {
             message:
               "You can't stop beeping when you have riders in your queue",
           });
@@ -151,8 +148,7 @@ export const userRouter = {
 
       if (input.isBeeping) {
         if (!context.user.isEmailVerified) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
+          throw new ORPCError("UNAUTHORIZED", {
             message: "You must confirm your email to beep.",
           });
         }
@@ -161,8 +157,7 @@ export const userRouter = {
           where: { user_id: context.user.id, default: true },
         });
         if (!c) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
+          throw new ORPCError("BAD_REQUEST", {
             message: "You must have a default car to beep.",
           });
         }
@@ -229,7 +224,7 @@ export const userRouter = {
       });
 
       if (!existingUser) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       if (
@@ -281,8 +276,7 @@ export const userRouter = {
       const userId = input?.userId ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You must be an admin to sync purchases for other users.",
         });
       }
@@ -295,8 +289,7 @@ export const userRouter = {
       const userId = input?.userId ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+        throw new ORPCError("UNAUTHORIZED", {
           message:
             "You must be an admin to get active payments for other users.",
         });
@@ -429,7 +422,7 @@ export const userRouter = {
     });
 
     if (!u) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return u;
@@ -446,7 +439,7 @@ export const userRouter = {
       });
 
       if (!u) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       return u;
@@ -462,7 +455,7 @@ export const userRouter = {
     });
 
     if (!u) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return u;
@@ -551,8 +544,7 @@ export const userRouter = {
   }),
   deleteMyAccount: authedProcedure.handler(async ({ context }) => {
     if (context.user.role === "admin") {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
+      throw new ORPCError("BAD_REQUEST", {
         message: "Admins can't delete their own accounts.",
       });
     }
@@ -571,7 +563,7 @@ export const userRouter = {
       });
 
       if (!c) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       return c;
@@ -585,12 +577,11 @@ export const userRouter = {
       });
 
       if (!user) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       if (user.role !== "admin") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "Can only send test emails to admins.",
         });
       }

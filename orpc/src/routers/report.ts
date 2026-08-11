@@ -3,8 +3,8 @@ import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { adminProcedure, authedProcedure } from "../utils/trpc";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { ORPCError } from "@orpc/server";
 
 export const reportRouter = {
   reports: adminProcedure
@@ -108,7 +108,7 @@ export const reportRouter = {
     });
 
     if (!r) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return r;
