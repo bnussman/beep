@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { orpc } from "../utils/orpc";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -31,7 +32,7 @@ function Login() {
   });
 
   const { mutate: login } = useMutation(
-    trpc.auth.login.mutationOptions({
+    orpc.auth.login.mutationOptions({
       onError(error) {
         form.setError("root", { message: error.message });
       },

@@ -18,6 +18,7 @@ import { flagsRouter } from "./routers/flags";
 import { RPCHandler } from "@orpc/server/fetch";
 import { CORSPlugin } from "@orpc/server/plugins";
 import { onError } from "@orpc/server";
+import { RouterClient } from '@orpc/server'
 
 const appRouter = {
   user: userRouter,
@@ -38,6 +39,7 @@ const appRouter = {
 };
 
 export type AppRouter = typeof appRouter;
+export type AppRouterClient = RouterClient<AppRouter>;
 
 const handler = new RPCHandler(appRouter, {
   plugins: [
