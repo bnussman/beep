@@ -250,7 +250,7 @@ const orpcDeployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: orpcAppName,
-              image: apiImageResource.repoDigest,
+              image: orpcImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3001 }],
               envFrom: [{ secretRef: { name: apiAppName } }],
