@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
+import { beepStatusMap } from "../../../utils/utils";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import { Indicator } from "../../../components/Indicator";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { RouterOutput, useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
@@ -23,7 +24,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { beepStatusMap } from "../../../utils/utils";
 
 export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
@@ -35,7 +35,6 @@ export const Route = createFileRoute("/admin/beeps/")({
 });
 
 function Beeps() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
@@ -43,16 +42,12 @@ function Beeps() {
   const [selectedBeepId, setSelectedBeepId] = useState<string | null>(null);
 
   const { data, isLoading, error } = useQuery(
-    trpc.beep.beeps.queryOptions(
-      {
-        page,
-      },
-      {
-        refetchInterval: 5_000,
-        refetchOnMount: true,
-        placeholderData: keepPreviousData,
-      },
-    ),
+    orpc.beep.beeps.queryOptions({
+      input: { page },
+      refetchInterval: 5_000,
+      refetchOnMount: true,
+      placeholderData: keepPreviousData,
+    }),
   );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
@@ -113,16 +108,16 @@ function Beeps() {
                   </Stack>
                 </TableCell>
                 <TableCell>
-                  {DateTime.fromISO(beep.start).toRelative()}
+                  {DateTime.fromJSDate(beep.start).toRelative()}
                 </TableCell>
                 <TableCell>
-                  {beep.end ? DateTime.fromISO(beep.end).toRelative() : "N/A"}
+                  {beep.end ? DateTime.fromJSDate(beep.end).toRelative() : "N/A"}
                 </TableCell>
                 <TableCell>
                   {beep.end
                     ? Interval.fromDateTimes(
-                        DateTime.fromISO(beep.start),
-                        DateTime.fromISO(beep.end),
+                        DateTime.fromJSDate(beep.start),
+                        DateTime.fromJSDate(beep.end),
                       )
                         .toDuration()
                         .rescale()

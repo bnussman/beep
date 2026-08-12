@@ -1,8 +1,8 @@
 import React from "react";
+import { orpc } from "../../../utils/orpc";
 import { Indicator } from "../../../components/Indicator";
 import { beepStatusMap } from "../../../utils/utils";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
@@ -35,23 +35,20 @@ export const Route = createFileRoute("/admin/beeps/active")({
 });
 
 function ActiveBeeps() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
   const [parent] = useAutoAnimate();
 
   const { data, isLoading, error } = useQuery(
-    trpc.beep.beeps.queryOptions(
-      {
+    orpc.beep.beeps.queryOptions({
+      input: {
         page,
         inProgress: true,
       },
-      {
-        refetchOnMount: true,
-        refetchInterval: 3_000,
-      },
-    ),
+      refetchOnMount: true,
+      refetchInterval: 3_000,
+    }),
   );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
@@ -110,7 +107,7 @@ function ActiveBeeps() {
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>
                 <TableCell>
-                  {DateTime.fromISO(beep.start).toRelative()}
+                  {DateTime.fromJSDate(beep.start).toRelative()}
                 </TableCell>
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={1}>

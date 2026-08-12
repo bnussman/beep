@@ -1,11 +1,11 @@
 import React from "react";
+import { RouterInputs } from "../../../orpc/src";
 import { orpc } from "../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { RouterInput } from "../utils/trpc";
 import { useNotifications } from "@toolpad/core";
 import {
   Alert,
@@ -20,7 +20,7 @@ import {
   LinearProgress,
 } from "@mui/material";
 
-type Values = RouterInput["user"]["edit"];
+type Values = RouterInputs["user"]["edit"];
 
 export const Route = createFileRoute('/profile/edit')({
   component: EditProfile,

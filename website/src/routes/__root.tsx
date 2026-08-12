@@ -3,13 +3,13 @@ import createCache from "@emotion/cache";
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
+import { queryClient } from "../utils/tanstack-query";
 import { Container, ThemeProvider, CssBaseline } from "@mui/material";
 import { Header } from "../components/Header";
 import { Banners } from "../components/Banners";
 import { CacheProvider } from "@emotion/react";
 import { theme } from "../utils/theme";
 import { NotificationsProvider } from "@toolpad/core";
-import { queryClient, trpcClient, TRPCProvider } from "../utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
   HeadContent,
@@ -64,12 +64,10 @@ function Providers({ children }: { children: React.ReactNode }) {
         <NotificationsProvider
           slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
         >
-          <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-            <QueryClientProvider client={queryClient}>
-              <CssBaseline enableColorScheme />
-              {children}
-            </QueryClientProvider>
-          </TRPCProvider>
+          <QueryClientProvider client={queryClient}>
+            <CssBaseline enableColorScheme />
+            {children}
+          </QueryClientProvider>
         </NotificationsProvider>
       </ThemeProvider>
     </CacheProvider>

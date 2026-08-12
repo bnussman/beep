@@ -1,4 +1,4 @@
-import { RouterOutput } from "./trpc";
+import { RouterOutputs } from "../../../orpc/src";
 
 /**
  * Determine the mobile operating system.
@@ -86,7 +86,7 @@ export function getMiles(meters: number, round = false) {
 }
 
 export const beepStatusMap: Record<
-  RouterOutput["beep"]["beep"]["status"],
+  RouterOutputs["beep"]["beep"]["status"],
   string
 > = {
   waiting: "orange",

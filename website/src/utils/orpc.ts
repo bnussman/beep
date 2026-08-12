@@ -1,11 +1,29 @@
+import * as Sentry from "@sentry/react";
 import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
-import { getAuthToken } from './trpc'
-import { AppRouterClient } from '../../../orpc/src'
+import { AppRouterClient, RouterOutputs } from '../../../orpc/src'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 
+export function getAuthToken() {
+  const stored = localStorage.getItem("user");
+  if (stored) {
+    try {
+      const auth = JSON.parse(stored) as RouterOutputs["auth"]["login"];
+      return auth.tokens.id;
+    } catch (error) {
+      Sentry.captureException(error);
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
+const origin = import.meta.env.VITE_API_ROOT
+  ? `https://${import.meta.env.VITE_API_ROOT}`
+  : "http://localhost:3001";
+
 const link = new RPCLink({
-  origin: 'http://localhost:3001',
+  origin,
   url: '/',
   headers: () => {
     const token = getAuthToken();

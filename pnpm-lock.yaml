@@ -392,12 +392,6 @@ importers:
       '@toolpad/core':
         specifier: ^0.16.0
         version: 0.16.0(ef54d8a3c2f45d5ad7f53e48a308f48c)
-      '@trpc/client':
-        specifier: ^11.16.0
-        version: 11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/tanstack-react-query':
-        specifier: ^11.16.0
-        version: 11.16.0(@tanstack/react-query@5.96.2(react@19.2.0))(@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.16.0(typescript@6.0.3))(react@19.2.0)(typescript@6.0.3)
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
@@ -420,9 +414,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.96.2
         version: 5.96.2(@tanstack/react-query@5.96.2(react@19.2.0))(react@19.2.0)
-      '@trpc/server':
-        specifier: ^11.16.0
-        version: 11.16.0(typescript@6.0.3)
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.1
@@ -9936,14 +9927,6 @@ snapshots:
 
   '@trpc/server@11.16.0(typescript@6.0.3)':
     dependencies:
-      typescript: 6.0.3
-
-  '@trpc/tanstack-react-query@11.16.0(@tanstack/react-query@5.96.2(react@19.2.0))(@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.16.0(typescript@6.0.3))(react@19.2.0)(typescript@6.0.3)':
-    dependencies:
-      '@tanstack/react-query': 5.96.2(react@19.2.0)
-      '@trpc/client': 11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/server': 11.16.0(typescript@6.0.3)
-      react: 19.2.0
       typescript: 6.0.3
 
   '@trpc/tanstack-react-query@11.16.0(@tanstack/react-query@5.96.2(react@19.2.3))(@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.16.0(typescript@6.0.3))(react@19.2.3)(typescript@6.0.3)':

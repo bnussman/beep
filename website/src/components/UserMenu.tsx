@@ -1,17 +1,22 @@
 import React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { queryClient } from "../utils/trpc";
 import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
+import { queryClient } from "../utils/tanstack-query";
 
 export function UserMenu() {
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -23,27 +28,19 @@ export function UserMenu() {
     }),
   );
 
-  const { mutateAsync: logout } = useMutation(
-    orpc.auth.logout.mutationOptions(),
+  const { mutate: logout } = useMutation(
+    orpc.auth.logout.mutationOptions({
+      onSuccess() {
+        localStorage.removeItem("user");
+
+        queryClient.resetQueries();
+
+        handleClose();
+
+        navigate({ to: "/" });
+      }
+    }),
   );
-
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout({});
-
-      localStorage.removeItem("user");
-
-      queryClient.resetQueries();
-
-      handleClose();
-
-      navigate({ to: "/" });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <div>
@@ -81,7 +78,7 @@ export function UserMenu() {
         </MenuItem>
         <Divider />
         <MenuItem
-          onClick={handleLogout}
+          onClick={() => logout({})}
           sx={(theme) => ({ color: theme.palette.error.light })}
         >
           Sign out

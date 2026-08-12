@@ -1,10 +1,10 @@
 import React from "react";
+import { RouterInputs } from "../../../orpc/src";
 import { Controller, useForm } from "react-hook-form";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { RouterInput } from "../utils/trpc";
 import {
   Alert,
   Button,
@@ -23,7 +23,7 @@ function Login() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const form = useForm<RouterInput["auth"]["login"]>({
+  const form = useForm<RouterInputs["auth"]["login"]>({
     defaultValues: {
       username: "",
       password: "",
