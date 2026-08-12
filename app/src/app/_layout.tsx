@@ -44,6 +44,15 @@ function App() {
 
   useAutoUpdate();
 
+  useSubscription(
+    trpc.user.updates.subscriptionOptions(undefined, {
+      enabled: user !== undefined,
+      onData(user) {
+        queryClient.setQueryData(trpc.user.me.queryKey(), user);
+      },
+    }),
+  );
+
   useEffect(() => {
     Sentry.setUser(user ?? null);
     setPurchaseUser(user ?? null);
