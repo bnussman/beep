@@ -104,12 +104,6 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.96.2
         version: 5.96.2(react@19.2.3)
-      '@trpc/client':
-        specifier: ^11.16.0
-        version: 11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/tanstack-react-query':
-        specifier: ^11.16.0
-        version: 11.16.0(@tanstack/react-query@5.96.2(react@19.2.3))(@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.16.0(typescript@6.0.3))(react@19.2.3)(typescript@6.0.3)
       expo:
         specifier: ~57.0.8
         version: 57.0.8(@babel/core@7.29.0)(@expo/dom-webview@57.0.1)(@expo/metro-runtime@57.0.7)(expo-router@57.0.8)(expo-widgets@57.0.6)(react-dom@19.2.3(react@19.2.3))(react-native-web@0.21.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native-worklets@0.10.0(@babel/core@7.29.0)(@react-native/metro-config@0.86.0(@babel/core@7.29.0))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.86.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3))(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.86.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
@@ -237,9 +231,6 @@ importers:
       '@sentry/cli':
         specifier: 3.1.0
         version: 3.1.0
-      '@trpc/server':
-        specifier: ^11.16.0
-        version: 11.16.0(typescript@6.0.3)
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.1
@@ -3123,27 +3114,10 @@ packages:
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
 
-  '@trpc/client@11.16.0':
-    resolution: {integrity: sha512-TxIzm7OoK3baKZ0XCbuMUbI3GhgjcbKHIc4nWVKaRpCRnbSh0T31BT6fTPYwtnA/Nur8pBCGqC2B4J5hEPiPFQ==}
-    hasBin: true
-    peerDependencies:
-      '@trpc/server': 11.16.0
-      typescript: '>=5.7.2'
-
   '@trpc/server@11.16.0':
     resolution: {integrity: sha512-XgGuUMddrUTd04+za/WE5GFuZ1/YU9XQG0t3VL5WOIu2JspkOlq6k4RYEiqS6HSJt+S0RXaPdIoE2anIP/BBRQ==}
     hasBin: true
     peerDependencies:
-      typescript: '>=5.7.2'
-
-  '@trpc/tanstack-react-query@11.16.0':
-    resolution: {integrity: sha512-kfNYJ5NCk67tmRCO/QWCycJmRamuEKmZf1HRG8yCBl8aTJdTwVq7l6AffFIMab3Q+NmQzwP8XXkAEK/EelKYOA==}
-    hasBin: true
-    peerDependencies:
-      '@tanstack/react-query': ^5.80.3
-      '@trpc/client': 11.16.0
-      '@trpc/server': 11.16.0
-      react: '>=18.2.0'
       typescript: '>=5.7.2'
 
   '@tufjs/canonical-json@2.0.0':
@@ -9926,21 +9900,8 @@ snapshots:
       yaml: 2.5.1
       yaml-diff-patch: 2.0.0
 
-  '@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3)':
-    dependencies:
-      '@trpc/server': 11.16.0(typescript@6.0.3)
-      typescript: 6.0.3
-
   '@trpc/server@11.16.0(typescript@6.0.3)':
     dependencies:
-      typescript: 6.0.3
-
-  '@trpc/tanstack-react-query@11.16.0(@tanstack/react-query@5.96.2(react@19.2.3))(@trpc/client@11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3))(@trpc/server@11.16.0(typescript@6.0.3))(react@19.2.3)(typescript@6.0.3)':
-    dependencies:
-      '@tanstack/react-query': 5.96.2(react@19.2.3)
-      '@trpc/client': 11.16.0(@trpc/server@11.16.0(typescript@6.0.3))(typescript@6.0.3)
-      '@trpc/server': 11.16.0(typescript@6.0.3)
-      react: 19.2.3
       typescript: 6.0.3
 
   '@tufjs/canonical-json@2.0.0': {}
