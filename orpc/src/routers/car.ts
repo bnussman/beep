@@ -117,7 +117,7 @@ export const carRouter = {
       z.object({
         make: z.enum(getMakes()),
         model: z.string(),
-        year: z.string(),
+        year: z.number(),
         color: z.enum(CAR_COLOR_OPTIONS),
         photo: z.instanceof(File),
       })
@@ -147,7 +147,7 @@ export const carRouter = {
       const newCar = {
         id: carId,
         ...input,
-        year: Number(input.year),
+        year: input.year,
         user_id: context.user.id,
         photo: S3_BUCKET_URL + objectKey,
         default: true,
