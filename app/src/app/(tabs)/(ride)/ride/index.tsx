@@ -36,22 +36,20 @@ export default function MainFindBeepScreen() {
   );
 
   useEffect(() => {
-    if (data) {
-      if (data === null) {
-        queryClient.invalidateQueries(
-          orpc.rider.getLastBeepToRate.queryOptions(),
-        );
-      }
-      queryClient.setQueryData(orpc.rider.currentRide.queryKey(), (prev) => {
-        if (data === null) {
-          return null;
-        }
-        if (!prev) {
-          return data as typeof beep;
-        }
-        return { ...prev, ...data };
-      });
+    if (data === null) {
+      queryClient.invalidateQueries(
+        orpc.rider.getLastBeepToRate.queryOptions(),
+      );
     }
+    queryClient.setQueryData(orpc.rider.currentRide.queryKey(), (prev) => {
+      if (data === null) {
+        return null;
+      }
+      if (!prev) {
+        return data as typeof beep;
+      }
+      return { ...prev, ...data };
+    });
   }, [data]);
 
   const { data: beepersLocation } = useQuery(
