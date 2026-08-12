@@ -40,7 +40,7 @@ function getLocalIP() {
 
 const ip = getLocalIP();
 
-const url = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
+const origin = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
 
 const link = new RPCLink({
   origin,
