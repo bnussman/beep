@@ -1,5 +1,6 @@
 import React from "react";
-import { useTRPC } from "../utils/trpc";
+import { orpc } from "../utils/orpc";
+import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
@@ -11,8 +12,6 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -21,27 +20,27 @@ interface Props {
 }
 
 export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const {
-    mutateAsync: deleteReport,
+    mutate,
     isPending,
     error,
-  } = useMutation(trpc.report.deleteReport.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.report.reports.pathFilter());
-    },
-  }));
+  } = useMutation(
+    orpc.report.deleteReport.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: orpc.report.reports.key()
+        });
 
-  const onDelete = async () => {
-    await deleteReport(id);
-    onClose();
+        onClose();
 
-    if (onSuccess) {
-      onSuccess();
-    }
-  };
+        if (onSuccess) {
+          onSuccess();
+        }
+      },
+    })
+  );
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
@@ -54,7 +53,7 @@ export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button loading={isPending} onClick={onDelete} color="error">
+        <Button loading={isPending} onClick={() => mutate(id)} color="error">
           Delete
         </Button>
       </DialogActions>

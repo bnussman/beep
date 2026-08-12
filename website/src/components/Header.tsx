@@ -4,7 +4,6 @@ import { orpc } from "../utils/orpc";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
 import { Link as RouterLink } from "@tanstack/react-router";
-import { useTRPC } from "../utils/trpc";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AppBar,
@@ -16,7 +15,6 @@ import {
 } from "@mui/material";
 
 export function Header() {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery(

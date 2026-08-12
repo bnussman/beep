@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import { orpc } from "../../../../utils/orpc";
+import { printStars } from "../../../../utils/utils";
 import { createFileRoute } from "@tanstack/react-router"
-import { useTRPC } from "../../../../utils/trpc";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
-import { printStars } from "../../ratings";
 import { TableCellUser } from "../../../../components/TableCellUser";
 import { RatingMenu } from "../../../../components/RatingMenu";
 import { DeleteRatingDialog } from "../../../../components/DeleteRatingDialog";
@@ -27,17 +27,20 @@ export const Route = createFileRoute("/admin/users/$userId/ratings")({
 });
 
 function RatingsTable() {
-  const trpc = useTRPC();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
 
   const { userId } = Route.useParams();
 
-  const { data, isLoading, error } = useQuery(trpc.rating.ratings.queryOptions({
-    userId,
-    cursor: currentPage,
-    pageSize: 10,
-  }));
+  const { data, isLoading, error } = useQuery(
+    orpc.rating.ratings.queryOptions({
+      input: {
+        userId,
+        cursor: currentPage,
+        pageSize: 10,
+      }
+    })
+  );
 
   return (
     <Stack spacing={1}>
@@ -71,7 +74,7 @@ function RatingsTable() {
                 <TableCell>{rating.message ?? "N/A"}</TableCell>
                 <TableCell>{printStars(rating.stars)}</TableCell>
                 <TableCell>
-                  {DateTime.fromISO(rating.timestamp).toRelative()}
+                  {DateTime.fromJSDate(rating.timestamp).toRelative()}
                 </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   <RatingMenu

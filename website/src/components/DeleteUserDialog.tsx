@@ -1,5 +1,5 @@
 import React from "react";
-import { useTRPC } from "../utils/trpc";
+import { orpc } from "../utils/orpc";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -18,11 +18,10 @@ interface Props {
 }
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
-  const trpc = useTRPC();
   const router = useRouter();
 
   const { data: user } = useQuery(
-    trpc.user.user.queryOptions(userId, { enabled: isOpen }),
+    orpc.user.user.queryOptions({ input: userId, enabled: isOpen }),
   );
 
   const {
@@ -30,7 +29,7 @@ export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
     isPending,
     error,
   } = useMutation(
-    trpc.user.deleteUser.mutationOptions({
+    orpc.user.deleteUser.mutationOptions({
       onSuccess() {
         router.history.back();
         onClose();

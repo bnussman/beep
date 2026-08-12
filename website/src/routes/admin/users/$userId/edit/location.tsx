@@ -4,9 +4,9 @@ import { Alert, Button, Stack, TextField } from "@mui/material";
 import { Marker } from "../../../../../components/Marker";
 import { Loading } from "../../../../../components/Loading";
 import { Map } from "../../../../../components/Map";
-import { useTRPC } from "../../../../../utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "../../../../../utils/orpc";
 import type { MapLayerMouseEvent } from "react-map-gl/maplibre";
 
 export const Route = createFileRoute('/admin/users/$userId/edit/location')({
@@ -14,16 +14,19 @@ export const Route = createFileRoute('/admin/users/$userId/edit/location')({
 })
 
 function EditLocation() {
-  const trpc = useTRPC();
   const { userId } = Route.useParams();
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const { data: user, isLoading, error } = useQuery(
+    orpc.user.user.queryOptions({ input: userId })
+  );
 
   const {
     mutateAsync: updateUser,
     error: mutateError,
     isPending: mutateLoading,
-  } = useMutation(trpc.user.editAdmin.mutationOptions());
+  } = useMutation(
+    orpc.user.editAdmin.mutationOptions()
+  );
 
   const [longitude, setLongitude] = useState<number>();
   const [latitude, setLatitude] = useState<number>();

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import { orpc } from "../../../../utils/orpc";
 import { beepStatusMap } from "../../../../utils/utils";
 import { DateTime, Duration } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../../components/BeepMenu";
 import { Indicator } from "../../../../components/Indicator";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../utils/trpc";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableCellUser } from "../../../../components/TableCellUser";
 import { TableLoading } from "../../../../components/TableLoading";
@@ -28,16 +28,17 @@ export const Route = createFileRoute("/admin/users/$userId/beeps")({
 });
 
 function BeepsTable() {
-  const trpc = useTRPC();
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { userId } = Route.useParams();
 
   const { data, isLoading, error } = useQuery(
-    trpc.beep.beeps.queryOptions({
-      userId,
-      cursor: currentPage,
-      pageSize: 10,
+    orpc.beep.beeps.queryOptions({
+      input: {
+        userId,
+        cursor: currentPage,
+        pageSize: 10,
+      }
     }),
   );
 
@@ -101,7 +102,7 @@ function BeepsTable() {
                     : "Still in progress"}
                 </TableCell>
                 <TableCell>
-                  {DateTime.fromISO(beep.start).toRelative()}
+                  {DateTime.fromJSDate(beep.start).toRelative()}
                 </TableCell>
                 <TableCell>
                   <BeepMenu beepId={beep.id} />

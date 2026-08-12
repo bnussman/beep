@@ -3,8 +3,8 @@ import { beepStatuses } from "../../drizzle/schema";
 
 export const rideResponseSchema = z.object({
   id: z.string(),
-  start: z.union([z.string(), z.date()]),
-  end: z.union([z.string(), z.date()]).nullable(),
+  start: z.date(),
+  end: z.date().nullable(),
   origin: z.string(),
   destination: z.string(),
   groupSize: z.number(),
@@ -28,8 +28,8 @@ export const rideResponseSchema = z.object({
 export const queueResponseSchema = z.array(
   z.object({
     id: z.string(),
-    start: z.union([z.string(), z.date()]),
-    end: z.union([z.string(), z.date()]).nullable(),
+    start: z.date(),
+    end: z.date().nullable(),
     origin: z.string(),
     destination: z.string(),
     groupSize: z.number(),

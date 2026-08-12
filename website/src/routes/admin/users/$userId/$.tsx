@@ -1,25 +1,25 @@
 import React from "react";
 import { Indicator } from "../../../../components/Indicator";
-import { printStars } from "../../ratings";
 import { useParams, createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../utils/trpc";
 import { Alert, Stack, Typography, Box, Link } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { getFormattedRating } from "../../../../utils/utils";
+import { getFormattedRating, printStars } from "../../../../utils/utils";
+import { orpc } from "../../../../utils/orpc";
 
 export const Route = createFileRoute('/admin/users/$userId/$')({
   component: Details,
 });
 
 function Details() {
-  const trpc = useTRPC();
   const { userId } = useParams({ from: Route.id });
 
   const {
     data: user,
     isLoading,
     error,
-  } = useQuery(trpc.user.user.queryOptions(userId));
+  } = useQuery(
+    orpc.user.user.queryOptions({ input: userId })
+  );
 
   if (isLoading || !user) {
     return null;

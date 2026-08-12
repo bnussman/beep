@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { orpc } from "../../../../utils/orpc";
 import { beepStatusMap, decodePolyline } from "../../../../utils/utils";
 import { Map } from "../../../../components/Map";
 import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useTRPC } from "../../../../utils/trpc";
 import { Loading } from "../../../../components/Loading";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import { keepPreviousData, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Marker as BeeperMarker } from "../../../../components/Marker";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
@@ -25,18 +24,23 @@ export const Route = createFileRoute("/admin/users/$userId/ride")({
 });
 
 function Ride() {
-  const trpc = useTRPC();
   const theme = useTheme();
   const queryClient = useQueryClient();
 
   const { userId } = useParams({ from: Route.id });
 
-  const { data: ride, isLoading, error } = useQuery(trpc.rider.currentRide.queryOptions(userId));
+  const { data: ride, isLoading, error } = useQuery(
+    orpc.rider.currentRide.queryOptions({ input: userId })
+  );
 
-  useSubscription(
-    trpc.rider.currentRideUpdatesAllowPartial.subscriptionOptions(userId, {
-      onData(data) {
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(userId), (prev) => {
+  const { data: data } = useQuery(
+    orpc.rider.currentRideUpdatesAllowPartial.liveOptions({ input: userId })
+  );
+
+  useEffect(() => {
+    if (data) {
+      queryClient.setQueryData(
+        orpc.rider.currentRide.queryKey({ input: userId }), (prev) => {
           if (data === null) {
             return null;
           }
@@ -44,32 +48,30 @@ function Ride() {
             return data as typeof ride;
           }
           return { ...prev, ...data };
-        });
-      }
-    }),
+        }
+      );
+    }
+  }, [data]);
+
+  const { data: rider } = useQuery(
+    orpc.user.updates.liveOptions({ input: userId }),
   );
 
-  const { data: rider } = useSubscription(
-    trpc.user.updates.subscriptionOptions(userId),
-  );
-
-  const { data: beeper } = useSubscription(
-    trpc.user.updates.subscriptionOptions(ride ? ride.beeper.id : skipToken),
+  const { data: beeper } = useQuery(
+    orpc.user.updates.liveOptions({ input: ride ? ride.beeper.id : skipToken }),
   );
 
   const { data: route } = useQuery(
-    trpc.location.getRoute.queryOptions(
-      ride
+    orpc.location.getRoute.queryOptions({
+      input: ride
         ? {
-            origin: ride.origin,
-            destination: ride.destination,
-            bias: beeper?.location,
-          }
+          origin: ride.origin,
+          destination: ride.destination,
+          bias: beeper?.location,
+        }
         : skipToken,
-      {
-        placeholderData: keepPreviousData,
-      },
-    ),
+      placeholderData: keepPreviousData,
+    })
   );
 
   const polylineCoordinates = route?.routes[0].legs
@@ -138,7 +140,7 @@ function Ride() {
           <Typography style={{ textWrap: "nowrap" }}>
             {new Date(ride.start).toLocaleString()}
           </Typography>
-          <Typography>{DateTime.fromISO(ride.start).toRelative()}</Typography>
+          <Typography>{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
         </Box>
       </Stack>
       <Box width="100%">

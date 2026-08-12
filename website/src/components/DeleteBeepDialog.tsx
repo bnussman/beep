@@ -1,5 +1,6 @@
 import React from "react";
-import { useTRPC } from "../utils/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "../utils/orpc";
 import {
   Alert,
   Button,
@@ -9,8 +10,6 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -19,7 +18,6 @@ interface Props {
 }
 
 export function DeleteBeepDialog({ isOpen, onClose, id, onSuccess }: Props) {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const {
@@ -27,9 +25,11 @@ export function DeleteBeepDialog({ isOpen, onClose, id, onSuccess }: Props) {
     isPending,
     error,
   } = useMutation(
-    trpc.beep.deleteBeep.mutationOptions({
+    orpc.beep.deleteBeep.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.beep.beeps.queryFilter());
+        queryClient.invalidateQueries({
+          queryKey: orpc.beep.beeps.key()
+        });
         onClose();
         onSuccess?.();
       },

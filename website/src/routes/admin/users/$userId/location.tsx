@@ -2,20 +2,21 @@ import React from "react";
 import { Marker } from "../../../../components/Marker";
 import { Map } from "../../../../components/Map";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../utils/trpc";
 import { Loading } from "../../../../components/Loading";
 import { Alert, Box } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../../../utils/orpc";
 
 export const Route = createFileRoute('/admin/users/$userId/location')({
   component: LocationView,
 });
 
 function LocationView() {
-  const trpc = useTRPC();
   const { userId } = Route.useParams();
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const { data: user, isLoading, error } = useQuery(
+    orpc.user.user.queryOptions({ input: userId })
+  );
 
   if (isLoading) {
     return <Loading />;

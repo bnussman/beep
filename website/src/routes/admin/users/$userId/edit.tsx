@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import { orpc } from "../../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "../../../../utils/trpc";
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import {
   Alert,
@@ -17,14 +17,15 @@ export const Route = createFileRoute('/admin/users/$userId/edit')({
 });
 
 function Edit() {
-  const trpc = useTRPC();
   const { userId } = Route.useParams();
 
   const pathname = useLocation({
     select: (location) => location.pathname,
   });
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const { isLoading, error } = useQuery(
+    orpc.user.user.queryOptions({ input: userId })
+  );
 
   if (isLoading) {
     return <CircularProgress />;

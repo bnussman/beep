@@ -1,13 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { queryClient, useTRPC } from "../utils/trpc";
+import { queryClient } from "../utils/trpc";
 import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
 
 export function UserMenu() {
-  const trpc = useTRPC();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,9 +22,11 @@ export function UserMenu() {
       retry: false,
     }),
   );
+
   const { mutateAsync: logout } = useMutation(
-    trpc.auth.logout.mutationOptions(),
+    orpc.auth.logout.mutationOptions(),
   );
+
   const navigate = useNavigate();
 
   const handleLogout = async () => {

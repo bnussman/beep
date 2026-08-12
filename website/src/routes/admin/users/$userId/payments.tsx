@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { orpc } from "../../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../utils/trpc";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
@@ -22,16 +22,17 @@ export const Route = createFileRoute("/admin/users/$userId/payments")({
 });
 
 function PaymentsTable() {
-  const trpc = useTRPC();
   const { userId } = Route.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { data, isLoading, error } = useQuery(
-    trpc.payment.payments.queryOptions({
-      userId,
-      page: currentPage,
-      pageSize: 10,
+    orpc.payment.payments.queryOptions({
+      input: {
+        userId,
+        page: currentPage,
+        pageSize: 10,
+      }
     }),
   );
 

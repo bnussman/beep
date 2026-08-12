@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { orpc } from "../../../../utils/orpc";
 import { Indicator } from "../../../../components/Indicator";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../utils/trpc";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableCellUser } from "../../../../components/TableCellUser";
@@ -27,17 +27,20 @@ export const Route = createFileRoute("/admin/users/$userId/reports")({
 });
 
 function ReportsTable() {
-  const trpc = useTRPC();
   const { userId } = Route.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedReportId, setSelectedReportId] = useState<string>();
 
-  const { data, isLoading, error } = useQuery(trpc.report.reports.queryOptions({
-    userId,
-    page: currentPage,
-    pageSize: 10,
-  }));
+  const { data, isLoading, error } = useQuery(
+    orpc.report.reports.queryOptions({
+      input: {
+        userId,
+        page: currentPage,
+        pageSize: 10,
+      }
+    })
+  );
 
   return (
     <Stack spacing={1}>
@@ -70,7 +73,7 @@ function ReportsTable() {
                 <TableCellUser user={report.reported} />
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>
-                  {DateTime.fromISO(report.timestamp).toRelative()}
+                  {DateTime.fromJSDate(report.timestamp).toRelative()}
                 </TableCell>
                 <TableCell>
                   <Indicator color={report.handled ? "green" : "red"} />

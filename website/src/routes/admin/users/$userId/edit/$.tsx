@@ -1,10 +1,12 @@
 import React from "react";
+import { orpc } from "../../../../../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import { createFileRoute } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { RouterInput, useTRPC } from "../../../../../utils/trpc";
 import { useNotifications } from "@toolpad/core";
+import { RouterInputs } from "../../../../../../../orpc/src";
 import {
   Alert,
   FormControlLabel,
@@ -14,18 +16,20 @@ import {
   TextField,
 } from "@mui/material";
 
-type Values = RouterInput["user"]["editAdmin"]["data"];
+type Values = RouterInputs["user"]["editAdmin"]["data"];
 
 export const Route = createFileRoute("/admin/users/$userId/edit/$")({
   component: EditDetails,
 });
 
 function EditDetails() {
-  const trpc = useTRPC();
   const notifications = useNotifications();
 
   const { userId } = Route.useParams();
-  const { data: user } = useQuery(trpc.user.user.queryOptions(userId));
+
+  const { data: user } = useQuery(
+    orpc.user.user.queryOptions({ input: userId })
+  );
 
   const values = {
     first: user?.first,
@@ -51,18 +55,16 @@ function EditDetails() {
   });
 
   const { mutateAsync: editUser } = useMutation(
-    trpc.user.editAdmin.mutationOptions({
+    orpc.user.editAdmin.mutationOptions({
       onSuccess(user) {
         notifications.show(`Successfully edited ${user.first}'s profile`, {
           severity: "success",
         });
       },
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            setError(field as keyof Values, {
-              message: error.data?.fieldErrors[field]?.[0],
-            });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], { message: issue.message });
           }
         } else {
           setError("root", { message: error.message });
