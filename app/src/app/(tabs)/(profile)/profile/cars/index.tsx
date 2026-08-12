@@ -5,7 +5,6 @@ import { Image } from "@/components/Image";
 import { View } from "react-native";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { TRPCClientError } from "@trpc/client";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -44,13 +43,16 @@ export default function Cars() {
     }),
   );
 
-  const { mutateAsync: deleteCar } = useMutation(
+  const { mutate: deleteCar } = useMutation(
     orpc.car.deleteCar.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({
           queryKey: orpc.car.cars.key()
         });
       },
+      onError(error) {
+        alert(error.message);
+      }
     }),
   );
 
@@ -81,9 +83,7 @@ export default function Cars() {
   };
 
   const onDelete = (id: string) => {
-    deleteCar({ carId: id }).catch((error: TRPCClientError<any>) =>
-      alert(error?.message),
-    );
+    deleteCar({ carId: id });
   };
 
   const setDefault = (id: string) => {
