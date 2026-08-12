@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../components/PaginationFooter";
 import { TableCellUser } from "../../components/TableCellUser";
@@ -19,6 +18,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { orpc } from "../../utils/orpc";
 
 export const Route = createFileRoute("/admin/payments")({
   component: Payments,
@@ -28,17 +28,16 @@ export const Route = createFileRoute("/admin/payments")({
 });
 
 function Payments() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
 
   const navigate = useNavigate({ from: Route.id });
 
-  const { data, isLoading, error } = useQuery(trpc.payment.payments.queryOptions(
-    {
-      page,
-    },
-    { placeholderData: keepPreviousData },
-  ));
+  const { data, isLoading, error } = useQuery(
+    orpc.payment.payments.queryOptions({
+      input: { page },
+      placeholderData: keepPreviousData
+    }),
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

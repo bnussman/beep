@@ -1,8 +1,8 @@
 import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import { orpc } from "../../../utils/orpc";
 import { Indicator } from "../../../components/Indicator";
 import { createFileRoute, Link as RouterLink, useNavigate, } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
@@ -42,20 +42,19 @@ export const Route = createFileRoute('/admin/users/')({
 });
 
 function Users() {
-  const trpc = useTRPC();
   const PAGE_SIZE = 20;
   const { page, query } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
   const { isLoading, isFetching, error, data } = useQuery(
-    trpc.user.users.queryOptions(
-      {
+    orpc.user.users.queryOptions({
+      input: {
         page,
         pageSize: PAGE_SIZE,
         query: !query ? undefined : query,
       },
-      { placeholderData: keepPreviousData },
-    ),
+      placeholderData: keepPreviousData
+    }),
   );
 
   const setCurrentPage = (event: unknown, page: number) => {

@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { printStars } from ".";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "../../../components/DeleteRatingDialog";
-import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import {
   Link as RouterLink,
@@ -20,13 +18,14 @@ import {
   Link,
   Card,
 } from "@mui/material";
+import { orpc } from "../../../utils/orpc";
+import { printStars } from "../../../utils/utils";
 
 export const Route = createFileRoute("/admin/ratings/$ratingId")({
   component: Rating,
 });
 
 function Rating() {
-  const trpc = useTRPC();
   const { ratingId } = Route.useParams();
   const router = useRouter();
 
@@ -36,7 +35,9 @@ function Rating() {
     data: rating,
     isPending,
     error,
-  } = useQuery(trpc.rating.rating.queryOptions(ratingId));
+  } = useQuery(
+    orpc.rating.rating.queryOptions({ input: ratingId })
+  );
 
   if (isPending) {
     return <Loading />;
@@ -58,7 +59,7 @@ function Rating() {
 
     {
       title: "Created",
-      content: DateTime.fromISO(rating.timestamp).toRelative(),
+      content: DateTime.fromJSDate(rating.timestamp).toRelative(),
     },
     {
       title: "Beep",

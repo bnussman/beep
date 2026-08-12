@@ -98,3 +98,14 @@ export const beepStatusMap: Record<
   canceled: "red",
   complete: "green",
 };
+
+
+export function printStars(rating: number): string {
+  let stars = "";
+
+  for (let i = 0; i < Math.round(rating); i++) {
+    stars += "⭐️";
+  }
+
+  return stars;
+}

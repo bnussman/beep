@@ -4,6 +4,7 @@ import { queryClient, useTRPC } from "../utils/trpc";
 import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "../utils/orpc";
 
 export function UserMenu() {
   const trpc = useTRPC();
@@ -17,7 +18,7 @@ export function UserMenu() {
   };
 
   const { data: user } = useQuery(
-    trpc.user.me.queryOptions(undefined, {
+    orpc.user.me.queryOptions({
       enabled: false,
       retry: false,
     }),

@@ -1,12 +1,12 @@
 import React from 'react'
 import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
-import { useTRPC } from '../../../utils/trpc';
 import { PaginationFooter } from '../../../components/PaginationFooter';
 import { Avatar, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from '../../../utils/orpc';
 
 export const Route = createFileRoute('/admin/leaderboards/beeps')({
   component: Beeps,
@@ -18,18 +18,15 @@ export const Route = createFileRoute('/admin/leaderboards/beeps')({
 });
 
 function Beeps() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
-  const { isLoading, error, data } = useQuery(trpc.user.usersWithBeeps.queryOptions(
-    {
-      page,
-    },
-    {
+  const { isLoading, error, data } = useQuery(
+    orpc.user.usersWithBeeps.queryOptions({
+      input: { page },
       placeholderData: keepPreviousData,
-    }
-  ));
+    }),
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
 import { CarMenu } from "../../../components/CarMenu";
 import { DeleteCarDialog } from "../../../components/DeleteCarDialog";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +7,6 @@ import { DateTime } from "luxon";
 import { Indicator } from "../../../components/Indicator";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
@@ -34,7 +34,6 @@ export const Route = createFileRoute("/admin/cars/")({
 });
 
 function Cars() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
 
   const navigate = useNavigate({ from: Route.id });
@@ -44,12 +43,10 @@ function Cars() {
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
   const { data, isLoading, error } = useQuery(
-    trpc.car.cars.queryOptions(
-      {
-        cursor: page,
-      },
-      { placeholderData: keepPreviousData },
-    ),
+    orpc.car.cars.queryOptions({
+      input: { cursor: page },
+      placeholderData: keepPreviousData
+    }),
   );
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
@@ -112,7 +109,7 @@ function Cars() {
                   <Indicator color={car.default ? "green" : "red"} />
                 </TableCell>
                 <TableCell>
-                  {DateTime.fromISO(car.created).toRelative()}
+                  {DateTime.fromJSDate(car.created).toRelative()}
                 </TableCell>
                 <TableCell onClick={() => onPhotoClick(car.id)}>
                   <Box

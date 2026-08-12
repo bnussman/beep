@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
+import { printStars } from "../../../utils/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
@@ -8,9 +9,7 @@ import { RatingMenu } from "../../../components/RatingMenu";
 import { DeleteRatingDialog } from "../../../components/DeleteRatingDialog";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useNotifications } from "@toolpad/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import {
@@ -21,7 +20,6 @@ import {
   TableHead,
   Stack,
   Typography,
-  Button,
   Paper,
   TableBody,
 } from "@mui/material";
@@ -34,20 +32,17 @@ export const Route = createFileRoute("/admin/ratings/")({
 });
 
 function Ratings() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
 
   const navigate = useNavigate({ from: Route.id });
 
-  const notifications = useNotifications();
-
   const { data, isLoading, error } = useQuery(
-    trpc.rating.ratings.queryOptions(
-      {
+    orpc.rating.ratings.queryOptions({
+      input: {
         cursor: page,
       },
-      { placeholderData: keepPreviousData },
-    ),
+      placeholderData: keepPreviousData
+    }),
   );
 
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
@@ -91,7 +86,7 @@ function Ratings() {
                 <TableCell>{rating.message ?? "N/A"}</TableCell>
                 <TableCell>{printStars(rating.stars)}</TableCell>
                 <TableCell>
-                  {DateTime.fromISO(rating.timestamp).toRelative()}
+                  {DateTime.fromJSDate(rating.timestamp).toRelative()}
                 </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   <RatingMenu
@@ -118,14 +113,4 @@ function Ratings() {
       />
     </Stack>
   );
-}
-
-export function printStars(rating: number): string {
-  let stars = "";
-
-  for (let i = 0; i < Math.round(rating); i++) {
-    stars += "⭐️";
-  }
-
-  return stars;
 }

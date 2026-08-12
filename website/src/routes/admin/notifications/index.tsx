@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { RouterInputs } from "../../../../../orpc/src";
+import { orpc } from "../../../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { SendNotificationConfirmationDialog } from "../../../components/SendNotificationConfirmationDialog";
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../../../utils/trpc";
 import {
   Alert,
   TextField,
@@ -15,14 +17,13 @@ import {
   Card,
 } from "@mui/material";
 
-type SendNotifictionVariables = RouterInput["notification"]["sendNotification"];
+type SendNotifictionVariables = RouterInputs["notification"]["sendNotification"];
 
 export const Route = createFileRoute('/admin/notifications/')({
   component: Notifications,
 });
 
 function Notifications() {
-  const trpc = useTRPC();
   const notifications = useNotifications();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -30,19 +31,16 @@ function Notifications() {
   const {
     handleSubmit,
     control,
-    reset,
     setError,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm<SendNotifictionVariables>({ mode: "onChange" });
 
   const { mutateAsync: sendNotification } =
-    useMutation(trpc.notification.sendNotification.mutationOptions({
+    useMutation(orpc.notification.sendNotification.mutationOptions({
       onError(e) {
-        if (e.data?.fieldErrors) {
-          for (const key in e.data?.fieldErrors ?? {}) {
-            setError(key as keyof SendNotifictionVariables, {
-              message: e.data?.fieldErrors?.[key]?.[0],
-            });
+        if (e instanceof ORPCError && e.data?.issues) {
+          for (const issue of e.data.issues) {
+            setError(issue.path[0], { message: issue.message });
           }
         } else {
           setError("root", { message: e.message });

@@ -1,8 +1,9 @@
 import React from "react";
+import { orpc } from "../../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../utils/trpc";
 import {
   Typography,
   Alert,
@@ -21,7 +22,6 @@ interface Values {
 }
 
 function ResetPassword() {
-  const trpc = useTRPC();
   const { id } = Route.useParams();
 
   const {
@@ -33,12 +33,12 @@ function ResetPassword() {
   } = useForm<Values>({ mode: "onChange" });
 
   const { mutateAsync: resetPassword, data } =
-    useMutation(trpc.auth.resetPassword.mutationOptions({
+    useMutation(orpc.auth.resetPassword.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            setError(field as keyof Values, {
-              message: error.data?.fieldErrors[field]?.[0],
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
 import { Indicator } from "../../../components/Indicator";
 import { beepStatusMap, decodePolyline } from "../../../utils/utils";
 import { BasicUser } from "../../../components/BasicUser";
@@ -6,15 +7,13 @@ import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
 import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
+import { DateTime, Interval } from "luxon";
+import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
+import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import {
   createFileRoute,
   useRouter,
 } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
-import { DateTime, Interval } from "luxon";
-import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
-import { Layer, Marker, Source } from "react-map-gl/maplibre";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import {
   Typography,
   Button,
@@ -31,7 +30,6 @@ export const Route = createFileRoute("/admin/beeps/$beepId")({
 });
 
 function Beep() {
-  const trpc = useTRPC();
   const theme = useTheme();
   const router = useRouter();
 
@@ -41,29 +39,27 @@ function Beep() {
     data: beep,
     isPending,
     error,
-  } = useQuery(trpc.beep.beep.queryOptions(beepId));
+  } = useQuery(orpc.beep.beep.queryOptions({ input: beepId }));
 
-  const { data: beeper } = useSubscription(
-    trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken),
+  const { data: beeper } = useQuery(
+    orpc.user.updates.liveOptions({ input: beep ? beep.beeper_id : skipToken }),
   );
 
-  const { data: rider } = useSubscription(
-    trpc.user.updates.subscriptionOptions(beep ? beep.rider_id : skipToken),
+  const { data: rider } = useQuery(
+    orpc.user.updates.liveOptions({ input: beep ? beep.rider_id : skipToken }),
   );
 
   const { data: route } = useQuery(
-    trpc.location.getRoute.queryOptions(
-      beep
+    orpc.location.getRoute.queryOptions({
+      input: beep
         ? {
           origin: beep.origin,
           destination: beep.destination,
           bias: beeper?.location,
         }
         : skipToken,
-      {
-        placeholderData: keepPreviousData,
-      },
-    ),
+      placeholderData: keepPreviousData,
+    }),
   );
 
   const polylineCoordinates = route?.routes[0].legs
@@ -130,7 +126,7 @@ function Beep() {
       content: (
         <Typography>
           {new Date(beep.start).toLocaleString()} -{" "}
-          {DateTime.fromISO(beep.start).toRelative()}
+          {DateTime.fromJSDate(beep.start).toRelative()}
         </Typography>
       ),
     },
@@ -139,7 +135,7 @@ function Beep() {
       content: beep.end ? (
         <Typography>
           {new Date(beep.end).toLocaleString()} -{" "}
-          {DateTime.fromISO(beep.end).toRelative()}
+          {DateTime.fromJSDate(beep.end).toRelative()}
         </Typography>
       ) : (
         <Typography>Beep is still in progress</Typography>
@@ -149,8 +145,8 @@ function Beep() {
       title: "Duration",
       content: beep.end
         ? Interval.fromDateTimes(
-          DateTime.fromISO(beep.start),
-          DateTime.fromISO(beep.end),
+          DateTime.fromJSDate(beep.start),
+          DateTime.fromJSDate(beep.end),
         )
           .toDuration()
           .rescale()
@@ -162,7 +158,7 @@ function Beep() {
     {
       title: "Pick Up ETA",
       content: beep.pick_up_eta ? (() => {
-        const date = DateTime.fromISO(beep.pick_up_eta!);
+        const date = DateTime.fromJSDate(beep.pick_up_eta!);
         const isInThePast = date < DateTime.now();
 
         return (
@@ -171,7 +167,7 @@ function Beep() {
               {isInThePast ? date.toLocaleString({ timeStyle: "short" }) : date.toRelative()}
             </Typography>
             <Typography variant="caption">
-              updated {DateTime.fromISO(beep.pick_up_eta_updated_at!).toRelative()}
+              updated {DateTime.fromJSDate(beep.pick_up_eta_updated_at!).toRelative()}
             </Typography>
           </Stack>
         );

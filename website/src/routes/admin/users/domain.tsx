@@ -1,18 +1,17 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { TableContainer, Stack, TableHead, Paper, Typography, Table, TableCell, TableRow, TableBody } from "@mui/material";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../../utils/orpc";
 
 export const Route = createFileRoute("/admin/users/domain")({
   component: UsersByDomain,
 });
 
 function UsersByDomain() {
-  const trpc = useTRPC();
-  const { data, isLoading, error } = useQuery(trpc.user.usersByDomain.queryOptions());
+  const { data, isLoading, error } = useQuery(orpc.user.usersByDomain.queryOptions());
 
   return (
     <Stack spacing={2}>

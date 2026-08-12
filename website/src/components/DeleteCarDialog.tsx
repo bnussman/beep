@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { RouterOutputs } from "../../../orpc/src";
+import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { RouterOutput, useTRPC } from "../utils/trpc";
 import {
   Alert,
   Button,
@@ -12,37 +13,42 @@ import {
   TextField,
 } from "@mui/material";
 
+type Car = RouterOutputs["car"]["cars"]["cars"][number];
+
 interface Props {
   isOpen: boolean;
-  car: RouterOutput["car"]["cars"]["cars"][number] | undefined;
+  car: Car | undefined;
   onClose: () => void;
 }
 
 export function DeleteCarDialog(props: Props) {
-  const trpc = useTRPC();
   const { isOpen, onClose, car } = props;
 
   const queryClient = useQueryClient();
 
   const [reason, setReason] = useState("");
 
-  const {
-    mutateAsync: deleteCar,
-    isPending,
-    error,
-    reset,
-  } = useMutation(trpc.car.deleteCar.mutationOptions());
+  const { mutate, isPending, error, reset } = useMutation(
+    orpc.car.deleteCar.mutationOptions({
+      onSuccess() {
+        onClose();
+
+        queryClient.invalidateQueries({
+          queryKey: orpc.car.cars.key()
+        });
+      }
+    })
+  );
 
   const handleClose = () => {
     reset();
     onClose();
   };
 
-  const doDelete = () => {
-    deleteCar({ carId: car?.id ?? "", reason }).then(() => {
-      onClose();
-      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
-    });
+  const handleDelete = () => {
+    if (car) {
+      mutate({ carId: car.id, reason });
+    }
   };
 
   return (
@@ -67,7 +73,7 @@ export function DeleteCarDialog(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button loading={isPending} color="error" onClick={doDelete}>
+        <Button loading={isPending} color="error" onClick={handleDelete}>
           Delete
         </Button>
       </DialogActions>

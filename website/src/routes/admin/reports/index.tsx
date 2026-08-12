@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Indicator } from "../../../components/Indicator";
-import { createFileRoute, createRoute, useNavigate } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableEmpty } from "../../../components/TableEmpty";
@@ -23,6 +22,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { orpc } from "../../../utils/orpc";
 
 export const Route = createFileRoute('/admin/reports/')({
   component: Reports,
@@ -32,7 +32,6 @@ export const Route = createFileRoute('/admin/reports/')({
 });
 
 function Reports() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
@@ -42,12 +41,14 @@ function Reports() {
     setSelectedReportId(id);
   };
 
-  const { data, isLoading, error } = useQuery(trpc.report.reports.queryOptions(
-    {
-      page,
-    },
-    { placeholderData: keepPreviousData },
-  ));
+  const { data, isLoading, error } = useQuery(
+    orpc.report.reports.queryOptions({
+      input: {
+        page,
+      },
+      placeholderData: keepPreviousData
+    }),
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
@@ -89,7 +90,7 @@ function Reports() {
                 <TableCell>{report.rating_id ? 'Rating' : report.beep_id ? "Beep" : "General"}</TableCell>
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>
-                  {DateTime.fromISO(report.timestamp).toRelative()}
+                  {DateTime.fromJSDate(report.timestamp).toRelative()}
                 </TableCell>
                 <TableCell>
                   <Indicator color={report.handled ? "green" : "red"} />

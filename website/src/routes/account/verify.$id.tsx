@@ -2,16 +2,15 @@ import React from "react";
 import { useEffect } from "react";
 import { Loading } from "../../components/Loading";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../utils/trpc";
 import { Box, Alert } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "../../utils/orpc";
 
 export const Route = createFileRoute('/account/verify/$id')({
   component: VerifyAccount,
 });
 
 function VerifyAccount() {
-  const trpc = useTRPC();
   const { id } = Route.useParams();
 
   const {
@@ -19,7 +18,7 @@ function VerifyAccount() {
     data,
     isPending,
     error,
-  } = useMutation(trpc.auth.verifyAccount.mutationOptions());
+  } = useMutation(orpc.auth.verifyAccount.mutationOptions());
 
   const handleVerify = async () => {
     try {

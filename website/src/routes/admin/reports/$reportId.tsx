@@ -1,12 +1,13 @@
 import React from "react";
+import { orpc } from "../../../utils/orpc";
 import { Link } from "../../../components/Link";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "../../../components/DeleteReportDialog";
-import { createRoute, useRouter, createFileRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../../../utils/trpc";
+import { useRouter, createFileRoute } from "@tanstack/react-router";
+import { RouterInput } from "../../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import {
   Button,
@@ -25,7 +26,6 @@ export const Route = createFileRoute('/admin/reports/$reportId')({
 });
 
 function Report() {
-  const trpc = useTRPC();
   const { reportId } = Route.useParams();
   const { history } = useRouter();
   const queryClient = useQueryClient();
@@ -34,16 +34,18 @@ function Report() {
     data: report,
     isLoading,
     error,
-  } = useQuery(trpc.report.report.queryOptions(reportId));
+  } = useQuery(orpc.report.report.queryOptions({ input: reportId }));
 
   const {
     mutateAsync: updateReport,
     isPending,
     error: updateError,
-  } = useMutation(trpc.report.updateReport.mutationOptions({
+  } = useMutation(orpc.report.updateReport.mutationOptions({
     onSuccess(report) {
-      queryClient.invalidateQueries(trpc.report.report.queryFilter(reportId));
-      queryClient.invalidateQueries(trpc.report.reports.pathFilter());
+      queryClient.invalidateQueries(orpc.report.report.queryOptions({ input: reportId }));
+      queryClient.invalidateQueries({
+        queryKey: orpc.report.reports.key()
+      });
     },
   }));
 

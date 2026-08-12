@@ -1,9 +1,11 @@
 import React from "react";
+import { orpc } from "../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../utils/trpc";
+import { RouterInput } from "../utils/trpc";
 import { useNotifications } from "@toolpad/core";
 import {
   Alert,
@@ -11,7 +13,6 @@ import {
   Typography,
   TextField,
   Avatar,
-  CircularProgress,
   Stack,
   Button,
   Box,
@@ -26,8 +27,7 @@ export const Route = createFileRoute('/profile/edit')({
 });
 
 function EditProfile() {
-  const trpc = useTRPC();
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
+  const { data: user } = useQuery(orpc.user.me.queryOptions({ enabled: false }));
   const notifications = useNotifications();
 
   const {
@@ -56,12 +56,12 @@ function EditProfile() {
       : undefined,
   });
 
-  const { mutateAsync } = useMutation(trpc.user.edit.mutationOptions({
+  const { mutateAsync } = useMutation(orpc.user.edit.mutationOptions({
     onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          setError(field as keyof Values, {
-            message: error.data?.fieldErrors[field]?.[0],
+      if (error instanceof ORPCError && error.data?.issues) {
+        for (const issue of error.data?.issues) {
+          setError(issue.path[0], {
+            message: issue.message,
           });
         }
       } else {
@@ -74,7 +74,7 @@ function EditProfile() {
     mutateAsync: uploadPicture,
     isPending: isUploadPending,
     error: uploadError,
-  } = useMutation(trpc.user.updatePicture.mutationOptions({
+  } = useMutation(orpc.user.updatePicture.mutationOptions({
     onSuccess() {
       notifications.show("Successfully updated profile picture", {
         severity: "success",
@@ -96,13 +96,9 @@ function EditProfile() {
   });
 
   const uploadPhoto = async (picture: File | undefined) => {
-    const formData = new FormData();
-
     if (picture) {
-    formData.set("photo", picture);
+      uploadPicture(picture);
     }
-
-    await uploadPicture(formData);
   };
 
   if (!user) {

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../utils/orpc";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useNotifications } from "@toolpad/core";
-import { queryClient, useTRPC } from "../../utils/trpc";
 import {
   Link as RouterLink,
   createFileRoute,
@@ -26,13 +26,17 @@ export const Route = createFileRoute('/account/delete')({
 });
 
 function DeleteAccount() {
-  const trpc = useTRPC();
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
+  const queryClient = useQueryClient();
+
+  const { data: user } = useQuery(
+    orpc.user.me.queryOptions({ enabled: false })
+  );
+
   const {
     mutateAsync: deleteAccount,
     isPending,
     error,
-  } = useMutation(trpc.user.deleteMyAccount.mutationOptions());
+  } = useMutation(orpc.user.deleteMyAccount.mutationOptions());
 
   const notifications = useNotifications();
   const navigate = useNavigate();

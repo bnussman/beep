@@ -1,22 +1,20 @@
-import React, { useState } from "react";
-import { useTRPC } from "../../../utils/trpc";
+import React, { useEffect, useState } from "react";
 import { Loading } from "../../../components/Loading";
 import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteUserDialog } from "../../../components/DeleteUserDialog";
+import { useNotifications } from "@toolpad/core";
+import { DateTime } from "luxon";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Link,
   Outlet,
   useLocation,
   createFileRoute,
 } from "@tanstack/react-router";
-import { useNotifications } from "@toolpad/core";
-import { DateTime } from "luxon";
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
   Avatar,
@@ -27,13 +25,13 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
+import { orpc } from "../../../utils/orpc";
 
 export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
 });
 
 function User() {
-  const trpc = useTRPC();
   const { userId } = Route.useParams();
 
   const queryClient = useQueryClient();
@@ -43,18 +41,18 @@ function User() {
     data: user,
     isPending,
     error,
-  } = useQuery(trpc.user.user.queryOptions(userId));
+  } = useQuery(orpc.user.user.queryOptions({ input: userId }));
 
-  useSubscription(
-    trpc.user.updates.subscriptionOptions(userId, {
-      onData(user) {
-        queryClient.setQueryData(trpc.user.user.queryKey(userId), user);
-      },
-    }),
-  );
+  const { data } = useQuery(orpc.user.updates.liveOptions({ input: userId }))
+
+  useEffect(() => {
+    if (data) {
+      queryClient.setQueryData(orpc.user.user.queryKey({ input: userId }), user);
+    }
+  }, [data]);
 
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
-    trpc.user.syncPayments.mutationOptions({
+    orpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
         notifications.show(
           `Payments synced. The user has ${activePayments.length} active payments.`,
@@ -70,7 +68,7 @@ function User() {
   );
 
   const { mutate: updateUser, isPending: isVerifyLoading } = useMutation(
-    trpc.user.editAdmin.mutationOptions({
+    orpc.user.editAdmin.mutationOptions({
       onSuccess() {
         notifications.show("User verified", { severity: "success" });
       },
@@ -81,7 +79,7 @@ function User() {
   );
 
   const { mutate: sendTestEmail, isPending: isSendingTestEmail } = useMutation(
-    trpc.user.sendTestEmail.mutationOptions({
+    orpc.user.sendTestEmail.mutationOptions({
       onSuccess() {
         notifications.show("Email sent", { severity: "success" });
       },
@@ -169,7 +167,7 @@ function User() {
             <Typography fontSize="12px">{user.id}</Typography>
             {user.created && (
               <Typography fontSize="12px">
-                Joined {DateTime.fromISO(user.created).toRelative()}
+                Joined {DateTime.fromJSDate(user.created).toRelative()}
               </Typography>
             )}
           </Stack>

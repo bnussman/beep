@@ -1,3 +1,4 @@
+import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
 import { createContext } from "./utils/trpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
@@ -40,11 +41,21 @@ const appRouter = {
 
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<AppRouter>;
+export type RouterInputs = InferRouterInputs<AppRouter>;
+export type RouterOutputs = InferRouterOutputs<AppRouter>;
 
 const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin()
   ],
+  toFetchResponse: {
+    eventStream: {
+      keepAlive: {
+        enabled: true,
+        interval: 5_000
+      },
+    },
+  },
   interceptors: [
     onError((error) => {
       console.error(error)

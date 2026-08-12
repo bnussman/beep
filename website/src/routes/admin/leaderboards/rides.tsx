@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink, useNavigate, createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
@@ -19,6 +18,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
+import { orpc } from "../../../utils/orpc";
 
 export const Route = createFileRoute('/admin/leaderboards/rides')({
   component: Rides,
@@ -30,18 +30,15 @@ export const Route = createFileRoute('/admin/leaderboards/rides')({
 });
 
 function Rides() {
-  const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
-  const { isLoading, error, data } = useQuery(trpc.user.usersWithRides.queryOptions(
-    {
-      page,
-    },
-    {
+  const { isLoading, error, data } = useQuery(
+    orpc.user.usersWithRides.queryOptions({
+      input: { page },
       placeholderData: keepPreviousData,
-    },
-  ));
+    }),
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

@@ -1,15 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { orpc } from "../../../utils/orpc";
 import { BeepersMap } from "../../../components/BeepersMap";
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
-import { printStars } from "../ratings";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { getFormattedRating } from "../../../utils/utils";
+import { getFormattedRating, printStars } from "../../../utils/utils";
 import {
   Paper,
   Box,
@@ -32,49 +30,45 @@ export const Route = createFileRoute("/admin/beepers/")({
 });
 
 function Beepers() {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery(
-    trpc.rider.beepers.queryOptions(),
+    orpc.rider.beepers.queryOptions(),
   );
 
-  useSubscription(
-    trpc.rider.beepersLocations.subscriptionOptions(
-      {
-        longitude: 0,
-        latitude: 0,
-        admin: true,
-      },
-      {
-        onData(locationUpdate) {
-          queryClient.setQueryData(
-            trpc.rider.beepers.queryKey(),
-            (oldUsers) => {
-              if (!oldUsers) {
-                return undefined;
-              }
+  const { data: locationUpdate } = useQuery(
+    orpc.rider.beepersLocations.liveOptions({
+      input: { longitude: 0, latitude: 0, admin: true }
+    })
+  );
 
-              const indexOfUser = oldUsers.findIndex(
-                (user) => user.id === locationUpdate.id,
-              );
+  useEffect(() => {
+    if (locationUpdate) {
+      queryClient.setQueryData(
+        orpc.rider.beepers.queryKey(),
+        (oldUsers) => {
+          if (!oldUsers) {
+            return undefined;
+          }
 
-              if (indexOfUser !== -1) {
-                const newData = [...oldUsers];
-
-                newData[indexOfUser] = {
-                  ...oldUsers[indexOfUser],
-                  location: locationUpdate.location,
-                };
-
-                return newData;
-              }
-            },
+          const indexOfUser = oldUsers.findIndex(
+            (user) => user.id === locationUpdate.id,
           );
+
+          if (indexOfUser !== -1) {
+            const newData = [...oldUsers];
+
+            newData[indexOfUser] = {
+              ...oldUsers[indexOfUser],
+              location: locationUpdate.location,
+            };
+
+            return newData;
+          }
         },
-      },
-    ),
-  );
+      );
+    }
+  }, [locationUpdate]);
 
   return (
     <Box>

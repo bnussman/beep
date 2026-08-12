@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import * as Sentry from "@sentry/react";
+import { orpc } from "../utils/orpc";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { useTRPC } from "../utils/trpc";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import {
   AppBar,
   Stack,
@@ -20,20 +20,21 @@ export function Header() {
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery(
-    trpc.user.me.queryOptions(undefined, {
+    orpc.user.me.queryOptions({
       retry: false,
       refetchOnWindowFocus: false,
     }),
   );
 
-  useSubscription(
-    trpc.user.updates.subscriptionOptions(undefined, {
-      enabled: user !== undefined,
-      onData(user) {
-        queryClient.setQueryData(trpc.user.me.queryKey(), user);
-      },
-    }),
-  );
+  const { data } = useQuery(orpc.user.updates.liveOptions({
+    enabled: user !== undefined
+  }));
+
+  useEffect(() => {
+    if (data) {
+      queryClient.setQueryData(orpc.user.me.queryKey(), data);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (user) {
