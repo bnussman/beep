@@ -3,8 +3,8 @@ import * as Location from "expo-location";
 import * as Sentry from "@sentry/react-native";
 import * as TaskManager from "expo-task-manager";
 import { captureException } from "@sentry/react-native";
-import { trpcClient } from "./trpc";
 import { isWeb } from "./constants";
+import { orpcClient } from "./orpc";
 
 export function useLocation(enabled = true) {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -159,7 +159,7 @@ TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
 
     if (data) {
       try {
-        await trpcClient.user.edit.mutate({
+        await orpcClient.user.edit({
           location: data.locations[0].coords,
         });
       } catch (e) {

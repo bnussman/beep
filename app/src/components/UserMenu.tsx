@@ -2,10 +2,10 @@ import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import type { Option } from "@/components/Menu";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
-import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import { Button } from "./Button";
+import { orpc } from "@/utils/orpc";
 
 interface Props {
   userId: string;
@@ -13,16 +13,15 @@ interface Props {
 
 export function useUserMenuOptions(userId: string): Option[] {
   const router = useRouter();
-  const trpc = useTRPC();
   const { beepId, ratingId } = useGlobalSearchParams<{
     beepId: string;
     ratingId: string;
   }>();
 
-  const { data: user } = useQuery(trpc.user.publicUser.queryOptions(userId));
+  const { data: user } = useQuery(orpc.user.publicUser.queryOptions({ input: userId }));
 
   const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(userId),
+    orpc.user.getUserPrivateDetails.queryOptions({ input: userId }),
   );
 
   return [

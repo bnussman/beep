@@ -6,7 +6,6 @@ import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -31,9 +30,10 @@ import { Elipsis } from "@/components/Elipsis";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { getTimeRemaining } from "@/utils/date";
 import { paddedContainerStyle } from "@/utils/styles";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 export default function StartBeepingScreen() {
-  const trpc = useTRPC();
   const router = useRouter();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
@@ -51,24 +51,23 @@ export default function StartBeepingScreen() {
   const { requestLocationPermission } = useLocationPermissions();
 
   const { data: queue } = useQuery(
-    trpc.beeper.queue.queryOptions(undefined, {
+    orpc.beeper.queue.queryOptions({
       enabled: user && user.isBeeping,
     }),
   );
 
   const { mutate: updateBeepSettings } = useMutation(
-    trpc.user.edit.mutationOptions({
+    orpc.user.edit.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.user.me.queryKey(), data);
+        queryClient.setQueryData(orpc.user.me.queryKey(), data);
       },
       onError(error) {
-        const fieldErrors = error.data?.fieldErrors;
-        if (!fieldErrors) {
-          alert(error.message);
-        } else {
-          for (const key in fieldErrors) {
-            form.setError(key as any, { message: fieldErrors[key]?.[0] });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data.issues) {
+            form.setError(issue.path[0], { message: issue.message });
           }
+        } else {
+          alert(error.message);
         }
       },
     }),

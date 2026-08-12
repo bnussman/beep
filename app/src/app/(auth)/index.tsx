@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
@@ -9,15 +9,16 @@ import { getPushToken } from "@/utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
-import { RouterInput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { SplashScreen, useRouter } from "expo-router";
 import { FieldError, TextField } from "heroui-native";
+import { RouterInputs } from "../../../../orpc/src";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
-type Values = RouterInput["auth"]["login"];
+type Values = RouterInputs["auth"]["login"];
 
 export default function LoginScreen() {
-  const trpc = useTRPC();
   const router = useRouter();
 
   const {
@@ -25,22 +26,20 @@ export default function LoginScreen() {
     handleSubmit,
     setFocus,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<Values>();
 
   const { mutate: login } = useMutation(
-    trpc.auth.login.mutationOptions({
-      async onSuccess(data, variables, result, context) {
+    orpc.auth.login.mutationOptions({
+      async onSuccess(data, vars, idk, context) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-        context.client.setQueryData(trpc.user.me.queryKey(), data.user);
+        context.client.setQueryData(orpc.user.me.queryKey(), data.user);
       },
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, {
-              message: error.data.fieldErrors[key]?.[0],
-            });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data.issues) {
+            setError(issue.path[0], { message: issue.message });
           }
         } else {
           alert(error.message);

@@ -9,13 +9,12 @@ import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
-import { paddedContainerStyle } from "@/utils/styles";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 export default function EditProfileScreen() {
-  const trpc = useTRPC();
   const { user } = useUser();
 
   const values = useMemo(
@@ -39,13 +38,11 @@ export default function EditProfileScreen() {
   } = useForm({ defaultValues: values, values });
 
   const { mutateAsync: edit } = useMutation(
-    trpc.user.edit.mutationOptions({
+    orpc.user.edit.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const key in error.data.fieldErrors) {
-            setError(key as keyof typeof errors, {
-              message: error.data.fieldErrors[key][0],
-            });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data.issues) {
+            setError(issue.path[0], { message: issue.message });
           }
         } else {
           alert(error.message);
@@ -55,7 +52,7 @@ export default function EditProfileScreen() {
   );
 
   const { mutate: upload, isPending: uploadLoading } = useMutation(
-    trpc.user.updatePicture.mutationOptions({
+    orpc.user.updatePicture.mutationOptions({
       onSuccess() {
         setPhoto(undefined);
       },
@@ -83,11 +80,7 @@ export default function EditProfileScreen() {
 
     setPhoto(result.assets[0]);
 
-    const formData = new FormData();
-
-    formData.append("photo", getFile(result.assets[0]) as File);
-
-    upload(formData);
+    upload(getFile(result.assets[0]) as File);
   };
 
   const onSubmit = handleSubmit(async (variables) => {

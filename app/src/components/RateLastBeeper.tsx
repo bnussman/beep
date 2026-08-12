@@ -1,15 +1,14 @@
-import { useTRPC } from "@/utils/trpc";
+import { orpc } from "@/utils/orpc";
 import { useUser } from "@/utils/useUser";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Alert, PressableFeedback } from "heroui-native";
 
 export function RateLastBeeper() {
-  const trpc = useTRPC();
   const router = useRouter();
 
   const { user } = useUser();
-  const { data: beep } = useQuery(trpc.rider.getLastBeepToRate.queryOptions());
+  const { data: beep } = useQuery(orpc.rider.getLastBeepToRate.queryOptions());
 
   if (!beep) {
     return null;

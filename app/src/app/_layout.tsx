@@ -3,27 +3,27 @@ import "../global.css";
 import { useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
 import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
-import { queryClient, trpcClient, TRPCProvider, useTRPC } from "@/utils/trpc";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+import { useColorScheme } from "react-native";
+import { useAutoUpdate } from "@/utils/updates";
+import { setupNotifications, updatePushToken } from "@/utils/notifications";
+import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
+import { navigationIntegration } from "@/utils/instrument";
+import { HeroUINativeProvider } from "heroui-native";
+import { setupLiveActivityListeners } from "@/live-activities/utils";
+import { orpc } from "@/utils/orpc";
+import { queryClient } from "@/utils/tanstack-query";
 import {
   QueryClientProvider,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { KeyboardProvider } from "react-native-keyboard-controller";
-import { LogBox, useColorScheme } from "react-native";
-import { useAutoUpdate } from "@/utils/updates";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { setupNotifications, updatePushToken } from "@/utils/notifications";
-import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "expo-router/react-navigation";
-import { navigationIntegration } from "@/utils/instrument";
-import { HeroUINativeProvider } from "heroui-native";
-import { setupLiveActivityListeners } from "@/live-activities/utils";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,26 +32,24 @@ setupNotifications();
 setupLiveActivityListeners();
 
 function App() {
-  const trpc = useTRPC();
   const colorScheme = useColorScheme();
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading } = useQuery(
-    trpc.user.me.queryOptions(undefined, {
-      retry: false,
-    }),
-  );
-
   useAutoUpdate();
 
-  useSubscription(
-    trpc.user.updates.subscriptionOptions(undefined, {
-      enabled: user !== undefined,
-      onData(user) {
-        queryClient.setQueryData(trpc.user.me.queryKey(), user);
-      },
-    }),
+  const { data: user, isLoading } = useQuery(
+    orpc.user.me.queryOptions({ retry: false })
   );
+
+  const { data: userUpdate } = useQuery(
+    orpc.user.updates.liveOptions({ enabled: user !== undefined })
+  );
+
+  useEffect(() => {
+    if (userUpdate) {
+      queryClient.setQueryData(orpc.user.me.queryKey(), user);
+    }
+  }, [userUpdate]);
 
   useEffect(() => {
     Sentry.setUser(user ?? null);
@@ -109,25 +107,23 @@ function Layout() {
     <GestureHandlerRootView>
       <HeroUINativeProvider>
         <KeyboardProvider>
-          <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-            <QueryClientProvider client={queryClient}>
-              <ThemeProvider
-                value={
-                  colorScheme === "dark"
-                    ? DarkTheme
-                    : {
-                        ...DefaultTheme,
-                        colors: {
-                          ...DefaultTheme.colors,
-                          background: "#fafafa",
-                        },
-                      }
-                }
-              >
-                <App />
-              </ThemeProvider>
-            </QueryClientProvider>
-          </TRPCProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider
+              value={
+                colorScheme === "dark"
+                  ? DarkTheme
+                  : {
+                      ...DefaultTheme,
+                      colors: {
+                        ...DefaultTheme.colors,
+                        background: "#fafafa",
+                      },
+                    }
+              }
+            >
+              <App />
+            </ThemeProvider>
+          </QueryClientProvider>
         </KeyboardProvider>
       </HeroUINativeProvider>
     </GestureHandlerRootView>

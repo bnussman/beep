@@ -1,27 +1,28 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useUser } from "@/utils/useUser";
 import { useQuery } from "@tanstack/react-query";
-import { queryClient, useTRPC } from "@/utils/trpc";
-import { useSubscription } from "@trpc/tanstack-react-query";
+import { orpc } from "@/utils/orpc";
+import { useEffect } from "react";
+import { queryClient } from "@/utils/tanstack-query";
 
 export default function Layout() {
-  const trpc = useTRPC();
   const { user } = useUser();
 
+  const enabled = user && user.isBeeping;
+
   const { data: queue } = useQuery(
-    trpc.beeper.queue.queryOptions(undefined, {
-      enabled: user && user.isBeeping,
-    }),
+    orpc.beeper.queue.queryOptions({ enabled })
   );
 
-  useSubscription(
-    trpc.beeper.watchQueue.subscriptionOptions(undefined, {
-      onData(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
-      },
-      enabled: user && user.isBeeping,
-    }),
+  const { data: queueData } = useQuery(
+    orpc.beeper.watchQueue.liveOptions({ enabled })
   );
+
+  useEffect(() => {
+    if (queueData) {
+      queryClient.setQueryData(orpc.beeper.queue.queryKey(), queueData);
+    }
+  }, [queueData]);
 
   return (
     <NativeTabs minimizeBehavior="onScrollDown">

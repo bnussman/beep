@@ -1,9 +1,9 @@
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from "./constants";
-import { RouterOutput } from "./trpc";
 import { captureException } from "@sentry/react-native";
+import { RouterOutputs } from "../../../orpc/src";
 
-export async function setPurchaseUser(user: RouterOutput["user"]["me"] | null) {
+export async function setPurchaseUser(user: RouterOutputs["user"]["me"] | null) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }

@@ -1,27 +1,26 @@
 import { ActivityIndicator, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/utils/trpc";
 import { getFormattedRatingString, printStars } from "@/components/Stars";
 import { Image } from "@/components/Image";
 import { useLocalSearchParams } from "expo-router";
 import { Avatar } from "@/components/Avatar";
+import { orpc } from "@/utils/orpc";
 
 export default function User() {
-  const trpc = useTRPC();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const {
     data: user,
     isPending: userPending,
     error: userError,
-  } = useQuery(trpc.user.publicUser.queryOptions(id));
+  } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
 
   const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(id),
+    orpc.user.getUserPrivateDetails.queryOptions({ input: id }),
   );
 
-  const { data: car } = useQuery(trpc.user.getUsersDefaultCar.queryOptions(id));
+  const { data: car } = useQuery(orpc.user.getUsersDefaultCar.queryOptions({ input: id }));
 
   if (userPending) {
     return (

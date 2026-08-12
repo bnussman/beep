@@ -4,27 +4,28 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { UserHeader } from "@/components/UserHeader";
 import { useNavigation } from "expo-router/react-navigation";
-import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Label } from "@/components/Label";
 import { useLocalSearchParams } from "expo-router";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { orpc } from "@/utils/orpc";
 
 export default function ReportScreen() {
-  const trpc = useTRPC();
   const { id, beepId, ratingId } = useLocalSearchParams<{
     id: string;
     beepId: string;
     ratingId: string;
   }>();
+
   const [reason, setReason] = useState<string>("");
+
   const { goBack } = useNavigation();
 
-  const { data: user } = useQuery(trpc.user.publicUser.queryOptions(id));
+  const { data: user } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
 
   const { mutateAsync: report, isPending } = useMutation(
-    trpc.report.createReport.mutationOptions({
+    orpc.report.createReport.mutationOptions({
       onSuccess() {
         goBack();
       },

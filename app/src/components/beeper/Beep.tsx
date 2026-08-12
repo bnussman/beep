@@ -9,7 +9,6 @@ import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Map } from "@/components/Map";
-import { useTRPC, type RouterOutput } from "@/utils/trpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { decodePolyline } from "@/utils/location";
 import { Marker } from "@/components/Marker";
@@ -27,21 +26,24 @@ import {
   openVenmo,
   sms,
 } from "@/utils/links";
+import { RouterOutputs } from "../../../../orpc/src";
+import { orpc } from "@/utils/orpc";
 
 interface Props {
-  beep: RouterOutput["beeper"]["queue"][number];
+  beep: RouterOutputs["beeper"]["queue"][number];
 }
 
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
   const router = useRouter();
-  const trpc = useTRPC();
 
   const { data: beepRoute } = useQuery(
-    trpc.location.getRoute.queryOptions({
-      origin: beep.origin,
-      destination: beep.destination,
+    orpc.location.getRoute.queryOptions({
+      input: {
+        origin: beep.origin,
+        destination: beep.destination,
+      }
     }),
   );
 
@@ -65,9 +67,9 @@ export function Beep(props: Props) {
   const queryClient = useQueryClient();
 
   const { mutate: cancel } = useMutation(
-    trpc.beeper.updateBeep.mutationOptions({
+    orpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+        queryClient.setQueryData(orpc.beeper.queue.queryKey(), data);
       },
       onError(error) {
         alert(error.message);

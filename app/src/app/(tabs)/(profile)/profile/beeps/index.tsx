@@ -2,7 +2,6 @@ import { useLayoutEffect, useState } from "react";
 import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Beep } from "@/components/Beep";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { getContentContainerStyle } from "@/utils/styles";
@@ -13,6 +12,8 @@ import { capitalize } from "@/utils/strings";
 import { getNativeNavigationMenuItem } from "@/components/Menu.utils";
 import { Elipsis } from "@/components/Elipsis";
 import { Button } from "heroui-native";
+import { RouterOutputs } from "../../../../../../../orpc/src";
+import { orpc } from "@/utils/orpc";
 
 const beepStatuses: BeepStatus[] = [
   "canceled",
@@ -25,10 +26,9 @@ const beepStatuses: BeepStatus[] = [
   "complete",
 ];
 
-type BeepStatus = RouterOutput['beep']['beep']['status'];
+type BeepStatus = RouterOutputs['beep']['beep']['status'];
 
 export default function BeepsScreen() {
-  const trpc = useTRPC();
   const { user } = useUser();
   const navigation = useNavigation();
 
@@ -92,24 +92,23 @@ export default function BeepsScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    trpc.beep.beeps.infiniteQueryOptions(
-      {
+    orpc.beep.beeps.infiniteOptions({
+      input: (page: number) => ({
         userId: user?.id,
         pageSize: PAGE_SIZE,
-        status: statuses
+        status: statuses,
+        page,
+      }),
+      initialPageParam: 1,
+      placeholderData: keepPreviousData,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
+          return undefined;
+        }
+        return page.page + 1;
       },
-      {
-        initialCursor: 1,
-        placeholderData: keepPreviousData,
-        getNextPageParam(page) {
-          if (page.page === page.pages) {
-            return undefined;
-          }
-          return page.page + 1;
-        },
-        refetchOnMount: false,
-      },
-    ),
+      refetchOnMount: false,
+    }),
   );
 
   const beeps = data?.pages.flatMap((page) => page.beeps);

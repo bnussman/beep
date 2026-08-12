@@ -1,18 +1,16 @@
-import React from "react";
-import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
 import { FlatList, View } from "react-native";
 import { QueueItem } from "@/components/beeper/QueueItem";
 import { getContentContainerStyle, paddedContainerStyle } from "@/utils/styles";
+import { orpc } from "@/utils/orpc";
 
 export default function StartBeepingScreen() {
-  const trpc = useTRPC();
   const { user } = useUser();
 
   const { data, refetch, isRefetching } = useQuery(
-    trpc.beeper.queue.queryOptions(undefined, {
+    orpc.beeper.queue.queryOptions({
       enabled: user && user.isBeeping,
     }),
   );

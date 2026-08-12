@@ -1,5 +1,4 @@
 import { useLocation } from "@/utils/location";
-import { useTRPC } from "@/utils/trpc";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PressableFeedback, SearchField } from "heroui-native";
 import { useState } from "react";
@@ -9,10 +8,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Separator } from "heroui-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useController } from "react-hook-form";
+import { orpc } from "@/utils/orpc";
 
 export default function PickLocation() {
   const params = useLocalSearchParams<{ type: "origin" | "destination" }>();
-  const trpc = useTRPC();
   const router = useRouter();
 
   const { location } = useLocation(true);
@@ -21,39 +20,38 @@ export default function PickLocation() {
 
   const [query, setQuery] = useState(field.field.value);
 
-  const { data, isFetching } = useQuery(
-    trpc.location.getSuggestions.queryOptions(
-      {
+  const { data } = useQuery(
+    orpc.location.getSuggestions.queryOptions({
+      input: {
         query,
         location: location?.coords,
       },
-      {
-        refetchOnMount: false,
-        placeholderData: keepPreviousData,
-        select(data) {
-          return data.map((item) => {
-            const addressParts = [
-              item.properties.housenumber,
-              item.properties.street,
-              item.properties.city,
-              item.properties.state,
-            ];
+      refetchOnMount: false,
+      placeholderData: keepPreviousData,
+      select(data) {
+        return data.map((item) => {
+          const addressParts = [
+            item.properties.housenumber,
+            item.properties.street,
+            item.properties.city,
+            item.properties.state,
+          ];
 
-            const address = addressParts
-              .filter((part) => part !== undefined)
-              .join(" ");
+          const address = addressParts
+            .filter((part) => part !== undefined)
+            .join(" ");
 
-            if (item.properties.name) {
-              return {
-                name: item.properties.name,
-                address,
-              };
-            }
+          if (item.properties.name) {
+            return {
+              name: item.properties.name,
+              address,
+            };
+          }
 
-            return { address };
-          });
-        },
+          return { address };
+        });
       },
+    },
     ),
   );
 

@@ -5,18 +5,16 @@ import { Image } from "@/components/Image";
 import { View } from "react-native";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "@/components/Menu";
 import { getContentContainerStyle } from "@/utils/styles";
-import { colorMap } from "@/utils/cars";
 import { Color, Indicator } from "@/components/Indicator";
+import { orpc } from "@/utils/orpc";
 
 export default function Cars() {
-  const trpc = useTRPC();
   const { user } = useUser();
 
   const queryClient = useQueryClient();
@@ -29,36 +27,39 @@ export default function Cars() {
     fetchNextPage,
     isRefetching,
   } = useInfiniteQuery(
-    trpc.car.cars.infiniteQueryOptions(
-      {
+    orpc.car.cars.infiniteOptions({
+      input: (page) => ({
         userId: user?.id,
         pageSize: PAGE_SIZE,
+        page,
+      }),
+      placeholderData: keepPreviousData,
+      initialPageParam: 1,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
+          return undefined;
+        }
+        return page.page + 1;
       },
-      {
-        placeholderData: keepPreviousData,
-        initialCursor: 1,
-        getNextPageParam(page) {
-          if (page.page === page.pages) {
-            return undefined;
-          }
-          return page.page + 1;
-        },
-      },
-    ),
+    }),
   );
 
   const { mutateAsync: deleteCar } = useMutation(
-    trpc.car.deleteCar.mutationOptions({
+    orpc.car.deleteCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({
+          queryKey: orpc.car.cars.key()
+        });
       },
     }),
   );
 
   const { mutateAsync: updateCar } = useMutation(
-    trpc.car.updateCar.mutationOptions({
+    orpc.car.updateCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({
+          queryKey: orpc.car.cars.key()
+        });
       },
     }),
   );
