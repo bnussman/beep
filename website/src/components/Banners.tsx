@@ -34,13 +34,15 @@ export function Banners() {
 
   return (
     <Alert
-      severity="error"
+      severity="warning"
+      sx={{ alignItems: 'center' }}
+      slotProps={{ action: { sx: { padding: 0.5 } } }}
       action={
         <Button
           loading={isPending}
           onClick={() => resend()}
-          color="error"
-          variant="outlined"
+          color="warning"
+          variant="contained"
         >
           Resend
         </Button>
