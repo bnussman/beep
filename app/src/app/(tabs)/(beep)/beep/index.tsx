@@ -56,7 +56,7 @@ export default function StartBeepingScreen() {
     }),
   );
 
-  const { mutate: updateBeepSettings } = useMutation(
+  const { mutateAsync: updateBeepSettings } = useMutation(
     orpc.user.edit.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(orpc.user.me.queryKey(), data);
@@ -125,7 +125,7 @@ export default function StartBeepingScreen() {
       };
     }
 
-    updateBeepSettings({
+    await updateBeepSettings({
       isBeeping: willBeBeeping,
       ...values,
       location,

@@ -1,5 +1,5 @@
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createContext } from "./utils/trpc";
+import { createContext, createWSContext } from "./utils/trpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
@@ -17,6 +17,7 @@ import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 import { flagsRouter } from "./routers/flags";
 import { RPCHandler } from "@orpc/server/fetch";
+import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";
 import { onError } from "@orpc/server";
 import { RouterClient } from '@orpc/server'
@@ -48,14 +49,6 @@ const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin()
   ],
-  toFetchResponse: {
-    eventStream: {
-      keepAlive: {
-        enabled: true,
-        interval: 5_000
-      },
-    },
-  },
   interceptors: [
     onError((error) => {
       console.error(error)
@@ -63,12 +56,23 @@ const handler = new RPCHandler(appRouter, {
   ]
 })
 
+const wsHandler = new WSRPCHandler(appRouter, {
+  interceptors: [
+    onError((error) => {
+      console.error(error)
+    }),
+  ],
+})
+
 Bun.serve({
   port: 3001,
   routes: {
     "/payments/webhook": handlePaymentWebook,
   },
-  async fetch(request) {
+  async fetch(request, server) {
+    if (server.upgrade(request)) {
+      return
+    }
     const { response } = await handler.handle(request, {
       prefix: '/',
       context: await createContext(request)
@@ -76,6 +80,18 @@ Bun.serve({
 
     return response ?? new Response('Not found', { status: 404 })
   },
+  websocket: {
+    async message(ws, message) {
+      await wsHandler.message(ws, message, {
+        context: async (request) => {
+          return await createWSContext(request)
+        },
+      })
+    },
+    async close(ws) {
+      await wsHandler.close(ws)
+    },
+  }
 });
 
 console.info("🚕 Beep API Server Started");

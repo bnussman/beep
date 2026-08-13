@@ -14,6 +14,7 @@ import { HeroUINativeProvider } from "heroui-native";
 import { setupLiveActivityListeners } from "@/live-activities/utils";
 import { orpc } from "@/utils/orpc";
 import { queryClient } from "@/utils/tanstack-query";
+import { useSubscription } from "@/utils/subscriptions";
 import {
   QueryClientProvider,
   useQuery,
@@ -24,6 +25,15 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "expo-router/react-navigation";
+
+if (!global.AbortSignal.prototype.throwIfAborted) {
+  console.log("PATCHING")
+  global.AbortSignal.prototype.throwIfAborted = function throwIfAborted() {
+    if (this.aborted) {
+      throw new Error('Aborted');
+    }
+  };
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,15 +51,15 @@ function App() {
     orpc.user.me.queryOptions({ retry: false })
   );
 
-  const { data: userUpdate } = useQuery(
-    orpc.user.updates.liveOptions({ enabled: user !== undefined })
-  );
-
-  useEffect(() => {
-    if (userUpdate) {
-      queryClient.setQueryData(orpc.user.me.queryKey(), user);
-    }
-  }, [userUpdate]);
+  useSubscription({
+    ...orpc.user.updates.liveOptions({
+      enabled: user !== undefined,
+      context: { ws: true }
+    }),
+    onData(data) {
+      queryClient.setQueryData(orpc.user.me.queryKey(), data);
+    },
+  });
 
   useEffect(() => {
     Sentry.setUser(user ?? null);

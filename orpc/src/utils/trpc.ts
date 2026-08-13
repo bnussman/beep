@@ -6,12 +6,39 @@ import { redis } from "./redis";
 import { os, ORPCError } from "@orpc/server";
 import { token, user } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { StandardLazyRequest } from "@orpc/server/standard";
 
 export async function createContext(
   request: Request
 ) {
   const bearerToken = request.headers.get("authorization")?.split(" ")[1]
 
+  if (!bearerToken) {
+    return {};
+  }
+
+  const result = await db
+    .select()
+    .from(token)
+    .leftJoin(user, eq(token.user_id, user.id))
+    .where(eq(token.id, bearerToken));
+
+  const session = result[0];
+
+  if (!session?.user) {
+    return {};
+  }
+
+  Sentry.setUser(session.user);
+
+  return { user: session.user, token: session.token };
+}
+
+
+export async function createWSContext(
+  request: StandardLazyRequest
+) {
+  const bearerToken = (request.headers.Authorization as string | undefined)?.split(" ")[1]
 
   if (!bearerToken) {
     return {};

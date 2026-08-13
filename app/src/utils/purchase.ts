@@ -38,7 +38,7 @@ export async function setupPurchase() {
       require("react-native-purchases").default;
     const { LOG_LEVEL } = await import("react-native-purchases");
 
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    Purchases.setLogLevel(LOG_LEVEL.INFO);
 
     if (Platform.OS === "ios") {
       Purchases.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });

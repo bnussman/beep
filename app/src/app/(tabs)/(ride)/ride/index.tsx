@@ -19,6 +19,7 @@ import { endRiderLiveActivities } from "@/live-activities/utils";
 import { paddedContainerStyle } from "@/utils/styles";
 import { isIOS } from "@/utils/constants";
 import { orpc } from "@/utils/orpc";
+import { useSubscription } from "@/utils/subscriptions";
 
 export default function MainFindBeepScreen() {
   const queryClient = useQueryClient();
@@ -31,26 +32,28 @@ export default function MainFindBeepScreen() {
     beep?.status === "here" ||
     beep?.status === "on_the_way";
 
-  const { data } = useQuery(
-    orpc.rider.currentRideUpdatesAllowPartial.liveOptions({ enabled: Boolean(beep) })
-  );
-
-  useEffect(() => {
-    if (data === null) {
-      queryClient.invalidateQueries(
-        orpc.rider.getLastBeepToRate.queryOptions(),
-      );
-    }
-    queryClient.setQueryData(orpc.rider.currentRide.queryKey(), (prev) => {
+  useSubscription({
+    ...orpc.rider.currentRideUpdatesAllowPartial.liveOptions({
+      enabled: Boolean(beep),
+      context: { ws: true }
+    }),
+    onData(data) {
       if (data === null) {
-        return null;
+        queryClient.invalidateQueries(
+          orpc.rider.getLastBeepToRate.queryOptions(),
+        );
       }
-      if (!prev) {
-        return data as typeof beep;
-      }
-      return { ...prev, ...data };
-    });
-  }, [data]);
+      queryClient.setQueryData(orpc.rider.currentRide.queryKey(), (prev) => {
+        if (data === null) {
+          return null;
+        }
+        if (!prev) {
+          return data as typeof beep;
+        }
+        return { ...prev, ...data };
+      });
+    }
+  })
 
   const { data: beepersLocation } = useQuery(
     orpc.rider.beeperLocationUpdates.liveOptions({
