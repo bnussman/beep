@@ -17,7 +17,7 @@ export function useSubscription<TQueryFnData = unknown, TError = Error, TData = 
   const query = useQuery<TQueryFnData, TError, TData, TQueryKey>(options);
 
   useEffect(() => {
-    if (query.data && options.onData) {
+    if (query.data !== undefined && options.onData) {
       options.onData(query.data as TQueryFnData);
     }
   }, [query.data]);
