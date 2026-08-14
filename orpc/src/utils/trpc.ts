@@ -5,67 +5,66 @@ import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 import { os, ORPCError } from "@orpc/server";
 import { token, user } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { DrizzleQueryError, eq } from "drizzle-orm";
 import { StandardLazyRequest } from "@orpc/server/standard";
 
-export async function createContext(
-  request: Request
-) {
+async function createContext(bearerToken: string | undefined) {
+  if (!bearerToken) {
+    return {};
+  }
+
+  const result = await db
+    .select()
+    .from(token)
+    .leftJoin(user, eq(token.user_id, user.id))
+    .where(eq(token.id, bearerToken));
+
+  const session = result[0];
+
+  if (!session?.user) {
+    return {};
+  }
+
+  Sentry.setUser(session.user);
+
+  return { user: session.user, token: session.token };
+}
+
+export async function createHTTPContext(request: Request) {
   const bearerToken = request.headers.get("authorization")?.split(" ")[1]
 
-  if (!bearerToken) {
-    return {};
-  }
-
-  const result = await db
-    .select()
-    .from(token)
-    .leftJoin(user, eq(token.user_id, user.id))
-    .where(eq(token.id, bearerToken));
-
-  const session = result[0];
-
-  if (!session?.user) {
-    return {};
-  }
-
-  Sentry.setUser(session.user);
-
-  return { user: session.user, token: session.token };
+  return await createContext(bearerToken);
 }
 
-
-export async function createWSContext(
-  request: StandardLazyRequest
-) {
+export async function createWSContext(request: StandardLazyRequest) {
   const bearerToken = (request.headers.Authorization as string | undefined)?.split(" ")[1]
 
-  if (!bearerToken) {
-    return {};
-  }
-
-  const result = await db
-    .select()
-    .from(token)
-    .leftJoin(user, eq(token.user_id, user.id))
-    .where(eq(token.id, bearerToken));
-
-  const session = result[0];
-
-  if (!session?.user) {
-    return {};
-  }
-
-  Sentry.setUser(session.user);
-
-  return { user: session.user, token: session.token };
+  return await createContext(bearerToken)
 }
 
-
 export type Context = Awaited<ReturnType<typeof createContext>>;
-export type AuthenticatedContext = Extract<Context, { user: {} }>;
 
-export const o = os.$context<Context>()
+const errorTransformerMiddleware = os.middleware(async (opts) => {
+  try {
+    return await opts.next(opts);
+  } catch (error) {
+    // Return a human readable error message for PostgreSQL duplicate key errors
+    if (
+      error instanceof DrizzleQueryError &&
+      error.cause &&
+      'code' in error.cause &&
+      'detail' in error.cause &&
+      typeof error.cause.detail === 'string' &&
+      error.cause.code === "23505"
+    ) {
+      throw new ORPCError("CONFLICT", { message: error.cause.detail });
+    }
+
+    throw error;
+  }
+});
+
+export const o = os.$context<Context>().use(errorTransformerMiddleware);
 
 export const authedProcedure = o.use(function isAuthed({ next, context }) {
   if (!context.user || !context.token) {
@@ -96,7 +95,6 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
 });
 
 export const mustHaveBeenInAcceptedBeep = o
-  .$context<AuthenticatedContext>()
   .middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
     if (!opts.context.user) {
       throw new ORPCError("UNAUTHORIZED");
@@ -141,7 +139,6 @@ export const mustHaveBeenInAcceptedBeep = o
   });
 
 export const mustBeInAcceptedBeep = o
-  .$context<AuthenticatedContext>()
   .middleware(async function checkIfUserIsInAnAcceptedBeep(opts, userId: string) {
     if (!opts.context.user) {
       throw new ORPCError("UNAUTHORIZED");
@@ -186,7 +183,6 @@ export const mustBeInAcceptedBeep = o
   });
 
 export const withLock = o
-  .$context<AuthenticatedContext>()
   .middleware(async function handleLock(opts) {
     if (!opts.context.user) {
       throw new Error(

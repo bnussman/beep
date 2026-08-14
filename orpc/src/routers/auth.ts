@@ -12,7 +12,7 @@ import { SendMailOptions } from "nodemailer";
 import { pubSub } from "../utils/pubsub";
 import { authSchema } from "../schemas/auth";
 import { signupSchema, userSchema } from "../schemas/user";
-import { ORPCError } from "@orpc/server";
+import { ORPCError, ValidationError } from "@orpc/server";
 
 export const authRouter = {
   login: o
@@ -105,16 +105,25 @@ export const authRouter = {
       });
 
       if (existing) {
-        throw new ORPCError("BAD_REQUEST", {
-          cause: new z.ZodRealError([
-            {
-              code: "invalid_value",
-              path: ["email"],
-              message: "A user with that email already exists.",
-              values: [input.email],
-            },
-          ]),
-        });
+        const issues = [
+          {
+            code: "invalid_value",
+            path: ["email"],
+            message: "A user with that email already exists.",
+            values: [input.email],
+          },
+        ];
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Input validation failed',
+          data: {
+            issues,
+          },
+          cause: new ValidationError({
+            message: 'Input validation failed',
+            issues,
+            invalidData: input,
+          }),
+        })
       }
 
       const extention = input.photo.name.substring(

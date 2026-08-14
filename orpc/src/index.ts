@@ -1,5 +1,5 @@
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createContext, createWSContext } from "./utils/trpc";
+import { createHTTPContext, createWSContext } from "./utils/trpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
@@ -77,12 +77,16 @@ Bun.serve({
     if (server.upgrade(request)) {
       return
     }
+
     const { response } = await handler.handle(request, {
-      prefix: '/',
-      context: await createContext(request)
+      context: await createHTTPContext(request)
     })
 
-    return response ?? new Response('Not found', { status: 404 })
+    if (response) {
+      return response;
+    }
+
+    return new Response('Not found', { status: 404 })
   },
   websocket: {
     async message(ws, message) {
