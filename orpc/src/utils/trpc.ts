@@ -66,7 +66,7 @@ const errorTransformerMiddleware = os.middleware(async (opts) => {
 
 export const o = os.$context<Context>().use(errorTransformerMiddleware);
 
-export const authedProcedure = o.use(function isAuthed({ next, context }) {
+const isAuthenticatedMiddleware = o.middleware(function isAuthed({ next, context }) {
   if (!context.user || !context.token) {
     throw new ORPCError("UNAUTHORIZED");
   }
@@ -74,7 +74,7 @@ export const authedProcedure = o.use(function isAuthed({ next, context }) {
   return next({ context });
 });
 
-export const verifiedProcedure = authedProcedure.use(function isVerified({ context, next }) {
+const isVerifiedMiddleware = o.use(isAuthenticatedMiddleware).middleware(function isVerified({ context, next }) {
   if (!context.user.isStudent || !context.user.isEmailVerified) {
     throw new ORPCError("UNAUTHORIZED", {
       message: "Your edu email must be verified.",
@@ -84,7 +84,7 @@ export const verifiedProcedure = authedProcedure.use(function isVerified({ conte
   return next({ context });
 });
 
-export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
+const isAdminMiddleware = o.use(isAuthenticatedMiddleware).middleware(function isAdmin(opts) {
   const { context } = opts;
 
   if (context.user.role !== "admin") {
@@ -94,12 +94,13 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
   return opts.next({ context });
 });
 
-export const mustHaveBeenInAcceptedBeep = o
-  .middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
-    if (!opts.context.user) {
-      throw new ORPCError("UNAUTHORIZED");
-    }
+export const authedProcedure = o.use(isAuthenticatedMiddleware);
+export const verifiedProcedure = o.use(isVerifiedMiddleware);
+export const adminProcedure = o.use(isAdminMiddleware);
 
+export const mustHaveBeenInAcceptedBeep = o
+  .use(isAuthenticatedMiddleware)
+  .middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
     if (opts.context.user.role === "admin" || userId === opts.context.user.id) {
       return opts.next(opts);
     }
@@ -139,11 +140,8 @@ export const mustHaveBeenInAcceptedBeep = o
   });
 
 export const mustBeInAcceptedBeep = o
+  .use(isAuthenticatedMiddleware)
   .middleware(async function checkIfUserIsInAnAcceptedBeep(opts, userId: string) {
-    if (!opts.context.user) {
-      throw new ORPCError("UNAUTHORIZED");
-    }
-
     if (opts.context.user.role === "admin" || userId === opts.context.user.id) {
       return opts.next(opts);
     }
@@ -183,13 +181,8 @@ export const mustBeInAcceptedBeep = o
   });
 
 export const withLock = o
+  .use(isAuthenticatedMiddleware)
   .middleware(async function handleLock(opts) {
-    if (!opts.context.user) {
-      throw new Error(
-        "This middleware should only be used for authenticated procedures.",
-      );
-    }
-
     const lock = createLock({
       adapter: new IoredisAdapter(redis),
       key: `${opts.path}-${opts.context.user.id}`,
