@@ -55,10 +55,11 @@ export default function MainFindBeepScreen() {
     }
   })
 
-  const { data: beepersLocation } = useQuery(
+  const { data: beepersLocation } = useSubscription(
     orpc.rider.beeperLocationUpdates.liveOptions({
       input: beep ? beep.beeper.id : skipToken,
       enabled: isAcceptedBeep,
+      context: { ws: true }
     })
   );
 

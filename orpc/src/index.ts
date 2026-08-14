@@ -40,8 +40,12 @@ const appRouter = {
   flags: flagsRouter,
 };
 
+interface ClientContext {
+  ws?: boolean;
+}
+
 export type AppRouter = typeof appRouter;
-export type AppRouterClient = RouterClient<AppRouter>;
+export type AppRouterClient = RouterClient<AppRouter, ClientContext>;
 export type RouterInputs = InferRouterInputs<AppRouter>;
 export type RouterOutputs = InferRouterOutputs<AppRouter>;
 

@@ -5,11 +5,13 @@ import { AnimatedMarker } from "./AnimatedMarker";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
-import { useEffect } from "react";
+import { useSubscription } from "@/utils/subscriptions";
+import { useIsFocused } from "expo-router";
 
 export function BeepersMap() {
   const { location } = useLocation();
   const queryClient = useQueryClient();
+  const isFocused = useIsFocused();
 
   const input = {
     latitude: location?.coords.latitude ?? 0,
@@ -24,15 +26,13 @@ export function BeepersMap() {
     }),
   );
 
-  const { data: locationUpdate } = useQuery(
-    orpc.rider.beepersLocations.liveOptions({
+  useSubscription({
+    ...orpc.rider.beepersLocations.liveOptions({
       input,
-      enabled: location !== undefined,
-    })
-  );
-
-  useEffect(() => {
-    if (locationUpdate) {
+      enabled: location !== undefined && isFocused,
+      context: { ws: true }
+    }),
+    onData(data) {
       queryClient.setQueryData(
         orpc.rider.beepersNearMe.queryKey({ input }),
         (prev) => {
@@ -41,21 +41,21 @@ export function BeepersMap() {
           }
 
           const indexOfItem = prev.findIndex(
-            (beeper) => beeper.id === locationUpdate.id,
+            (beeper) => beeper.id === data.id,
           );
 
           if (indexOfItem !== -1) {
             const newData = [...prev];
             newData[indexOfItem] = {
               ...prev[indexOfItem],
-              location: locationUpdate.location,
+              location: data.location,
             };
             return newData;
           }
         },
       );
     }
-  }, [locationUpdate]);
+  });
 
   const initialRegion: Region | undefined = location
     ? {
