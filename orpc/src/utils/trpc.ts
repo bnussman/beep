@@ -74,25 +74,29 @@ const isAuthenticatedMiddleware = o.middleware(function isAuthed({ next, context
   return next({ context });
 });
 
-const isVerifiedMiddleware = o.use(isAuthenticatedMiddleware).middleware(function isVerified({ context, next }) {
-  if (!context.user.isStudent || !context.user.isEmailVerified) {
-    throw new ORPCError("UNAUTHORIZED", {
-      message: "Your edu email must be verified.",
-    });
-  }
+const isVerifiedMiddleware = o
+  .use(isAuthenticatedMiddleware)
+  .middleware(function isVerified({ context, next }) {
+    if (!context.user.isStudent || !context.user.isEmailVerified) {
+      throw new ORPCError("UNAUTHORIZED", {
+        message: "Your edu email must be verified.",
+      });
+    }
 
-  return next({ context });
-});
+    return next({ context });
+  });
 
-const isAdminMiddleware = o.use(isAuthenticatedMiddleware).middleware(function isAdmin(opts) {
-  const { context } = opts;
+const isAdminMiddleware = o
+  .use(isAuthenticatedMiddleware)
+  .middleware(function isAdmin(opts) {
+    const { context } = opts;
 
-  if (context.user.role !== "admin") {
-    throw new ORPCError("UNAUTHORIZED");
-  }
+    if (context.user.role !== "admin") {
+      throw new ORPCError("UNAUTHORIZED");
+    }
 
-  return opts.next({ context });
-});
+    return opts.next({ context });
+  });
 
 export const authedProcedure = o.use(isAuthenticatedMiddleware);
 export const verifiedProcedure = o.use(isVerifiedMiddleware);
