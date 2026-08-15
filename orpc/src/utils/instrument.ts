@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/bun";
 import { ENVIRONMENT, SENTRY_DSN } from "./constants";
+import { ORPCInstrumentation } from "@orpc/opentelemetry";
 
 const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
 
@@ -45,6 +46,9 @@ Sentry.init({
   tracesSampler(samplingContext) {
     return true;
   },
+  openTelemetryInstrumentations: [
+    new ORPCInstrumentation(),
+  ],
   integrations(integrations) {
     return [
       Sentry.bunRuntimeMetricsIntegration(),

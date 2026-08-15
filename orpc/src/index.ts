@@ -1,3 +1,4 @@
+import './utils/instrument';
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
 import { createHTTPContext, createWSContext } from "./utils/trpc";
 import { userRouter } from "./routers/user";
