@@ -72,20 +72,23 @@ const wsLink = new WSRPCLink({
   reconnect: {
     enabled: true,
     delay(info) {
-      return 1_000
+      return info.attempt === 1 ? 0 : 2_000;
     },
-    // onClose: { enabled: true }
+    onClose: {
+      enabled: true,
+    }
   },
   plugins: [
     new ClientRetryPlugin({
       default: {
-        retryDelay: 1_000,
+        retryDelay: (value) => {
+          return value.attempt === 1 ? 0 : 2_000
+        },
         retry: () => {
           return Number.POSITIVE_INFINITY
         },
         shouldRetry: (ctx) => {
           if (ctx.error instanceof ORPCError && ctx.error.code === "UNAUTHORIZED") {
-            console.log("Skipping retry")
             return false;
           }
           return true;
