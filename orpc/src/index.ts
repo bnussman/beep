@@ -54,6 +54,7 @@ export type RouterOutputs = InferRouterOutputs<AppRouter>;
 const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin({
+      origin: "*",
       allowHeaders: ["Content-Type", "Authorization", "Vary", "sentry-trace", "baggage"],
     })
   ],
