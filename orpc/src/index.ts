@@ -22,6 +22,7 @@ import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";
 import { onError } from "@orpc/server";
 import { RouterClient } from '@orpc/server'
+import { getActiveSpan } from '@sentry/bun';
 
 const appRouter = {
   user: userRouter,
@@ -55,6 +56,15 @@ const handler = new RPCHandler(appRouter, {
     new CORSPlugin()
   ],
   interceptors: [
+    ({ request, next }) => {
+      const span = getActiveSpan();
+
+      request.signal?.addEventListener('abort', () => {
+        span?.addEvent('aborted', { reason: String(request.signal?.reason) })
+      })
+
+      return next()
+    },
     onError((error) => {
       console.error(error)
     }),
