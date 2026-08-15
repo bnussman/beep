@@ -1,4 +1,3 @@
-import React from "react";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
@@ -7,17 +6,17 @@ import { Label } from "@/components/Label";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 export default function Feedback() {
-  const trpc = useTRPC();
   const {
     mutateAsync: createFeedback,
     isPending,
     error,
   } = useMutation(
-    trpc.feedback.createFeedback.mutationOptions({
+    orpc.feedback.createFeedback.mutationOptions({
       onSuccess() {
         Alert.alert(
           "Thank you for your feedback!",
@@ -26,7 +25,13 @@ export default function Feedback() {
         reset();
       },
       onError(error) {
-        alert(error.message);
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data.issues) {
+            setError(issue.path[0], { message: issue.message });
+          }
+        } else {
+          alert(error.message);
+        }
       },
     }),
   );
@@ -35,12 +40,11 @@ export default function Feedback() {
     control,
     handleSubmit,
     reset,
+    setError,
     formState: { errors },
   } = useForm({
     defaultValues: { message: "" },
   });
-
-  const validationErrors = error?.data?.fieldErrors;
 
   const onSubmit = handleSubmit((values) => createFeedback(values));
 
@@ -81,7 +85,7 @@ export default function Feedback() {
           )}
         />
         <Text color="error">
-          {errors.message?.message ?? validationErrors?.message?.[0]}
+          {errors.message?.message}
         </Text>
       </View>
       <Button onPress={onSubmit} isLoading={isPending}>

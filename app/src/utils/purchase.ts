@@ -1,9 +1,9 @@
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from "./constants";
-import { RouterOutput } from "./trpc";
 import { captureException } from "@sentry/react-native";
+import { RouterOutputs } from "../../../orpc/src";
 
-export async function setPurchaseUser(user: RouterOutput["user"]["me"] | null) {
+export async function setPurchaseUser(user: RouterOutputs["user"]["me"] | null) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }
@@ -38,7 +38,7 @@ export async function setupPurchase() {
       require("react-native-purchases").default;
     const { LOG_LEVEL } = await import("react-native-purchases");
 
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    Purchases.setLogLevel(LOG_LEVEL.INFO);
 
     if (Platform.OS === "ios") {
       Purchases.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });

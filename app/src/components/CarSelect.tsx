@@ -4,23 +4,24 @@ import { Menu } from "./Menu";
 import { Input } from "./Input";
 import { useUser } from "@/utils/useUser";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/utils/trpc";
 import { useRouter } from "expo-router";
+import { orpc } from "@/utils/orpc";
 
 export function CarSelect() {
   const { user } = useUser();
-  const trpc = useTRPC();
   const router = useRouter();
 
   const { data: cars } = useQuery(
-    trpc.car.cars.queryOptions(user ? { userId: user.id } : skipToken),
+    orpc.car.cars.queryOptions({
+      input: user ? { userId: user.id } : skipToken
+    }),
   );
 
   const { mutate } = useMutation(
-    trpc.car.updateCar.mutationOptions({
+    orpc.car.updateCar.mutationOptions({
       onSuccess(data, variables, onMutateResult, context) {
         context.client.invalidateQueries({
-          queryKey: trpc.car.cars.pathKey(),
+          queryKey: orpc.car.cars.key(),
         });
       },
     }),

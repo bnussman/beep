@@ -6,9 +6,9 @@ import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { Link, LinkProps } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
-import { useTRPC } from "@/utils/trpc";
 import { Button } from "@/components/Button";
 import { paddedContainerStyle } from "@/utils/styles";
+import { orpc } from "@/utils/orpc";
 
 interface LinkItem {
   icon: string | React.JSX.Element;
@@ -18,7 +18,6 @@ interface LinkItem {
 }
 
 export default function EditProfileScreen() {
-  const trpc = useTRPC();
   const { user } = useUser();
 
   const links: LinkItem[] = [
@@ -61,7 +60,7 @@ export default function EditProfileScreen() {
   ];
 
   const { mutate: resend, isPending: resendLoading } = useMutation(
-    trpc.auth.resendVerification.mutationOptions({
+    orpc.auth.resendVerification.mutationOptions({
       onSuccess() {
         alert(
           "Successfully resent verification email. Please check your email for further instructions.",

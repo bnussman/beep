@@ -2,7 +2,7 @@ import { getTimeRemaining } from "@/utils/date";
 import { useState, useEffect } from "react";
 
 interface Props {
-  date: string;
+  date: Date;
 }
 
 export const Countdown = (props: Props) => {

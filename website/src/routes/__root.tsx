@@ -84,7 +84,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Providers>
           <Header />
 
-          <Container component="main" sx={{ pt: 10 }}>
+          <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column' }}>
             <Banners />
             {children}
           </Container>

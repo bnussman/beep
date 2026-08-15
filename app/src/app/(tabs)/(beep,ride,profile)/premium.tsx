@@ -1,4 +1,5 @@
 import PremiumImage from "../../../../assets/premium.png";
+import { orpc } from "@/utils/orpc";
 import { useEffect, useState } from "react";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
@@ -7,7 +8,6 @@ import { Button } from "@/components/Button";
 import { View, ActivityIndicator } from "react-native";
 import { Countdown } from "@/components/CountDown";
 import { FlatList } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
@@ -52,14 +52,13 @@ function Offering({ item, disabled }: Props) {
 }
 
 function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
-  const trpc = useTRPC();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const { mutateAsync: syncPayments } = useMutation(
-    trpc.user.syncPayments.mutationOptions({
+    orpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments, vars, result, context) {
         context.client.setQueryData(
-          trpc.user.activePayments.queryOptions().queryKey,
+          orpc.user.activePayments.queryOptions().queryKey,
           activePayments,
         );
       },
@@ -255,9 +254,8 @@ export default function Premium() {
 }
 
 export function useActivePayments() {
-  const trpc = useTRPC();
   const query = useQuery(
-    trpc.user.activePayments.queryOptions(undefined, {
+    orpc.user.activePayments.queryOptions({
       // Refetches payments when the user's first payment expires so the UI updates
       // to reflect that their premium expired
       refetchInterval(query) {

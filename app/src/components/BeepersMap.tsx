@@ -2,15 +2,16 @@ import { Map } from "./Map";
 import { useLocation } from "@/utils/location";
 import { type Region } from "react-native-maps";
 import { AnimatedMarker } from "./AnimatedMarker";
-import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
+import { useSubscription } from "@/utils/subscriptions";
+import { useIsFocused } from "expo-router";
 
 export function BeepersMap() {
-  const trpc = useTRPC();
   const { location } = useLocation();
   const queryClient = useQueryClient();
+  const isFocused = useIsFocused();
 
   const input = {
     latitude: location?.coords.latitude ?? 0,
@@ -18,40 +19,43 @@ export function BeepersMap() {
   };
 
   const { data: beepers } = useQuery(
-    trpc.rider.beepersNearMe.queryOptions(input, {
+    orpc.rider.beepersNearMe.queryOptions({
+      input,
       enabled: location !== undefined,
       refetchInterval: 15_000,
     }),
   );
 
-  useSubscription(
-    trpc.rider.beepersLocations.subscriptionOptions(input, {
-      enabled: location !== undefined,
-      onData(locationUpdate) {
-        queryClient.setQueryData(
-          trpc.rider.beepersNearMe.queryKey(input),
-          (prev) => {
-            if (!prev) {
-              return undefined;
-            }
-
-            const indexOfItem = prev.findIndex(
-              (beeper) => beeper.id === locationUpdate.id,
-            );
-
-            if (indexOfItem !== -1) {
-              const newData = [...prev];
-              newData[indexOfItem] = {
-                ...prev[indexOfItem],
-                location: locationUpdate.location,
-              };
-              return newData;
-            }
-          },
-        );
-      },
+  useSubscription({
+    ...orpc.rider.beepersLocations.liveOptions({
+      input,
+      enabled: location !== undefined && isFocused,
+      context: { ws: true }
     }),
-  );
+    onData(data) {
+      queryClient.setQueryData(
+        orpc.rider.beepersNearMe.queryKey({ input }),
+        (prev) => {
+          if (!prev) {
+            return undefined;
+          }
+
+          const indexOfItem = prev.findIndex(
+            (beeper) => beeper.id === data.id,
+          );
+
+          if (indexOfItem !== -1) {
+            const newData = [...prev];
+            newData[indexOfItem] = {
+              ...prev[indexOfItem],
+              location: data.location,
+            };
+            return newData;
+          }
+        },
+      );
+    }
+  });
 
   const initialRegion: Region | undefined = location
     ? {

@@ -4,13 +4,14 @@ import { useUser } from "@/utils/useUser";
 import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
 import { View } from "react-native";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
 import { useRouter } from "expo-router";
+import { RouterOutputs } from "../../../orpc/src";
+import { orpc } from "@/utils/orpc";
 
-type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
+type Rating = RouterOutputs["rating"]["ratings"]["ratings"][number];
 
 interface Props {
   item: Rating;
@@ -18,7 +19,6 @@ interface Props {
 }
 
 export function Rating(props: Props) {
-  const trpc = useTRPC();
   const { item } = props;
   const { user } = useUser();
   const router = useRouter();
@@ -29,11 +29,13 @@ export function Rating(props: Props) {
   const queryClient = useQueryClient();
 
   const { mutateAsync: deleteRating } = useMutation(
-    trpc.rating.deleteRating.mutationOptions({
+    orpc.rating.deleteRating.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries({
+          queryKey: orpc.rating.ratings.key()
+        });
         queryClient.invalidateQueries(
-          trpc.rider.getLastBeepToRate.queryFilter(),
+          orpc.rider.getLastBeepToRate.queryOptions(),
         );
       },
       onError(error) {
@@ -108,9 +110,8 @@ export function Rating(props: Props) {
                   {otherUser.first} {otherUser.last}
                 </Text>
                 <Text color="subtle" size="xs">
-                  {`${isRater ? "You rated" : "Rated you"} - ${new Date(
-                    item.timestamp as string,
-                  ).toLocaleString(undefined, {
+                  {`${isRater ? "You rated" : "Rated you"} - ${
+                    item.timestamp.toLocaleString(undefined, {
                     dateStyle: "short",
                     timeStyle: "short",
                   })}`}

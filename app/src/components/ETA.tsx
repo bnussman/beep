@@ -3,14 +3,14 @@ import { View } from "react-native";
 import { Countdown } from "./CountDown";
 
 interface Props {
-  eta: string | null;
+  eta: Date | null;
 }
 
 export function ETA(props: Props) {
 
   const renderBody = () => {
     if (props.eta) {
-      const pickUpAt = new Date(props.eta).toLocaleTimeString([], { timeStyle: 'short' });
+      const pickUpAt = props.eta.toLocaleTimeString([], { timeStyle: 'short' });
 
       return (
         <Text>

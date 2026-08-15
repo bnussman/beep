@@ -8,24 +8,21 @@ import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
 import { years } from "@/utils/cars";
 import { Pressable } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Card, FieldError, TextField } from "heroui-native";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
+import { RouterInputs } from "../../../../../../../orpc/src";
 
-interface Values {
-  year: number;
-  make: string;
-  model: string;
-  color: string;
+interface Values extends Omit<RouterInputs['car']['createCar'], 'photo'> {
   photo: ImagePicker.ImagePickerAsset;
 }
 
 export default function AddCar() {
-  const trpc = useTRPC();
   const navigation = useNavigation();
 
   const {
@@ -39,34 +36,32 @@ export default function AddCar() {
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
 
   const { data: colors } = useQuery({
-    ...trpc.car.getColors.queryOptions(),
+    ...orpc.car.getColors.queryOptions(),
     initialData: [],
   });
 
   const { data: models } = useQuery({
-    ...trpc.car.getModels.queryOptions(make ? make : skipToken),
+    ...orpc.car.getModels.queryOptions({ input: make ? make : skipToken }),
     initialData: [],
   });
 
   const { data: makes } = useQuery({
-    ...trpc.car.getMakes.queryOptions(),
+    ...orpc.car.getMakes.queryOptions(),
     initialData: [],
   });
 
   const queryClient = useQueryClient();
 
-  const { mutate: addCar } = useMutation(
-    trpc.car.createCar.mutationOptions({
+  const { mutateAsync: addCar } = useMutation(
+    orpc.car.createCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.car.cars.key() });
         navigation.goBack();
       },
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, {
-              message: error.data.fieldErrors[key][0],
-            });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data.issues) {
+            setError(issue.path[0], { message: issue.message });
           }
         } else {
           alert(error.message);
@@ -92,20 +87,10 @@ export default function AddCar() {
   };
 
   const onSubmit = handleSubmit(async (variables) => {
-    const formData = new FormData();
-
-    for (const key in variables) {
-      if (key === "photo") {
-        formData.append("photo", getFile(variables[key]) as File);
-      } else {
-        formData.append(
-          key,
-          variables[key as keyof typeof variables] as string,
-        );
-      }
-    }
-
-    addCar(formData);
+    await addCar({
+      ...variables,
+      photo: getFile(variables.photo) as File
+    }).catch(() => { });
   });
 
   return (
@@ -116,6 +101,7 @@ export default function AddCar() {
       <Controller
         name="make"
         rules={{ required: "Make is required" }}
+        // @ts-expect-error just let me
         defaultValue=""
         control={control}
         render={({ field, fieldState }) => (

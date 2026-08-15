@@ -2,28 +2,30 @@ import React from "react";
 import { ActivityIndicator, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/utils/trpc";
 import { getFormattedRatingString, printStars } from "@/components/Stars";
 import { Image } from "@/components/Image";
+import { orpc } from "@/utils/orpc";
 
 interface Props {
   id: string;
 }
 
 export default function UserDetailsPage({ id }: Props) {
-  const trpc = useTRPC();
-
   const {
     data: user,
     isPending: userPending,
     error: userError,
-  } = useQuery(trpc.user.publicUser.queryOptions(id));
-
-  const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(id),
+  } = useQuery(
+    orpc.user.publicUser.queryOptions({ input: id })
   );
 
-  const { data: car } = useQuery(trpc.user.getUsersDefaultCar.queryOptions(id));
+  const { data: userDetails } = useQuery(
+    orpc.user.getUserPrivateDetails.queryOptions({ input: id }),
+  );
+
+  const { data: car } = useQuery(
+    orpc.user.getUsersDefaultCar.queryOptions({ input: id })
+  );
 
   if (userPending) {
     return (

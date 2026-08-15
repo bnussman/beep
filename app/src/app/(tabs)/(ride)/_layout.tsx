@@ -1,4 +1,3 @@
-import { Button } from "@/components/Button";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { RideMenu } from "@/components/RideMenu";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";

@@ -1,11 +1,10 @@
-import React from "react";
 import { Button } from "@/components/Button";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { RouterOutputs } from "../../../orpc/src";
+import { orpc } from "@/utils/orpc";
 
-type Status = RouterOutput["beeper"]["queue"][number]["status"];
+type Status = RouterOutputs["beeper"]["queue"][number]["status"];
 
 type InProgressStatuses = Exclude<Status, "complete" | "denied" | "canceled">;
 
@@ -18,23 +17,27 @@ const nextStatusMap: Record<InProgressStatuses, Status> = {
 };
 
 interface Props {
-  beep: RouterOutput["beeper"]["queue"][number];
+  beep: RouterOutputs["beeper"]["queue"][number];
 }
 
 export function ActionButton(props: Props) {
-  const trpc = useTRPC();
   const { beep } = props;
+
   const queryClient = useQueryClient();
+
   const { mutate, isPending } = useMutation(
-    trpc.beeper.updateBeep.mutationOptions({
+    orpc.beeper.updateBeep.mutationOptions({
       onSuccess(data, vars) {
         if (vars.data.status === "complete") {
-          queryClient.invalidateQueries(
-            trpc.rider.getLastBeepToRate.pathFilter(),
-          );
+          queryClient.invalidateQueries({
+            queryKey: orpc.rider.getLastBeepToRate.queryKey(),
+          });
         }
-        queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+
+        queryClient.invalidateQueries({
+          queryKey: orpc.beep.beeps.key()
+        });
+        queryClient.setQueryData(orpc.beeper.queue.queryKey(), data);
       },
       onError(error) {
         alert(error.message);

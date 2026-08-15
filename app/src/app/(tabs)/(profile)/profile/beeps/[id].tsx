@@ -5,7 +5,7 @@ import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Text } from "@/components/Text";
 import { decodePolyline, getMiles } from "@/utils/location";
-import { useTRPC } from "@/utils/trpc";
+import { orpc } from "@/utils/orpc";
 import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { skipToken, useQuery } from "@tanstack/react-query";
@@ -16,7 +16,6 @@ import MapView from "react-native-maps";
 
 export default function BeepDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const trpc = useTRPC();
   const mapRef = useRef<MapView>(null);
   const { user } = useUser();
 
@@ -24,17 +23,17 @@ export default function BeepDetails() {
     data: beep,
     isPending,
     error,
-  } = useQuery(trpc.beep.beep.queryOptions(id));
+  } = useQuery(orpc.beep.beep.queryOptions({ input: id }));
 
   const { data: route } = useQuery(
-    trpc.location.getRoute.queryOptions(
-      beep
+    orpc.location.getRoute.queryOptions({
+      input: beep
         ? {
-            origin: beep.origin,
-            destination: beep.destination,
-          }
+          origin: beep.origin,
+          destination: beep.destination,
+        }
         : skipToken,
-    ),
+    }),
   );
 
   const polylineCoordinates = route?.routes[0].legs

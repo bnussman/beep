@@ -3,12 +3,12 @@ import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
-import { useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage, statusToDescription } from "@/utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import { isIOS } from "@/utils/constants";
+import { orpc } from "@/utils/orpc";
 
 interface Props {
   beepersLocation:
@@ -20,10 +20,9 @@ interface Props {
 }
 
 export function RideDetails(props: Props) {
-  const trpc = useTRPC();
   const router = useRouter();
 
-  const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
+  const { data: beep } = useQuery(orpc.rider.currentRide.queryOptions());
 
   const isAcceptedBeep =
     beep?.status === "accepted" ||
@@ -32,10 +31,10 @@ export function RideDetails(props: Props) {
     beep?.status === "on_the_way";
 
   const { data: car } = useQuery(
-    trpc.user.getUsersDefaultCar.queryOptions(
-      beep ? beep.beeper.id : skipToken,
-      { enabled: isAcceptedBeep },
-    ),
+    orpc.user.getUsersDefaultCar.queryOptions({
+      input: beep ? beep.beeper.id : skipToken,
+      enabled: isAcceptedBeep
+    }),
   );
 
   if (!beep) {

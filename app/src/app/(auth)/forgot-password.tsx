@@ -1,19 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/Button";
 import { Description, TextField } from "heroui-native";
+import { orpc } from "@/utils/orpc";
 
 export default function ForgotPasswordScreen() {
-  const trpc = useTRPC();
-
   const [email, setEmail] = useState<string>("");
 
   const { mutate: sendForgotEmail, isPending } = useMutation(
-    trpc.auth.forgotPassword.mutationOptions({
+    orpc.auth.forgotPassword.mutationOptions({
       onSuccess() {
         alert(
           "Success! Please Check your email 📧\nWe sent you a link to a page where you can reset your password.",

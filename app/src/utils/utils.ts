@@ -1,7 +1,7 @@
-import { RouterOutput } from "@/utils/trpc";
+import { RouterOutputs } from "../../../orpc/src";
 
 export function getCurrentStatusMessage(
-  beep: RouterOutput["rider"]["currentRide"],
+  beep: RouterOutputs["rider"]["currentRide"],
 ): string {
   switch (beep?.status) {
     case "waiting":
@@ -20,7 +20,7 @@ export function getCurrentStatusMessage(
 }
 
 export const statusToDescription: Record<
-  RouterOutput["beep"]["beep"]["status"],
+  RouterOutputs["beep"]["beep"]["status"],
   string
 > = {
   canceled: "",

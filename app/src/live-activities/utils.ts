@@ -1,6 +1,7 @@
 import RiderActivity from "@/live-activities/rider-activity";
 import { isIOS } from "@/utils/constants";
-import { RouterOutput, trpcClient } from "@/utils/trpc";
+import { orpcClient } from "@/utils/orpc";
+import { RouterOutputs } from "../../../orpc/src";
 
 const riderLiveActivities = RiderActivity.getInstances();
 const riderLiveActivityListeners: { remove(): void }[] = [];
@@ -8,8 +9,7 @@ const riderLiveActivityListeners: { remove(): void }[] = [];
 export function setupLiveActivityListeners() {
   for (const activity of riderLiveActivities) {
     const listener = activity.addPushTokenListener((event) => {
-      trpcClient.rider.updateLiveActivityToken
-        .mutate({
+      orpcClient.rider.updateLiveActivityToken({
           activityId: event.activityId,
           token: event.pushToken,
         })
@@ -21,7 +21,7 @@ export function setupLiveActivityListeners() {
 }
 
 export function startBeepLiveActivity(
-  beep: RouterOutput["rider"]["startBeep"],
+  beep: RouterOutputs["rider"]["startBeep"],
 ) {
   const riderActivity = RiderActivity.start({
     status: beep.status,
@@ -33,8 +33,7 @@ export function startBeepLiveActivity(
   riderLiveActivities.push(riderActivity);
 
   const listener = riderActivity.addPushTokenListener((event) => {
-    trpcClient.rider.setBeepLiveActivityToken
-      .mutate({
+    orpcClient.rider.setBeepLiveActivityToken({
         activityId: event.activityId,
         beepId: beep.id,
         token: event.pushToken,

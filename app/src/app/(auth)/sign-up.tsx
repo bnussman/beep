@@ -10,10 +10,11 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { TextField, FieldError, Description } from "heroui-native";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 interface Values {
   first: string;
@@ -27,29 +28,26 @@ interface Values {
 }
 
 export default function SignUpScreen() {
-  const trpc = useTRPC();
   const {
     control,
     handleSubmit,
     setFocus,
     setError,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<Values>();
 
   const { mutate: signup } = useMutation(
-    trpc.auth.signup.mutationOptions({
-      async onSuccess(data, variables, result, context) {
+    orpc.auth.signup.mutationOptions({
+      async onSuccess(data, vars, context, client) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-        context.client.setQueryData(trpc.user.me.queryKey(), data.user);
+        client.client.setQueryData(orpc.user.me.queryKey(), data.user);
       },
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, {
-              message: error.data.fieldErrors[key]?.[0],
-            });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data.issues) {
+            setError(issue.path[0], { message: issue.message });
           }
         } else {
           alert(error.message);
@@ -59,30 +57,17 @@ export default function SignUpScreen() {
   );
 
   const onSubmit = handleSubmit(async (variables) => {
-    const formData = new FormData();
-
-    for (const key in variables) {
-      if (key === "photo") {
-        formData.append(
-          "photo",
-          getFile(variables[key as "photo"]) as File,
-        );
-      } else {
-        formData.append(
-          key,
-          variables[key as keyof typeof variables] as string,
-        );
-      }
-    }
+    let pushToken;
 
     if (isMobile && !isSimulator) {
-      const pushToken = await getPushToken();
-      if (pushToken) {
-        formData.append("pushToken", pushToken);
-      }
+      pushToken = await getPushToken();
     }
 
-    signup(formData);
+    signup({
+      ...variables,
+      pushToken: pushToken ?? undefined,
+      photo: getFile(variables.photo) as File
+    });
   });
 
   const chooseProfilePhoto = async () => {

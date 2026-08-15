@@ -1,15 +1,13 @@
-import React from "react";
 import { FlatList, View, ActivityIndicator } from "react-native";
 import { useUser } from "@/utils/useUser";
 import { Rating } from "@/components/Rating";
-import { isIOS, PAGE_SIZE } from "@/utils/constants";
+import { PAGE_SIZE } from "@/utils/constants";
 import { Text } from "@/components/Text";
-import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getContentContainerStyle } from "@/utils/styles";
+import { orpc } from "@/utils/orpc";
 
 export default function RatingsScreen() {
-  const trpc = useTRPC();
   const { user } = useUser();
 
   const {
@@ -21,21 +19,20 @@ export default function RatingsScreen() {
     isFetchingNextPage,
     isRefetching,
   } = useInfiniteQuery(
-    trpc.rating.ratings.infiniteQueryOptions(
-      {
+    orpc.rating.ratings.infiniteOptions({
+      input: (page) => ({
         userId: user?.id,
         pageSize: PAGE_SIZE,
+        page
+      }),
+      initialPageParam: 1,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
+          return undefined;
+        }
+        return page.page + 1;
       },
-      {
-        initialCursor: 1,
-        getNextPageParam(page) {
-          if (page.page === page.pages) {
-            return undefined;
-          }
-          return page.page + 1;
-        },
-      },
-    ),
+    })
   );
 
   const ratings = data?.pages.flatMap((ratings) => ratings.ratings);

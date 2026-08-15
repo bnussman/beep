@@ -44,7 +44,5 @@ export const signupSchema = z.object({
   venmo: z.string().max(30).optional(),
   cashapp: z.string().max(40).optional(),
   pushToken: z.string().optional(),
-  photo: z.instanceof(File, {
-    message: "You must add a profile picture",
-  }),
+  photo: z.instanceof(File),
 });

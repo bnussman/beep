@@ -4,7 +4,6 @@ import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, trpcClient, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -14,9 +13,9 @@ import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
-import RiderActivity from "@/live-activities/rider-activity";
-import { getCurrentStatusMessage } from "@/utils/utils";
 import { startBeepLiveActivity } from "@/live-activities/utils";
+import { orpc } from "@/utils/orpc";
+import { RouterOutputs } from "../../../../../../orpc/src";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -29,9 +28,7 @@ export default function PickBeepScreen() {
     groupSize: string;
   }>();
 
-  const trpc = useTRPC();
-
-  const { data: flags } = useQuery(trpc.flags.flags.queryOptions());
+  const { data: flags } = useQuery(orpc.flags.flags.queryOptions());
 
   const {
     data: beepers,
@@ -40,20 +37,20 @@ export default function PickBeepScreen() {
     refetch,
     isRefetching,
   } = useQuery(
-    trpc.rider.beepers.queryOptions(
-      location
+    orpc.rider.beepers.queryOptions({
+      input: location
         ? {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        }
         : skipToken,
-    ),
+    }),
   );
 
   const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(
-    trpc.rider.startBeep.mutationOptions({
+    orpc.rider.startBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+        queryClient.setQueryData(orpc.rider.currentRide.queryKey(), data);
 
         if (flags?.liveActivities) {
           startBeepLiveActivity(data);
@@ -107,7 +104,7 @@ export default function PickBeepScreen() {
   const renderItem = ({
     item,
   }: {
-    item: RouterOutput["rider"]["beepers"][number];
+    item: RouterOutputs["rider"]["beepers"][number];
     index: number;
   }) => {
     return (

@@ -1,7 +1,7 @@
 import { captureException } from "@sentry/react-native";
 import { Linking, Platform, Share } from "react-native";
-import { trpcClient } from "./trpc";
 import { tryCatch } from "./errors";
+import { orpcClient } from "./orpc";
 
 export function openDirections(origin: string, dest: string): void {
   if (Platform.OS == "ios") {
@@ -109,7 +109,7 @@ export function shareVenmoInformation(
 
 export async function call(userId: string) {
   const { data, error } = await tryCatch(
-    trpcClient.user.getUserPrivateDetails.query(userId),
+    orpcClient.user.getUserPrivateDetails(userId),
   );
 
   if (error) {
@@ -128,7 +128,7 @@ export async function call(userId: string) {
 
 export async function sms(userId: string) {
   const { data, error } = await tryCatch(
-    trpcClient.user.getUserPrivateDetails.query(userId),
+    orpcClient.user.getUserPrivateDetails(userId),
   );
 
   if (error) {

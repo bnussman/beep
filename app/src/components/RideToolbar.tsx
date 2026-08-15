@@ -1,21 +1,19 @@
-import { endRiderLiveActivities } from "@/live-activities/utils";
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
-import { useTRPC } from "@/utils/trpc";
+import { orpc } from "@/utils/orpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { Alert } from "react-native";
 
 export function RideToolbar() {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
+  const { data: beep } = useQuery(orpc.rider.currentRide.queryOptions());
 
   const { mutate } = useMutation(
-    trpc.rider.leaveQueue.mutationOptions({
+    orpc.rider.leaveQueue.mutationOptions({
       onSuccess() {
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), null);
+        queryClient.setQueryData(orpc.rider.currentRide.queryKey(), null);
       },
       onError(error) {
         alert(error.message);
@@ -75,12 +73,14 @@ export function RideToolbar() {
   };
 
   const { mutate: updateBeep } = useMutation(
-    trpc.beep.editBeep.mutationOptions({
+    orpc.beep.editBeep.mutationOptions({
       onError(error) {
-        const errorMessage = error.data?.fieldErrors
-          ? Object.values(error.data.fieldErrors).flat().join("\n")
-          : error.message;
-        alert(errorMessage);
+        // @todo adapt to oRPC error
+        // const errorMessage = error.data?.fieldErrors
+        //   ? Object.values(error.data.fieldErrors).flat().join("\n")
+        //   : error.message;
+        // alert(errorMessage);
+        alert(error.message);
       },
     }),
   );

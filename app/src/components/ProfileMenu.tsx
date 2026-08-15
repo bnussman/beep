@@ -1,20 +1,19 @@
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { isMobile } from "@/utils/constants";
 import { useRouter } from "expo-router";
 import type { Option } from "./Menu";
+import { orpc } from "@/utils/orpc";
 
 export function useProfileMenu(): Option[] {
-  const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const { mutate: deleteAccount } = useMutation(
-    trpc.user.deleteMyAccount.mutationOptions({
+    orpc.user.deleteMyAccount.mutationOptions({
       onSuccess() {
         AsyncStorage.clear();
 
@@ -29,7 +28,7 @@ export function useProfileMenu(): Option[] {
   );
 
   const { mutate: logout, isPending } = useMutation(
-    trpc.auth.logout.mutationOptions({
+    orpc.auth.logout.mutationOptions({
       onSuccess() {
         AsyncStorage.clear();
 

@@ -1,13 +1,12 @@
 import MapView from "react-native-maps";
 import { useEffect, useRef } from "react";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, View } from "react-native";
 import { isMobile } from "@/utils/constants";
 import { call, openDirections, sms } from "@/utils/links";
 import { printStars } from "@/components/Stars";
 import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { decodePolyline, getMiles } from "@/utils/location";
@@ -18,20 +17,21 @@ import { Menu } from "@/components/Menu";
 import { Link } from "expo-router";
 import { Separator } from "heroui-native";
 import { Indicator } from "../Indicator";
+import { orpc } from "@/utils/orpc";
+import { RouterOutputs } from "../../../../orpc/src";
 
 interface Props {
-  item: RouterOutput["beeper"]["queue"][number];
+  item: RouterOutputs["beeper"]["queue"][number];
   index: number;
 }
 
 export function QueueItem({ item: beep }: Props) {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(
-    trpc.beeper.updateBeep.mutationOptions({
+    orpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+        queryClient.setQueryData(orpc.beeper.queue.queryKey(), data);
       },
       onError(error) {
         alert(error.message);
@@ -42,9 +42,11 @@ export function QueueItem({ item: beep }: Props) {
   const mapRef = useRef<MapView>(null);
 
   const { data: beepRoute } = useQuery(
-    trpc.location.getRoute.queryOptions({
-      origin: beep.origin,
-      destination: beep.destination,
+    orpc.location.getRoute.queryOptions({
+      input: {
+        origin: beep.origin,
+        destination: beep.destination,
+      }
     }),
   );
 

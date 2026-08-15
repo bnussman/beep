@@ -1,24 +1,23 @@
-import React from "react";
 import { Button } from "./Button";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { Alert, PressableProps } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { RouterOutputs } from "../../../orpc/src";
+import { orpc } from "@/utils/orpc";
 
 interface Props {
   type: "accept" | "deny";
-  item: RouterOutput["beeper"]["queue"][number];
+  item: RouterOutputs["beeper"]["queue"][number];
   style?: PressableProps["style"];
 }
 
 export function AcceptDenyButton(props: Props) {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation(
-    trpc.beeper.updateBeep.mutationOptions({
+    orpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+        queryClient.setQueryData(orpc.beeper.queue.queryKey(), data);
       },
       onError(error) {
         alert(error.message);

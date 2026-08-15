@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { RateBar } from "@/components/Rate";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { View } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { ActivityIndicator } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { useQuery } from "@tanstack/react-query";
@@ -12,9 +11,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { orpc } from "@/utils/orpc";
 
 export default function RateScreen() {
-  const trpc = useTRPC();
   const { id, beepId } = useLocalSearchParams<{ id: string; beepId: string }>();
 
   const [stars, setStars] = useState<number>(0);
@@ -23,16 +22,16 @@ export default function RateScreen() {
   const { back } = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: user } = useQuery(trpc.user.publicUser.queryOptions(id));
+  const { data: user } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
 
   const { mutateAsync: rate, isPending } = useMutation(
-    trpc.rating.createRating.mutationOptions({
+    orpc.rating.createRating.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
-        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
-        queryClient.invalidateQueries(
-          trpc.rider.getLastBeepToRate.pathFilter(),
-        );
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beeps.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.rating.ratings.key() });
+        queryClient.invalidateQueries({
+          queryKey: orpc.rider.getLastBeepToRate.queryKey(),
+        });
         back();
       },
       onError(error) {
