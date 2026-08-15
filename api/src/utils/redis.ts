@@ -1,4 +1,4 @@
-const Redis = require("ioredis"); // I have to use `require` to make Sentry's Redis integration work
+import Redis from "ioredis";
 import { REDIS_HOST, REDIS_PASSWROD } from "./constants";
 import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
 

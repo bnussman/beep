@@ -16,6 +16,12 @@ Sentry.init({
   tracesSampleRate: 0,
   integrations: [navigationIntegration],
   tracePropagationTargets: isWeb
-    ? ["localhost", "https://api.dev.ridebeep.app", "https://api.ridebeep.app"]
+    ? [
+      "localhost",
+      "https://orpc.dev.ridebeep.app",
+      "https://orpc.ridebeep.app",
+      "https://api.dev.ridebeep.app",
+      "https://api.ridebeep.app"
+    ]
     : undefined,
 });
