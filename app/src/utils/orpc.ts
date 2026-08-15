@@ -1,13 +1,14 @@
 import * as Sentry from "@sentry/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import { createORPCClient, DynamicLink, ORPCError } from '@orpc/client';
+import { createORPCClient, DynamicLink, ORPCError, RPCJsonSerializer } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
 import { AppRouterClient, RouterOutputs } from '../../../orpc/src'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { isWeb } from "./constants";
 import { ClientRetryPlugin } from '@orpc/client/plugins'
+import { RPCSerializer } from "./serializer";
 
 export async function getAuthToken() {
   const tokens = await AsyncStorage.getItem("auth");
@@ -59,6 +60,7 @@ const httpLink = new RPCLink({
 
     return { Authorization: `Bearer ${token}` };
   },
+  serializer: new RPCSerializer()
 })
 
 interface ClientContext {

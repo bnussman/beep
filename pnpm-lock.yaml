@@ -92,6 +92,9 @@ importers:
       '@orpc/client':
         specifier: 2.0.0-beta.26
         version: 2.0.0-beta.26(@opentelemetry/api@1.9.1)
+      '@orpc/shared':
+        specifier: 2.0.0-beta.26
+        version: 2.0.0-beta.26(@opentelemetry/api@1.9.1)
       '@orpc/tanstack-query':
         specifier: 2.0.0-beta.26
         version: 2.0.0-beta.26(@opentelemetry/api@1.9.1)(@tanstack/query-core@5.96.2)
@@ -101,6 +104,9 @@ importers:
       '@sentry/react-native':
         specifier: 7.11.0
         version: 7.11.0(expo@57.0.8)(react-native@0.86.0(@babel/core@7.29.0)(@react-native/metro-config@0.86.0(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.3))(react@19.2.3)
+      '@standardserver/core':
+        specifier: ^0.8.0
+        version: 0.8.0
       '@tanstack/react-query':
         specifier: ^5.96.2
         version: 5.96.2(react@19.2.3)
@@ -2837,6 +2843,9 @@ packages:
   '@standardserver/core@0.7.1':
     resolution: {integrity: sha512-ZMoFDR92p9HnaI6vXK1iNFKXyLK8/6r3D4EJUM+SqeyReUH3OEJO4CZKU8BfXyzAV1A6Nsa7y2dGqDOYqH5LlQ==}
 
+  '@standardserver/core@0.8.0':
+    resolution: {integrity: sha512-2qpqMckZ2UMdeSoxUsvunPfkIeHSahW+LtIsMfHP7L8jEOAtWt1c1/RTKFB7AwNSHGPhQm5JEMpYNgM/N7j2lQ==}
+
   '@standardserver/fastify@0.7.1':
     resolution: {integrity: sha512-Oa+ttR0CyNkFjNczs2dO/WFFeZ4sAszVBKIOhKb1FFcDtD9VdqDgMBhbQ4sFR885fwpYckoYjFU6xXWWTueBlw==}
     peerDependencies:
@@ -2856,6 +2865,9 @@ packages:
 
   '@standardserver/shared@0.7.1':
     resolution: {integrity: sha512-tBDheI3Me1gQEKPU+XhcCZ6/njmkKgJhA5rhi1/m6GauGhHq87UuVslDNc8qB+T/xsxVch/qETFhssEWO9c6BA==}
+
+  '@standardserver/shared@0.8.0':
+    resolution: {integrity: sha512-z+w4hhiPeokm09Rwt172KlU4FHKVlCaw12nTQPYAD6xGrsProzH9Ex7/+qLtcSEwGWp8h0Fi6E8Z6dfyKXMNqw==}
 
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
@@ -9554,6 +9566,10 @@ snapshots:
     dependencies:
       '@standardserver/shared': 0.7.1
 
+  '@standardserver/core@0.8.0':
+    dependencies:
+      '@standardserver/shared': 0.8.0
+
   '@standardserver/fastify@0.7.1':
     dependencies:
       '@standardserver/core': 0.7.1
@@ -9576,6 +9592,8 @@ snapshots:
       '@standardserver/shared': 0.7.1
 
   '@standardserver/shared@0.7.1': {}
+
+  '@standardserver/shared@0.8.0': {}
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
