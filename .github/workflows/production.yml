@@ -45,24 +45,24 @@ jobs:
           ACTOR: ${{ github.actor }}
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 11.10.0
-          run_install: false
-      - uses: actions/setup-node@v6
-        with:
-          cache: pnpm
-          node-version: latest
-      - uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-      - run: pnpm i --frozen-lockfile
-      - run: eas update --auto --environment production
-        env:
-          EAS_SKIP_AUTO_FINGERPRINT: 1
-        working-directory: ./app
+  # publish:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - uses: pnpm/action-setup@v6
+  #       with:
+  #         version: 11.10.0
+  #         run_install: false
+  #     - uses: actions/setup-node@v6
+  #       with:
+  #         cache: pnpm
+  #         node-version: latest
+  #     - uses: expo/expo-github-action@v8
+  #       with:
+  #         eas-version: latest
+  #         token: ${{ secrets.EXPO_TOKEN }}
+  #     - run: pnpm i --frozen-lockfile
+  #     - run: eas update --auto --environment production
+  #       env:
+  #         EAS_SKIP_AUTO_FINGERPRINT: 1
+  #       working-directory: ./app
