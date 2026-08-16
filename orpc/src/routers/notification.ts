@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure } from "../utils/trpc";
+import { adminProcedure } from "../utils/orpc";
 import { db } from "../utils/db";
 import { user } from "../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";

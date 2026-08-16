@@ -17,7 +17,7 @@ import {
   adminProcedure,
   authedProcedure,
   mustHaveBeenInAcceptedBeep,
-} from "../utils/trpc";
+} from "../utils/orpc";
 import {
   DEFAULT_PAGE_SIZE,
   S3_BUCKET_URL,

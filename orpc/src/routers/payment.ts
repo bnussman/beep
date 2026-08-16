@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { authedProcedure } from "../utils/trpc";
+import { authedProcedure } from "../utils/orpc";
 import { db } from "../utils/db";
 import { count } from "drizzle-orm";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";

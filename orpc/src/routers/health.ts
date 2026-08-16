@@ -1,6 +1,6 @@
 import { db as dbClient } from "../utils/db";
 import { publishClient } from "../utils/redis";
-import { o } from "../utils/trpc";
+import { o } from "../utils/orpc";
 import { sql } from "drizzle-orm";
 
 export const healthRouter = {

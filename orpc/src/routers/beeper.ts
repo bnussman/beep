@@ -1,6 +1,6 @@
 import { queueResponseSchema } from "../schemas/beep";
 import { z } from "zod";
-import { authedProcedure } from "../utils/trpc";
+import { authedProcedure } from "../utils/orpc";
 import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 import { beep, beepStatuses, user } from "../../drizzle/schema";

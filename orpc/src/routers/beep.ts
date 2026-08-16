@@ -3,7 +3,7 @@ import {
   adminProcedure,
   authedProcedure,
   o
-} from "../utils/trpc";
+} from "../utils/orpc";
 import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
 import { beep, beepStatuses, user } from "../../drizzle/schema";

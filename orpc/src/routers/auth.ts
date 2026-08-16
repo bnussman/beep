@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { authedProcedure, o } from "../utils/trpc";
+import { authedProcedure, o } from "../utils/orpc";
 import { z } from "zod";
 import { db } from "../utils/db";
 import { forgot_password, token, user, verify_email } from "../../drizzle/schema";

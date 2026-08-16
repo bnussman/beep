@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { authedProcedure } from "../utils/trpc";
+import { authedProcedure } from "../utils/orpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { route } from "@banksnussman/osrm";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";

@@ -1,7 +1,7 @@
 import { count, eq } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
-import { adminProcedure, authedProcedure } from "../utils/trpc";
+import { adminProcedure, authedProcedure } from "../utils/orpc";
 import { z } from "zod";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { ORPCError } from "@orpc/server";

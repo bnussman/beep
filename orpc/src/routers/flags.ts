@@ -1,4 +1,4 @@
-import { o } from "../utils/trpc";
+import { o } from "../utils/orpc";
 
 export const flagsRouter = {
   flags: o.handler(() => {

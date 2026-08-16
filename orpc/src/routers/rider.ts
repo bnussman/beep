@@ -11,7 +11,7 @@ import {
   mustBeInAcceptedBeep,
   verifiedProcedure,
   withLock,
-} from "../utils/trpc";
+} from "../utils/orpc";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
