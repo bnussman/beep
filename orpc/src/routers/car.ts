@@ -11,6 +11,7 @@ import {
   authedProcedure,
   o,
   verifiedProcedure,
+  withLock,
 } from "../utils/orpc";
 import { ORPCError } from "@orpc/server";
 
@@ -113,6 +114,7 @@ export const carRouter = {
       }
     }),
   createCar: verifiedProcedure
+    .use(withLock)
     .input(
       z.object({
         make: z.enum(getMakes()),

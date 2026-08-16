@@ -44,7 +44,7 @@ export async function createWSContext(request: StandardLazyRequest) {
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 
-const errorTransformerMiddleware = os.middleware(async (opts) => {
+const errorTransformerMiddleware = os.middleware(async function errorTransformer(opts) {
   try {
     return await opts.next(opts);
   } catch (error) {
