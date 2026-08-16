@@ -34,6 +34,9 @@ const link = new RPCLink({
 
     return { Authorization: `Bearer ${token}` };
   },
+  fetch(url, init, options, path) {
+    return fetch(url, init);
+  }
 })
 
 export const orpcClient: AppRouterClient = createORPCClient(link)

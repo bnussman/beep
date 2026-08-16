@@ -60,7 +60,10 @@ const httpLink = new RPCLink({
 
     return { Authorization: `Bearer ${token}` };
   },
-  serializer: new RPCSerializer()
+  serializer: new RPCSerializer(),
+  fetch(url, init) {
+    return fetch(url, init);
+  }
 })
 
 interface ClientContext {
