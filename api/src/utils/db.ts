@@ -1,5 +1,5 @@
-import type { ClientConfig } from "pg";
-import { Client } from "pg";
+import type { ClientConfig, Client as ClientType } from "pg";
+const { Client } = require("pg") as { Client: typeof ClientType }; // we must use `require` because of Bun / Sentry / OpenTelementry weirdness
 import { drizzle } from "drizzle-orm/node-postgres";
 import { DB_URL } from "./constants";
 import { relations } from "../../drizzle/relations";
