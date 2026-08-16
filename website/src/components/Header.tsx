@@ -35,9 +35,7 @@ export function Header() {
   }, [data]);
 
   useEffect(() => {
-    if (user) {
-      Sentry.setUser(user);
-    }
+    Sentry.setUser(user ?? null);
   }, [user]);
 
   return (

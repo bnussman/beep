@@ -9,7 +9,6 @@ import {
   Container,
   Stack,
   Typography,
-  useColorScheme,
 } from "@mui/material";
 
 export const Route = createFileRoute("/")({
@@ -17,8 +16,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { colorScheme } = useColorScheme();
-
   return (
     <Container>
       <Stack
