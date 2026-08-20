@@ -331,7 +331,6 @@ export class RPCJsonSerializer {
     if (getIsBlob(data)) {
       maps.push(segments.slice())
       blobs.push(data)
-      console.log('here!')
       return data
     }
 
