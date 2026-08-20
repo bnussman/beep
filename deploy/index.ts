@@ -243,7 +243,7 @@ const orpcDeployment = new k8s.apps.v1.Deployment(
     },
     spec: {
       selector: { matchLabels: { app: orpcAppName } },
-      replicas: 1,
+      replicas: isProduction ? 3 : 1,
       template: {
         metadata: { labels: { app: orpcAppName } },
         spec: {
