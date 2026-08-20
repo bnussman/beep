@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useSubscription } from "../../../utils/subscriptions";
 import { orpc } from "../../../utils/orpc";
 import { BeepersMap } from "../../../components/BeepersMap";
 import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
@@ -36,14 +37,12 @@ function Beepers() {
     orpc.rider.beepers.queryOptions(),
   );
 
-  const { data: locationUpdate } = useQuery(
-    orpc.rider.beepersLocations.liveOptions({
-      input: { longitude: 0, latitude: 0, admin: true }
-    })
-  );
-
-  useEffect(() => {
-    if (locationUpdate) {
+  useSubscription({
+    ...orpc.rider.beepersLocations.liveOptions({
+      input: { longitude: 0, latitude: 0, admin: true },
+      context: { ws: true }
+    }),
+    onData(data) {
       queryClient.setQueryData(
         orpc.rider.beepers.queryKey(),
         (oldUsers) => {
@@ -52,7 +51,7 @@ function Beepers() {
           }
 
           const indexOfUser = oldUsers.findIndex(
-            (user) => user.id === locationUpdate.id,
+            (user) => user.id === data.id,
           );
 
           if (indexOfUser !== -1) {
@@ -60,15 +59,15 @@ function Beepers() {
 
             newData[indexOfUser] = {
               ...oldUsers[indexOfUser],
-              location: locationUpdate.location,
+              location: data.location,
             };
 
             return newData;
           }
         },
       );
-    }
-  }, [locationUpdate]);
+    },
+  })
 
   return (
     <Box>

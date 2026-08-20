@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useSubscription } from "../../../../utils/subscriptions";
 import { orpc } from "../../../../utils/orpc";
 import { beepStatusMap, decodePolyline } from "../../../../utils/utils";
 import { Map } from "../../../../components/Map";
@@ -33,12 +34,12 @@ function Ride() {
     orpc.rider.currentRide.queryOptions({ input: userId })
   );
 
-  const { data: data } = useQuery(
-    orpc.rider.currentRideUpdatesAllowPartial.liveOptions({ input: userId })
-  );
-
-  useEffect(() => {
-    if (data) {
+  useSubscription({
+    ...orpc.rider.currentRideUpdatesAllowPartial.liveOptions({
+      input: userId,
+      context: { ws: true }
+    }),
+    onData(data) {
       queryClient.setQueryData(
         orpc.rider.currentRide.queryKey({ input: userId }), (prev) => {
           if (data === null) {
@@ -50,15 +51,21 @@ function Ride() {
           return { ...prev, ...data };
         }
       );
-    }
-  }, [data]);
+    },
+  });
 
   const { data: rider } = useQuery(
-    orpc.user.updates.liveOptions({ input: userId }),
+    orpc.user.updates.liveOptions({
+      input: userId,
+      context: { ws: true }
+    }),
   );
 
   const { data: beeper } = useQuery(
-    orpc.user.updates.liveOptions({ input: ride ? ride.beeper.id : skipToken }),
+    orpc.user.updates.liveOptions({
+      input: ride ? ride.beeper.id : skipToken,
+      context: { ws: true }
+    }),
   );
 
   const { data: route } = useQuery(

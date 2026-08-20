@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import * as Sentry from "@sentry/react";
+import { useSubscription } from "../utils/subscriptions";
 import { orpc } from "../utils/orpc";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
@@ -24,15 +25,15 @@ export function Header() {
     }),
   );
 
-  const { data } = useQuery(orpc.user.updates.liveOptions({
-    enabled: user !== undefined
-  }));
-
-  useEffect(() => {
-    if (data) {
+  useSubscription({
+    ...orpc.user.updates.liveOptions({
+      enabled: user !== undefined,
+      context: { ws: true }
+    }),
+    onData(data) {
       queryClient.setQueryData(orpc.user.me.queryKey(), data);
     }
-  }, [data]);
+  })
 
   useEffect(() => {
     Sentry.setUser(user ?? null);

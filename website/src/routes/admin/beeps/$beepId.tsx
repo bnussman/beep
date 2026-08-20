@@ -42,11 +42,17 @@ function Beep() {
   } = useQuery(orpc.beep.beep.queryOptions({ input: beepId }));
 
   const { data: beeper } = useQuery(
-    orpc.user.updates.liveOptions({ input: beep ? beep.beeper_id : skipToken }),
+    orpc.user.updates.liveOptions({
+      input: beep ? beep.beeper_id : skipToken,
+      context: { ws: true }
+    }),
   );
 
   const { data: rider } = useQuery(
-    orpc.user.updates.liveOptions({ input: beep ? beep.rider_id : skipToken }),
+    orpc.user.updates.liveOptions({
+      input: beep ? beep.rider_id : skipToken,
+      context: { ws: true }
+    }),
   );
 
   const { data: route } = useQuery(

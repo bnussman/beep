@@ -20,7 +20,7 @@ export const userSchema = z.object({
   rating: z.string().nullable(),
   role: z.enum(["user", "admin"]),
   photo: z.string().nullable(),
-  created: z.union([z.date(), z.string()]).nullable(),
+  created: z.date().nullable(),
   location: z
     .object({ latitude: z.number(), longitude: z.number() })
     .nullable(),

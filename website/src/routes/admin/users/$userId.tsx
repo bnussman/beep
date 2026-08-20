@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
+import { useSubscription } from "../../../utils/subscriptions";
 import { Loading } from "../../../components/Loading";
 import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
@@ -25,7 +27,6 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { orpc } from "../../../utils/orpc";
 
 export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
@@ -43,13 +44,15 @@ function User() {
     error,
   } = useQuery(orpc.user.user.queryOptions({ input: userId }));
 
-  const { data } = useQuery(orpc.user.updates.liveOptions({ input: userId }))
-
-  useEffect(() => {
-    if (data) {
-      queryClient.setQueryData(orpc.user.user.queryKey({ input: userId }), user);
-    }
-  }, [data]);
+  useSubscription({
+    ...orpc.user.updates.liveOptions({
+      input: userId,
+      context: { ws: true }
+    }),
+    onData(data) {
+      queryClient.setQueryData(orpc.user.user.queryKey({ input: userId }), data);
+    },
+  });
 
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
     orpc.user.syncPayments.mutationOptions({

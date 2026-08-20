@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useSubscription } from "../../../../utils/subscriptions";
 import { orpc } from "../../../../utils/orpc";
 import { beepStatusMap } from "../../../../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
@@ -35,15 +36,15 @@ function QueueTable() {
     orpc.beeper.queue.queryOptions({ input: userId }),
   );
 
-  const { data: queue } = useQuery(
-    orpc.beeper.watchQueue.liveOptions({ input: userId })
-  );
-
-  useEffect(() => {
-    if (queue) {
-      queryClient.setQueryData(orpc.beeper.queue.queryKey({ input: userId }), queue);
-    }
-  }, [queue]);
+  useSubscription({
+    ...orpc.beeper.watchQueue.liveOptions({
+      input: userId,
+      context: { ws: true }
+    }),
+    onData(data) {
+      queryClient.setQueryData(orpc.beeper.queue.queryKey({ input: userId }), data);
+    },
+  });
 
   return (
     <TableContainer component={Paper} variant="outlined">
