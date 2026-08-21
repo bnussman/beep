@@ -4,7 +4,6 @@ import { getCoordinatesFromAddress } from "../logic/location";
 import { route } from "@banksnussman/osrm";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
 import { geocoding } from "@banksnussman/photon";
-import { ORPCError } from "@orpc/server";
 
 export const locationRouter = {
   getETA: authedProcedure
@@ -15,8 +14,9 @@ export const locationRouter = {
       }),
     )
     .handler(async ({ input }) => {
-      const { data, error } = await route({
+      const { data } = await route({
           baseUrl: OSRM_BASE_URL,
+          throwOnError: true,
           path: {
             profile: "driving",
             coordinates: `${input.start};${input.end}`,
@@ -25,19 +25,10 @@ export const locationRouter = {
         },
       );
 
-      if (error) {
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: `${error.code} ${error.message}`,
-          cause: error,
-        });
-      }
-
       const routeData = data.routes[0];
 
       if (!routeData) {
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: "Unabe to find a route.",
-        });
+        throw new Error("No routes retuned from OSRM");
       }
 
       const eta = routeData.duration;
@@ -84,8 +75,9 @@ export const locationRouter = {
         );
       }
 
-      const { data, error } = await route({
+      const { data } = await route({
         baseUrl: OSRM_BASE_URL,
+        throwOnError: true,
         path: {
           profile: "driving",
           coordinates: `${originCoordinates.longitude},${originCoordinates.latitude};${destinationCoordinates.longitude},${destinationCoordinates.latitude}`,
@@ -95,13 +87,6 @@ export const locationRouter = {
           steps: true,
         },
       });
-
-      if (error) {
-        throw new ORPCError("INTERNAL_SERVER_ERROR", {
-          message: `${error.code} ${error.message}`,
-          cause: error,
-        });
-      }
 
       return data;
     }),

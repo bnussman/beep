@@ -62,9 +62,7 @@ export const authRouter = {
           );
           break;
         default:
-          throw new ORPCError("INTERNAL_SERVER_ERROR", {
-            message: `Unknown password type ${u.passwordType}`,
-          });
+          throw new Error(`Unknown password type ${u.passwordType}`);
       }
 
       if (!isPasswordCorrect) {

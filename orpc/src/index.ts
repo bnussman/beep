@@ -20,9 +20,9 @@ import { flagsRouter } from "./routers/flags";
 import { RPCHandler } from "@orpc/server/fetch";
 import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";
-import { onError } from "@orpc/server";
+import { onError, ORPCError } from "@orpc/server";
 import { RouterClient } from '@orpc/server'
-import { getActiveSpan } from '@sentry/bun';
+import { captureException, getActiveSpan } from '@sentry/bun';
 
 const appRouter = {
   user: userRouter,
@@ -69,16 +69,22 @@ const handler = new RPCHandler(appRouter, {
       return next()
     },
     onError((error) => {
-      console.error(error)
-    }),
+      if (!(error instanceof ORPCError)) {
+        console.error("Banks", error);
+        captureException(error);
+      }
+    })
   ]
 })
 
 const wsHandler = new WSRPCHandler(appRouter, {
   interceptors: [
     onError((error) => {
-      console.error(error)
-    }),
+      if (!(error instanceof ORPCError)) {
+        console.error(error);
+        captureException(error);
+      }
+    })
   ],
 })
 
@@ -95,7 +101,6 @@ Bun.serve({
     const { response } = await handler.handle(request, {
       context: await createHTTPContext(request)
     })
-
 
     if (response) {
       return response;
