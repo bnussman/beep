@@ -1,6 +1,6 @@
 import './utils/instrument';
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createHTTPContext, createWSContext } from "./utils/orpc";
+import { createHTTPContext, createWSContext, errorInterceptor, otelAbortSignalCaptureInterceptor } from "./utils/orpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
@@ -20,9 +20,7 @@ import { flagsRouter } from "./routers/flags";
 import { RPCHandler } from "@orpc/server/fetch";
 import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";
-import { onError, ORPCError } from "@orpc/server";
 import { RouterClient } from '@orpc/server'
-import { captureException, getActiveSpan } from '@sentry/bun';
 
 const appRouter = {
   user: userRouter,
@@ -59,32 +57,14 @@ const handler = new RPCHandler(appRouter, {
     })
   ],
   interceptors: [
-    ({ request, next }) => {
-      const span = getActiveSpan();
-
-      request.signal?.addEventListener('abort', () => {
-        span?.addEvent('aborted', { reason: String(request.signal?.reason) })
-      })
-
-      return next()
-    },
-    onError((error) => {
-      if (!(error instanceof ORPCError)) {
-        console.error("Banks", error);
-        captureException(error);
-      }
-    })
+    errorInterceptor
   ]
 })
 
 const wsHandler = new WSRPCHandler(appRouter, {
   interceptors: [
-    onError((error) => {
-      if (!(error instanceof ORPCError)) {
-        console.error(error);
-        captureException(error);
-      }
-    })
+    otelAbortSignalCaptureInterceptor,
+    errorInterceptor
   ],
 })
 

@@ -3,10 +3,10 @@ import { db } from "./db";
 import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
-import { os, ORPCError } from "@orpc/server";
+import { os, ORPCError, onError } from "@orpc/server";
 import { token, user } from "../../drizzle/schema";
 import { DrizzleQueryError, eq } from "drizzle-orm";
-import { StandardLazyRequest } from "@orpc/server/standard";
+import { StandardHandlerInterceptor, StandardLazyRequest } from "@orpc/server/standard";
 
 async function createContext(bearerToken: string | undefined) {
   if (!bearerToken) {
@@ -201,3 +201,20 @@ export const withLock = o
 
     return result;
   });
+
+export const errorInterceptor: StandardHandlerInterceptor<Context> = onError((error) => {
+  if (!(error instanceof ORPCError)) {
+    console.error("Banks", error);
+    Sentry.captureException(error);
+  }
+});
+
+export const otelAbortSignalCaptureInterceptor: StandardHandlerInterceptor<Context> = ({ request, next }) => {
+  const span = Sentry.getActiveSpan();
+
+  request.signal?.addEventListener('abort', () => {
+    span?.addEvent('aborted', { reason: String(request.signal?.reason) })
+  })
+
+  return next()
+};
