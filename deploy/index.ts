@@ -89,40 +89,20 @@ const orpcService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
-const apiIngress = new k8s.networking.v1.Ingress(
-  "api-ingress",
-  {
-    metadata: {
-      name: "api-ingress",
-      namespace: namespaceName,
-    },
-    spec: {
-      rules: [
-        {
-          host:
-            isProduction
-              ? "api.ridebeep.app"
-              : "api.dev.ridebeep.app",
-          http: {
-            paths: [
-              {
-                path: "/",
-                pathType: "Prefix",
-                backend: {
-                  service: {
-                    name: apiAppName,
-                    port: { number: 3000 },
-                  },
-                },
-              },
-            ],
-          },
+const orpcHttp = {
+  paths: [
+    {
+      path: "/",
+      pathType: "Prefix",
+      backend: {
+        service: {
+          name: orpcAppName,
+          port: { number: 3001 },
         },
-      ],
+      },
     },
-  },
-  { provider: k8sProvider },
-);
+  ],
+};
 
 const orpcIngress = new k8s.networking.v1.Ingress(
   "orpc-ingress",
@@ -138,20 +118,14 @@ const orpcIngress = new k8s.networking.v1.Ingress(
             isProduction
               ? "orpc.ridebeep.app"
               : "orpc.dev.ridebeep.app",
-          http: {
-            paths: [
-              {
-                path: "/",
-                pathType: "Prefix",
-                backend: {
-                  service: {
-                    name: orpcAppName,
-                    port: { number: 3001 },
-                  },
-                },
-              },
-            ],
-          },
+          http: orpcHttp,
+        },
+        {
+          host:
+            isProduction
+              ? "api.ridebeep.app"
+              : "api.dev.ridebeep.app",
+          http: orpcHttp,
         },
       ],
     },
