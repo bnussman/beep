@@ -3,7 +3,7 @@
     "project_number": "707230715534",
     "firebase_url": "https://ride-beep-app.firebaseio.com",
     "project_id": "ride-beep-app",
-    "storage_bucket": "ride-beep-app.appspot.com"
+    "storage_bucket": "ride-beep-app.firebasestorage.app"
   },
   "client": [
     {
@@ -13,12 +13,7 @@
           "package_name": "app.ridebeep.App"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "707230715534-5n3glj445fu6taifh1oa7lhjo8f4leq5.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyDkAiNCI90kBeJqtEVUB6LK9gMSXBKGh1k"
@@ -26,12 +21,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "707230715534-5n3glj445fu6taifh1oa7lhjo8f4leq5.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
