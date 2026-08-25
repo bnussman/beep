@@ -154,7 +154,7 @@ const secret = new k8s.core.v1.Secret(
     },
     stringData: {
       ...env,
-      REDIS_HOST: `${redisService.metadata.name}.${namespaceName}`,
+      REDIS_HOST: `redis.${namespaceName}`,
     },
     type: "Opaque",
   },
