@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/bun";
 import { db } from "./db";
 import { isAcceptedBeepNew } from "../logic/beep";
-import { createLock, IoredisAdapter } from "redlock-universal";
+import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 import { os, ORPCError, onError } from "@orpc/server";
 import { token, user } from "../../drizzle/schema";
@@ -188,7 +188,7 @@ export const withLock = o
   .use(isAuthenticatedMiddleware)
   .middleware(async function handleLock(opts) {
     const lock = createLock({
-      adapter: new IoredisAdapter(redis),
+      adapter: new NodeRedisAdapter(redis),
       key: `${opts.path}-${opts.context.user.id}`,
       ttl: 5_000,
     });

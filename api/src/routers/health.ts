@@ -1,5 +1,5 @@
 import { db as dbClient } from "../utils/db";
-import { publishClient } from "../utils/redis";
+import { redis } from "../utils/redis";
 import { o } from "../utils/orpc";
 import { sql } from "drizzle-orm";
 
@@ -21,7 +21,7 @@ export const healthRouter = {
 
 async function getRedisStatus() {
   const start = performance.now();
-  const redisPing = await publishClient.ping(); // Should throw is redis is offline
+  const redisPing = await redis.ping(); // Should throw is redis is offline
 
   const end = performance.now();
 

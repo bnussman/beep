@@ -47,18 +47,14 @@ export const beeperRouter = {
       if (signal) {
         signal.onabort = () => {
           console.log("➖ Beeper unsubscribed", id);
-          eventSource.return();
         };
       }
 
-      const queue = await getBeeperQueue(id);
+      yield await getBeeperQueue(id);
 
-      yield queue;
+      const iterator = pubSub.subscribe(`queue-${id}`, { signal });
 
-      const eventSource = pubSub.subscribe("queue", id);
-
-      for await (const { queue } of eventSource) {
-        if (signal?.aborted) return;
+      for await (const { queue } of iterator) {
         yield queue;
       }
     }),
@@ -136,9 +132,9 @@ export const beeperRouter = {
         const ride = { ...beep, ...getDerivedRiderFields(beep, queue) };
 
         if (beep.id === input.beepId && isEndingBeep) {
-          pubSub.publish("ride", beep.rider_id, { ride: null });
+          pubSub.publish(`ride-${beep.rider_id}`, { ride: null });
         } else {
-          pubSub.publish("ride", beep.rider_id, { ride });
+          pubSub.publish(`ride-${beep.rider_id}`, { ride });
         }
 
         if (beep.id === input.beepId) {
@@ -158,7 +154,7 @@ export const beeperRouter = {
 
       queue = queue.filter(getIsInProgressBeep);
 
-      pubSub.publish("queue", context.user.id, { queue });
+      pubSub.publish(`queue-${context.user.id}`, { queue });
 
       return queue;
     }),

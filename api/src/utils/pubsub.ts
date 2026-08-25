@@ -1,21 +1,19 @@
 import { Context } from "./orpc";
 import { queueResponseSchema, rideResponseSchema } from "../schemas/beep";
-import { createPubSub } from "@graphql-yoga/subscription";
-import { eventTarget } from "./redis";
+import { RedisPublisher } from '@orpc/publisher/redis'
 import z from "zod";
+import { redis } from "./redis";
 
 export type User = NonNullable<Context["user"]>;
 export type Ride = z.infer<typeof rideResponseSchema> | null;
 type Queue = z.infer<typeof queueResponseSchema>;
+type LocationUpdate = { id: string; location: { latitude: number; longitude: number } };
 
 type PubSubChannels = {
-  user: [userId: string, payload: { user: User }];
-  ride: [userId: string, payload: { ride: Partial<Ride> }];
-  queue: [userId: string, payload: { queue: Queue }];
-  locations: [
-    payload: { id: string; location: { latitude: number; longitude: number } },
-  ];
-  beepsCount: [payload: number];
+  [key: `user-${string}`]: { user: User },
+  [key: `ride-${string}`]: { ride: Partial<Ride> },
+  [key: `queue-${string}`]: { queue: Queue },
+  locations: LocationUpdate;
 };
 
-export const pubSub = createPubSub<PubSubChannels>({ eventTarget });
+export const pubSub = new RedisPublisher<PubSubChannels>(redis);

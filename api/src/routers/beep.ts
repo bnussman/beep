@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   adminProcedure,
   authedProcedure,
-  o
 } from "../utils/orpc";
 import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
@@ -15,7 +14,6 @@ import {
 import { pubSub } from "../utils/pubsub";
 import {
   getBeeperQueue,
-  getBeepsCount,
   getDerivedRiderFields,
   getIsInProgressBeep,
   inProgressBeep,
@@ -211,12 +209,12 @@ export const beepRouter = {
       const queue = await getBeeperQueue(b.beeper_id);
 
       for (const beep of queue) {
-        pubSub.publish("ride", beep.rider_id, {
+        pubSub.publish(`ride-${beep.rider_id}`, {
           ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
         });
       }
 
-      pubSub.publish("queue", b.beeper_id, { queue });
+      pubSub.publish(`queue-${b.beeper_id}`, { queue });
 
       return b;
     }),
@@ -260,7 +258,7 @@ export const beepRouter = {
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
-        pubSub.publish("ride", beep.rider.id, { ride: null });
+        pubSub.publish(`ride-${beep.rider.id}`, { ride: null });
 
         if (beep.rider_live_activity_token) {
           updateLiveActivity(beep.rider_live_activity_token, {
@@ -297,27 +295,7 @@ export const beepRouter = {
         .where(eq(user.id, beeper.id))
         .returning();
 
-      pubSub.publish("user", beeper.id, { user: u[0] });
-      pubSub.publish("queue", beeper.id, { queue: [] });
+      pubSub.publish(`user-${beeper.id}`, { user: u[0] });
+      pubSub.publish(`queue-${beeper.id}`, { queue: [] });
     }),
-  beepsCountSubscription: o.handler(async function* ({
-    signal,
-  }) {
-    const beepsCount = await getBeepsCount();
-
-    yield beepsCount;
-
-    const eventSource = pubSub.subscribe("beepsCount");
-
-    if (signal) {
-      signal.onabort = () => {
-        eventSource.return();
-      };
-    }
-
-    for await (const beepsCount of eventSource) {
-      if (signal?.aborted) return;
-      yield beepsCount;
-    }
-  }),
 };

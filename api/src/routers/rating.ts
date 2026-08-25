@@ -194,7 +194,7 @@ export const ratingRouter = {
 
       const updatedUser = { ...u, rating: avgRating };
 
-      pubSub.publish("user", u.id, { user: updatedUser });
+      pubSub.publish(`user-${u.id}`, { user: updatedUser });
 
       if (u.pushToken) {
         sendNotification({

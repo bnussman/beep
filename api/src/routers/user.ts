@@ -58,17 +58,15 @@ export const userRouter = {
         yield user;
       }
 
-      const eventSource = pubSub.subscribe("user", userId);
+      const iterator = pubSub.subscribe(`user-${userId}`, { signal });
 
       if (signal) {
         signal.onabort = () => {
           console.log("➖ User unsubscribed", userId);
-          eventSource.return();
         };
       }
 
-      for await (const { user } of eventSource) {
-        if (signal?.aborted) return;
+      for await (const { user } of iterator) {
         yield user;
       }
     }),
@@ -174,7 +172,7 @@ export const userRouter = {
 
       Object.assign(context.user, values);
 
-      pubSub.publish("user", context.user.id, { user: context.user });
+      pubSub.publish(`user-${context.user.id}`, { user: context.user });
 
       if (input.location) {
         const data = {
@@ -255,7 +253,7 @@ export const userRouter = {
         .where(eq(user.id, input.userId))
         .returning();
 
-      pubSub.publish("user", u[0].id, { user: u[0] });
+      pubSub.publish(`user-${u[0].id}`, { user: u[0] });
 
       if (u[0].location) {
         const data = {
@@ -330,7 +328,7 @@ export const userRouter = {
         .where(eq(user.id, context.user.id))
         .returning();
 
-      pubSub.publish("user", context.user.id, { user: u[0] });
+      pubSub.publish(`user-${context.user.id}`, { user: u[0] });
 
       return context.user;
     }),
