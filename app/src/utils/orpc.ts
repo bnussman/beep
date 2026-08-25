@@ -43,10 +43,10 @@ function getLocalIP() {
 
 const ip = getLocalIP();
 
-const origin = __DEV__ ? `http://${ip}:3000` : "https://orpc.ridebeep.app";
+const origin = __DEV__ ? `http://${ip}:3000` : "https://api.ridebeep.app";
 const wsUrl = __DEV__
   ? `ws://${ip}:3000`
-  : "wss://orpc.ridebeep.app";
+  : "wss://api.ridebeep.app";
 
 const httpLink = new RPCLink({
   origin,

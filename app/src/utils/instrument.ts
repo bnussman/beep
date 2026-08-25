@@ -18,8 +18,6 @@ Sentry.init({
   tracePropagationTargets: isWeb
     ? [
       "localhost",
-      "https://orpc.dev.ridebeep.app",
-      "https://orpc.ridebeep.app",
       "https://api.dev.ridebeep.app",
       "https://api.ridebeep.app"
     ]
