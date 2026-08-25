@@ -211,9 +211,6 @@ export const beepRouter = {
       const queue = await getBeeperQueue(b.beeper_id);
 
       for (const beep of queue) {
-        pubSub.publish("rideAllowPartial", beep.rider_id, {
-          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
-        });
         pubSub.publish("ride", beep.rider_id, {
           ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
         });
@@ -263,7 +260,6 @@ export const beepRouter = {
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
-        pubSub.publish("rideAllowPartial", beep.rider.id, { ride: null });
         pubSub.publish("ride", beep.rider.id, { ride: null });
 
         if (beep.rider_live_activity_token) {

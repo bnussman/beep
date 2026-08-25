@@ -179,9 +179,6 @@ export const riderRouter = {
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
-        pubSub.publish("rideAllowPartial", beep.rider_id, {
-          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
-        });
         pubSub.publish("ride", beep.rider_id, {
           ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
         });
@@ -221,7 +218,7 @@ export const riderRouter = {
   currentRideUpdates: authedProcedure
     .input(z.string().optional())
     .output(
-      asyncIteratorObject(rideResponseSchema.nullable())
+      asyncIteratorObject(rideResponseSchema.partial().nullable())
     )
     .handler(async function* ({ context, signal, input }) {
       const userId = input ?? context.user.id;
@@ -268,7 +265,7 @@ export const riderRouter = {
 
       console.log("➕ Rider subscribed", userId);
 
-      const eventSource = pubSub.subscribe("rideAllowPartial", userId);
+      const eventSource = pubSub.subscribe("ride", userId);
 
       yield await getRidersCurrentRide(userId);
 
@@ -444,15 +441,11 @@ export const riderRouter = {
 
       queue = queue.filter((beep) => beep.id !== entry.id);
 
-      pubSub.publish("rideAllowPartial", context.user.id, { ride: null });
       pubSub.publish("ride", context.user.id, { ride: null });
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
         const ride = { ...beep, ...getDerivedRiderFields(beep, queue) }
-        pubSub.publish("rideAllowPartial", beep.rider_id, {
-          ride,
-        });
         pubSub.publish("ride", beep.rider_id, {
           ride,
         });

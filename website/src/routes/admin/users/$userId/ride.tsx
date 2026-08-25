@@ -35,7 +35,7 @@ function Ride() {
   );
 
   useSubscription({
-    ...orpc.rider.currentRideUpdatesAllowPartial.liveOptions({
+    ...orpc.rider.currentRideUpdates.liveOptions({
       input: userId,
       context: { ws: true }
     }),

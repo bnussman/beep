@@ -33,7 +33,7 @@ export default function MainFindBeepScreen() {
     beep?.status === "on_the_way";
 
   useSubscription({
-    ...orpc.rider.currentRideUpdatesAllowPartial.liveOptions({
+    ...orpc.rider.currentRideUpdates.liveOptions({
       enabled: Boolean(beep),
       context: { ws: true }
     }),
