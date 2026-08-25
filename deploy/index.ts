@@ -4,17 +4,18 @@ import * as k8s from "@pulumi/kubernetes";
 
 const env = process.env.secrets ? JSON.parse(process.env.secrets) : {};
 const ACTOR = process.env.ACTOR;
-
 const envName = pulumi.getStack();
-
 const namespaceName = `beep-${envName}`;
-const orpcAppName = "orpc";
-const orpcImageName = `ghcr.io/bnussman/orpc:${envName}`;
+const apiAppName = "api";
+const apiImageName = `ghcr.io/bnussman/api:${envName}`;
+const isProduction = envName === "production";
 
-const isProduction = envName.includes("production");
+const k8sProvider = new k8s.Provider("k8sProvider", {
+  kubeconfig: pulumi.secret(process.env.KUBECONFIG),
+});
 
-const orpcImageResource = new docker.Image("orpcImageResource", {
-  imageName: orpcImageName,
+const image = new docker.Image("apiImageResource", {
+  imageName: apiImageName,
   build: {
     context: "../orpc",
     dockerfile: "../orpc/Dockerfile",
@@ -24,10 +25,6 @@ const orpcImageResource = new docker.Image("orpcImageResource", {
     server: "ghcr.io",
     username: ACTOR,
   },
-});
-
-const k8sProvider = new k8s.Provider("k8sProvider", {
-  kubeconfig: pulumi.secret(process.env.KUBECONFIG),
 });
 
 const namespace = new k8s.core.v1.Namespace(
@@ -41,30 +38,30 @@ const namespace = new k8s.core.v1.Namespace(
   { provider: k8sProvider },
 );
 
-const orpcService = new k8s.core.v1.Service(
-  orpcAppName,
+const apiService = new k8s.core.v1.Service(
+  apiAppName,
   {
     metadata: {
-      name: orpcAppName,
+      name: apiAppName,
       namespace: namespaceName,
     },
     spec: {
       type: "ClusterIP",
       ports: [{ port: 3001, targetPort: 3001 }],
-      selector: { app: orpcAppName },
+      selector: { app: apiAppName },
     },
   },
   { provider: k8sProvider },
 );
 
-const orpcHttp = {
+const apiHttp = {
   paths: [
     {
       path: "/",
       pathType: "Prefix",
       backend: {
         service: {
-          name: orpcAppName,
+          name: apiAppName,
           port: { number: 3001 },
         },
       },
@@ -72,11 +69,11 @@ const orpcHttp = {
   ],
 };
 
-const orpcIngress = new k8s.networking.v1.Ingress(
-  "orpc-ingress",
+const apiIngress = new k8s.networking.v1.Ingress(
+  "api-ingress",
   {
     metadata: {
-      name: "orpc-ingress",
+      name: "api-ingress",
       namespace: namespaceName,
     },
     spec: {
@@ -86,14 +83,14 @@ const orpcIngress = new k8s.networking.v1.Ingress(
             isProduction
               ? "orpc.ridebeep.app"
               : "orpc.dev.ridebeep.app",
-          http: orpcHttp,
+          http: apiHttp,
         },
         {
           host:
             isProduction
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
-          http: orpcHttp,
+          http: apiHttp,
         },
       ],
     },
@@ -146,10 +143,10 @@ const redisService = new k8s.core.v1.Service(
 );
 
 const secret = new k8s.core.v1.Secret(
-  "orpc-secret",
+  "api-secret",
   {
     metadata: {
-      name: "orpc-secret",
+      name: "api-secret",
       namespace: namespaceName,
     },
     stringData: {
@@ -161,24 +158,24 @@ const secret = new k8s.core.v1.Secret(
   { provider: k8sProvider },
 );
 
-const orpcDeployment = new k8s.apps.v1.Deployment(
-  orpcAppName,
+const apiDeployment = new k8s.apps.v1.Deployment(
+  apiAppName,
   {
     metadata: {
-      name: orpcAppName,
+      name: apiAppName,
       namespace: namespace.metadata.name,
-      labels: { app: orpcAppName },
+      labels: { app: apiAppName },
     },
     spec: {
-      selector: { matchLabels: { app: orpcAppName } },
+      selector: { matchLabels: { app: apiAppName } },
       replicas: isProduction ? 3 : 1,
       template: {
-        metadata: { labels: { app: orpcAppName } },
+        metadata: { labels: { app: apiAppName } },
         spec: {
           containers: [
             {
-              name: orpcAppName,
-              image: orpcImageResource.repoDigest,
+              name: apiAppName,
+              image: image.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3001 }],
               envFrom: [{ secretRef: { name: secret.metadata.name } }],
