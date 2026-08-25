@@ -203,8 +203,10 @@ export const withLock = o
   });
 
 export const errorInterceptor: StandardHandlerInterceptor<Context> = onError((error) => {
-  if (!(error instanceof ORPCError)) {
-    console.error("Banks", error);
+  const isORPCError = error instanceof ORPCError;
+
+  if (!isORPCError) {
+    console.error(error);
     Sentry.captureException(error);
   }
 });
