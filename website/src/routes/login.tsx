@@ -1,5 +1,5 @@
 import React from "react";
-import { RouterInputs } from "../../../orpc/src";
+import { RouterInputs } from "../../../api/src";
 import { Controller, useForm } from "react-hook-form";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";

@@ -12,4 +12,4 @@ EXPOSE 3000
 
 ENV NODE_ENV=production
 
-CMD ["bun", "run", "--preload", "./src/utils/instrument.ts", "src/index.ts"]
+CMD ["bun", "run", "--preload", "@sentry/node/preload", "src/index.ts"]

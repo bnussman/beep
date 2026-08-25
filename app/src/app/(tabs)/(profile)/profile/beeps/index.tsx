@@ -12,7 +12,7 @@ import { capitalize } from "@/utils/strings";
 import { getNativeNavigationMenuItem } from "@/components/Menu.utils";
 import { Elipsis } from "@/components/Elipsis";
 import { Button } from "heroui-native";
-import { RouterOutputs } from "../../../../../../../orpc/src";
+import { RouterOutputs } from "../../../../../../../api/src";
 import { orpc } from "@/utils/orpc";
 
 const beepStatuses: BeepStatus[] = [

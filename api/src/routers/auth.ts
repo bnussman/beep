@@ -1,27 +1,21 @@
-import { authedProcedure, publicProcedure, router } from "../utils/trpc";
+import * as Sentry from "@sentry/bun";
+import { authedProcedure, o } from "../utils/orpc";
 import { z } from "zod";
 import { db } from "../utils/db";
-import {
-  forgot_password,
-  token,
-  user,
-  verify_email,
-} from "../../drizzle/schema";
+import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
 import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
-import * as Sentry from "@sentry/bun";
 import { pubSub } from "../utils/pubsub";
-import { isAlpha, isMobilePhone } from "validator";
 import { authSchema } from "../schemas/auth";
-import { userSchema } from "../schemas/user";
+import { signupSchema, userSchema } from "../schemas/user";
+import { ORPCError, ValidationError } from "@orpc/server";
 
-export const authRouter = router({
-  login: publicProcedure
+export const authRouter = {
+  login: o
     .input(
       z.object({
         username: z.string(),
@@ -30,7 +24,7 @@ export const authRouter = router({
       }),
     )
     .output(authSchema)
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const { username, password, pushToken } = input;
 
       const u = await db.query.user.findFirst({
@@ -46,8 +40,7 @@ export const authRouter = router({
       });
 
       if (!u) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User does not exist or credentials are incorrect.",
         });
       }
@@ -69,15 +62,11 @@ export const authRouter = router({
           );
           break;
         default:
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: `Unknown password type ${u.passwordType}`,
-          });
+          throw new Error(`Unknown password type ${u.passwordType}`);
       }
 
       if (!isPasswordCorrect) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User does not exist or credentials are incorrect.",
         });
       }
@@ -100,47 +89,11 @@ export const authRouter = router({
 
       return { user: u, tokens };
     }),
-  signup: publicProcedure
-    .input(z.instanceof(FormData))
+  signup: o
+    .input(signupSchema)
     .output(authSchema)
-    .mutation(async ({ input: formData }) => {
+    .handler(async ({ input }) => {
       const userId = crypto.randomUUID();
-
-      const signupSchema = z.object({
-        first: z
-          .string()
-          .min(1)
-          .max(64)
-          .refine(isAlpha, "Must only contain letters"),
-        last: z
-          .string()
-          .min(1)
-          .max(64)
-          .refine(isAlpha, "Must only contain letters"),
-        username: z.string().min(3).max(64),
-        password: z.string().min(6).max(255),
-        email: z.email().endsWith(".edu", "You must use a .edu email"),
-        phone: z.string().refine(isMobilePhone, "Invalid phone number"),
-        venmo: z.string().max(30).optional(),
-        cashapp: z.string().max(40).optional(),
-        pushToken: z.string().optional(),
-        photo: z.instanceof(File, {
-          message: "You must add a profile picture",
-        }),
-      });
-
-      const {
-        success,
-        data: input,
-        error,
-      } = signupSchema.safeParse(Object.fromEntries(formData.entries()));
-
-      if (!success) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          cause: error,
-        });
-      }
 
       const existing = await db.query.user.findFirst({
         where: {
@@ -150,17 +103,25 @@ export const authRouter = router({
       });
 
       if (existing) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          cause: new z.ZodRealError([
-            {
-              code: "invalid_value",
-              path: ["email"],
-              message: "A user with that email already exists.",
-              values: [input.email],
-            },
-          ]),
-        });
+        const issues = [
+          {
+            code: "invalid_value",
+            path: ["email"],
+            message: "A user with that email already exists.",
+            values: [input.email],
+          },
+        ];
+        throw new ORPCError('BAD_REQUEST', {
+          message: 'Input validation failed',
+          data: {
+            issues,
+          },
+          cause: new ValidationError({
+            message: 'Input validation failed',
+            issues,
+            invalidData: input,
+          }),
+        })
       }
 
       const extention = input.photo.name.substring(
@@ -230,19 +191,19 @@ export const authRouter = router({
     }),
   logout: authedProcedure
     .input(z.object({ isApp: z.boolean().optional() }))
-    .mutation(async ({ ctx, input }) => {
-      await db.delete(token).where(eq(token.id, ctx.token.id));
+    .handler(async ({ context, input }) => {
+      await db.delete(token).where(eq(token.id, context.token.id));
 
       if (input.isApp) {
         await db
           .update(user)
           .set({ pushToken: null })
-          .where(eq(user.id, ctx.user.id));
+          .where(eq(user.id, context.user.id));
       }
     }),
-  forgotPassword: publicProcedure
+  forgotPassword: o
     .input(z.object({ email: z.email() }))
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { email: input.email },
       });
@@ -311,21 +272,20 @@ export const authRouter = router({
 
       return u.email;
     }),
-  resetPassword: publicProcedure
+  resetPassword: o
     .input(
       z.object({
         id: z.string(),
         password: z.string().min(6),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const forgotPassword = await db.query.forgot_password.findFirst({
         where: { id: input.id },
       });
 
       if (!forgotPassword) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Password reset request not found.",
         });
       }
@@ -335,8 +295,7 @@ export const authRouter = router({
           .delete(forgot_password)
           .where(eq(forgot_password.id, forgotPassword.id));
 
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "This password reset request has expired.",
         });
       }
@@ -358,13 +317,13 @@ export const authRouter = router({
 
       return true;
     }),
-  verifyAccount: publicProcedure
+  verifyAccount: o
     .input(
       z.object({
         id: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const verifyAccountEntry = await db.query.verify_email.findFirst({
         where: { id: input.id },
         with: {
@@ -373,8 +332,7 @@ export const authRouter = router({
       });
 
       if (!verifyAccountEntry) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Unable to find that email verification entry.",
         });
       }
@@ -384,8 +342,7 @@ export const authRouter = router({
           .delete(verify_email)
           .where(eq(verify_email.id, verifyAccountEntry.id));
 
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message:
             "Your account verification link has expired. Login to your account to request another link.",
         });
@@ -396,8 +353,7 @@ export const authRouter = router({
           .delete(verify_email)
           .where(eq(verify_email.id, verifyAccountEntry.id));
 
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You tried to verify your email, but your email has changed. Login to request a new verification link.",
         });
@@ -422,13 +378,13 @@ export const authRouter = router({
 
       return u[0].email;
     }),
-  resendVerification: authedProcedure.mutation(async ({ ctx }) => {
-    await db.delete(verify_email).where(eq(verify_email.user_id, ctx.user.id));
+  resendVerification: authedProcedure.handler(async ({ context }) => {
+    await db.delete(verify_email).where(eq(verify_email.user_id, context.user.id));
 
     const verifyEmailEntry = {
       id: crypto.randomUUID(),
-      email: ctx.user.email,
-      user_id: ctx.user.id,
+      email: context.user.email,
+      user_id: context.user.id,
       time: new Date(),
     };
 
@@ -436,9 +392,9 @@ export const authRouter = router({
 
     const mailOptions: SendMailOptions = {
       from: "Beep App <banks@ridebeep.app>",
-      to: ctx.user.email,
+      to: context.user.email,
       subject: "Verify your Beep App Email!",
-      html: `Hey ${ctx.user.username}, <br><br>
+      html: `Hey ${context.user.username}, <br><br>
                 Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
                 - Beep App Team
             `,
@@ -457,18 +413,18 @@ export const authRouter = router({
       }),
     )
     .output(userSchema)
-    .mutation(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const password = await bunPassword.hash(input.password, "bcrypt");
 
       await db
         .update(user)
         .set({ password, passwordType: "bcrypt" })
-        .where(eq(user.id, ctx.user.id));
+        .where(eq(user.id, context.user.id));
 
       await db
         .delete(token)
-        .where(and(eq(token.user_id, ctx.user.id), ne(token.id, ctx.token.id)));
+        .where(and(eq(token.user_id, context.user.id), ne(token.id, context.token.id)));
 
-      return ctx.user;
+      return context.user;
     }),
-});
+};

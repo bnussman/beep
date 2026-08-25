@@ -26,7 +26,7 @@ import {
   openVenmo,
   sms,
 } from "@/utils/links";
-import { RouterOutputs } from "../../../../orpc/src";
+import { RouterOutputs } from "../../../../api/src";
 import { orpc } from "@/utils/orpc";
 
 interface Props {

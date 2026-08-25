@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import { Marker } from "./Marker";
 import { Map } from "./Map";
-import { RouterOutputs } from "../../../orpc/src";
+import { RouterOutputs } from "../../../api/src";
 
 interface Props {
   beepers: RouterOutputs["rider"]["beepers"];

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
+import { authedProcedure } from "../utils/orpc";
 import { db } from "../utils/db";
 import { count } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { ORPCError } from "@orpc/server";
 
-export const paymentRouter = router({
+export const paymentRouter = {
   payments: authedProcedure
     .input(
       z.object({
@@ -15,12 +15,11 @@ export const paymentRouter = router({
         active: z.boolean().optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
-      const userId = input.userId ?? ctx.user.id;
+    .handler(async ({ input, context }) => {
+      const userId = input.userId ?? context.user.id;
 
-      if (ctx.user.role === "user" && userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+      if (context.user.role === "user" && userId !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You must be an admin to get purchases for other users",
         });
       }
@@ -64,4 +63,4 @@ export const paymentRouter = router({
         results,
       };
     }),
-});
+};

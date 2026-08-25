@@ -1,5 +1,6 @@
-import { captureException } from "@sentry/bun";
-import { createContext, router } from "./utils/trpc";
+import './utils/instrument';
+import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
+import { createHTTPContext, createWSContext, errorInterceptor, otelAbortSignalCaptureInterceptor } from "./utils/orpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
@@ -15,13 +16,13 @@ import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-import { createBunWSHandler } from "./utils/ws";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
-import { CORS_HEADERS } from "./utils/cors";
 import { flagsRouter } from "./routers/flags";
+import { RPCHandler } from "@orpc/server/fetch";
+import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
+import { CORSPlugin } from "@orpc/server/plugins";
+import { RouterClient } from '@orpc/server'
 
-const appRouter = router({
+const appRouter = {
   user: userRouter,
   auth: authRouter,
   report: reportRouter,
@@ -37,67 +38,68 @@ const appRouter = router({
   location: locationRouter,
   health: healthRouter,
   flags: flagsRouter,
-});
+};
+
+interface ClientContext {
+  ws?: boolean;
+}
 
 export type AppRouter = typeof appRouter;
+export type AppRouterClient = RouterClient<AppRouter, ClientContext>;
+export type RouterInputs = InferRouterInputs<AppRouter>;
+export type RouterOutputs = InferRouterOutputs<AppRouter>;
 
-const websocket = createBunWSHandler({
-  router: appRouter,
-  createContext,
-  onError(error) {
-    if (getHTTPStatusCodeFromError(error.error) >= 500) {
-      console.error(error.error);
-      captureException(error.error, {
-        extra: { input: error.input, type: error.type },
-      });
-    }
-  },
-});
+const handler = new RPCHandler(appRouter, {
+  plugins: [
+    new CORSPlugin({
+      origin: "*",
+      allowHeaders: ["Content-Type", "Authorization", "Vary", "sentry-trace", "baggage"],
+    })
+  ],
+  interceptors: [
+    errorInterceptor
+  ]
+})
+
+const wsHandler = new WSRPCHandler(appRouter, {
+  interceptors: [
+    otelAbortSignalCaptureInterceptor,
+    errorInterceptor
+  ],
+})
 
 Bun.serve({
+  port: 3000,
   routes: {
     "/payments/webhook": handlePaymentWebook,
   },
-  fetch(request, server) {
-    if (request.method === "OPTIONS") {
-      return new Response("Departed", { headers: CORS_HEADERS });
+  async fetch(request, server) {
+    if (server.upgrade(request)) {
+      return
     }
-    if (
-      server.upgrade(request, {
-        data: {
-          req: request,
-          abortController: new AbortController(),
-          abortControllers: new Map(),
+
+    const { response } = await handler.handle(request, {
+      context: await createHTTPContext(request)
+    })
+
+    if (response) {
+      return response;
+    }
+
+    return new Response('Not found', { status: 404 })
+  },
+  websocket: {
+    async message(ws, message) {
+      await wsHandler.message(ws, message, {
+        context: async (request) => {
+          return await createWSContext(request)
         },
       })
-    ) {
-      return;
-    }
-    return fetchRequestHandler({
-      endpoint: "/",
-      req: request,
-      router: appRouter,
-      createContext,
-      onError(error) {
-        if (error.req.url.includes("syncPayments")) {
-          console.error("Error syncing payments", error);
-          captureException(error.error, {
-            extra: { input: error.input, type: error.type },
-          });
-        }
-        if (getHTTPStatusCodeFromError(error.error) >= 500) {
-          console.error(error.error);
-          captureException(error.error, {
-            extra: { input: error.input, type: error.type },
-          });
-        }
-      },
-      responseMeta() {
-        return { headers: CORS_HEADERS };
-      },
-    });
-  },
-  websocket,
+    },
+    async close(ws) {
+      await wsHandler.close(ws)
+    },
+  }
 });
 
 console.info("🚕 Beep API Server Started");

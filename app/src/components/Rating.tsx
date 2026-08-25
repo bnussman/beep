@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
 import { useRouter } from "expo-router";
-import { RouterOutputs } from "../../../orpc/src";
+import { RouterOutputs } from "../../../api/src";
 import { orpc } from "@/utils/orpc";
 
 type Rating = RouterOutputs["rating"]["ratings"]["ratings"][number];

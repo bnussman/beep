@@ -1,12 +1,12 @@
 import { count, eq } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure } from "../utils/orpc";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { ORPCError } from "@orpc/server";
 
-export const reportRouter = router({
+export const reportRouter = {
   reports: adminProcedure
     .input(
       z.object({
@@ -15,7 +15,7 @@ export const reportRouter = router({
         userId: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const where = input.userId
         ? {
             OR: [{ reporter_id: input.userId }, { reported_id: input.userId }],
@@ -76,7 +76,7 @@ export const reportRouter = router({
         results,
       };
     }),
-  report: adminProcedure.input(z.string()).query(async ({ input }) => {
+  report: adminProcedure.input(z.string()).handler(async ({ input }) => {
     const r = await db.query.report.findFirst({
       where: { id: input },
       with: {
@@ -108,7 +108,7 @@ export const reportRouter = router({
     });
 
     if (!r) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return r;
@@ -123,9 +123,9 @@ export const reportRouter = router({
         }),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const values = input.data.handled
-        ? { handled: true, handled_by_id: ctx.user.id, notes: input.data.notes }
+        ? { handled: true, handled_by_id: context.user.id, notes: input.data.notes }
         : { handled: false, handled_by_id: null, notes: input.data.notes };
 
       const r = await db
@@ -136,7 +136,7 @@ export const reportRouter = router({
 
       return r[0];
     }),
-  deleteReport: adminProcedure.input(z.string()).mutation(async ({ input }) => {
+  deleteReport: adminProcedure.input(z.string()).handler(async ({ input }) => {
     await db.delete(report).where(eq(report.id, input));
   }),
   createReport: authedProcedure
@@ -148,7 +148,7 @@ export const reportRouter = router({
         ratingId: z.uuid().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const r = await db
         .insert(report)
         .values({
@@ -156,7 +156,7 @@ export const reportRouter = router({
           reason: input.reason,
           timestamp: new Date(),
           reported_id: input.userId,
-          reporter_id: ctx.user.id,
+          reporter_id: context.user.id,
           beep_id: input.beepId,
           rating_id: input.ratingId,
         })
@@ -164,4 +164,4 @@ export const reportRouter = router({
 
       return r[0];
     }),
-});
+};

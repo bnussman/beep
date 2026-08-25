@@ -1,9 +1,9 @@
-import { publicProcedure, router } from "../utils/trpc";
+import { o } from "../utils/orpc";
 
-export const flagsRouter = router({
-  flags: publicProcedure.query(() => {
+export const flagsRouter = {
+  flags: o.handler(() => {
     return {
       liveActivities: false,
     };
   }),
-});
+};

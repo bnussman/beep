@@ -12,7 +12,7 @@ import { View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { SplashScreen, useRouter } from "expo-router";
 import { FieldError, TextField } from "heroui-native";
-import { RouterInputs } from "../../../../orpc/src";
+import { RouterInputs } from "../../../../api/src";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
 

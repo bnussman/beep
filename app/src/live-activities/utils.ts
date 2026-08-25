@@ -1,7 +1,7 @@
 import RiderActivity from "@/live-activities/rider-activity";
 import { isIOS } from "@/utils/constants";
 import { orpcClient } from "@/utils/orpc";
-import { RouterOutputs } from "../../../orpc/src";
+import { RouterOutputs } from "../../../api/src";
 
 const riderLiveActivities = RiderActivity.getInstances();
 const riderLiveActivityListeners: { remove(): void }[] = [];

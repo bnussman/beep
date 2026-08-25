@@ -1,4 +1,4 @@
-import { RouterOutputs } from "../../../orpc/src";
+import { RouterOutputs } from "../../../api/src";
 
 export function getCurrentStatusMessage(
   beep: RouterOutputs["rider"]["currentRide"],

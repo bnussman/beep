@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useNotifications } from "@toolpad/core";
-import { RouterInputs } from "../../../../../../../orpc/src";
+import { RouterInputs } from "../../../../../../../api/src";
 import {
   Alert,
   FormControlLabel,

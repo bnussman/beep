@@ -1,4 +1,4 @@
-import { Context } from "./trpc";
+import { Context } from "./orpc";
 import { queueResponseSchema, rideResponseSchema } from "../schemas/beep";
 import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis";

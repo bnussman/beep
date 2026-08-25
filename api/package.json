@@ -1,12 +1,12 @@
 {
   "name": "@beep/api",
-  "version": "0.0.1",
-  "description": "tRPC for Ride Beep App",
+  "version": "0.0.0",
+  "description": "oRPC API for Ride Beep App",
   "main": "src/index.ts",
   "type": "module",
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "bun run --preload ./src/utils/instrument.ts --watch src/index.ts",
+    "dev": "bun run --preload @sentry/node/preload --watch src/index.ts",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },
@@ -23,8 +23,10 @@
     "@banksnussman/photon": "^0.0.5",
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
-    "@sentry/bun": "^10.54.0",
-    "@trpc/server": "^11.16.0",
+    "@orpc/opentelemetry": "2.0.0-beta.28",
+    "@orpc/server": "2.0.0-beta.26",
+    "@sentry/bun": "^10.70.0",
+    "@sentry/node": "^10.70.0",
     "car-info": "0.2.5",
     "drizzle-orm": "1.0.0-rc.3",
     "ioredis": "^5.10.1",

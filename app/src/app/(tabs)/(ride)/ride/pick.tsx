@@ -15,7 +15,7 @@ import { captureException } from "@sentry/react-native";
 import { getContentContainerStyle } from "@/utils/styles";
 import { startBeepLiveActivity } from "@/live-activities/utils";
 import { orpc } from "@/utils/orpc";
-import { RouterOutputs } from "../../../../../../orpc/src";
+import { RouterOutputs } from "../../../../../../api/src";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();

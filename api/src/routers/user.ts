@@ -3,7 +3,6 @@ import { beep, user, verify_email } from "../../drizzle/schema";
 import { db, writeDB } from "../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
 import { syncUserPayments } from "../utils/payments";
 import { SendMailOptions } from "nodemailer";
@@ -13,47 +12,50 @@ import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
 import { inProgressBeep, updateEta } from "../logic/beep";
 import { userSchema } from "../schemas/user";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
 import { getActivePayments } from "../logic/payments";
 import {
   adminProcedure,
   authedProcedure,
   mustHaveBeenInAcceptedBeep,
-  router,
-} from "../utils/trpc";
+} from "../utils/orpc";
 import {
   DEFAULT_PAGE_SIZE,
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../utils/constants";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
 
-export const userRouter = router({
-  me: authedProcedure.output(userSchema).query(async ({ ctx }) => {
-    return ctx.user;
+export const userRouter = {
+  me: authedProcedure.output(userSchema).handler(async ({ context }) => {
+    return context.user;
   }),
   updates: authedProcedure
     .input(z.string().optional())
-    .output(zAsyncIterable({ yield: userSchema, return: userSchema }))
-    .subscription(async function* ({ ctx, input, signal }) {
-      if (ctx.user.role === "user" && input && input !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+    .output(asyncIteratorObject(userSchema))
+    .handler(async function* ({ context, input, signal }) {
+      if (context.user.role === "user" && input && input !== context.user.id) {
+        throw new ORPCError( "UNAUTHORIZED", {
           message:
             "You don't have permission to subscrbe to another user's user updates.",
         });
       }
 
-      const userId = input ?? ctx.user.id;
+      const userId = input ?? context.user.id;
 
       console.log("➕ User subscribed", userId);
 
-      if (ctx.user.id === userId) {
-        yield ctx.user;
+      if (context.user.id === userId) {
+        yield context.user;
       } else {
-        yield await db.query.user.findFirst({
+        const user = await db.query.user.findFirst({
           where: { id: userId },
           columns: { password: false, passwordType: false },
-        });
+        })
+
+        if (!user) {
+          throw new ORPCError('NOT_FOUND');
+        }
+        yield user;
       }
 
       const eventSource = pubSub.subscribe("user", userId);
@@ -92,37 +94,36 @@ export const userRouter = router({
         })
         .partial(),
     )
-    .mutation(async ({ ctx, input }) => {
+    .handler(async ({ context, input }) => {
       const values: Partial<typeof user.$inferInsert> = input;
 
       if (values.isBeeping === false) {
         const countOfInProgressBeeps = await db.$count(
           beep,
-          and(eq(beep.beeper_id, ctx.user.id), inProgressBeep),
+          and(eq(beep.beeper_id, context.user.id), inProgressBeep),
         );
 
         if (countOfInProgressBeeps > 0) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
+          throw new ORPCError("BAD_REQUEST", {
             message:
               "You can't stop beeping when you have riders in your queue",
           });
         }
       }
 
-      if (input.email && input.email !== ctx.user.email) {
+      if (input.email && input.email !== context.user.email) {
         // User is changing their email, we must make them reverify.
         values.isEmailVerified = false;
         values.isEmailVerified = false;
 
         await db
           .delete(verify_email)
-          .where(eq(verify_email.user_id, ctx.user.id));
+          .where(eq(verify_email.user_id, context.user.id));
 
         const verifyEmailEntry = {
           id: crypto.randomUUID(),
           email: input.email,
-          user_id: ctx.user.id,
+          user_id: context.user.id,
           time: new Date(),
         };
 
@@ -132,7 +133,7 @@ export const userRouter = router({
           from: "Beep App <banks@ridebeep.app>",
           to: input.email,
           subject: "Verify your Beep App Email!",
-          html: `Hey ${ctx.user.username}, <br><br>
+          html: `Hey ${context.user.username}, <br><br>
                   Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
                   - Beep App Team
               `,
@@ -146,49 +147,47 @@ export const userRouter = router({
       }
 
       if (input.isBeeping) {
-        if (!ctx.user.isEmailVerified) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
+        if (!context.user.isEmailVerified) {
+          throw new ORPCError("UNAUTHORIZED", {
             message: "You must confirm your email to beep.",
           });
         }
 
         const c = await db.query.car.findFirst({
-          where: { user_id: ctx.user.id, default: true },
+          where: { user_id: context.user.id, default: true },
         });
         if (!c) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
+          throw new ORPCError("BAD_REQUEST", {
             message: "You must have a default car to beep.",
           });
         }
       }
 
       if ("location" in values) {
-        await writeDB.update(user).set(values).where(eq(user.id, ctx.user.id));
+        await writeDB.update(user).set(values).where(eq(user.id, context.user.id));
       } else {
         await db
           .update(user)
           .set(values)
-          .where(eq(user.id, ctx.user.id));
+          .where(eq(user.id, context.user.id));
       }
 
-      Object.assign(ctx.user, values);
+      Object.assign(context.user, values);
 
-      pubSub.publish("user", ctx.user.id, { user: ctx.user });
+      pubSub.publish("user", context.user.id, { user: context.user });
 
       if (input.location) {
         const data = {
-          id: ctx.user.id,
+          id: context.user.id,
           location: input.location,
         };
 
-        updateEta(ctx.user.id, input.location);
+        updateEta(context.user.id, input.location);
 
         pubSub.publish("locations", data);
       }
 
-      return ctx.user;
+      return context.user;
     }),
   editAdmin: adminProcedure
     .input(
@@ -214,7 +213,7 @@ export const userRouter = router({
           .partial(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const existingUser = await db.query.user.findFirst({
         where: { id: input.userId },
         columns: {
@@ -225,7 +224,7 @@ export const userRouter = router({
       });
 
       if (!existingUser) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       if (
@@ -273,12 +272,11 @@ export const userRouter = router({
     }),
   syncPayments: authedProcedure
     .input(z.object({ userId: z.string().optional() }))
-    .mutation(async ({ ctx, input }) => {
-      const userId = input?.userId ?? ctx.user.id;
+    .handler(async ({ context, input }) => {
+      const userId = input?.userId ?? context.user.id;
 
-      if (ctx.user.role === "user" && userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+      if (context.user.role === "user" && userId !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You must be an admin to sync purchases for other users.",
         });
       }
@@ -287,54 +285,35 @@ export const userRouter = router({
     }),
   activePayments: authedProcedure
     .input(z.object({ userId: z.string() }).optional())
-    .query(async ({ ctx, input }) => {
-      const userId = input?.userId ?? ctx.user.id;
+    .handler(async ({ context, input }) => {
+      const userId = input?.userId ?? context.user.id;
 
-      if (ctx.user.role === "user" && userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+      if (context.user.role === "user" && userId !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
           message:
             "You must be an admin to get active payments for other users.",
         });
       }
 
-      return await getActivePayments(ctx.user.id);
+      return await getActivePayments(context.user.id);
     }),
   updatePicture: authedProcedure
-    .input(z.instanceof(FormData))
-    .mutation(async ({ ctx, input: formData }) => {
-      const signupSchema = z.object({
-        photo: z.instanceof(File),
-      });
+    .input(z.instanceof(File))
+    .handler(async ({ context, input }) => {
 
-      const {
-        success,
-        data: input,
-        error,
-      } = signupSchema.safeParse({
-        photo: formData.get("photo"),
-      });
-
-      if (!success) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          cause: error,
-        });
-      }
-
-      const extention = input.photo.name.substring(
-        input.photo.name.lastIndexOf("."),
-        input.photo.name.length,
+      const extention = input.name.substring(
+        input.name.lastIndexOf("."),
+        input.name.length,
       );
 
-      const filename = ctx.user.id + "-" + Date.now() + extention;
+      const filename = context.user.id + "-" + Date.now() + extention;
 
       const objectKey = "images/" + filename;
 
-      await s3.write(objectKey, input.photo, { acl: "public-read" });
+      await s3.write(objectKey, input, { acl: "public-read" });
 
-      if (ctx.user.photo) {
-        const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
+      if (context.user.photo) {
+        const key = context.user.photo.split(S3_BUCKET_URL)[1];
 
         if (key) {
           s3.delete(key);
@@ -348,12 +327,12 @@ export const userRouter = router({
       const u = await db
         .update(user)
         .set({ photo: S3_BUCKET_URL + objectKey })
-        .where(eq(user.id, ctx.user.id))
+        .where(eq(user.id, context.user.id))
         .returning();
 
-      pubSub.publish("user", ctx.user.id, { user: u[0] });
+      pubSub.publish("user", context.user.id, { user: u[0] });
 
-      return ctx.user;
+      return context.user;
     }),
   users: adminProcedure
     .input(
@@ -364,7 +343,7 @@ export const userRouter = router({
         isBeeping: z.boolean().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const lowercaseQuery = input.query?.toLowerCase();
 
       const where = and(
@@ -423,7 +402,7 @@ export const userRouter = router({
         results,
       };
     }),
-  publicUser: authedProcedure.input(z.string()).query(async ({ input }) => {
+  publicUser: authedProcedure.input(z.string()).handler(async ({ input }) => {
     const u = await db.query.user.findFirst({
       where: { id: input },
       columns: {
@@ -443,14 +422,15 @@ export const userRouter = router({
     });
 
     if (!u) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return u;
   }),
   getUserPrivateDetails: authedProcedure
-    .concat(mustHaveBeenInAcceptedBeep)
-    .query(async ({ input }) => {
+    .input(z.string())
+    .use(mustHaveBeenInAcceptedBeep)
+    .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { id: input },
         columns: {
@@ -459,12 +439,12 @@ export const userRouter = router({
       });
 
       if (!u) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       return u;
     }),
-  user: adminProcedure.input(z.string()).query(async ({ input }) => {
+  user: adminProcedure.input(z.string()).handler(async ({ input }) => {
     const u = await db.query.user.findFirst({
       where: { id: input },
       columns: {
@@ -475,7 +455,7 @@ export const userRouter = router({
     });
 
     if (!u) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return u;
@@ -487,7 +467,7 @@ export const userRouter = router({
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const users = await db
         .select({
           user: {
@@ -523,7 +503,7 @@ export const userRouter = router({
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const users = await db
         .select({
           user: {
@@ -552,7 +532,7 @@ export const userRouter = router({
         pageSize: input.pageSize,
       };
     }),
-  usersByDomain: adminProcedure.query(async () => {
+  usersByDomain: adminProcedure.handler(async () => {
     return await db
       .select({
         domain: sql<string>`substring(email from '@(.*)$')`.as("domain"),
@@ -562,47 +542,46 @@ export const userRouter = router({
       .groupBy(sql`domain`)
       .orderBy(sql`count desc`);
   }),
-  deleteMyAccount: authedProcedure.mutation(async ({ ctx }) => {
-    if (ctx.user.role === "admin") {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
+  deleteMyAccount: authedProcedure.handler(async ({ context }) => {
+    if (context.user.role === "admin") {
+      throw new ORPCError("BAD_REQUEST", {
         message: "Admins can't delete their own accounts.",
       });
     }
 
-    await db.delete(user).where(eq(user.id, ctx.user.id));
+    await db.delete(user).where(eq(user.id, context.user.id));
   }),
-  deleteUser: adminProcedure.input(z.string()).mutation(async ({ input }) => {
+  deleteUser: adminProcedure.input(z.string()).handler(async ({ input }) => {
     await db.delete(user).where(eq(user.id, input));
   }),
   getUsersDefaultCar: authedProcedure
-    .concat(mustHaveBeenInAcceptedBeep)
-    .query(async ({ input }) => {
+    .input(z.string())
+    .use(mustHaveBeenInAcceptedBeep)
+    .handler(async ({ input }) => {
       const c = await db.query.car.findFirst({
         where: { user_id: input, default: true },
       });
 
       if (!c) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       return c;
     }),
   sendTestEmail: adminProcedure
     .input(z.object({ userId: z.uuid() }))
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const user = await db.query.user.findFirst({
         where: { id: input.userId },
         columns: { email: true, username: true, role: true },
       });
 
       if (!user) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       if (user.role !== "admin") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "Can only send test emails to admins.",
         });
       }
@@ -619,4 +598,4 @@ export const userRouter = router({
 
       await email.sendMail(mailOptions);
     }),
-});
+};

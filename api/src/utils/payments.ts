@@ -30,7 +30,7 @@ export async function syncUserPayments(userId: string) {
   }
 
   if (!REVENUE_CAT_SECRET) {
-    throw new Error("No REVENU_CAT_SECRET in env.");
+    throw new Error("No REVENUE_CAT_SECRET in env.");
   }
 
   const options = {

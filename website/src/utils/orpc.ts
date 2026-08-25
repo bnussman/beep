@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/react";
 import { createORPCClient, DynamicLink, ORPCError } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
-import { AppRouterClient, RouterOutputs } from '../../../orpc/src'
+import { AppRouterClient, RouterOutputs } from '../../../api/src'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { ClientRetryPlugin } from '@orpc/client/plugins'
 
@@ -22,11 +22,11 @@ export function getAuthToken() {
 
 const origin = import.meta.env.VITE_API_ROOT
   ? `https://${import.meta.env.VITE_API_ROOT}`
-  : "http://localhost:3001";
+  : "http://localhost:3000";
 
 const wsOrigin = import.meta.env.VITE_API_ROOT
   ? `wss://${import.meta.env.VITE_API_ROOT}`
-  : "ws://localhost:3001";
+  : "ws://localhost:3000";
 
 const httpLink = new RPCLink({
   origin,

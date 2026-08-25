@@ -1,7 +1,7 @@
 import { Button } from "@/components/Button";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { RouterOutputs } from "../../../orpc/src";
+import { RouterOutputs } from "../../../api/src";
 import { orpc } from "@/utils/orpc";
 
 type Status = RouterOutputs["beeper"]["queue"][number]["status"];

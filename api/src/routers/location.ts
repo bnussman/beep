@@ -1,12 +1,11 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
+import { authedProcedure } from "../utils/orpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { route } from "@banksnussman/osrm";
-import { TRPCError } from "@trpc/server";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
 import { geocoding } from "@banksnussman/photon";
 
-export const locationRouter = router({
+export const locationRouter = {
   getETA: authedProcedure
     .input(
       z.object({
@@ -14,9 +13,10 @@ export const locationRouter = router({
         end: z.string(),
       }),
     )
-    .query(async ({ input }) => {
-      const { data, error } = await route({
+    .handler(async ({ input }) => {
+      const { data } = await route({
           baseUrl: OSRM_BASE_URL,
+          throwOnError: true,
           path: {
             profile: "driving",
             coordinates: `${input.start};${input.end}`,
@@ -25,21 +25,10 @@ export const locationRouter = router({
         },
       );
 
-      if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `${error.code} ${error.message}`,
-          cause: error,
-        });
-      }
-
       const routeData = data.routes[0];
 
       if (!routeData) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Unabe to find a route.",
-        });
+        throw new Error("No routes retuned from OSRM");
       }
 
       const eta = routeData.duration;
@@ -62,15 +51,15 @@ export const locationRouter = router({
           .nullable(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const [originCoordinates, destinationCoordinates] = await Promise.all([
         getCoordinatesFromAddress(
           input.origin,
-          input.bias ?? ctx.user.location,
+          input.bias ?? context.user.location,
         ),
         getCoordinatesFromAddress(
           input.destination,
-          input.bias ?? ctx.user.location,
+          input.bias ?? context.user.location,
         ),
       ]);
 
@@ -86,8 +75,9 @@ export const locationRouter = router({
         );
       }
 
-      const { data, error } = await route({
+      const { data } = await route({
         baseUrl: OSRM_BASE_URL,
+        throwOnError: true,
         path: {
           profile: "driving",
           coordinates: `${originCoordinates.longitude},${originCoordinates.latitude};${destinationCoordinates.longitude},${destinationCoordinates.latitude}`,
@@ -97,14 +87,6 @@ export const locationRouter = router({
           steps: true,
         },
       });
-
-      if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `${error.code} ${error.message}`,
-          cause: error,
-        });
-      }
 
       return data;
     }),
@@ -120,8 +102,8 @@ export const locationRouter = router({
           .optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
-      const bias = input.location ?? ctx.user.location;
+    .handler(async ({ input, context }) => {
+      const bias = input.location ?? context.user.location;
 
       const { data, error } = await geocoding({
         baseUrl: PHOTON_BASE_URL,
@@ -138,4 +120,4 @@ export const locationRouter = router({
 
       return data.features;
     }),
-});
+};

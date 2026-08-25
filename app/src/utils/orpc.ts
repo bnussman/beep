@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 import { createORPCClient, DynamicLink, ORPCError, RPCJsonSerializer } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
-import { AppRouterClient, RouterOutputs } from '../../../orpc/src'
+import { AppRouterClient, RouterOutputs } from '../../../api/src'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { isWeb } from "./constants";
 import { ClientRetryPlugin } from '@orpc/client/plugins'
@@ -43,9 +43,9 @@ function getLocalIP() {
 
 const ip = getLocalIP();
 
-const origin = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
+const origin = __DEV__ ? `http://${ip}:3000` : "https://orpc.ridebeep.app";
 const wsUrl = __DEV__
-  ? `ws://${ip}:3001`
+  ? `ws://${ip}:3000`
   : "wss://orpc.ridebeep.app";
 
 const httpLink = new RPCLink({

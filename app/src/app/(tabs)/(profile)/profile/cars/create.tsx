@@ -16,7 +16,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Card, FieldError, TextField } from "heroui-native";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
-import { RouterInputs } from "../../../../../../../orpc/src";
+import { RouterInputs } from "../../../../../../../api/src";
 
 interface Values extends Omit<RouterInputs['car']['createCar'], 'photo'> {
   photo: ImagePicker.ImagePickerAsset;

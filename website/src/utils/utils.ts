@@ -1,4 +1,4 @@
-import { RouterOutputs } from "../../../orpc/src";
+import { RouterOutputs } from "../../../api/src";
 
 /**
  * Determine the mobile operating system.

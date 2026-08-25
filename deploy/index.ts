@@ -9,6 +9,7 @@ const namespaceName = `beep-${envName}`;
 const apiAppName = "api";
 const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 const isProduction = envName === "production";
+const API_PORT = 3000;
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
   kubeconfig: pulumi.secret(process.env.KUBECONFIG),
@@ -17,8 +18,8 @@ const k8sProvider = new k8s.Provider("k8sProvider", {
 const image = new docker.Image("apiImageResource", {
   imageName: apiImageName,
   build: {
-    context: "../orpc",
-    dockerfile: "../orpc/Dockerfile",
+    context: "../api",
+    dockerfile: "../api/Dockerfile",
   },
   registry: {
     password: process.env.GITHUB_TOKEN,
@@ -47,7 +48,7 @@ const apiService = new k8s.core.v1.Service(
     },
     spec: {
       type: "ClusterIP",
-      ports: [{ port: 3001, targetPort: 3001 }],
+      ports: [{ port: API_PORT, targetPort: API_PORT }],
       selector: { app: apiAppName },
     },
   },
@@ -62,7 +63,7 @@ const apiHttp = {
       backend: {
         service: {
           name: apiAppName,
-          port: { number: 3001 },
+          port: { number: API_PORT },
         },
       },
     },
@@ -177,7 +178,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               name: apiAppName,
               image: image.repoDigest,
               imagePullPolicy: "Always",
-              ports: [{ containerPort: 3001 }],
+              ports: [{ containerPort: API_PORT }],
               envFrom: [{ secretRef: { name: secret.metadata.name } }],
             },
           ],

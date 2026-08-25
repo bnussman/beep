@@ -2,7 +2,6 @@ import { z } from "zod";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
 import { and, count, eq, ne } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
 import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
@@ -10,12 +9,13 @@ import { getMakes, getModels } from "car-info";
 import { CAR_COLOR_OPTIONS } from "../utils/constants";
 import {
   authedProcedure,
-  publicProcedure,
-  router,
+  o,
   verifiedProcedure,
-} from "../utils/trpc";
+  withLock,
+} from "../utils/orpc";
+import { ORPCError } from "@orpc/server";
 
-export const carRouter = router({
+export const carRouter = {
   cars: authedProcedure
     .input(
       z.object({
@@ -24,7 +24,7 @@ export const carRouter = router({
         userId: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const where = input.userId ? { user_id: input.userId } : {};
 
       const [cars, countData] = await Promise.all([
@@ -68,10 +68,9 @@ export const carRouter = router({
         reason: z.string().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      if (ctx.user.role !== "admin" && input.reason) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+    .handler(async ({ input, context }) => {
+      if (context.user.role !== "admin" && input.reason) {
+        throw new ORPCError("BAD_REQUEST",  {
           message: "Only admins can specify a reason.",
         });
       }
@@ -84,22 +83,19 @@ export const carRouter = router({
       });
 
       if (!c) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Car not found",
         });
       }
 
       if (c.default && c.user.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "Default car can not be deleted while beeping.",
         });
       }
 
-      if (c.user_id !== ctx.user.id && ctx.user.role !== "admin") {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+      if (c.user_id !== context.user.id && context.user.role !== "admin") {
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You don't have permission to delete another user's car.",
         });
       }
@@ -118,34 +114,21 @@ export const carRouter = router({
       }
     }),
   createCar: verifiedProcedure
-    .input(z.instanceof(FormData))
-    .mutation(async ({ input: formData, ctx }) => {
-      const carSchema = z.object({
+    .use(withLock)
+    .input(
+      z.object({
         make: z.enum(getMakes()),
         model: z.string(),
-        year: z.string(),
+        year: z.number(),
         color: z.enum(CAR_COLOR_OPTIONS),
         photo: z.instanceof(File),
-      });
-
-      const {
-        success,
-        data: input,
-        error,
-      } = carSchema.safeParse(Object.fromEntries(formData.entries()));
-
-      if (!success) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          cause: error,
-        });
-      }
-
+      })
+    )
+    .handler(async ({ input, context }) => {
       const validModels = getModels(input.make as string) as string[];
 
       if (!validModels.includes(input.model)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `The selected model (${input.model}) is not valid for the selected make (${input.make}).`,
         });
       }
@@ -166,8 +149,8 @@ export const carRouter = router({
       const newCar = {
         id: carId,
         ...input,
-        year: Number(input.year),
-        user_id: ctx.user.id,
+        year: input.year,
+        user_id: context.user.id,
         photo: S3_BUCKET_URL + objectKey,
         default: true,
         created: new Date(),
@@ -178,7 +161,7 @@ export const carRouter = router({
       await db
         .update(car)
         .set({ default: false })
-        .where(and(eq(car.user_id, ctx.user.id), ne(car.id, newCar.id)));
+        .where(and(eq(car.user_id, context.user.id), ne(car.id, newCar.id)));
 
       return newCar;
     }),
@@ -191,7 +174,7 @@ export const carRouter = router({
         }),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const c = await db
         .update(car)
         .set(input.data)
@@ -207,13 +190,13 @@ export const carRouter = router({
 
       return c[0];
     }),
-  getColors: publicProcedure.query(() => {
+  getColors: o.handler(() => {
     return CAR_COLOR_OPTIONS;
   }),
-  getMakes: publicProcedure.query(() => {
+  getMakes: o.handler(() => {
     return getMakes();
   }),
-  getModels: publicProcedure.input(z.string()).query(({ input }) => {
+  getModels: o.input(z.string()).handler(({ input }) => {
     return getModels(input) as string[];
   }),
-});
+};

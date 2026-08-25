@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RouterInputs } from "../../../../../orpc/src";
+import { RouterInputs } from "../../../../../api/src";
 import { orpc } from "../../../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";

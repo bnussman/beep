@@ -18,7 +18,7 @@ import { Link } from "expo-router";
 import { Separator } from "heroui-native";
 import { Indicator } from "../Indicator";
 import { orpc } from "@/utils/orpc";
-import { RouterOutputs } from "../../../../orpc/src";
+import { RouterOutputs } from "../../../../api/src";
 
 interface Props {
   item: RouterOutputs["beeper"]["queue"][number];

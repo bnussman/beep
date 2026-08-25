@@ -2,13 +2,11 @@ import { z } from "zod";
 import {
   adminProcedure,
   authedProcedure,
-  publicProcedure,
-  router,
-} from "../utils/trpc";
+  o
+} from "../utils/orpc";
 import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
 import { beep, beepStatuses, user } from "../../drizzle/schema";
-import { TRPCError } from "@trpc/server";
 import {
   PushNotification,
   sendNotification,
@@ -25,8 +23,9 @@ import {
 } from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { updateLiveActivity } from "../utils/live-activities";
+import { ORPCError } from "@orpc/server";
 
-export const beepRouter = router({
+export const beepRouter = {
   beeps: authedProcedure
     .input(
       z.object({
@@ -38,10 +37,9 @@ export const beepRouter = router({
         userId: z.string().optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
-      if (ctx.user.role !== "admin" && input.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+    .handler(async ({ input, context }) => {
+      if (context.user.role !== "admin" && input.userId !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
           message: "You cannot view beeps for other users.",
         });
       }
@@ -108,7 +106,7 @@ export const beepRouter = router({
         results,
       };
     }),
-  beep: authedProcedure.input(z.string()).query(async ({ input, ctx }) => {
+  beep: authedProcedure.input(z.string()).handler(async ({ input, context }) => {
     const b = await db.query.beep.findFirst({
       where: { id: input },
       with: {
@@ -132,25 +130,23 @@ export const beepRouter = router({
     });
 
     if (!b) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
+      throw new ORPCError("NOT_FOUND", {
         message: "Beep not found",
       });
     }
 
     if (
-      ctx.user.role === "user" &&
-      ![b.beeper_id, b.rider_id].includes(ctx.user.id)
+      context.user.role === "user" &&
+      ![b.beeper_id, b.rider_id].includes(context.user.id)
     ) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
+      throw new ORPCError("FORBIDDEN", {
         message: "You can't view a beep that you are not involved in.",
       });
     }
 
     return b;
   }),
-  deleteBeep: adminProcedure.input(z.string()).mutation(async ({ input }) => {
+  deleteBeep: adminProcedure.input(z.string()).handler(async ({ input }) => {
     await db.delete(beep).where(eq(beep.id, input));
   }),
   editBeep: authedProcedure
@@ -166,25 +162,23 @@ export const beepRouter = router({
           .partial(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .handler(async ({ context, input }) => {
       const b = await db.query.beep.findFirst({
         where: { id: input.beepId },
       });
 
       if (!b) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found" });
+        throw new ORPCError("NOT_FOUND", { message: "Beep not found" });
       }
 
-      if (b.rider_id !== ctx.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
+      if (b.rider_id !== context.user.id) {
+        throw new ORPCError("FORBIDDEN", {
           message: "You can't edit a beep that you are not involved in.",
         });
       }
 
       if (!getIsInProgressBeep(b)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `You can't edit beep with status ${beep.status}.`,
         });
       }
@@ -209,7 +203,7 @@ export const beepRouter = router({
         await sendNotification({
           to: beeper.pushToken,
           title: "Rider updated their ride details",
-          body: `${ctx.user.first} updated their ${fieldNames}`,
+          body: `${context.user.first} updated their ${fieldNames}`,
         });
       }
 
@@ -236,7 +230,7 @@ export const beepRouter = router({
         stopBeeping: z.boolean(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const beeper = await db.query.user.findFirst({
         where: { id: input.userId },
         with: {
@@ -250,15 +244,13 @@ export const beepRouter = router({
       });
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "User not found.",
         });
       }
 
       if (beeper?.beeps.length === 0) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "User's queue is already empty.",
         });
       }
@@ -312,7 +304,7 @@ export const beepRouter = router({
       pubSub.publish("user", beeper.id, { user: u[0] });
       pubSub.publish("queue", beeper.id, { queue: [] });
     }),
-  beepsCountSubscription: publicProcedure.subscription(async function* ({
+  beepsCountSubscription: o.handler(async function* ({
     signal,
   }) {
     const beepsCount = await getBeepsCount();
@@ -332,4 +324,4 @@ export const beepRouter = router({
       yield beepsCount;
     }
   }),
-});
+};
