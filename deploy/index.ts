@@ -8,26 +8,10 @@ const ACTOR = process.env.ACTOR;
 const envName = pulumi.getStack();
 
 const namespaceName = `beep-${envName}`;
-const apiAppName = "api";
-const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 const orpcAppName = "orpc";
 const orpcImageName = `ghcr.io/bnussman/orpc:${envName}`;
 
 const isProduction = envName.includes("production");
-
-const apiImageResource = new docker.Image("apiImageResource", {
-  imageName: apiImageName,
-  build: {
-    context: "../api",
-    dockerfile: "../api/Dockerfile",
-  },
-  registry: {
-    password: process.env.GITHUB_TOKEN,
-    server: "ghcr.io",
-    username: ACTOR,
-  },
-});
-
 
 const orpcImageResource = new docker.Image("orpcImageResource", {
   imageName: orpcImageName,
@@ -52,22 +36,6 @@ const namespace = new k8s.core.v1.Namespace(
     metadata: {
       name: namespaceName,
       labels: { name: namespaceName },
-    },
-  },
-  { provider: k8sProvider },
-);
-
-const apiService = new k8s.core.v1.Service(
-  apiAppName,
-  {
-    metadata: {
-      name: apiAppName,
-      namespace: namespaceName,
-    },
-    spec: {
-      type: "ClusterIP",
-      ports: [{ port: 3000, targetPort: 3000 }],
-      selector: { app: apiAppName },
     },
   },
   { provider: k8sProvider },
@@ -177,32 +145,18 @@ const redisService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
-const apiDeployment = new k8s.apps.v1.Deployment(
-  apiAppName,
+const secret = new k8s.core.v1.Secret(
+  "orpc-secret",
   {
     metadata: {
-      name: apiAppName,
-      namespace: namespace.metadata.name,
-      labels: { app: apiAppName },
+      name: "orpc-secret",
+      namespace: namespaceName,
     },
-    spec: {
-      selector: { matchLabels: { app: apiAppName } },
-      replicas: 1,
-      template: {
-        metadata: { labels: { app: apiAppName } },
-        spec: {
-          containers: [
-            {
-              name: apiAppName,
-              image: apiImageResource.repoDigest,
-              imagePullPolicy: "Always",
-              ports: [{ containerPort: 3000 }],
-              envFrom: [{ secretRef: { name: apiAppName } }],
-            },
-          ],
-        },
-      },
+    stringData: {
+      ...env,
+      REDIS_HOST: `${redisService.metadata.name}.${namespaceName}`,
     },
+    type: "Opaque",
   },
   { provider: k8sProvider },
 );
@@ -227,28 +181,12 @@ const orpcDeployment = new k8s.apps.v1.Deployment(
               image: orpcImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3001 }],
-              envFrom: [{ secretRef: { name: apiAppName } }],
+              envFrom: [{ secretRef: { name: secret.metadata.name } }],
             },
           ],
         },
       },
     },
-  },
-  { provider: k8sProvider },
-);
-
-const secret = new k8s.core.v1.Secret(
-  apiAppName,
-  {
-    metadata: {
-      name: apiAppName,
-      namespace: namespaceName,
-    },
-    stringData: {
-      ...env,
-      REDIS_HOST: `redis.${namespaceName}`,
-    },
-    type: "Opaque",
   },
   { provider: k8sProvider },
 );
