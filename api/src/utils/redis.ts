@@ -1,23 +1,8 @@
-import Redis from "ioredis";
-import { REDIS_HOST, REDIS_PASSWROD } from "./constants";
-import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
+import { createClient } from 'redis';
+import { REDIS_URL } from "./constants";
 
-export const redis = new Redis({
-  host: REDIS_HOST,
-  password: REDIS_PASSWROD,
+export const redis = createClient({
+  url: REDIS_URL
 });
 
-export const publishClient = new Redis({
-  host: REDIS_HOST,
-  password: REDIS_PASSWROD,
-});
-
-export const subscribeClient = new Redis({
-  host: REDIS_HOST,
-  password: REDIS_PASSWROD,
-});
-
-export const eventTarget = createRedisEventTarget({
-  publishClient,
-  subscribeClient,
-});
+await redis.connect();

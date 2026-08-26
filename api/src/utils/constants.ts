@@ -12,6 +12,8 @@ export const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 
 export const REDIS_PASSWROD = process.env.REDIS_PASSWORD;
 
+export const REDIS_URL = `redis://:${REDIS_PASSWROD}@${REDIS_HOST}`;
+
 export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID ?? "beep";
 
 export const S3_ACCESS_KEY_SECRET =

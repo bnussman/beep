@@ -1,12 +1,12 @@
 import * as Sentry from "@sentry/bun";
 import { db } from "./db";
 import { isAcceptedBeepNew } from "../logic/beep";
-import { createLock, IoredisAdapter } from "redlock-universal";
+import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "./redis";
-import { os, ORPCError, onError } from "@orpc/server";
+import { os, ORPCError, onError, StandardLazyRequest } from "@orpc/server";
 import { token, user } from "../../drizzle/schema";
 import { DrizzleQueryError, eq } from "drizzle-orm";
-import { StandardHandlerInterceptor, StandardLazyRequest } from "@orpc/server/standard";
+import { StandardHandlerInterceptor } from "@orpc/server/standard";
 
 async function createContext(bearerToken: string | undefined) {
   if (!bearerToken) {
@@ -188,7 +188,7 @@ export const withLock = o
   .use(isAuthenticatedMiddleware)
   .middleware(async function handleLock(opts) {
     const lock = createLock({
-      adapter: new IoredisAdapter(redis),
+      adapter: new NodeRedisAdapter(redis),
       key: `${opts.path}-${opts.context.user.id}`,
       ttl: 5_000,
     });
@@ -203,8 +203,10 @@ export const withLock = o
   });
 
 export const errorInterceptor: StandardHandlerInterceptor<Context> = onError((error) => {
-  if (!(error instanceof ORPCError)) {
-    console.error("Banks", error);
+  const isORPCError = error instanceof ORPCError;
+
+  if (!isORPCError) {
+    console.error(error);
     Sentry.captureException(error);
   }
 });

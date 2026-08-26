@@ -374,7 +374,7 @@ export const authRouter = {
         .delete(verify_email)
         .where(eq(verify_email.id, verifyAccountEntry.id));
 
-      pubSub.publish("user", u[0].id, { user: u[0] });
+      pubSub.publish(`user-${u[0].id}`, { user: u[0] });
 
       return u[0].email;
     }),

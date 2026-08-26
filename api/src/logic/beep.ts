@@ -306,19 +306,6 @@ async function getUsersPushToken(userId: string) {
   return rider?.pushToken ?? null;
 }
 
-export async function getBeepsCount() {
-  return await db.$count(beep);
-}
-
-export async function getInProgressBeepsCount() {
-  return await db.$count(beep, inProgressBeep);
-}
-
-export async function publishBeepsCount() {
-  const count = await getBeepsCount();
-  pubSub.publish("beepsCount", count);
-}
-
 export async function updateEta(beeperId: string, location: { latitude: number; longitude: number }) {
   const currentBeep = await db.query.beep.findFirst({
     where: { AND: [{ beeper_id: beeperId }, inProgressBeepNew] },
@@ -354,7 +341,7 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
 
   const values = { pick_up_eta: eta, pick_up_eta_updated_at: new Date() };
 
-  pubSub.publish("ride", currentBeep.rider_id, { ride: values });
+  pubSub.publish(`ride-${currentBeep.rider_id}`, { ride: values });
 
   await db.update(beep).set(values).where(eq(beep.id, currentBeep.id));
 }

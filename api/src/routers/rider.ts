@@ -18,7 +18,6 @@ import {
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeepNew,
-  publishBeepsCount,
 } from "../logic/beep";
 import { rideResponseSchema } from "../schemas/beep";
 import { updateLiveActivity } from "../utils/live-activities";
@@ -107,7 +106,7 @@ export const riderRouter = {
 
       await db.update(user).set({ location }).where(eq(user.id, context.user.id));
 
-      pubSub.publish("user", context.user.id, { user: { ...context.user, location } });
+      pubSub.publish(`user-${context.user.id}`, { user: { ...context.user, location } });
 
       if (context.user.isBeeping) {
         throw new ORPCError("BAD_REQUEST", {
@@ -168,18 +167,16 @@ export const riderRouter = {
 
       await db.insert(beep).values(newBeep);
 
-      publishBeepsCount();
-
       queue.push({
         ...newBeep,
         rider: context.user,
         beeper,
       });
 
-      pubSub.publish("queue", beeper.id, { queue });
+      pubSub.publish(`queue-${beeper.id}`, { queue });
 
       for (const beep of queue) {
-        pubSub.publish("ride", beep.rider_id, {
+        pubSub.publish(`ride-${beep.rider_id}`, {
           ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
         });
       }
@@ -232,19 +229,17 @@ export const riderRouter = {
 
       console.log("➕ Rider subscribed", userId);
 
-      const eventSource = pubSub.subscribe("ride", userId);
+      const eventSource = pubSub.subscribe(`ride-${userId}`, { signal });
 
       yield await getRidersCurrentRide(userId);
 
       if (signal) {
         signal.onabort = () => {
           console.log("➖ Rider unsubscribed", userId);
-          eventSource.return();
         };
       }
 
       for await (const { ride } of eventSource) {
-        if (signal?.aborted) return;
         yield ride;
       }
     }),
@@ -265,19 +260,17 @@ export const riderRouter = {
 
       console.log("➕ Rider subscribed", userId);
 
-      const eventSource = pubSub.subscribe("ride", userId);
+      const iterator = pubSub.subscribe(`ride-${userId}`);
 
       yield await getRidersCurrentRide(userId);
 
       if (signal) {
         signal.onabort = () => {
           console.log("➖ Rider unsubscribed", userId);
-          eventSource.return();
         };
       }
 
-      for await (const { ride } of eventSource) {
-        if (signal?.aborted) return;
+      for await (const { ride } of iterator) {
         yield ride;
       }
     }),
@@ -298,17 +291,9 @@ export const riderRouter = {
         yield beeper.location;
       }
 
-      const eventSource = pubSub.subscribe("user", input);
+      const iterator = pubSub.subscribe(`user-${input}`, { signal });
 
-      if (signal) {
-        signal.onabort = () => {
-          eventSource.return();
-        };
-      }
-
-      for await (const { user } of eventSource) {
-        if (signal?.aborted) return;
-
+      for await (const { user } of iterator) {
         if (user.location) {
           yield user.location;
         }
@@ -441,12 +426,12 @@ export const riderRouter = {
 
       queue = queue.filter((beep) => beep.id !== entry.id);
 
-      pubSub.publish("ride", context.user.id, { ride: null });
-      pubSub.publish("queue", beeper.id, { queue });
+      pubSub.publish(`ride-${context.user.id}`, { ride: null });
+      pubSub.publish(`queue-${beeper.id}`, { queue });
 
       for (const beep of queue) {
         const ride = { ...beep, ...getDerivedRiderFields(beep, queue) }
-        pubSub.publish("ride", beep.rider_id, {
+        pubSub.publish(`ride-${beep.rider_id}`, {
           ride,
         });
         if (ride.rider_live_activity_token) {
