@@ -10,6 +10,7 @@ import { authSchema, changePasswordInput, forgotPasswordInput, loginInput, logou
 import { signupSchema, userSchema } from "../schemas/user";
 import { ORPCError, ValidationError } from "@orpc/server";
 import { isExpired, sendResetPasswordEmail, sendSignupVerificationEmail } from "../logic/auth";
+import { sha256 } from "../utils/hash";
 
 export const authRouter = {
   login: o
@@ -40,10 +41,7 @@ export const authRouter = {
 
       switch (u.passwordType) {
         case "sha256":
-          const hasher = new Bun.CryptoHasher("sha256");
-          hasher.update(password);
-
-          isPasswordCorrect = hasher.digest("hex") === u.password;
+          isPasswordCorrect = sha256(password) === u.password;
           break;
         case "bcrypt":
           isPasswordCorrect = await bunPassword.verify(

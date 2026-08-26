@@ -22,6 +22,7 @@ import {
 import { rideResponseSchema } from "../schemas/beep";
 import { updateLiveActivity } from "../utils/live-activities";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
+import { sha256 } from "../utils/hash";
 
 export const riderRouter = {
   beepers: verifiedProcedure
@@ -320,16 +321,10 @@ export const riderRouter = {
           ),
         );
 
-      return users.map((user) => {
-        const hasher = new Bun.CryptoHasher("sha256");
-        hasher.update(user.id);
-        const hashedId = hasher.digest("hex");
-
-        return {
-          id: hashedId,
-          location: user.location,
-        };
-      });
+      return users.map((user) => ({
+        id: sha256(user.id),
+        location: user.location,
+      }));
     }),
   beepersLocations: authedProcedure
     .input(
@@ -344,30 +339,15 @@ export const riderRouter = {
         throw new ORPCError("UNAUTHORIZED");
       }
 
-      const eventSource = pubSub.subscribe("locations");
+      const iterator = pubSub.subscribe("locations", { signal });
 
-      if (signal) {
-        signal.onabort = () => {
-          eventSource.return();
-        };
-      }
-
-      for await (const data of eventSource) {
-        if (signal?.aborted) return;
-
+      for await (const data of iterator) {
         if (input.admin) {
           yield data;
         } else if (
-          getDistance(
-            input.latitude,
-            input.longitude,
-            data.location.latitude,
-            data.location.longitude,
-          ) < DEFAULT_LOCATION_RADIUS
+          getDistance(input, data.location) < DEFAULT_LOCATION_RADIUS
         ) {
-          const hasher = new Bun.CryptoHasher("sha256");
-          hasher.update(data.id);
-          yield { id: hasher.digest("hex"), location: data.location };
+          yield { id: sha256(data.id), location: data.location };
         }
       }
     }),

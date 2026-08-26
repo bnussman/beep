@@ -46,3 +46,10 @@ export const signupSchema = z.object({
   pushToken: z.string().optional(),
   photo: z.instanceof(File, { error: "You must provide a profile photo" }),
 });
+
+export const locationSchema = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+});
+
+export type Location = z.infer<typeof locationSchema>;

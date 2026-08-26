@@ -1,6 +1,7 @@
 import { geocoding } from "@banksnussman/photon";
 import { user } from "../../drizzle/schema";
 import { PHOTON_BASE_URL } from "../utils/constants";
+import type { Location } from "../schemas/user";
 
 export async function getCoordinatesFromAddress(
   address: string,
@@ -28,19 +29,22 @@ export async function getCoordinatesFromAddress(
   return { latitude, longitude };
 }
 
+
+function deg2rad(deg: number): number {
+  return deg * (Math.PI / 180);
+}
+
 export function getDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
+  origin: Location,
+  destination: Location,
 ): number {
   const R = 6371;
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
+  const dLat = deg2rad(destination.latitude - origin.latitude);
+  const dLon = deg2rad(destination.longitude - origin.longitude);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
+    Math.cos(deg2rad(origin.latitude)) *
+      Math.cos(deg2rad(destination.latitude)) *
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
 
@@ -48,8 +52,4 @@ export function getDistance(
 
   const d = R * c;
   return d * 0.621371;
-}
-
-function deg2rad(deg: number): number {
-  return deg * (Math.PI / 180);
 }
