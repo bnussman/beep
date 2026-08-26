@@ -3,10 +3,10 @@ import { db } from "./db";
 import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "./redis";
-import { os, ORPCError, onError } from "@orpc/server";
+import { os, ORPCError, onError, StandardLazyRequest } from "@orpc/server";
 import { token, user } from "../../drizzle/schema";
 import { DrizzleQueryError, eq } from "drizzle-orm";
-import { StandardHandlerInterceptor, StandardLazyRequest } from "@orpc/server/standard";
+import { StandardHandlerInterceptor } from "@orpc/server/standard";
 
 async function createContext(bearerToken: string | undefined) {
   if (!bearerToken) {
