@@ -1,28 +1,19 @@
-import * as Sentry from "@sentry/bun";
 import { authedProcedure, o } from "../utils/orpc";
-import { z } from "zod";
 import { db } from "../utils/db";
 import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
-import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
-import { email } from "../utils/email";
-import { SendMailOptions } from "nodemailer";
+import { isDevelopment, S3_BUCKET_URL } from "../utils/constants";
 import { pubSub } from "../utils/pubsub";
-import { authSchema } from "../schemas/auth";
+import { authSchema, changePasswordInput, forgotPasswordInput, loginInput, logoutInput, resetPasswordInput, verifyAccountInput } from "../schemas/auth";
 import { signupSchema, userSchema } from "../schemas/user";
 import { ORPCError, ValidationError } from "@orpc/server";
+import { sendResetPasswordEmail, sendSignupVerificationEmail } from "../logic/auth";
 
 export const authRouter = {
   login: o
-    .input(
-      z.object({
-        username: z.string(),
-        password: z.string(),
-        pushToken: z.string().nullable().optional(),
-      }),
-    )
+    .input(loginInput)
     .output(authSchema)
     .handler(async ({ input }) => {
       const { username, password, pushToken } = input;
@@ -171,26 +162,16 @@ export const authRouter = {
         })
         .returning();
 
-      const mailOptions: SendMailOptions = {
-        from: "Beep App <banks@ridebeep.app>",
-        to: input.email,
-        subject: "Verify your Beep App Email!",
-        html: `Hey ${input.username}, <br><br>
-                Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry[0].id} to verify your email. This link will expire in 5 hours. <br><br>
-                - Beep App Team
-            `,
-      };
-
-      try {
-        await email.sendMail(mailOptions);
-      } catch (error) {
-        Sentry.captureException(error);
-      }
+      await sendSignupVerificationEmail({
+        email: input.email,
+        token: verifyEmailEntry[0].id,
+        username: input.username,
+      });
 
       return { user: u[0], tokens };
     }),
   logout: authedProcedure
-    .input(z.object({ isApp: z.boolean().optional() }))
+    .input(logoutInput)
     .handler(async ({ context, input }) => {
       await db.delete(token).where(eq(token.id, context.token.id));
 
@@ -202,7 +183,7 @@ export const authRouter = {
       }
     }),
   forgotPassword: o
-    .input(z.object({ email: z.email() }))
+    .input(forgotPasswordInput)
     .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { email: input.email },
@@ -226,21 +207,11 @@ export const authRouter = {
         } else {
           // The user has an existing forgot password link that is still valid.
           // Keep the same entry in the database, just resend the email.
-          const mailOptions: SendMailOptions = {
-            from: "Beep App <banks@ridebeep.app>",
-            to: u.email,
-            subject: "Change your Beep App password",
-            html: `Hey ${u.username}, <br><br>
-                    Head to ${WEB_BASE_URL}/password/reset/${existingForgotPassword.id} to reset your password. This link will expire in 5 hours. <br><br>
-                    - Beep App Team
-                `,
-          };
-
-          try {
-            await email.sendMail(mailOptions);
-          } catch (error) {
-            Sentry.captureException(error);
-          }
+          await sendResetPasswordEmail({
+            email: u.email,
+            username: u.username,
+            token: existingForgotPassword.id,
+          });
 
           return u.email;
         }
@@ -254,31 +225,16 @@ export const authRouter = {
 
       await db.insert(forgot_password).values(forgotPasswordValues);
 
-      const mailOptions: SendMailOptions = {
-        from: "Beep App <banks@ridebeep.app>",
-        to: u.email,
-        subject: "Change your Beep App password",
-        html: `Hey ${u.username}, <br><br>
-                Head to ${WEB_BASE_URL}/password/reset/${forgotPasswordValues.id} to reset your password. This link will expire in 5 hours. <br><br>
-                - Beep App Team
-            `,
-      };
-
-      try {
-        await email.sendMail(mailOptions);
-      } catch (error) {
-        Sentry.captureException(error);
-      }
+      await sendResetPasswordEmail({
+        email: u.email,
+        username: u.username,
+        token: forgotPasswordValues.id,
+      });
 
       return u.email;
     }),
   resetPassword: o
-    .input(
-      z.object({
-        id: z.string(),
-        password: z.string().min(6),
-      }),
-    )
+    .input(resetPasswordInput)
     .handler(async ({ input }) => {
       const forgotPassword = await db.query.forgot_password.findFirst({
         where: { id: input.id },
@@ -318,11 +274,7 @@ export const authRouter = {
       return true;
     }),
   verifyAccount: o
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
+    .input(verifyAccountInput)
     .handler(async ({ input }) => {
       const verifyAccountEntry = await db.query.verify_email.findFirst({
         where: { id: input.id },
@@ -390,28 +342,14 @@ export const authRouter = {
 
     await db.insert(verify_email).values(verifyEmailEntry);
 
-    const mailOptions: SendMailOptions = {
-      from: "Beep App <banks@ridebeep.app>",
-      to: context.user.email,
-      subject: "Verify your Beep App Email!",
-      html: `Hey ${context.user.username}, <br><br>
-                Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
-                - Beep App Team
-            `,
-    };
-
-    try {
-      await email.sendMail(mailOptions);
-    } catch (error) {
-      Sentry.captureException(error);
-    }
+    await sendSignupVerificationEmail({
+      email: verifyEmailEntry.email,
+      username: context.user.email,
+      token: verifyEmailEntry.id,
+    });
   }),
   changePassword: authedProcedure
-    .input(
-      z.object({
-        password: z.string().min(6),
-      }),
-    )
+    .input(changePasswordInput)
     .output(userSchema)
     .handler(async ({ input, context }) => {
       const password = await bunPassword.hash(input.password, "bcrypt");
@@ -423,7 +361,12 @@ export const authRouter = {
 
       await db
         .delete(token)
-        .where(and(eq(token.user_id, context.user.id), ne(token.id, context.token.id)));
+        .where(
+          and(
+            eq(token.user_id, context.user.id),
+            ne(token.id, context.token.id)
+          )
+        );
 
       return context.user;
     }),
