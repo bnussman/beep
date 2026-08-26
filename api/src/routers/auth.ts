@@ -9,7 +9,7 @@ import { pubSub } from "../utils/pubsub";
 import { authSchema, changePasswordInput, forgotPasswordInput, loginInput, logoutInput, resetPasswordInput, verifyAccountInput } from "../schemas/auth";
 import { signupSchema, userSchema } from "../schemas/user";
 import { ORPCError, ValidationError } from "@orpc/server";
-import { sendResetPasswordEmail, sendSignupVerificationEmail } from "../logic/auth";
+import { isExpired, sendResetPasswordEmail, sendSignupVerificationEmail } from "../logic/auth";
 
 export const authRouter = {
   login: o
@@ -198,7 +198,7 @@ export const authRouter = {
       });
 
       if (existingForgotPassword) {
-        if (existingForgotPassword.time.getTime() + 18000 * 1000 < Date.now()) {
+        if (isExpired(existingForgotPassword.time)) {
           // The user's existing forgot password request has expired.
           // We will delete it, and proceed with creating a new one.
           await db
@@ -246,7 +246,7 @@ export const authRouter = {
         });
       }
 
-      if (forgotPassword.time.getTime() + 18000 * 1000 < Date.now()) {
+      if (isExpired(forgotPassword.time)) {
         await db
           .delete(forgot_password)
           .where(eq(forgot_password.id, forgotPassword.id));
@@ -289,7 +289,7 @@ export const authRouter = {
         });
       }
 
-      if (verifyAccountEntry.time.getTime() + 18000 * 1000 < Date.now()) {
+      if (isExpired(verifyAccountEntry.time)) {
         await db
           .delete(verify_email)
           .where(eq(verify_email.id, verifyAccountEntry.id));

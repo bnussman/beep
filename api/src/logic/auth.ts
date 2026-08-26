@@ -52,3 +52,9 @@ export async function sendResetPasswordEmail(options: SendResetPasswordOptions) 
     captureException(error);
   }
 }
+
+export function isExpired(date: Date) {
+  const expiresAt = date.getTime() + 18000 * 1000; // timestamp + 5 hours
+
+  return expiresAt < Date.now()
+}
