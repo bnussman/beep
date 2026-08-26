@@ -28,7 +28,6 @@
     "@sentry/node": "^10.70.0",
     "car-info": "0.2.5",
     "drizzle-orm": "1.0.0-rc.3",
-    "ioredis": "^5.10.1",
     "redis": "6.2.1",
     "jose": "^6.2.3",
     "nodemailer": "^8.0.5",
