@@ -11,8 +11,8 @@ const getStyle = (theme: "light" | "dark") => ({
       type: "raster" as const,
       tiles:
         theme === "dark"
-          ? ["https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"]
-          : ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
+          ? ["https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png"]
+          : ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
       tileSize: 256,
     },
   },

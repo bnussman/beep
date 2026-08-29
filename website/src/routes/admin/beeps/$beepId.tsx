@@ -209,7 +209,7 @@ function Beep() {
           ))}
         </Grid>
       </Card>
-      <Card sx={{ height: "500px" }}>
+      <Card sx={{ height: "500px", borderRadius: '16px' }}>
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
