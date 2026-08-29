@@ -13,5 +13,4 @@ allowBuilds:
   protobufjs: false
 minimumReleaseAge: 120
 minimumReleaseAgeExclude:
-  - '@banksnussman/osrm@0.0.4'
-  - '@banksnussman/photon@0.0.5'
+  - zod@4.5.2
