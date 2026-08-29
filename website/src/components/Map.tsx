@@ -9,9 +9,10 @@ const getStyle = (theme: "light" | "dark") => ({
   sources: {
     osm: {
       type: "raster" as const,
+      // @todo find a nice map
       tiles:
         theme === "dark"
-          ? ["https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png"]
+          ? ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"]
           : ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
       tileSize: 256,
     },
