@@ -3,35 +3,16 @@ import { default as _Map } from "react-map-gl/maplibre";
 import { useColorScheme } from "@mui/material";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const getStyle = (theme: "light" | "dark") => ({
-  version: 8 as const,
-  metadata: {},
-  sources: {
-    osm: {
-      type: "raster" as const,
-      // @todo find a nice map
-      tiles:
-        theme === "dark"
-          ? ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"]
-          : ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-      tileSize: 256,
-    },
-  },
-  layers: [
-    {
-      id: "tiles-layer",
-      type: "raster" as const,
-      source: "osm",
-    },
-  ],
-});
-
 export function Map(props: React.ComponentProps<typeof _Map>) {
   const { colorScheme } = useColorScheme();
 
   return (
     <_Map
-      mapStyle={getStyle(colorScheme ?? "light")}
+      mapStyle={
+        colorScheme === "dark" ?
+          "https://api.maptiler.com/maps/streets-v4-dark/style.json?key=zrYtedVR6XzXEOMiUlF4" :
+          "https://api.maptiler.com/maps/streets-v4/style.json?key=zrYtedVR6XzXEOMiUlF4"
+      }
       attributionControl={false}
       style={{
         borderRadius: "16px",
