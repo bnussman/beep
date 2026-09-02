@@ -1,10 +1,12 @@
 import { z } from "zod";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
-import { and, count, eq, ne } from "drizzle-orm";
-import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
-import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
+import { ORPCError } from "@orpc/server";
+import { condensedUserColumns } from "../logic/user";
+import { sendNotification } from "../utils/notifications";
+import { and, count, eq, ne } from "drizzle-orm";
+import { S3_BUCKET_URL } from "../utils/constants";
 import { getMakes, getModels } from "car-info";
 import { CAR_COLOR_OPTIONS } from "../utils/constants";
 import {
@@ -13,18 +15,16 @@ import {
   verifiedProcedure,
   withLock,
 } from "../utils/orpc";
-import { ORPCError } from "@orpc/server";
-import { condensedUserColumns } from "../logic/user";
+import {
+  createCarInputSchema,
+  deleteCarInputSchema,
+  getCarsInputSchema,
+  updateCarInputSchema
+} from "../schemas/car";
 
 export const carRouter = {
   cars: authedProcedure
-    .input(
-      z.object({
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        cursor: z.number().optional().default(1),
-        userId: z.string().optional(),
-      }),
-    )
+    .input(getCarsInputSchema)
     .handler(async ({ input }) => {
       const where = input.userId ? { user_id: input.userId } : {};
 
@@ -58,12 +58,7 @@ export const carRouter = {
       };
     }),
   deleteCar: authedProcedure
-    .input(
-      z.object({
-        carId: z.string(),
-        reason: z.string().optional(),
-      }),
-    )
+    .input(deleteCarInputSchema)
     .handler(async ({ input, context }) => {
       if (context.user.role !== "admin" && input.reason) {
         throw new ORPCError("BAD_REQUEST",  {
@@ -111,15 +106,7 @@ export const carRouter = {
     }),
   createCar: verifiedProcedure
     .use(withLock)
-    .input(
-      z.object({
-        make: z.enum(getMakes()),
-        model: z.string(),
-        year: z.number(),
-        color: z.enum(CAR_COLOR_OPTIONS),
-        photo: z.instanceof(File),
-      })
-    )
+    .input(createCarInputSchema)
     .handler(async ({ input, context }) => {
       const validModels = getModels(input.make as string) as string[];
 
@@ -162,14 +149,7 @@ export const carRouter = {
       return newCar;
     }),
   updateCar: authedProcedure
-    .input(
-      z.object({
-        carId: z.string(),
-        data: z.object({
-          default: z.boolean(),
-        }),
-      }),
-    )
+    .input(updateCarInputSchema)
     .handler(async ({ input }) => {
       const c = await db
         .update(car)

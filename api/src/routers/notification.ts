@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { adminProcedure } from "../utils/orpc";
 import { db } from "../utils/db";
 import { user } from "../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";
+import { ORPCError } from "@orpc/server";
+import { adminProcedure } from "../utils/orpc";
 import {
   sendNotification,
   sendNotificationsBatch,
 } from "../utils/notifications";
-import { ORPCError } from "@orpc/server";
 
 export const notificationRouter = {
   sendNotification: adminProcedure

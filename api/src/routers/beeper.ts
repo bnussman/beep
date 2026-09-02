@@ -1,10 +1,12 @@
-import { queueResponseSchema } from "../schemas/beep";
 import { z } from "zod";
-import { authedProcedure } from "../utils/orpc";
 import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
-import { beep, beepStatuses, user } from "../../drizzle/schema";
+import { authedProcedure } from "../utils/orpc";
 import { pubSub } from "../utils/pubsub";
+import { beep, user } from "../../drizzle/schema";
+import { queueResponseSchema, updateBeepAsBeeperInputSchema } from "../schemas/beep";
+import { updateLiveActivity } from "../utils/live-activities";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
@@ -13,13 +15,11 @@ import {
   getQueueSize,
   sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
-import { updateLiveActivity } from "../utils/live-activities";
-import { asyncIteratorObject, ORPCError } from "@orpc/server";
 
 export const beeperRouter = {
   queue: authedProcedure
     .output(queueResponseSchema)
-    .input(z.string().optional())
+    .input(z.uuid().optional())
     .handler(async ({ input, context }) => {
       if (input && input !== context.user.id && context.user.role !== "admin") {
         throw new ORPCError("UNAUTHORIZED", {
@@ -30,7 +30,7 @@ export const beeperRouter = {
       return await getBeeperQueue(input ?? context.user.id);
     }),
   watchQueue: authedProcedure
-    .input(z.string().optional())
+    .input(z.uuid().optional())
     .output(asyncIteratorObject(queueResponseSchema))
     .handler(async function* ({ context, input, signal }) {
       const id = input ?? context.user.id;
@@ -59,14 +59,7 @@ export const beeperRouter = {
       }
     }),
   updateBeep: authedProcedure
-    .input(
-      z.object({
-        beepId: z.string(),
-        data: z.object({
-          status: z.enum(beepStatuses),
-        }),
-      }),
-    )
+    .input(updateBeepAsBeeperInputSchema)
     .output(queueResponseSchema)
     .handler(async ({ input, context }) => {
       let queue = await getBeeperQueue(context.user.id);

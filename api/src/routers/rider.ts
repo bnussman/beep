@@ -1,4 +1,9 @@
 import { z } from "zod";
+import { rideResponseSchema } from "../schemas/beep";
+import { updateLiveActivity } from "../utils/live-activities";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
+import { sha256 } from "../utils/hash";
+import { condensedUserColumns } from "../logic/user";
 import { db } from "../utils/db";
 import { beep, payment, user } from "../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
@@ -19,11 +24,6 @@ import {
   getRidersCurrentRide,
   inProgressBeepNew,
 } from "../logic/beep";
-import { rideResponseSchema } from "../schemas/beep";
-import { updateLiveActivity } from "../utils/live-activities";
-import { asyncIteratorObject, ORPCError } from "@orpc/server";
-import { sha256 } from "../utils/hash";
-import { condensedUserColumns } from "../logic/user";
 
 export const riderRouter = {
   beepers: verifiedProcedure

@@ -1,21 +1,17 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure } from "../utils/orpc";
-import { db } from "../utils/db";
-import { count, eq } from "drizzle-orm";
-import { feedback } from "../../drizzle/schema";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
-import { condensedUserColumns } from "../logic/user";
+import { adminProcedure, authedProcedure } from "../../utils/orpc";
+import { db } from "../../utils/db";
+import { eq } from "drizzle-orm";
+import { feedback } from "../../../drizzle/schema";
+import { condensedUserColumns } from "../../logic/user";
+import { createFeedbackInputSchema, getFeedbacksInputSchema } from "./schemas";
+import { getFeedbacksCount } from "./logic";
 
 export const feedbackRouter = {
   feedback: adminProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-      }),
-    )
+    .input(getFeedbacksInputSchema)
     .handler(async ({ input }) => {
-      const [feedbacks, countData] = await Promise.all([
+      const [feedbacks, results] = await Promise.all([
         db.query.feedback.findMany({
           orderBy: { created: "desc" },
           offset: (input.page - 1) * input.pageSize,
@@ -26,10 +22,8 @@ export const feedbackRouter = {
             },
           },
         }),
-        db.select({ count: count() }).from(feedback),
+        getFeedbacksCount(),
       ]);
-
-      const results = countData[0].count;
 
       return {
         feedback: feedbacks,
@@ -40,11 +34,7 @@ export const feedbackRouter = {
       };
     }),
   createFeedback: authedProcedure
-    .input(
-      z.object({
-        message: z.string(),
-      }),
-    )
+    .input(createFeedbackInputSchema)
     .handler(async ({ context, input }) => {
       const f = await db
         .insert(feedback)

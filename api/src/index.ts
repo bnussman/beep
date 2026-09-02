@@ -8,7 +8,7 @@ import { ratingRouter } from "./routers/rating";
 import { carRouter } from "./routers/car";
 import { beepRouter } from "./routers/beep";
 import { paymentRouter } from "./routers/payment";
-import { feedbackRouter } from "./routers/feedback";
+import { feedbackRouter } from "./routers/feedback/router";
 import { notificationRouter } from "./routers/notification";
 import { redisRouter } from "./routers/redis";
 import { riderRouter } from "./routers/rider";

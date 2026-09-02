@@ -16,7 +16,7 @@ export const ratingRouter = {
       z.object({
         cursor: z.number().optional().default(1),
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        userId: z.string().optional(),
+        userId: z.uuid().optional(),
       }),
     )
     .handler(async ({ input }) => {

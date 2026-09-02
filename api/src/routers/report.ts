@@ -13,7 +13,7 @@ export const reportRouter = {
       z.object({
         page: z.number().default(1),
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        userId: z.string().optional(),
+        userId: z.uuid().optional(),
       }),
     )
     .handler(async ({ input }) => {
@@ -93,7 +93,7 @@ export const reportRouter = {
   updateReport: adminProcedure
     .input(
       z.object({
-        reportId: z.string(),
+        reportId: z.uuid(),
         data: z.object({
           notes: z.string().nullable().optional(),
           handled: z.boolean().nullable().optional(),

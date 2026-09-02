@@ -1,17 +1,21 @@
 import { z } from "zod";
+import { db } from "../utils/db";
+import { ORPCError } from "@orpc/server";
+import { pubSub } from "../utils/pubsub";
+import { count, eq, and } from "drizzle-orm";
+import { beep, user } from "../../drizzle/schema";
+import { updateLiveActivity } from "../utils/live-activities";
+import { clearQueueInputSchema, editBeepInputSchema, getBeepsInputSchema } from "../schemas/beep";
+import { condensedUserColumns } from "../logic/user";
 import {
   adminProcedure,
   authedProcedure,
 } from "../utils/orpc";
-import { db } from "../utils/db";
-import { count, eq, and } from "drizzle-orm";
-import { beep, beepStatuses, user } from "../../drizzle/schema";
 import {
   PushNotification,
   sendNotification,
   sendNotifications,
 } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
@@ -19,24 +23,10 @@ import {
   inProgressBeep,
   inProgressBeepNew,
 } from "../logic/beep";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
-import { updateLiveActivity } from "../utils/live-activities";
-import { ORPCError } from "@orpc/server";
-import { editBeepInputSchema } from "../schemas/beep";
-import { condensedUserColumns } from "../logic/user";
 
 export const beepRouter = {
   beeps: authedProcedure
-    .input(
-      z.object({
-        cursor: z.number().min(1).optional(),
-        page: z.number().min(1).optional(),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        inProgress: z.boolean().optional(),
-        status: z.array(z.enum(beepStatuses)).optional(),
-        userId: z.string().optional(),
-      }),
-    )
+    .input(getBeepsInputSchema)
     .handler(async ({ input, context }) => {
       if (context.user.role !== "admin" && input.userId !== context.user.id) {
         throw new ORPCError("UNAUTHORIZED", {
@@ -100,39 +90,43 @@ export const beepRouter = {
         results,
       };
     }),
-  beep: authedProcedure.input(z.string()).handler(async ({ input, context }) => {
-    const b = await db.query.beep.findFirst({
-      where: { id: input },
-      with: {
-        beeper: {
-          columns: condensedUserColumns,
+  beep: authedProcedure
+    .input(z.uuid())
+    .handler(async ({ input, context }) => {
+      const b = await db.query.beep.findFirst({
+        where: { id: input },
+        with: {
+          beeper: {
+            columns: condensedUserColumns,
+          },
+          rider: {
+            columns: condensedUserColumns,
+          },
         },
-        rider: {
-          columns: condensedUserColumns,
-        },
-      },
-    });
-
-    if (!b) {
-      throw new ORPCError("NOT_FOUND", {
-        message: "Beep not found",
       });
-    }
 
-    if (
-      context.user.role === "user" &&
-      ![b.beeper_id, b.rider_id].includes(context.user.id)
-    ) {
-      throw new ORPCError("FORBIDDEN", {
-        message: "You can't view a beep that you are not involved in.",
-      });
-    }
+      if (!b) {
+        throw new ORPCError("NOT_FOUND", {
+          message: "Beep not found",
+        });
+      }
 
-    return b;
-  }),
-  deleteBeep: adminProcedure.input(z.string()).handler(async ({ input }) => {
-    await db.delete(beep).where(eq(beep.id, input));
-  }),
+      if (
+        context.user.role === "user" &&
+        ![b.beeper_id, b.rider_id].includes(context.user.id)
+      ) {
+        throw new ORPCError("FORBIDDEN", {
+          message: "You can't view a beep that you are not involved in.",
+        });
+      }
+
+      return b;
+    }),
+  deleteBeep: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      await db.delete(beep).where(eq(beep.id, input));
+    }),
   editBeep: authedProcedure
     .input(editBeepInputSchema)
     .handler(async ({ context, input }) => {
@@ -194,12 +188,7 @@ export const beepRouter = {
       return b;
     }),
   clearQueue: adminProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        stopBeeping: z.boolean(),
-      }),
-    )
+    .input(clearQueueInputSchema)
     .handler(async ({ input }) => {
       const beeper = await db.query.user.findFirst({
         where: { id: input.userId },
