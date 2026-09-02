@@ -49,7 +49,7 @@ export const feedbackRouter = {
       return f[0];
     }),
   deleteFeedback: adminProcedure
-    .input(z.string())
+    .input(z.uuid())
     .handler(async ({ input }) => {
       await db.delete(feedback).where(eq(feedback.id, input));
     }),

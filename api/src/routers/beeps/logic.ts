@@ -2,14 +2,13 @@ import * as Sentry from "@sentry/bun";
 import { eq, or } from "drizzle-orm";
 import { db } from "../../utils/db";
 import { beep } from "../../../drizzle/schema";
-import type { Location, User } from "../users/types";
 import { pubSub } from "../../utils/pubsub";
 import { sendNotification } from "../../utils/notifications";
 import { updateLiveActivity } from "../../utils/live-activities";
 import { OSRM_BASE_URL } from "../../utils/constants";
 import { route } from "@banksnussman/osrm";
-
-type Beep = typeof beep.$inferSelect;
+import { Beep } from "./types";
+import type { Location, User } from "../users/types";
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),

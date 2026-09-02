@@ -485,15 +485,16 @@ export const userRouter = {
       .groupBy(sql`domain`)
       .orderBy(sql`count desc`);
   }),
-  deleteMyAccount: authedProcedure.handler(async ({ context }) => {
-    if (context.user.role === "admin") {
-      throw new ORPCError("BAD_REQUEST", {
-        message: "Admins can't delete their own accounts.",
-      });
-    }
+  deleteMyAccount: authedProcedure
+    .handler(async ({ context }) => {
+      if (context.user.role === "admin") {
+        throw new ORPCError("BAD_REQUEST", {
+          message: "Admins can't delete their own accounts.",
+        });
+      }
 
-    await db.delete(user).where(eq(user.id, context.user.id));
-  }),
+      await db.delete(user).where(eq(user.id, context.user.id));
+    }),
   deleteUser: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {

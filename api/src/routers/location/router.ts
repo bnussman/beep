@@ -1,29 +1,23 @@
-import { z } from "zod";
 import { authedProcedure } from "../../utils/orpc";
 import { route } from "@banksnussman/osrm";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../../utils/constants";
 import { geocoding } from "@banksnussman/photon";
 import { getCoordinatesFromAddress } from "./logic";
+import { getETAInputSchema, getRouteInputSchema, getSuggestionInputSchema } from "./schemas";
 
 export const locationRouter = {
   getETA: authedProcedure
-    .input(
-      z.object({
-        start: z.string(),
-        end: z.string(),
-      }),
-    )
+    .input(getETAInputSchema)
     .handler(async ({ input }) => {
       const { data } = await route({
-          baseUrl: OSRM_BASE_URL,
-          throwOnError: true,
-          path: {
-            profile: "driving",
-            coordinates: `${input.start};${input.end}`,
-            version: "v1",
-          },
+        baseUrl: OSRM_BASE_URL,
+        throwOnError: true,
+        path: {
+          profile: "driving",
+          coordinates: `${input.start};${input.end}`,
+          version: "v1",
         },
-      );
+      });
 
       const routeData = data.routes[0];
 
@@ -38,19 +32,7 @@ export const locationRouter = {
       return `${etaMinutes} min`;
     }),
   getRoute: authedProcedure
-    .input(
-      z.object({
-        origin: z.string(),
-        destination: z.string(),
-        bias: z
-          .object({
-            latitude: z.number(),
-            longitude: z.number(),
-          })
-          .optional()
-          .nullable(),
-      }),
-    )
+    .input(getRouteInputSchema)
     .handler(async ({ input, context }) => {
       const [originCoordinates, destinationCoordinates] = await Promise.all([
         getCoordinatesFromAddress(
@@ -91,17 +73,7 @@ export const locationRouter = {
       return data;
     }),
   getSuggestions: authedProcedure
-    .input(
-      z.object({
-        query: z.string(),
-        location: z
-          .object({
-            latitude: z.number(),
-            longitude: z.number(),
-          })
-          .optional(),
-      }),
-    )
+    .input(getSuggestionInputSchema)
     .handler(async ({ input, context }) => {
       const bias = input.location ?? context.user.location;
 
