@@ -1,9 +1,9 @@
-import { z } from "zod";
 import { db } from "../../utils/db";
 import { user } from "../../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { adminProcedure } from "../../utils/orpc";
+import { sendNotificationInputSchema, sendNotificationToUserInputSchema } from "./schemas";
 import {
   sendNotification,
   sendNotificationsBatch,
@@ -11,13 +11,7 @@ import {
 
 export const notificationRouter = {
   sendNotification: adminProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        body: z.string(),
-        emailMatch: z.string().optional(),
-      }),
-    )
+    .input(sendNotificationInputSchema)
     .handler(async ({ input }) => {
       const users = await db
         .select({ pushToken: user.pushToken })
@@ -38,13 +32,7 @@ export const notificationRouter = {
       return to.length;
     }),
   sendNotificationToUser: adminProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        body: z.string(),
-        userId: z.string(),
-      }),
-    )
+    .input(sendNotificationToUserInputSchema)
     .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { id: input.userId },

@@ -3,19 +3,13 @@ import { report } from "../../../drizzle/schema";
 import { db } from "../../utils/db";
 import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { z } from "zod";
-import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
+import { createReportInputSchema, listReportsInputSchema, updateReportInputSchema } from "./schemas";
 
 export const reportRouter = {
   reports: adminProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        userId: z.uuid().optional(),
-      }),
-    )
+    .input(listReportsInputSchema)
     .handler(async ({ input }) => {
       const where = input.userId
         ? {
@@ -63,43 +57,37 @@ export const reportRouter = {
         results,
       };
     }),
-  report: adminProcedure.input(z.string()).handler(async ({ input }) => {
-    const r = await db.query.report.findFirst({
-      where: { id: input },
-      columns: {
-        reported_id: false,
-        reporter_id: false,
-        handled_by_id: false,
-      },
-      with: {
-        reported: {
-          columns: condensedUserColumns,
+  report: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      const r = await db.query.report.findFirst({
+        where: { id: input },
+        columns: {
+          reported_id: false,
+          reporter_id: false,
+          handled_by_id: false,
         },
-        reporter: {
-          columns: condensedUserColumns,
+        with: {
+          reported: {
+            columns: condensedUserColumns,
+          },
+          reporter: {
+            columns: condensedUserColumns,
+          },
+          handledBy: {
+            columns: condensedUserColumns,
+          },
         },
-        handledBy: {
-          columns: condensedUserColumns,
-        },
-      },
-    });
+      });
 
-    if (!r) {
-      throw new ORPCError("NOT_FOUND");
-    }
+      if (!r) {
+        throw new ORPCError("NOT_FOUND");
+      }
 
-    return r;
-  }),
+      return r;
+    }),
   updateReport: adminProcedure
-    .input(
-      z.object({
-        reportId: z.uuid(),
-        data: z.object({
-          notes: z.string().nullable().optional(),
-          handled: z.boolean().nullable().optional(),
-        }),
-      }),
-    )
+    .input(updateReportInputSchema)
     .handler(async ({ input, context }) => {
       const values = input.data.handled
         ? { handled: true, handled_by_id: context.user.id, notes: input.data.notes }
@@ -113,18 +101,13 @@ export const reportRouter = {
 
       return r[0];
     }),
-  deleteReport: adminProcedure.input(z.string()).handler(async ({ input }) => {
-    await db.delete(report).where(eq(report.id, input));
-  }),
+  deleteReport: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      await db.delete(report).where(eq(report.id, input));
+    }),
   createReport: authedProcedure
-    .input(
-      z.object({
-        userId: z.uuid(),
-        reason: z.string(),
-        beepId: z.uuid().optional(),
-        ratingId: z.uuid().optional(),
-      }),
-    )
+    .input(createReportInputSchema)
     .handler(async ({ input, context }) => {
       const r = await db
         .insert(report)

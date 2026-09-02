@@ -5,25 +5,19 @@ import { count, eq } from "drizzle-orm";
 import { rating, user } from "../../../drizzle/schema";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
-import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 import { getUsersAverageRating } from "./logic";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
+import { createRatingInputSchema, deleteRatingInputSchema, listRatingsInputSchema } from "./schemas";
 
 export const ratingRouter = {
   ratings: authedProcedure
-    .input(
-      z.object({
-        cursor: z.number().optional().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        userId: z.uuid().optional(),
-      }),
-    )
+    .input(listRatingsInputSchema)
     .handler(async ({ input }) => {
       const where = input.userId
         ? {
-            OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
-          }
+          OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
+        }
         : {};
 
       const [ratings, ratingsCount] = await Promise.all([
@@ -62,31 +56,29 @@ export const ratingRouter = {
         results,
       };
     }),
-  rating: adminProcedure.input(z.string()).handler(async ({ input }) => {
-    const r = await db.query.rating.findFirst({
-      where: { id: input },
-      with: {
-        rater: {
-          columns: condensedUserColumns,
+  rating: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      const r = await db.query.rating.findFirst({
+        where: { id: input },
+        with: {
+          rater: {
+            columns: condensedUserColumns,
+          },
+          rated: {
+            columns: condensedUserColumns,
+          },
         },
-        rated: {
-          columns: condensedUserColumns,
-        },
-      },
-    });
+      });
 
-    if (!r) {
-      throw new ORPCError("NOT_FOUND");
-    }
+      if (!r) {
+        throw new ORPCError("NOT_FOUND");
+      }
 
-    return r;
-  }),
+      return r;
+    }),
   deleteRating: authedProcedure
-    .input(
-      z.object({
-        ratingId: z.string(),
-      }),
-    )
+    .input(deleteRatingInputSchema)
     .handler(async ({ input, context }) => {
       const r = await db.query.rating.findFirst({
         where: { id: input.ratingId },
@@ -114,14 +106,7 @@ export const ratingRouter = {
         .where(eq(user.id, r.rated_id));
     }),
   createRating: authedProcedure
-    .input(
-      z.object({
-        stars: z.number().min(1).max(5),
-        message: z.string().max(255).optional(),
-        beepId: z.uuid(),
-        userId: z.uuid(),
-      }),
-    )
+    .input(createRatingInputSchema)
     .handler(async ({ context, input }) => {
       const u = await db.query.user.findFirst({
         where: { id: input.userId },

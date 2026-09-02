@@ -1,21 +1,13 @@
-import { z } from "zod";
 import { authedProcedure } from "../../utils/orpc";
 import { db } from "../../utils/db";
 import { count } from "drizzle-orm";
-import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
+import { listPaymentsInputSchema } from "./schemas";
 
 export const paymentRouter = {
   payments: authedProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        userId: z.string().optional(),
-        active: z.boolean().optional(),
-      }),
-    )
+    .input(listPaymentsInputSchema)
     .handler(async ({ input, context }) => {
       const userId = input.userId ?? context.user.id;
 
