@@ -9,9 +9,9 @@ import { SendMailOptions } from "nodemailer";
 import { email } from "../../utils/email";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
-import { isAlpha, isMobilePhone } from "validator";
 import { inProgressBeep, updateEta } from "../beeps/logic";
-import { userSchema } from "./schemas";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
+import { activePaymentsInputSchema, adminEditUserInputSchema, editUserInputSchema, listsUsersInputSchema, listsUsersWithBeepsInputSchema, listsUsersWithRidesInputSchema, sendTestEmailInputSchema, syncUserPaymentsInputSchema, userSchema } from "./schemas";
 import { getActivePayments } from "../payments/logic";
 import {
   adminProcedure,
@@ -19,18 +19,18 @@ import {
   mustHaveBeenInAcceptedBeep,
 } from "../../utils/orpc";
 import {
-  DEFAULT_PAGE_SIZE,
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../../utils/constants";
-import { asyncIteratorObject, ORPCError } from "@orpc/server";
 
 export const userRouter = {
-  me: authedProcedure.output(userSchema).handler(async ({ context }) => {
-    return context.user;
-  }),
+  me: authedProcedure
+    .output(userSchema)
+    .handler(({ context }) => {
+      return context.user;
+    }),
   updates: authedProcedure
-    .input(z.string().optional())
+    .input(z.uuid().optional())
     .output(asyncIteratorObject(userSchema))
     .handler(async function* ({ context, input, signal }) {
       if (context.user.role === "user" && input && input !== context.user.id) {
@@ -71,27 +71,7 @@ export const userRouter = {
       }
     }),
   edit: authedProcedure
-    .input(
-      z
-        .object({
-          first: z.string().refine(isAlpha, "Must be letters only.").min(1),
-          last: z.string().refine(isAlpha, "Must be letters only.").min(1),
-          email: z.email().endsWith(".edu", "Email must end with .edu"),
-          phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
-          venmo: z.string().nullable(),
-          cashapp: z.string().nullable(),
-          pushToken: z.string(),
-          isBeeping: z.boolean(),
-          singlesRate: z.number().min(1).max(25),
-          groupRate: z.number().min(1).max(25),
-          capacity: z.number().min(1).max(25),
-          location: z.object({
-            longitude: z.number(),
-            latitude: z.number(),
-          }),
-        })
-        .partial(),
-    )
+    .input(editUserInputSchema)
     .handler(async ({ context, input }) => {
       const values: Partial<typeof user.$inferInsert> = input;
 
@@ -188,29 +168,7 @@ export const userRouter = {
       return context.user;
     }),
   editAdmin: adminProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        data: z
-          .object({
-            first: z.string(),
-            last: z.string(),
-            email: z.string(),
-            phone: z.string(),
-            venmo: z.string(),
-            cashapp: z.string(),
-            photo: z.string(),
-            isStudent: z.boolean(),
-            isEmailVerified: z.boolean(),
-            isBeeping: z.boolean(),
-            location: z.object({
-              longitude: z.number(),
-              latitude: z.number(),
-            }),
-          })
-          .partial(),
-      }),
-    )
+    .input(adminEditUserInputSchema)
     .handler(async ({ input }) => {
       const existingUser = await db.query.user.findFirst({
         where: { id: input.userId },
@@ -269,7 +227,7 @@ export const userRouter = {
       return u[0];
     }),
   syncPayments: authedProcedure
-    .input(z.object({ userId: z.string().optional() }))
+    .input(syncUserPaymentsInputSchema)
     .handler(async ({ context, input }) => {
       const userId = input?.userId ?? context.user.id;
 
@@ -282,7 +240,7 @@ export const userRouter = {
       return await syncUserPayments(userId);
     }),
   activePayments: authedProcedure
-    .input(z.object({ userId: z.string() }).optional())
+    .input(activePaymentsInputSchema)
     .handler(async ({ context, input }) => {
       const userId = input?.userId ?? context.user.id;
 
@@ -333,14 +291,7 @@ export const userRouter = {
       return context.user;
     }),
   users: adminProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-        query: z.string().optional(),
-        isBeeping: z.boolean().optional(),
-      }),
-    )
+    .input(listsUsersInputSchema)
     .handler(async ({ input }) => {
       const lowercaseQuery = input.query?.toLowerCase();
 
@@ -400,33 +351,35 @@ export const userRouter = {
         results,
       };
     }),
-  publicUser: authedProcedure.input(z.string()).handler(async ({ input }) => {
-    const u = await db.query.user.findFirst({
-      where: { id: input },
-      columns: {
-        id: true,
-        first: true,
-        last: true,
-        photo: true,
-        username: true,
-        venmo: true,
-        cashapp: true,
-        singlesRate: true,
-        groupRate: true,
-        capacity: true,
-        isBeeping: true,
-        rating: true,
-      },
-    });
+  publicUser: authedProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      const u = await db.query.user.findFirst({
+        where: { id: input },
+        columns: {
+          id: true,
+          first: true,
+          last: true,
+          photo: true,
+          username: true,
+          venmo: true,
+          cashapp: true,
+          singlesRate: true,
+          groupRate: true,
+          capacity: true,
+          isBeeping: true,
+          rating: true,
+        },
+      });
 
-    if (!u) {
-      throw new ORPCError("NOT_FOUND");
-    }
+      if (!u) {
+        throw new ORPCError("NOT_FOUND");
+      }
 
-    return u;
-  }),
+      return u;
+    }),
   getUserPrivateDetails: authedProcedure
-    .input(z.string())
+    .input(z.uuid())
     .use(mustHaveBeenInAcceptedBeep)
     .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
@@ -442,29 +395,26 @@ export const userRouter = {
 
       return u;
     }),
-  user: adminProcedure.input(z.string()).handler(async ({ input }) => {
-    const u = await db.query.user.findFirst({
-      where: { id: input },
-      columns: {
-        password: false,
-        passwordType: false,
-        pushToken: false,
-      },
-    });
+  user: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      const u = await db.query.user.findFirst({
+        where: { id: input },
+        columns: {
+          password: false,
+          passwordType: false,
+          pushToken: false,
+        },
+      });
 
-    if (!u) {
-      throw new ORPCError("NOT_FOUND");
-    }
+      if (!u) {
+        throw new ORPCError("NOT_FOUND");
+      }
 
-    return u;
-  }),
+      return u;
+    }),
   usersWithBeeps: adminProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-      }),
-    )
+    .input(listsUsersWithBeepsInputSchema)
     .handler(async ({ input }) => {
       const users = await db
         .select({
@@ -495,12 +445,7 @@ export const userRouter = {
       };
     }),
   usersWithRides: adminProcedure
-    .input(
-      z.object({
-        page: z.number().default(1),
-        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-      }),
-    )
+    .input(listsUsersWithRidesInputSchema)
     .handler(async ({ input }) => {
       const users = await db
         .select({
@@ -549,11 +494,13 @@ export const userRouter = {
 
     await db.delete(user).where(eq(user.id, context.user.id));
   }),
-  deleteUser: adminProcedure.input(z.string()).handler(async ({ input }) => {
-    await db.delete(user).where(eq(user.id, input));
-  }),
+  deleteUser: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      await db.delete(user).where(eq(user.id, input));
+    }),
   getUsersDefaultCar: authedProcedure
-    .input(z.string())
+    .input(z.uuid())
     .use(mustHaveBeenInAcceptedBeep)
     .handler(async ({ input }) => {
       const c = await db.query.car.findFirst({
@@ -567,7 +514,7 @@ export const userRouter = {
       return c;
     }),
   sendTestEmail: adminProcedure
-    .input(z.object({ userId: z.uuid() }))
+    .input(sendTestEmailInputSchema)
     .handler(async ({ input }) => {
       const user = await db.query.user.findFirst({
         where: { id: input.userId },

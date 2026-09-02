@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { rideResponseSchema } from "../beeps/schemas";
 import { updateLiveActivity } from "../../utils/live-activities";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import { sha256 } from "../../utils/hash";
@@ -11,6 +10,7 @@ import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
 import { DEFAULT_LOCATION_RADIUS } from "../../utils/constants";
+import { locationSchema } from "../users/schemas";
 import {
   authedProcedure,
   mustBeInAcceptedBeep,
@@ -24,17 +24,19 @@ import {
   getRidersCurrentRide,
   inProgressBeepNew,
 } from "../beeps/logic";
+import {
+  getBeeperLocationsInputSchema,
+  getBeepersInputSchema,
+  leaveQueueInputSchema,
+  rideResponseSchema,
+  setBeepLiveActivityTokenInputSchema,
+  startBeepInputSchema,
+  updateLiveActivityTokenInputSchema
+} from "./schemas";
 
 export const riderRouter = {
   beepers: verifiedProcedure
-    .input(
-      z
-        .object({
-          longitude: z.number(),
-          latitude: z.number(),
-        })
-        .optional(),
-    )
+    .input(getBeepersInputSchema)
     .handler(async ({ input, context }) => {
       if (context.user.role === "user" && input === undefined) {
         throw new ORPCError("BAD_REQUEST", {
@@ -89,16 +91,7 @@ export const riderRouter = {
     }),
   startBeep: verifiedProcedure
     .use(withLock)
-    .input(
-      z.object({
-        beeperId: z.string(),
-        origin: z.string(),
-        destination: z.string(),
-        groupSize: z.number().min(1).max(25),
-        latitude: z.number(),
-        longitude: z.number(),
-      }),
-    )
+    .input(startBeepInputSchema)
     .output(rideResponseSchema)
     .handler(async ({ input, context }) => {
       const location = {
@@ -200,7 +193,7 @@ export const riderRouter = {
       };
     }),
   currentRide: authedProcedure
-    .input(z.string().optional())
+    .input(z.uuid().optional())
     .output(rideResponseSchema.nullable())
     .handler(({ input, context }) => {
       const userId = input ?? context.user.id;
@@ -215,7 +208,7 @@ export const riderRouter = {
       return getRidersCurrentRide(userId);
     }),
   currentRideUpdates: authedProcedure
-    .input(z.string().optional())
+    .input(z.uuid().optional())
     .output(
       asyncIteratorObject(rideResponseSchema.partial().nullable())
     )
@@ -246,7 +239,7 @@ export const riderRouter = {
       }
     }),
   currentRideUpdatesAllowPartial: authedProcedure
-    .input(z.string().optional())
+    .input(z.uuid().optional())
     .output(
       asyncIteratorObject(rideResponseSchema.partial().nullable())
     )
@@ -277,7 +270,7 @@ export const riderRouter = {
       }
     }),
   beeperLocationUpdates: authedProcedure
-    .input(z.string())
+    .input(z.uuid())
     .use(mustBeInAcceptedBeep)
     .handler(async function* ({ input, signal }) {
       const beeper = await db.query.user.findFirst({
@@ -302,12 +295,7 @@ export const riderRouter = {
       }
     }),
   beepersNearMe: authedProcedure
-    .input(
-      z.object({
-        latitude: z.number(),
-        longitude: z.number(),
-      }),
-    )
+    .input(locationSchema)
     .handler(async ({ input }) => {
       const users = await db
         .select({
@@ -328,13 +316,7 @@ export const riderRouter = {
       }));
     }),
   beepersLocations: authedProcedure
-    .input(
-      z.object({
-        latitude: z.number(),
-        longitude: z.number(),
-        admin: z.boolean().optional(),
-      }),
-    )
+    .input(getBeeperLocationsInputSchema)
     .handler(async function* ({ input, context, signal }) {
       if (input.admin && context.user.role !== "admin") {
         throw new ORPCError("UNAUTHORIZED");
@@ -353,11 +335,7 @@ export const riderRouter = {
       }
     }),
   leaveQueue: authedProcedure
-    .input(
-      z.object({
-        beeperId: z.string(),
-      }),
-    )
+    .input(leaveQueueInputSchema)
     .handler(async ({ context, input }) => {
       const beeper = await db.query.user.findFirst({
         where: { id: input.beeperId },
@@ -468,13 +446,7 @@ export const riderRouter = {
     return mostRecentCompletedBeep;
   }),
   setBeepLiveActivityToken: authedProcedure
-    .input(
-      z.object({
-        beepId: z.string(),
-        token: z.string(),
-        activityId: z.string(),
-      }),
-    )
+    .input(setBeepLiveActivityTokenInputSchema)
     .handler(async ({ context, input }) => {
       const b = await db.query.beep.findFirst({
         where: { id: input.beepId },
@@ -504,7 +476,7 @@ export const riderRouter = {
       return {};
     }),
   updateLiveActivityToken: authedProcedure
-    .input(z.object({ activityId: z.string(), token: z.string() }))
+    .input(updateLiveActivityTokenInputSchema)
     .handler(async ({ input, context }) => {
       const b = await db.query.beep.findFirst({
         where: { rider_live_activity_id: input.activityId },

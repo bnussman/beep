@@ -1,5 +1,6 @@
-import { isAlpha, isMobilePhone } from "validator";
 import z from "zod";
+import { isAlpha, isMobilePhone } from "validator";
+import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 
 export const userSchema = z.object({
   id: z.string(),
@@ -52,4 +53,70 @@ export const locationSchema = z.object({
   longitude: z.number(),
 });
 
-export type Location = z.infer<typeof locationSchema>;
+export const listsUsersInputSchema = z.object({
+  page: z.number().default(1),
+  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
+  query: z.string().optional(),
+  isBeeping: z.boolean().optional(),
+});
+
+export const adminEditUserInputSchema = z.object({
+  userId: z.uuid(),
+  data: z
+    .object({
+      first: z.string(),
+      last: z.string(),
+      email: z.string(),
+      phone: z.string(),
+      venmo: z.string(),
+      cashapp: z.string(),
+      photo: z.string(),
+      isStudent: z.boolean(),
+      isEmailVerified: z.boolean(),
+      isBeeping: z.boolean(),
+      location: z.object({
+        longitude: z.number(),
+        latitude: z.number(),
+      }),
+    })
+    .partial(),
+});
+
+export const editUserInputSchema = z
+  .object({
+    first: z.string().refine(isAlpha, "Must be letters only.").min(1),
+    last: z.string().refine(isAlpha, "Must be letters only.").min(1),
+    email: z.email().endsWith(".edu", "Email must end with .edu"),
+    phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
+    venmo: z.string().nullable(),
+    cashapp: z.string().nullable(),
+    pushToken: z.string(),
+    isBeeping: z.boolean(),
+    singlesRate: z.number().min(1).max(25),
+    groupRate: z.number().min(1).max(25),
+    capacity: z.number().min(1).max(25),
+    location: z.object({
+      longitude: z.number(),
+      latitude: z.number(),
+    }),
+  })
+  .partial();
+
+export const syncUserPaymentsInputSchema = z.object({
+  userId: z.uuid().optional()
+});
+
+export const activePaymentsInputSchema =
+  z.object({ userId: z.uuid() }).optional()
+
+export const listsUsersWithBeepsInputSchema = z.object({
+  page: z.number().default(1),
+  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
+});
+
+export const listsUsersWithRidesInputSchema = z.object({
+  page: z.number().default(1),
+  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
+});
+
+export const sendTestEmailInputSchema = z.object({ userId: z.uuid() })

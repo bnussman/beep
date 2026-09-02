@@ -4,7 +4,8 @@ import { eq } from "drizzle-orm";
 import { authedProcedure } from "../../utils/orpc";
 import { pubSub } from "../../utils/pubsub";
 import { beep, user } from "../../../drizzle/schema";
-import { queueResponseSchema, updateBeepAsBeeperInputSchema } from "../beeps/schemas";
+import { queueResponseSchema } from "./schemas";
+import { updateBeepAsBeeperInputSchema } from "../beeps/schemas";
 import { updateLiveActivity } from "../../utils/live-activities";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import {

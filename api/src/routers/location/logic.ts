@@ -1,7 +1,7 @@
 import { geocoding } from "@banksnussman/photon";
 import { user } from "../../../drizzle/schema";
 import { PHOTON_BASE_URL } from "../../utils/constants";
-import type { Location } from "../../routers/users/schemas";
+import type { Location } from "../../routers/users/types";
 
 export async function getCoordinatesFromAddress(
   address: string,
