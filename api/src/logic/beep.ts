@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/bun";
 import { eq, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep } from "../../drizzle/schema";
+import type { Location } from "../schemas/user";
 import { pubSub, User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 import { updateLiveActivity } from "../utils/live-activities";
@@ -306,7 +307,7 @@ async function getUsersPushToken(userId: string) {
   return rider?.pushToken ?? null;
 }
 
-export async function updateEta(beeperId: string, location: { latitude: number; longitude: number }) {
+export async function updateEta(beeperId: string, location: Location) {
   const currentBeep = await db.query.beep.findFirst({
     where: { AND: [{ beeper_id: beeperId }, inProgressBeepNew] },
     orderBy: { start: 'asc' },
@@ -346,7 +347,7 @@ export async function updateEta(beeperId: string, location: { latitude: number; 
   await db.update(beep).set(values).where(eq(beep.id, currentBeep.id));
 }
 
-export async function getETA(locations: { latitude: number; longitude: number }[]) {
+export async function getETA(locations: Location[]) {
   try {
     const { data, error } = await route(
       {

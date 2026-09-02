@@ -11,12 +11,13 @@ import {
   pgEnum,
   customType,
 } from "drizzle-orm/pg-core";
-import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { Geometry } from "wkx";
+import type { CustomTypeValues } from "drizzle-orm/pg-core";
+import type { Location } from "../src/schemas/user";
 
 export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
   return customType<{
-    data: { latitude: number; longitude: number } | null;
+    data: Location | null;
   }>({
     dataType() {
       return "geometry";
