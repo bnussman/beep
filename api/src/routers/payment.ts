@@ -4,6 +4,7 @@ import { db } from "../utils/db";
 import { count } from "drizzle-orm";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { ORPCError } from "@orpc/server";
+import { condensedUserColumns } from "../logic/user";
 
 export const paymentRouter = {
   payments: authedProcedure
@@ -37,12 +38,7 @@ export const paymentRouter = {
           where,
           with: {
             user: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
           },
         }),

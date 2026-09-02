@@ -23,6 +23,7 @@ import { rideResponseSchema } from "../schemas/beep";
 import { updateLiveActivity } from "../utils/live-activities";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import { sha256 } from "../utils/hash";
+import { condensedUserColumns } from "../logic/user";
 
 export const riderRouter = {
   beepers: verifiedProcedure
@@ -444,20 +445,10 @@ export const riderRouter = {
       with: {
         ratings: true,
         beeper: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
         rider: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
       },
     });

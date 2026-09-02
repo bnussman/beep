@@ -5,6 +5,7 @@ import { adminProcedure, authedProcedure } from "../utils/orpc";
 import { z } from "zod";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { ORPCError } from "@orpc/server";
+import { condensedUserColumns } from "../logic/user";
 
 export const reportRouter = {
   reports: adminProcedure
@@ -31,31 +32,17 @@ export const reportRouter = {
           columns: {
             reported_id: false,
             reporter_id: false,
+            handled_by_id: false,
           },
           with: {
             reported: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
             reporter: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
             handledBy: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
           },
         }),
@@ -79,30 +66,20 @@ export const reportRouter = {
   report: adminProcedure.input(z.string()).handler(async ({ input }) => {
     const r = await db.query.report.findFirst({
       where: { id: input },
+      columns: {
+        reported_id: false,
+        reporter_id: false,
+        handled_by_id: false,
+      },
       with: {
         reported: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
         reporter: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
         handledBy: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
       },
     });

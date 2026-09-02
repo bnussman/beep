@@ -22,6 +22,8 @@ import {
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { updateLiveActivity } from "../utils/live-activities";
 import { ORPCError } from "@orpc/server";
+import { editBeepInputSchema } from "../schemas/beep";
+import { condensedUserColumns } from "../logic/user";
 
 export const beepRouter = {
   beeps: authedProcedure
@@ -62,10 +64,7 @@ export const beepRouter = {
           with: {
             beeper: {
               columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
+                ...condensedUserColumns,
                 venmo: true,
                 cashapp: true,
                 groupRate: true,
@@ -74,10 +73,7 @@ export const beepRouter = {
             },
             rider: {
               columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
+                ...condensedUserColumns,
                 venmo: true,
                 cashapp: true,
               },
@@ -109,20 +105,10 @@ export const beepRouter = {
       where: { id: input },
       with: {
         beeper: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
         rider: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
       },
     });
@@ -148,18 +134,7 @@ export const beepRouter = {
     await db.delete(beep).where(eq(beep.id, input));
   }),
   editBeep: authedProcedure
-    .input(
-      z.object({
-        beepId: z.string(),
-        data: z
-          .object({
-            origin: z.string().min(2),
-            destination: z.string().min(2),
-            groupSize: z.number().min(1).max(25),
-          })
-          .partial(),
-      }),
-    )
+    .input(editBeepInputSchema)
     .handler(async ({ context, input }) => {
       const b = await db.query.beep.findFirst({
         where: { id: input.beepId },

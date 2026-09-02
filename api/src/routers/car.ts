@@ -14,6 +14,7 @@ import {
   withLock,
 } from "../utils/orpc";
 import { ORPCError } from "@orpc/server";
+import { condensedUserColumns } from "../logic/user";
 
 export const carRouter = {
   cars: authedProcedure
@@ -35,12 +36,7 @@ export const carRouter = {
           where: input.userId ? { user_id: input.userId } : {},
           with: {
             user: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
           },
         }),

@@ -98,7 +98,7 @@ function Report() {
           </Typography>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Reporter</Typography>
-            <Link to="/admin/users/$userId" params={{ userId: report.reporter_id }}>
+            <Link to="/admin/users/$userId" params={{ userId: report.reporter.id }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Avatar src={report.reporter.photo ?? undefined} />
                 <Typography>
@@ -109,7 +109,7 @@ function Report() {
           </Stack>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Reported</Typography>
-            <Link to="/admin/users/$userId" params={{ userId: report.reported_id }}>
+            <Link to="/admin/users/$userId" params={{ userId: report.reported.id }}>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Avatar src={report.reported.photo ?? undefined} />
                 <Typography>

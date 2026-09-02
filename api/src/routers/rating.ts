@@ -8,6 +8,7 @@ import { pubSub } from "../utils/pubsub";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { getUsersAverageRating } from "../logic/rating";
 import { ORPCError } from "@orpc/server";
+import { condensedUserColumns } from "../logic/user";
 
 export const ratingRouter = {
   ratings: authedProcedure
@@ -37,20 +38,10 @@ export const ratingRouter = {
           orderBy: { timestamp: "desc" },
           with: {
             rater: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
             rated: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
           },
         }),
@@ -76,20 +67,10 @@ export const ratingRouter = {
       where: { id: input },
       with: {
         rater: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
         rated: {
-          columns: {
-            id: true,
-            first: true,
-            last: true,
-            photo: true,
-          },
+          columns: condensedUserColumns,
         },
       },
     });

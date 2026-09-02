@@ -4,6 +4,7 @@ import { db } from "../utils/db";
 import { count, eq } from "drizzle-orm";
 import { feedback } from "../../drizzle/schema";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { condensedUserColumns } from "../logic/user";
 
 export const feedbackRouter = {
   feedback: adminProcedure
@@ -21,12 +22,7 @@ export const feedbackRouter = {
           limit: input.pageSize,
           with: {
             user: {
-              columns: {
-                id: true,
-                first: true,
-                last: true,
-                photo: true,
-              },
+              columns: condensedUserColumns,
             },
           },
         }),

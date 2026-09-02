@@ -45,3 +45,14 @@ export const queueResponseSchema = z.array(
     }),
   }),
 );
+
+export const editBeepInputSchema = z.object({
+  beepId: z.string(),
+  data: z
+    .object({
+      origin: z.string().min(2),
+      destination: z.string().min(2),
+      groupSize: z.number().min(1).max(25),
+    })
+    .partial(),
+});
