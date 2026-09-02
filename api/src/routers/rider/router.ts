@@ -1,29 +1,29 @@
 import { z } from "zod";
-import { rideResponseSchema } from "../schemas/beep";
-import { updateLiveActivity } from "../utils/live-activities";
+import { rideResponseSchema } from "../beeps/schemas";
+import { updateLiveActivity } from "../../utils/live-activities";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
-import { sha256 } from "../utils/hash";
-import { condensedUserColumns } from "../logic/user";
-import { db } from "../utils/db";
-import { beep, payment, user } from "../../drizzle/schema";
+import { sha256 } from "../../utils/hash";
+import { condensedUserColumns } from "../users/logic";
+import { db } from "../../utils/db";
+import { getDistance } from "../location/logic";
+import { beep, payment, user } from "../../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
-import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
-import { getDistance } from "../logic/location";
+import { sendNotification } from "../../utils/notifications";
+import { pubSub } from "../../utils/pubsub";
+import { DEFAULT_LOCATION_RADIUS } from "../../utils/constants";
 import {
   authedProcedure,
   mustBeInAcceptedBeep,
   verifiedProcedure,
   withLock,
-} from "../utils/orpc";
+} from "../../utils/orpc";
 import {
   getBeeperQueue,
   getDerivedRiderFields,
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeepNew,
-} from "../logic/beep";
+} from "../beeps/logic";
 
 export const riderRouter = {
   beepers: verifiedProcedure

@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { db } from "../utils/db";
+import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
-import { authedProcedure } from "../utils/orpc";
-import { pubSub } from "../utils/pubsub";
-import { beep, user } from "../../drizzle/schema";
-import { queueResponseSchema, updateBeepAsBeeperInputSchema } from "../schemas/beep";
-import { updateLiveActivity } from "../utils/live-activities";
+import { authedProcedure } from "../../utils/orpc";
+import { pubSub } from "../../utils/pubsub";
+import { beep, user } from "../../../drizzle/schema";
+import { queueResponseSchema, updateBeepAsBeeperInputSchema } from "../beeps/schemas";
+import { updateLiveActivity } from "../../utils/live-activities";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import {
   getBeeperQueue,
@@ -14,7 +14,7 @@ import {
   getIsInProgressBeep,
   getQueueSize,
   sendBeepUpdateNotificationToRider,
-} from "../logic/beep";
+} from "../beeps/logic";
 
 export const beeperRouter = {
   queue: authedProcedure

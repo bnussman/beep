@@ -1,6 +1,6 @@
 import type { SendMailOptions } from "nodemailer";
-import { WEB_BASE_URL } from "../utils/constants";
-import { email } from "../utils/email";
+import { WEB_BASE_URL } from "../../utils/constants";
+import { email } from "../../utils/email";
 import { captureException } from "@sentry/bun";
 
 interface SendVerificationEmailOptions {

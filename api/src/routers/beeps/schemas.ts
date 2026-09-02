@@ -1,6 +1,6 @@
 import z from "zod";
-import { beepStatuses } from "../../drizzle/schema";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { beepStatuses } from "../../../drizzle/schema";
+import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 
 export const rideResponseSchema = z.object({
   id: z.string(),

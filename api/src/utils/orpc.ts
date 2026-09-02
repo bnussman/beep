@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/bun";
 import { db } from "./db";
-import { isAcceptedBeepNew } from "../logic/beep";
+import { isAcceptedBeepNew } from "../routers/beeps/logic";
 import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 import { os, ORPCError, onError, StandardLazyRequest } from "@orpc/server";

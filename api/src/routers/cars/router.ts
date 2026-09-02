@@ -1,26 +1,26 @@
 import { z } from "zod";
-import { db } from "../utils/db";
-import { car } from "../../drizzle/schema";
-import { s3 } from "../utils/s3";
+import { db } from "../../utils/db";
+import { car } from "../../../drizzle/schema";
+import { s3 } from "../../utils/s3";
 import { ORPCError } from "@orpc/server";
-import { condensedUserColumns } from "../logic/user";
-import { sendNotification } from "../utils/notifications";
+import { condensedUserColumns } from "../users/logic";
+import { sendNotification } from "../../utils/notifications";
 import { and, count, eq, ne } from "drizzle-orm";
-import { S3_BUCKET_URL } from "../utils/constants";
+import { S3_BUCKET_URL } from "../../utils/constants";
 import { getMakes, getModels } from "car-info";
-import { CAR_COLOR_OPTIONS } from "../utils/constants";
+import { CAR_COLOR_OPTIONS } from "../../utils/constants";
 import {
   authedProcedure,
   o,
   verifiedProcedure,
   withLock,
-} from "../utils/orpc";
+} from "../../utils/orpc";
 import {
   createCarInputSchema,
   deleteCarInputSchema,
   getCarsInputSchema,
   updateCarInputSchema
-} from "../schemas/car";
+} from "./schemas";
 
 export const carRouter = {
   cars: authedProcedure

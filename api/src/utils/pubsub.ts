@@ -1,9 +1,9 @@
 import { Context } from "./orpc";
-import { queueResponseSchema, rideResponseSchema } from "../schemas/beep";
+import { queueResponseSchema, rideResponseSchema } from "../routers/beeps/schemas";
 import { RedisPublisher } from '@orpc/publisher/redis'
 import z from "zod";
 import { redis } from "./redis";
-import type { Location } from "../schemas/user";
+import type { Location } from "../routers/users/schemas";
 
 export type User = NonNullable<Context["user"]>;
 export type Ride = z.infer<typeof rideResponseSchema> | null;

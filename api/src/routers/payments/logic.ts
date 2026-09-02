@@ -1,4 +1,4 @@
-import { db } from "../utils/db";
+import { db } from "../../utils/db";
 
 export async function getActivePayments(userId: string) {
   return await db.query.payment.findMany({

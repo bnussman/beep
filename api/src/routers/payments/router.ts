@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { authedProcedure } from "../utils/orpc";
-import { db } from "../utils/db";
+import { authedProcedure } from "../../utils/orpc";
+import { db } from "../../utils/db";
 import { count } from "drizzle-orm";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 import { ORPCError } from "@orpc/server";
-import { condensedUserColumns } from "../logic/user";
+import { condensedUserColumns } from "../users/logic";
 
 export const paymentRouter = {
   payments: authedProcedure

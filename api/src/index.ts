@@ -1,22 +1,22 @@
 import './utils/instrument';
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
 import { createHTTPContext, createWSContext, errorInterceptor, otelAbortSignalCaptureInterceptor } from "./utils/orpc";
-import { userRouter } from "./routers/user";
-import { authRouter } from "./routers/auth";
-import { reportRouter } from "./routers/report";
-import { ratingRouter } from "./routers/rating";
-import { carRouter } from "./routers/car";
-import { beepRouter } from "./routers/beep";
-import { paymentRouter } from "./routers/payment";
+import { userRouter } from "./routers/users/router";
+import { authRouter } from "./routers/auth/router";
+import { reportRouter } from "./routers/reports/router";
+import { ratingRouter } from "./routers/ratings/router";
+import { carRouter } from "./routers/cars/router";
+import { beepRouter } from "./routers/beeps/router";
+import { paymentRouter } from "./routers/payments/router";
 import { feedbackRouter } from "./routers/feedback/router";
-import { notificationRouter } from "./routers/notification";
-import { redisRouter } from "./routers/redis";
-import { riderRouter } from "./routers/rider";
-import { beeperRouter } from "./routers/beeper";
-import { locationRouter } from "./routers/location";
+import { notificationRouter } from "./routers/notifications/router";
+import { redisRouter } from "./routers/redis/router";
+import { riderRouter } from "./routers/rider/router";
+import { beeperRouter } from "./routers/beeper/router";
+import { locationRouter } from "./routers/location/router";
 import { handlePaymentWebook } from "./utils/payments";
-import { healthRouter } from "./routers/health";
-import { flagsRouter } from "./routers/flags";
+import { healthRouter } from "./routers/health/router";
+import { flagsRouter } from "./routers/flags/router";
 import { RPCHandler } from "@orpc/server/fetch";
 import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";

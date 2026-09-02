@@ -1,28 +1,28 @@
 import * as Sentry from "@sentry/bun";
-import { beep, user, verify_email } from "../../drizzle/schema";
-import { db, writeDB } from "../utils/db";
+import { beep, user, verify_email } from "../../../drizzle/schema";
+import { db, writeDB } from "../../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
-import { s3 } from "../utils/s3";
-import { syncUserPayments } from "../utils/payments";
+import { s3 } from "../../utils/s3";
+import { syncUserPayments } from "../../utils/payments";
 import { SendMailOptions } from "nodemailer";
-import { email } from "../utils/email";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
+import { email } from "../../utils/email";
+import { sendNotification } from "../../utils/notifications";
+import { pubSub } from "../../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
-import { inProgressBeep, updateEta } from "../logic/beep";
-import { userSchema } from "../schemas/user";
-import { getActivePayments } from "../logic/payments";
+import { inProgressBeep, updateEta } from "../beeps/logic";
+import { userSchema } from "./schemas";
+import { getActivePayments } from "../payments/logic";
 import {
   adminProcedure,
   authedProcedure,
   mustHaveBeenInAcceptedBeep,
-} from "../utils/orpc";
+} from "../../utils/orpc";
 import {
   DEFAULT_PAGE_SIZE,
   S3_BUCKET_URL,
   WEB_BASE_URL,
-} from "../utils/constants";
+} from "../../utils/constants";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
 
 export const userRouter = {

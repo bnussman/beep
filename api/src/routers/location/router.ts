@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { authedProcedure } from "../utils/orpc";
-import { getCoordinatesFromAddress } from "../logic/location";
+import { authedProcedure } from "../../utils/orpc";
 import { route } from "@banksnussman/osrm";
-import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utils/constants";
+import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../../utils/constants";
 import { geocoding } from "@banksnussman/photon";
+import { getCoordinatesFromAddress } from "./logic";
 
 export const locationRouter = {
   getETA: authedProcedure

@@ -3,7 +3,7 @@ import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
 import { feedback } from "../../../drizzle/schema";
-import { condensedUserColumns } from "../../logic/user";
+import { condensedUserColumns } from "../users/logic";
 import { createFeedbackInputSchema, getFeedbacksInputSchema } from "./schemas";
 import { getFeedbacksCount } from "./logic";
 

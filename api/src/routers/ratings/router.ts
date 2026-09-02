@@ -1,14 +1,14 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure } from "../utils/orpc";
-import { db } from "../utils/db";
+import { adminProcedure, authedProcedure } from "../../utils/orpc";
+import { db } from "../../utils/db";
 import { count, eq } from "drizzle-orm";
-import { rating, user } from "../../drizzle/schema";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
-import { DEFAULT_PAGE_SIZE } from "../utils/constants";
-import { getUsersAverageRating } from "../logic/rating";
+import { rating, user } from "../../../drizzle/schema";
+import { sendNotification } from "../../utils/notifications";
+import { pubSub } from "../../utils/pubsub";
+import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
+import { getUsersAverageRating } from "./logic";
 import { ORPCError } from "@orpc/server";
-import { condensedUserColumns } from "../logic/user";
+import { condensedUserColumns } from "../users/logic";
 
 export const ratingRouter = {
   ratings: authedProcedure

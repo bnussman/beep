@@ -13,7 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { Geometry } from "wkx";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
-import type { Location } from "../src/schemas/user";
+import type { Location } from "../src/routers/users/schemas";
 
 export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
   return customType<{

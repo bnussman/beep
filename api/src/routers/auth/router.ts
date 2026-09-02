@@ -1,16 +1,16 @@
-import { authedProcedure, o } from "../utils/orpc";
-import { db } from "../utils/db";
-import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
+import { authedProcedure, o } from "../../utils/orpc";
+import { db } from "../../utils/db";
+import { forgot_password, token, user, verify_email } from "../../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { password as bunPassword } from "bun";
-import { s3 } from "../utils/s3";
-import { isDevelopment, S3_BUCKET_URL } from "../utils/constants";
-import { pubSub } from "../utils/pubsub";
-import { authSchema, changePasswordInput, forgotPasswordInput, loginInput, logoutInput, resetPasswordInput, verifyAccountInput } from "../schemas/auth";
-import { signupSchema, userSchema } from "../schemas/user";
+import { s3 } from "../../utils/s3";
+import { isDevelopment, S3_BUCKET_URL } from "../../utils/constants";
+import { pubSub } from "../../utils/pubsub";
+import { authSchema, changePasswordInput, forgotPasswordInput, loginInput, logoutInput, resetPasswordInput, verifyAccountInput } from "./schemas";
+import { signupSchema, userSchema } from "../users/schemas";
 import { ORPCError, ValidationError } from "@orpc/server";
-import { isExpired, sendResetPasswordEmail, sendSignupVerificationEmail } from "../logic/auth";
-import { sha256 } from "../utils/hash";
+import { isExpired, sendResetPasswordEmail, sendSignupVerificationEmail } from "./logic";
+import { sha256 } from "../../utils/hash";
 
 export const authRouter = {
   login: o
