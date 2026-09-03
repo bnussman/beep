@@ -113,18 +113,24 @@ export const productEnum = pgEnum("payment_product", [
 
 export const storeEnum = pgEnum("payment_store", ["play_store", "app_store"]);
 
-export const payment = pgTable("payment", {
-  id: varchar("id", { length: 255 }).primaryKey().notNull(),
-  user_id: varchar("user_id", { length: 255 })
-    .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
-  storeId: varchar("store_id", { length: 255 }).notNull(),
-  productId: productEnum("product_id").notNull(),
-  price: numeric("price").notNull(),
-  store: storeEnum("store").notNull(),
-  created: timestamp("created", { withTimezone: true, mode: "date" }).notNull(),
-  expires: timestamp("expires", { withTimezone: true, mode: "date" }).notNull(),
-});
+export const payment = pgTable(
+  "payment",
+  {
+    id: varchar("id", { length: 255 }).primaryKey().notNull(),
+    user_id: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    storeId: varchar("store_id", { length: 255 }).notNull(),
+    productId: productEnum("product_id").notNull(),
+    price: numeric("price").notNull(),
+    store: storeEnum("store").notNull(),
+    created: timestamp("created", { withTimezone: true, mode: "date" }).notNull(),
+    expires: timestamp("expires", { withTimezone: true, mode: "date" }).notNull(),
+  },
+  (table) => [
+    unique("payment_store_store_id_unique").on(table.store, table.storeId),
+  ],
+);
 
 export const forgot_password = pgTable("forgot_password", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
