@@ -13,4 +13,4 @@ allowBuilds:
   protobufjs: false
 minimumReleaseAge: 120
 minimumReleaseAgeExclude:
-  - zod@4.5.2
+  - '@banksnussman/revenuecat@0.0.5'

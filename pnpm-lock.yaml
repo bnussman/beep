@@ -16,6 +16,9 @@ importers:
       '@banksnussman/photon':
         specifier: ^0.0.5
         version: 0.0.5
+      '@banksnussman/revenuecat':
+        specifier: 0.0.5
+        version: 0.0.5
       '@orpc/opentelemetry':
         specifier: 2.0.0-beta.31
         version: 2.0.0-beta.31(@opentelemetry/api@1.9.1)(@opentelemetry/instrumentation@0.220.0(@opentelemetry/api@1.9.1))
@@ -821,6 +824,9 @@ packages:
 
   '@banksnussman/photon@0.0.5':
     resolution: {integrity: sha512-AeLw3KfK66sbOQwTjZF3Gz0phzpytUFQMEngWElG8IZDqjiwi5fmDyEr3a8HEuIQK8ONvq70wHAhXWMwJtYyYA==}
+
+  '@banksnussman/revenuecat@0.0.5':
+    resolution: {integrity: sha512-BAwkUktW2zbLGz+r81UaN6UHLgg3UK/N6GqWQR6q3gRYZx8roZA7Vb/WxGee5cb2nmbwDK6uVNLmD5suhNBMcg==}
 
   '@base-ui/react@1.5.0':
     resolution: {integrity: sha512-z1gSAlced1yY+iM+mHDEtIkD8UI3Ebs52MuBPxvV6f5hRutk+xvCH/wuB7hDqDzK9JG5FoMz5nhrqtSs1wjt1A==}
@@ -7389,6 +7395,8 @@ snapshots:
   '@banksnussman/osrm@0.0.4': {}
 
   '@banksnussman/photon@0.0.5': {}
+
+  '@banksnussman/revenuecat@0.0.5': {}
 
   '@base-ui/react@1.5.0(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:

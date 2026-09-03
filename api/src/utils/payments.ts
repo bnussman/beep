@@ -1,9 +1,10 @@
 import * as Sentry from "@sentry/bun";
+import type { Webhook } from "@banksnussman/revenuecat/webhook";
 import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
 import { productEnum, payment, storeEnum } from "../../drizzle/schema";
-import { SubscriberResponse, Webhook } from "./revenuecat";
 import { getActivePayments } from "../routers/payments/logic";
+import { subscribers } from "@banksnussman/revenuecat/v1";
 
 type Product = (typeof productEnum.enumValues)[number];
 type Store = (typeof storeEnum.enumValues)[number];
@@ -33,27 +34,25 @@ export async function syncUserPayments(userId: string) {
     throw new Error("No REVENUE_CAT_SECRET in env.");
   }
 
-  const options = {
+  const { data } = await subscribers({
     method: "GET",
+    path: {
+      app_user_id: userId,
+    },
+    throwOnError: true,
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${REVENUE_CAT_SECRET}`,
     },
-  };
-
-  const request = await fetch(
-    `https://api.revenuecat.com/v1/subscribers/${userId}`,
-    options,
-  );
-
-  const response: SubscriberResponse = await request.json();
+  });
+  
 
   const products = Object.keys(
-    response.subscriber.non_subscriptions,
+    data.subscriber.non_subscriptions,
   ) as Product[];
 
   for (const product of products) {
-    for (const paymentItem of response.subscriber.non_subscriptions[product]) {
+    for (const paymentItem of data.subscriber.non_subscriptions[product]) {
       const created = new Date(paymentItem.purchase_date);
 
       try {
