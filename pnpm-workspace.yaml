@@ -13,4 +13,4 @@ allowBuilds:
   protobufjs: false
 minimumReleaseAge: 120
 minimumReleaseAgeExclude:
-  - '@banksnussman/revenuecat@0.0.5'
+  - '@banksnussman/revenuecat@0.0.6'
