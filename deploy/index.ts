@@ -179,7 +179,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               image: image.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: API_PORT }],
-              envFrom: [{ secretRef: { name: secret.metadata.name } }],
+              envFrom: [{ secretRef: { name: "api-secret" } }],
             },
           ],
         },
