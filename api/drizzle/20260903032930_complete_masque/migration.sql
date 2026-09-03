@@ -1,0 +1,1 @@
+ALTER TABLE "payment" ADD CONSTRAINT "payment_store_store_id_unique" UNIQUE("store","store_id");
