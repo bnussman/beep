@@ -45,7 +45,6 @@ export async function syncUserPayments(userId: string) {
       Authorization: `Bearer ${REVENUE_CAT_SECRET}`,
     },
   });
-  
 
   const products = Object.keys(
     data.subscriber.non_subscriptions,
