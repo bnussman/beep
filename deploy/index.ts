@@ -13,7 +13,6 @@ const API_PORT = 3000;
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
   kubeconfig: pulumi.secret(process.env.KUBECONFIG),
-  upsertExistingObjects: true,
 });
 
 const image = new docker.Image("apiImageResource", {
