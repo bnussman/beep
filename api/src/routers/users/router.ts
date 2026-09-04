@@ -131,10 +131,11 @@ export const userRouter = {
           });
         }
 
-        const c = await db.query.car.findFirst({
+        const car = await db.query.cars.findFirst({
           where: { user_id: context.user.id, default: true },
         });
-        if (!c) {
+
+        if (!car) {
           throw new ORPCError("BAD_REQUEST", {
             message: "You must have a default car to beep.",
           });
@@ -504,15 +505,15 @@ export const userRouter = {
     .input(z.uuid())
     .use(mustHaveBeenInAcceptedBeep)
     .handler(async ({ input }) => {
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { user_id: input, default: true },
       });
 
-      if (!c) {
+      if (!car) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return c;
+      return car;
     }),
   sendTestEmail: adminProcedure
     .input(sendTestEmailInputSchema)

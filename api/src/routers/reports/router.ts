@@ -1,5 +1,5 @@
 import { count, eq } from "drizzle-orm";
-import { report } from "../../../drizzle/schema";
+import { reports } from "../../../drizzle/schema";
 import { db } from "../../utils/db";
 import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { z } from "zod";
@@ -18,7 +18,7 @@ export const reportRouter = {
         : {};
 
       const [reports, reportsCount] = await Promise.all([
-        db.query.report.findMany({
+        db.query.reports.findMany({
           offset: (input.page - 1) * input.pageSize,
           limit: input.pageSize,
           orderBy: { timestamp: "desc" },
@@ -40,7 +40,7 @@ export const reportRouter = {
             },
           },
         }),
-        db.query.report.findMany({
+        db.query.reports.findMany({
           extras: { count: count() },
           columns: {},
           where,
@@ -60,7 +60,7 @@ export const reportRouter = {
   report: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const r = await db.query.report.findFirst({
+      const report = await db.query.reports.findFirst({
         where: { id: input },
         columns: {
           reported_id: false,
@@ -80,11 +80,11 @@ export const reportRouter = {
         },
       });
 
-      if (!r) {
+      if (!report) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return r;
+      return report;
     }),
   updateReport: adminProcedure
     .input(updateReportInputSchema)
@@ -93,24 +93,24 @@ export const reportRouter = {
         ? { handled: true, handled_by_id: context.user.id, notes: input.data.notes }
         : { handled: false, handled_by_id: null, notes: input.data.notes };
 
-      const r = await db
-        .update(report)
+      const [report] = await db
+        .update(reports)
         .set(values)
-        .where(eq(report.id, input.reportId))
+        .where(eq(reports.id, input.reportId))
         .returning();
 
-      return r[0];
+      return report;
     }),
   deleteReport: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      await db.delete(report).where(eq(report.id, input));
+      await db.delete(reports).where(eq(reports.id, input));
     }),
   createReport: authedProcedure
     .input(createReportInputSchema)
     .handler(async ({ input, context }) => {
-      const r = await db
-        .insert(report)
+      const [report] = await db
+        .insert(reports)
         .values({
           id: crypto.randomUUID(),
           reason: input.reason,
@@ -122,6 +122,6 @@ export const reportRouter = {
         })
         .returning();
 
-      return r[0];
+      return report;
     }),
 };

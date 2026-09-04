@@ -1,6 +1,6 @@
 import { authedProcedure, o } from "../../utils/orpc";
 import { db } from "../../utils/db";
-import { forgot_password, token, users, verify_email } from "../../../drizzle/schema";
+import { forgot_password, tokens, users, verify_email } from "../../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { password as bunPassword } from "bun";
 import { s3 } from "../../utils/s3";
@@ -60,13 +60,13 @@ export const authRouter = {
         });
       }
 
-      const tokens = {
+      const tokenData = {
         id: crypto.randomUUID(),
         tokenid: crypto.randomUUID(),
         user_id: user.id,
       };
 
-      await db.insert(token).values(tokens);
+      await db.insert(tokens).values(tokenData);
 
       if (pushToken) {
         await db
@@ -76,7 +76,7 @@ export const authRouter = {
         user.pushToken = pushToken;
       }
 
-      return { user, tokens };
+      return { user, tokens: tokenData };
     }),
   signup: o
     .input(signupSchema)
@@ -142,13 +142,13 @@ export const authRouter = {
         })
         .returning();
 
-      const tokens = {
+      const tokensData = {
         id: crypto.randomUUID(),
         tokenid: crypto.randomUUID(),
         user_id: userId,
       };
 
-      await db.insert(token).values(tokens);
+      await db.insert(tokens).values(tokensData);
 
       const verifyEmailEntry = await db
         .insert(verify_email)
@@ -166,12 +166,12 @@ export const authRouter = {
         username: input.username,
       });
 
-      return { user, tokens };
+      return { user, tokens: tokensData };
     }),
   logout: authedProcedure
     .input(logoutInput)
     .handler(async ({ context, input }) => {
-      await db.delete(token).where(eq(token.id, context.token.id));
+      await db.delete(tokens).where(eq(tokens.id, context.token.id));
 
       if (input.isApp) {
         await db
@@ -267,7 +267,7 @@ export const authRouter = {
         .where(eq(forgot_password.id, forgotPassword.id));
 
       // Remove all of the user's auth tokens because they have a new password.
-      await db.delete(token).where(eq(token.user_id, forgotPassword.user_id));
+      await db.delete(tokens).where(eq(tokens.user_id, forgotPassword.user_id));
 
       return true;
     }),
@@ -358,11 +358,11 @@ export const authRouter = {
         .where(eq(users.id, context.user.id));
 
       await db
-        .delete(token)
+        .delete(tokens)
         .where(
           and(
-            eq(token.user_id, context.user.id),
-            ne(token.id, context.token.id)
+            eq(tokens.user_id, context.user.id),
+            ne(tokens.id, context.token.id)
           )
         );
 

@@ -97,7 +97,7 @@ export const users = pgTable(
   ],
 );
 
-export const token = pgTable("token", {
+export const tokens = pgTable("token", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   tokenid: varchar("tokenid", { length: 255 }).notNull(),
   user_id: varchar("user_id", { length: 255 })
@@ -149,7 +149,7 @@ export const feedback = pgTable("feedback", {
   created: timestamp("created", { withTimezone: true, mode: "date" }).notNull(),
 });
 
-export const car = pgTable("car", {
+export const cars = pgTable("car", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
@@ -215,7 +215,7 @@ export const beep = pgTable(
   ],
 );
 
-export const report = pgTable("report", {
+export const reports = pgTable("report", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   reporter_id: varchar("reporter_id", { length: 255 })
     .notNull()

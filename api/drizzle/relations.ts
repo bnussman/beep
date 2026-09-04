@@ -1,13 +1,13 @@
 import { defineRelations } from "drizzle-orm";
 import {
   beep,
-  car,
+  cars,
   feedback,
   forgot_password,
   payments,
   ratings,
-  report,
-  token,
+  reports,
+  tokens,
   users,
   verify_email,
 } from "./schema";
@@ -15,26 +15,26 @@ import {
 export const relations = defineRelations(
   {
     users,
-    token,
+    tokens,
     payments,
     forgot_password,
     feedback,
-    car,
+    cars,
     beep,
-    report,
+    reports,
     verify_email,
     ratings,
   },
   (r) => ({
-    token: {
+    tokens: {
       user: r.one.users({
-        from: r.token.user_id,
+        from: r.tokens.user_id,
         to: r.users.id,
         optional: false,
       }),
     },
     users: {
-      tokens: r.many.token({ from: r.users.id, to: r.token.user_id }),
+      tokens: r.many.tokens({ from: r.users.id, to: r.tokens.user_id }),
       payments: r.many.payments({ from: r.users.id, to: r.payments.user_id }),
       forgot_passwords: r.many.forgot_password({
         from: r.users.id,
@@ -45,7 +45,7 @@ export const relations = defineRelations(
         to: r.verify_email.user_id,
       }),
       feedbacks: r.many.feedback({ from: r.users.id, to: r.feedback.user_id }),
-      cars: r.many.car({ from: r.users.id, to: r.car.user_id }),
+      cars: r.many.cars({ from: r.users.id, to: r.cars.user_id }),
       beeps: r.many.beep({
         from: r.users.id,
         to: r.beep.beeper_id,
@@ -56,14 +56,14 @@ export const relations = defineRelations(
         to: r.beep.rider_id,
         alias: "rider",
       }),
-      reports: r.many.report({
+      reports: r.many.reports({
         from: r.users.id,
-        to: r.report.reporter_id,
+        to: r.reports.reporter_id,
         alias: "reporter",
       }),
-      complaints: r.many.report({
+      complaints: r.many.reports({
         from: r.users.id,
-        to: r.report.reported_id,
+        to: r.reports.reported_id,
         alias: "reported",
       }),
       ratings: r.many.ratings({
@@ -110,8 +110,8 @@ export const relations = defineRelations(
         optional: false,
       }),
     },
-    car: {
-      user: r.one.users({ from: r.car.user_id, to: r.users.id, optional: false }),
+    cars: {
+      user: r.one.users({ from: r.cars.user_id, to: r.users.id, optional: false }),
     },
     beep: {
       beeper: r.one.users({
@@ -127,28 +127,28 @@ export const relations = defineRelations(
         optional: false,
       }),
       ratings: r.many.ratings({ from: r.beep.id, to: r.ratings.beep_id }),
-      reports: r.many.report({ from: r.beep.id, to: r.report.beep_id }),
+      reports: r.many.reports({ from: r.beep.id, to: r.reports.beep_id }),
     },
-    report: {
+    reports: {
       reporter: r.one.users({
-        from: r.report.reporter_id,
+        from: r.reports.reporter_id,
         to: r.users.id,
         alias: "reporter",
         optional: false,
       }),
       reported: r.one.users({
-        from: r.report.reported_id,
+        from: r.reports.reported_id,
         to: r.users.id,
         alias: "reported",
         optional: false,
       }),
       handledBy: r.one.users({
-        from: r.report.handled_by_id,
+        from: r.reports.handled_by_id,
         to: r.users.id,
         alias: "handler",
       }),
-      beep: r.one.beep({ from: r.report.beep_id, to: r.beep.id }),
-      rating: r.one.ratings({ from: r.report.rating_id, to: r.ratings.id }),
+      beep: r.one.beep({ from: r.reports.beep_id, to: r.beep.id }),
+      rating: r.one.ratings({ from: r.reports.rating_id, to: r.ratings.id }),
     },
     ratings: {
       rater: r.one.users({

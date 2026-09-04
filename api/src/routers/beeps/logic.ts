@@ -182,12 +182,12 @@ export async function sendBeepUpdateNotificationToRider(
         body: "Your beeper is on their way.",
       };
 
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
-      if (c) {
-        alert.body = `Your beeper is on their way in a ${c.color} ${c.make} ${c.model}`;
+      if (car) {
+        alert.body = `Your beeper is on their way in a ${car.color} ${car.make} ${car.model}`;
       }
 
       if (beep.rider_live_activity_token) {
@@ -196,9 +196,7 @@ export async function sendBeepUpdateNotificationToRider(
           alert,
           name: "RiderActivity",
           props: {
-            car: c
-              ? { make: c.make, model: c.model, color: c.color }
-              : undefined,
+            car,
             positionInQueue: beep.position,
             etaMinutes: undefined, // @todo
             name: beeper.first,
@@ -222,12 +220,12 @@ export async function sendBeepUpdateNotificationToRider(
         title: `${beeper.first} ${beeper.last} is here`,
         body: "Your beeper is here to pick you up.",
       };
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
-      if (c) {
-        alert.body = `Look for a ${c.color} ${c.make} ${c.model}`;
+      if (car) {
+        alert.body = `Look for a ${car.color} ${car.make} ${car.model}`;
       }
 
       if (beep.rider_live_activity_token) {
@@ -236,9 +234,7 @@ export async function sendBeepUpdateNotificationToRider(
           alert,
           name: "RiderActivity",
           props: {
-            car: c
-              ? { make: c.make, model: c.model, color: c.color }
-              : undefined,
+            car,
             positionInQueue: beep.position,
             name: beeper.first,
             status: beep.status,

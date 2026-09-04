@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "../../utils/db";
-import { car } from "../../../drizzle/schema";
+import { cars } from "../../../drizzle/schema";
 import { s3 } from "../../utils/s3";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
@@ -29,7 +29,7 @@ export const carRouter = {
       const where = input.userId ? { user_id: input.userId } : {};
 
       const [cars, countData] = await Promise.all([
-        db.query.car.findMany({
+        db.query.cars.findMany({
           limit: input.pageSize,
           offset: (input.cursor - 1) * input.pageSize,
           orderBy: { created: "desc" },
@@ -40,7 +40,7 @@ export const carRouter = {
             },
           },
         }),
-        db.query.car.findMany({
+        db.query.cars.findMany({
           columns: {},
           extras: { count: count() },
           where,
@@ -66,40 +66,40 @@ export const carRouter = {
         });
       }
 
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { id: input.carId },
         with: {
           user: true,
         },
       });
 
-      if (!c) {
+      if (!car) {
         throw new ORPCError("NOT_FOUND", {
           message: "Car not found",
         });
       }
 
-      if (c.default && c.user.isBeeping) {
+      if (car.default && car.user.isBeeping) {
         throw new ORPCError("BAD_REQUEST", {
           message: "Default car can not be deleted while beeping.",
         });
       }
 
-      if (c.user_id !== context.user.id && context.user.role !== "admin") {
+      if (car.user_id !== context.user.id && context.user.role !== "admin") {
         throw new ORPCError("UNAUTHORIZED", {
           message: "You don't have permission to delete another user's car.",
         });
       }
 
-      await db.delete(car).where(eq(car.id, c.id));
+      await db.delete(cars).where(eq(cars.id, car.id));
 
-      const key = c.photo.split(S3_BUCKET_URL)[1];
+      const key = car.photo.split(S3_BUCKET_URL)[1];
       await s3.delete(key);
 
-      if (input.reason && c.user.pushToken) {
+      if (input.reason && car.user.pushToken) {
         await sendNotification({
-          to: c.user.pushToken,
-          title: `${c.year} ${c.make} ${c.model} deleted`,
+          to: car.user.pushToken,
+          title: `${car.year} ${car.make} ${car.model} deleted`,
           body: input.reason,
         });
       }
@@ -129,7 +129,7 @@ export const carRouter = {
         acl: "public-read",
       });
 
-      const newCar = {
+      const car = {
         id: carId,
         ...input,
         year: input.year,
@@ -140,31 +140,41 @@ export const carRouter = {
         updated: new Date(),
       };
 
-      await db.insert(car).values(newCar);
-      await db
-        .update(car)
-        .set({ default: false })
-        .where(and(eq(car.user_id, context.user.id), ne(car.id, newCar.id)));
+      await db.insert(cars).values(car);
 
-      return newCar;
+      await db
+        .update(cars)
+        .set({ default: false })
+        .where(
+          and(
+            eq(cars.user_id, context.user.id),
+            ne(cars.id, car.id)
+          )
+        );
+
+      return car;
     }),
   updateCar: authedProcedure
     .input(updateCarInputSchema)
     .handler(async ({ input }) => {
-      const c = await db
-        .update(car)
+      const [car] = await db
+        .update(cars)
         .set(input.data)
-        .where(eq(car.id, input.carId))
+        .where(eq(cars.id, input.carId))
         .returning();
 
       if (input.data.default) {
         await db
-          .update(car)
+          .update(cars)
           .set({ default: false })
-          .where(and(ne(car.id, input.carId), eq(car.user_id, c[0].user_id)));
+          .where(
+            and(
+              ne(cars.id, input.carId),
+              eq(cars.user_id, car.user_id))
+          );
       }
 
-      return c[0];
+      return car;
     }),
   getColors: o.handler(() => {
     return CAR_COLOR_OPTIONS;
