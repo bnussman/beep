@@ -23,6 +23,7 @@ import {
   inProgressBeep,
   inProgressBeepNew,
 } from "./logic";
+import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
 
 export const beepRouter = {
   beeps: authedProcedure
@@ -43,11 +44,10 @@ export const beepRouter = {
       };
 
       const page = input.cursor ?? input.page ?? 1;
-      const offset = (page - 1) * input.pageSize;
 
       const [beeps, countData] = await Promise.all([
         db.query.beeps.findMany({
-          offset,
+          offset: getOffsetFromPage(page, input.pageSize),
           limit: input.pageSize,
           where,
           orderBy: { start: "desc" },
@@ -85,7 +85,7 @@ export const beepRouter = {
       return {
         beeps,
         page,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         pageSize: input.pageSize,
         results,
       };

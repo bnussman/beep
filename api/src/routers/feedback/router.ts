@@ -6,6 +6,7 @@ import { feedbacks } from "../../../drizzle/schema";
 import { condensedUserColumns } from "../users/logic";
 import { createFeedbackInputSchema, getFeedbacksInputSchema } from "./schemas";
 import { getFeedbacksCount } from "./logic";
+import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
 
 export const feedbackRouter = {
   feedback: adminProcedure
@@ -14,7 +15,7 @@ export const feedbackRouter = {
       const [feedbacks, results] = await Promise.all([
         db.query.feedbacks.findMany({
           orderBy: { created: "desc" },
-          offset: (input.page - 1) * input.pageSize,
+          offset: getOffsetFromPage(input.page, input.pageSize),
           limit: input.pageSize,
           with: {
             user: {
@@ -29,7 +30,7 @@ export const feedbackRouter = {
         feedback: feedbacks,
         page: input.page,
         pageSize: input.pageSize,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         results,
       };
     }),

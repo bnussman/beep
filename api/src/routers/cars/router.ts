@@ -21,6 +21,7 @@ import {
   getCarsInputSchema,
   updateCarInputSchema
 } from "./schemas";
+import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
 
 export const carRouter = {
   cars: authedProcedure
@@ -31,7 +32,7 @@ export const carRouter = {
       const [cars, countData] = await Promise.all([
         db.query.cars.findMany({
           limit: input.pageSize,
-          offset: (input.cursor - 1) * input.pageSize,
+          offset: getOffsetFromPage(input.cursor, input.pageSize),
           orderBy: { created: "desc" },
           where: input.userId ? { user_id: input.userId } : {},
           with: {
@@ -53,7 +54,7 @@ export const carRouter = {
         cars,
         page: input.cursor,
         pageSize: input.pageSize,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         results,
       };
     }),

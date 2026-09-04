@@ -6,6 +6,7 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { createReportInputSchema, listReportsInputSchema, updateReportInputSchema } from "./schemas";
+import { getOffsetFromPage } from "../../utils/pagination";
 
 export const reportRouter = {
   reports: adminProcedure
@@ -19,7 +20,7 @@ export const reportRouter = {
 
       const [reports, reportsCount] = await Promise.all([
         db.query.reports.findMany({
-          offset: (input.page - 1) * input.pageSize,
+          offset: getOffsetFromPage(input.page, input.pageSize),
           limit: input.pageSize,
           orderBy: { timestamp: "desc" },
           where,

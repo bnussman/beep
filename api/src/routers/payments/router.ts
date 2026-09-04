@@ -4,6 +4,7 @@ import { count } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { listPaymentsInputSchema } from "./schemas";
+import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
 
 export const paymentRouter = {
   payments: authedProcedure
@@ -26,7 +27,7 @@ export const paymentRouter = {
         db.query.payments.findMany({
           orderBy: { created: "desc" },
           limit: input.pageSize,
-          offset: (input.page - 1) * input.pageSize,
+          offset: getOffsetFromPage(input.page, input.pageSize),
           where,
           with: {
             user: {
@@ -45,7 +46,7 @@ export const paymentRouter = {
 
       return {
         payments,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         page: input.page,
         pageSize: input.pageSize,
         results,

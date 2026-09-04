@@ -9,6 +9,7 @@ import { getUsersAverageRating } from "./logic";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { createRatingInputSchema, deleteRatingInputSchema, listRatingsInputSchema } from "./schemas";
+import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
 
 export const ratingRouter = {
   ratings: authedProcedure
@@ -22,7 +23,7 @@ export const ratingRouter = {
 
       const [ratings, ratingsCount] = await Promise.all([
         db.query.ratings.findMany({
-          offset: (input.cursor - 1) * input.pageSize,
+          offset: getOffsetFromPage(input.cursor, input.pageSize),
           limit: input.pageSize,
           where,
           columns: {
@@ -52,7 +53,7 @@ export const ratingRouter = {
         ratings,
         pageSize: input.pageSize,
         page: input.cursor,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         results,
       };
     }),
