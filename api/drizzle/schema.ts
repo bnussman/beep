@@ -238,13 +238,13 @@ export const report = pgTable("report", {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
-  rating_id: varchar("rating_id", { length: 255 }).references(() => rating.id, {
+  rating_id: varchar("rating_id", { length: 255 }).references(() => ratings.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
 });
 
-export const rating = pgTable(
+export const ratings = pgTable(
   "rating",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),

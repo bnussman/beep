@@ -5,7 +5,7 @@ import {
   feedback,
   forgot_password,
   payment,
-  rating,
+  ratings,
   report,
   token,
   user,
@@ -23,7 +23,7 @@ export const relations = defineRelations(
     beep,
     report,
     verify_email,
-    rating,
+    ratings,
   },
   (r) => ({
     token: {
@@ -66,19 +66,19 @@ export const relations = defineRelations(
         to: r.report.reported_id,
         alias: "reported",
       }),
-      ratings: r.many.rating({
+      ratings: r.many.ratings({
         from: r.user.id,
-        to: r.rating.rater_id,
+        to: r.ratings.rater_id,
         alias: "rater",
       }),
-      reviews: r.many.rating({
+      reviews: r.many.ratings({
         from: r.user.id,
-        to: r.rating.rated_id,
+        to: r.ratings.rated_id,
         alias: "rated",
       }),
-      handledRatings: r.many.rating({
+      handledRatings: r.many.ratings({
         from: r.user.id,
-        to: r.rating.rated_id,
+        to: r.ratings.rated_id,
         alias: "handler",
       }),
     },
@@ -126,7 +126,7 @@ export const relations = defineRelations(
         alias: "rider",
         optional: false,
       }),
-      ratings: r.many.rating({ from: r.beep.id, to: r.rating.beep_id }),
+      ratings: r.many.ratings({ from: r.beep.id, to: r.ratings.beep_id }),
       reports: r.many.report({ from: r.beep.id, to: r.report.beep_id }),
     },
     report: {
@@ -148,22 +148,22 @@ export const relations = defineRelations(
         alias: "handler",
       }),
       beep: r.one.beep({ from: r.report.beep_id, to: r.beep.id }),
-      rating: r.one.rating({ from: r.report.rating_id, to: r.rating.id }),
+      rating: r.one.ratings({ from: r.report.rating_id, to: r.ratings.id }),
     },
-    rating: {
+    ratings: {
       rater: r.one.user({
-        from: r.rating.rater_id,
+        from: r.ratings.rater_id,
         to: r.user.id,
         alias: "rater",
         optional: false,
       }),
       rated: r.one.user({
-        from: r.rating.rated_id,
+        from: r.ratings.rated_id,
         to: r.user.id,
         alias: "rated",
         optional: false,
       }),
-      beep: r.one.beep({ from: r.rating.beep_id, to: r.beep.id }),
+      beep: r.one.beep({ from: r.ratings.beep_id, to: r.beep.id }),
     },
   }),
 );

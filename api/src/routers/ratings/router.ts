@@ -2,7 +2,7 @@ import { z } from "zod";
 import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { db } from "../../utils/db";
 import { count, eq } from "drizzle-orm";
-import { rating, user } from "../../../drizzle/schema";
+import { ratings, user } from "../../../drizzle/schema";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
 import { getUsersAverageRating } from "./logic";
@@ -21,7 +21,7 @@ export const ratingRouter = {
         : {};
 
       const [ratings, ratingsCount] = await Promise.all([
-        db.query.rating.findMany({
+        db.query.ratings.findMany({
           offset: (input.cursor - 1) * input.pageSize,
           limit: input.pageSize,
           where,
@@ -39,7 +39,7 @@ export const ratingRouter = {
             },
           },
         }),
-        db.query.rating.findMany({
+        db.query.ratings.findMany({
           columns: {},
           extras: { count: count() },
           where,
@@ -59,7 +59,7 @@ export const ratingRouter = {
   rating: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const r = await db.query.rating.findFirst({
+      const rating = await db.query.ratings.findFirst({
         where: { id: input },
         with: {
           rater: {
@@ -71,16 +71,16 @@ export const ratingRouter = {
         },
       });
 
-      if (!r) {
+      if (!rating) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return r;
+      return rating;
     }),
   deleteRating: authedProcedure
     .input(deleteRatingInputSchema)
     .handler(async ({ input, context }) => {
-      const r = await db.query.rating.findFirst({
+      const r = await db.query.ratings.findFirst({
         where: { id: input.ratingId },
       });
 
@@ -96,7 +96,7 @@ export const ratingRouter = {
         });
       }
 
-      await db.delete(rating).where(eq(rating.id, r.id));
+      await db.delete(ratings).where(eq(ratings.id, r.id));
 
       const updatedRating = await getUsersAverageRating(r.rated_id);
 
@@ -142,7 +142,7 @@ export const ratingRouter = {
       }
 
       const r = await db
-        .insert(rating)
+        .insert(ratings)
         .values({
           id: crypto.randomUUID(),
           timestamp: new Date(),
