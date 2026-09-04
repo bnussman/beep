@@ -2,7 +2,7 @@ import { z } from "zod";
 import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
-import { feedback } from "../../../drizzle/schema";
+import { feedbacks } from "../../../drizzle/schema";
 import { condensedUserColumns } from "../users/logic";
 import { createFeedbackInputSchema, getFeedbacksInputSchema } from "./schemas";
 import { getFeedbacksCount } from "./logic";
@@ -12,7 +12,7 @@ export const feedbackRouter = {
     .input(getFeedbacksInputSchema)
     .handler(async ({ input }) => {
       const [feedbacks, results] = await Promise.all([
-        db.query.feedback.findMany({
+        db.query.feedbacks.findMany({
           orderBy: { created: "desc" },
           offset: (input.page - 1) * input.pageSize,
           limit: input.pageSize,
@@ -36,8 +36,8 @@ export const feedbackRouter = {
   createFeedback: authedProcedure
     .input(createFeedbackInputSchema)
     .handler(async ({ context, input }) => {
-      const f = await db
-        .insert(feedback)
+      const [feedback] = await db
+        .insert(feedbacks)
         .values({
           id: crypto.randomUUID(),
           user_id: context.user.id,
@@ -46,11 +46,11 @@ export const feedbackRouter = {
         })
         .returning();
 
-      return f[0];
+      return feedback;
     }),
   deleteFeedback: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      await db.delete(feedback).where(eq(feedback.id, input));
+      await db.delete(feedbacks).where(eq(feedbacks.id, input));
     }),
 };

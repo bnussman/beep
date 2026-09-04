@@ -132,7 +132,7 @@ export const payments = pgTable(
   ],
 );
 
-export const forgot_password = pgTable("forgot_password", {
+export const forgotPasswords = pgTable("forgot_password", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
@@ -140,7 +140,7 @@ export const forgot_password = pgTable("forgot_password", {
   time: timestamp("time", { withTimezone: true, mode: "date" }).notNull(),
 });
 
-export const feedback = pgTable("feedback", {
+export const feedbacks = pgTable("feedback", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
@@ -269,7 +269,7 @@ export const ratings = pgTable(
   ],
 );
 
-export const verify_email = pgTable("verify_email", {
+export const emailVerifications = pgTable("verify_email", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()

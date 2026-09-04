@@ -1,6 +1,6 @@
 import { authedProcedure, o } from "../../utils/orpc";
 import { db } from "../../utils/db";
-import { forgot_password, tokens, users, verify_email } from "../../../drizzle/schema";
+import { emailVerifications, forgotPasswords, tokens, users } from "../../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { password as bunPassword } from "bun";
 import { s3 } from "../../utils/s3";
@@ -151,7 +151,7 @@ export const authRouter = {
       await db.insert(tokens).values(tokensData);
 
       const verifyEmailEntry = await db
-        .insert(verify_email)
+        .insert(emailVerifications)
         .values({
           email: input.email,
           id: crypto.randomUUID(),
@@ -191,7 +191,7 @@ export const authRouter = {
         return input.email;
       }
 
-      const existingForgotPassword = await db.query.forgot_password.findFirst({
+      const existingForgotPassword = await db.query.forgotPasswords.findFirst({
         where: { user_id: user.id },
       });
 
@@ -200,8 +200,8 @@ export const authRouter = {
           // The user's existing forgot password request has expired.
           // We will delete it, and proceed with creating a new one.
           await db
-            .delete(forgot_password)
-            .where(eq(forgot_password.id, existingForgotPassword.id));
+            .delete(forgotPasswords)
+            .where(eq(forgotPasswords.id, existingForgotPassword.id));
         } else {
           // The user has an existing forgot password link that is still valid.
           // Keep the same entry in the database, just resend the email.
@@ -221,7 +221,7 @@ export const authRouter = {
         user_id: user.id,
       };
 
-      await db.insert(forgot_password).values(forgotPasswordValues);
+      await db.insert(forgotPasswords).values(forgotPasswordValues);
 
       await sendResetPasswordEmail({
         email: user.email,
@@ -234,7 +234,7 @@ export const authRouter = {
   resetPassword: o
     .input(resetPasswordInput)
     .handler(async ({ input }) => {
-      const forgotPassword = await db.query.forgot_password.findFirst({
+      const forgotPassword = await db.query.forgotPasswords.findFirst({
         where: { id: input.id },
       });
 
@@ -246,8 +246,8 @@ export const authRouter = {
 
       if (isExpired(forgotPassword.time)) {
         await db
-          .delete(forgot_password)
-          .where(eq(forgot_password.id, forgotPassword.id));
+          .delete(forgotPasswords)
+          .where(eq(forgotPasswords.id, forgotPassword.id));
 
         throw new ORPCError("NOT_FOUND", {
           message: "This password reset request has expired.",
@@ -263,8 +263,8 @@ export const authRouter = {
         .where(eq(users.id, forgotPassword.user_id));
 
       await db
-        .delete(forgot_password)
-        .where(eq(forgot_password.id, forgotPassword.id));
+        .delete(forgotPasswords)
+        .where(eq(forgotPasswords.id, forgotPassword.id));
 
       // Remove all of the user's auth tokens because they have a new password.
       await db.delete(tokens).where(eq(tokens.user_id, forgotPassword.user_id));
@@ -274,7 +274,7 @@ export const authRouter = {
   verifyAccount: o
     .input(verifyAccountInput)
     .handler(async ({ input }) => {
-      const verifyAccountEntry = await db.query.verify_email.findFirst({
+      const verifyAccountEntry = await db.query.emailVerifications.findFirst({
         where: { id: input.id },
         with: {
           user: true,
@@ -289,8 +289,8 @@ export const authRouter = {
 
       if (isExpired(verifyAccountEntry.time)) {
         await db
-          .delete(verify_email)
-          .where(eq(verify_email.id, verifyAccountEntry.id));
+          .delete(emailVerifications)
+          .where(eq(emailVerifications.id, verifyAccountEntry.id));
 
         throw new ORPCError("NOT_FOUND", {
           message:
@@ -300,8 +300,8 @@ export const authRouter = {
 
       if (verifyAccountEntry.email !== verifyAccountEntry.user.email) {
         await db
-          .delete(verify_email)
-          .where(eq(verify_email.id, verifyAccountEntry.id));
+          .delete(emailVerifications)
+          .where(eq(emailVerifications.id, verifyAccountEntry.id));
 
         throw new ORPCError("BAD_REQUEST", {
           message:
@@ -321,15 +321,15 @@ export const authRouter = {
         .returning();
 
       await db
-        .delete(verify_email)
-        .where(eq(verify_email.id, verifyAccountEntry.id));
+        .delete(emailVerifications)
+        .where(eq(emailVerifications.id, verifyAccountEntry.id));
 
       pubSub.publish(`user-${user.id}`, { user });
 
       return user.email;
     }),
   resendVerification: authedProcedure.handler(async ({ context }) => {
-    await db.delete(verify_email).where(eq(verify_email.user_id, context.user.id));
+    await db.delete(emailVerifications).where(eq(emailVerifications.user_id, context.user.id));
 
     const verifyEmailEntry = {
       id: crypto.randomUUID(),
@@ -338,7 +338,7 @@ export const authRouter = {
       time: new Date(),
     };
 
-    await db.insert(verify_email).values(verifyEmailEntry);
+    await db.insert(emailVerifications).values(verifyEmailEntry);
 
     await sendSignupVerificationEmail({
       email: verifyEmailEntry.email,

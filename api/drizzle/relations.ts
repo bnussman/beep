@@ -2,14 +2,14 @@ import { defineRelations } from "drizzle-orm";
 import {
   beeps,
   cars,
-  feedback,
-  forgot_password,
+  feedbacks,
+  forgotPasswords,
   payments,
   ratings,
   reports,
   tokens,
   users,
-  verify_email,
+  emailVerifications,
 } from "./schema";
 
 export const relations = defineRelations(
@@ -17,12 +17,12 @@ export const relations = defineRelations(
     users,
     tokens,
     payments,
-    forgot_password,
-    feedback,
+    forgotPasswords,
+    feedbacks,
     cars,
     beeps,
     reports,
-    verify_email,
+    emailVerifications,
     ratings,
   },
   (r) => ({
@@ -36,15 +36,15 @@ export const relations = defineRelations(
     users: {
       tokens: r.many.tokens({ from: r.users.id, to: r.tokens.user_id }),
       payments: r.many.payments({ from: r.users.id, to: r.payments.user_id }),
-      forgot_passwords: r.many.forgot_password({
+      forgot_passwords: r.many.forgotPasswords({
         from: r.users.id,
-        to: r.forgot_password.user_id,
+        to: r.forgotPasswords.user_id,
       }),
-      verify_emails: r.many.verify_email({
+      verify_emails: r.many.emailVerifications({
         from: r.users.id,
-        to: r.verify_email.user_id,
+        to: r.emailVerifications.user_id,
       }),
-      feedbacks: r.many.feedback({ from: r.users.id, to: r.feedback.user_id }),
+      feedbacks: r.many.feedbacks({ from: r.users.id, to: r.feedbacks.user_id }),
       cars: r.many.cars({ from: r.users.id, to: r.cars.user_id }),
       beeps: r.many.beeps({
         from: r.users.id,
@@ -89,23 +89,23 @@ export const relations = defineRelations(
         optional: false,
       }),
     },
-    forgot_password: {
+    forgotPasswords: {
       user: r.one.users({
-        from: r.forgot_password.user_id,
+        from: r.forgotPasswords.user_id,
         to: r.users.id,
         optional: false,
       }),
     },
-    verify_email: {
+    emailVerifications: {
       user: r.one.users({
-        from: r.verify_email.user_id,
+        from: r.emailVerifications.user_id,
         to: r.users.id,
         optional: false,
       }),
     },
-    feedback: {
+    feedbacks: {
       user: r.one.users({
-        from: r.feedback.user_id,
+        from: r.feedbacks.user_id,
         to: r.users.id,
         optional: false,
       }),

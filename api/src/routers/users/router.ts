@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { beeps, users, verify_email } from "../../../drizzle/schema";
+import { beeps, emailVerifications, users } from "../../../drizzle/schema";
 import { db, writeDB } from "../../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
@@ -95,8 +95,8 @@ export const userRouter = {
         values.isEmailVerified = false;
 
         await db
-          .delete(verify_email)
-          .where(eq(verify_email.user_id, context.user.id));
+          .delete(emailVerifications)
+          .where(eq(emailVerifications.user_id, context.user.id));
 
         const verifyEmailEntry = {
           id: crypto.randomUUID(),
@@ -105,7 +105,7 @@ export const userRouter = {
           time: new Date(),
         };
 
-        await db.insert(verify_email).values(verifyEmailEntry);
+        await db.insert(emailVerifications).values(verifyEmailEntry);
 
         const mailOptions: SendMailOptions = {
           from: "Beep App <banks@ridebeep.app>",
