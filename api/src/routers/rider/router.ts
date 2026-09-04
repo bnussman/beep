@@ -5,7 +5,7 @@ import { sha256 } from "../../utils/hash";
 import { condensedUserColumns } from "../users/logic";
 import { db } from "../../utils/db";
 import { getDistance } from "../location/logic";
-import { beep, payment, users } from "../../../drizzle/schema";
+import { beep, payments, users } from "../../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
@@ -62,7 +62,7 @@ export const riderRouter = {
             sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input?.latitude ?? 0},${input?.longitude ?? 0}))`.as(
               "distance",
             ),
-          isPremium: sql<boolean>`${payment.id} IS NOT NULL`,
+          isPremium: sql<boolean>`${payments.id} IS NOT NULL`,
         })
         .from(users)
         .where(({ distance }) =>
@@ -75,14 +75,14 @@ export const riderRouter = {
         )
         .orderBy(({ distance, isPremium }) => [desc(isPremium), asc(distance)])
         .leftJoin(
-          payment,
+          payments,
           and(
-            eq(payment.user_id, users.id),
-            gte(payment.expires, new Date()),
+            eq(payments.user_id, users.id),
+            gte(payments.expires, new Date()),
             or(
-              eq(payment.productId, "top_of_beeper_list_1_hour"),
-              eq(payment.productId, "top_of_beeper_list_2_hours"),
-              eq(payment.productId, "top_of_beeper_list_3_hours"),
+              eq(payments.productId, "top_of_beeper_list_1_hour"),
+              eq(payments.productId, "top_of_beeper_list_2_hours"),
+              eq(payments.productId, "top_of_beeper_list_3_hours"),
             ),
           ),
         );

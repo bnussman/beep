@@ -4,7 +4,7 @@ import {
   car,
   feedback,
   forgot_password,
-  payment,
+  payments,
   ratings,
   report,
   token,
@@ -16,7 +16,7 @@ export const relations = defineRelations(
   {
     users,
     token,
-    payment,
+    payments,
     forgot_password,
     feedback,
     car,
@@ -35,7 +35,7 @@ export const relations = defineRelations(
     },
     users: {
       tokens: r.many.token({ from: r.users.id, to: r.token.user_id }),
-      payments: r.many.payment({ from: r.users.id, to: r.payment.user_id }),
+      payments: r.many.payments({ from: r.users.id, to: r.payments.user_id }),
       forgot_passwords: r.many.forgot_password({
         from: r.users.id,
         to: r.forgot_password.user_id,
@@ -82,9 +82,9 @@ export const relations = defineRelations(
         alias: "handler",
       }),
     },
-    payment: {
+    payments: {
       user: r.one.users({
-        from: r.payment.user_id,
+        from: r.payments.user_id,
         to: r.users.id,
         optional: false,
       }),

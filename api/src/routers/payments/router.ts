@@ -23,7 +23,7 @@ export const paymentRouter = {
       };
 
       const [payments, paymentsCount] = await Promise.all([
-        db.query.payment.findMany({
+        db.query.payments.findMany({
           orderBy: { created: "desc" },
           limit: input.pageSize,
           offset: (input.page - 1) * input.pageSize,
@@ -34,7 +34,7 @@ export const paymentRouter = {
             },
           },
         }),
-        db.query.payment.findMany({
+        db.query.payments.findMany({
           columns: {},
           extras: { count: count() },
           where,

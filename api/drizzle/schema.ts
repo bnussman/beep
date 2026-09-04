@@ -113,7 +113,7 @@ export const productEnum = pgEnum("payment_product", [
 
 export const storeEnum = pgEnum("payment_store", ["play_store", "app_store"]);
 
-export const payment = pgTable(
+export const payments = pgTable(
   "payment",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
