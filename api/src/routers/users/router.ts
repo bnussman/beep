@@ -257,7 +257,6 @@ export const userRouter = {
   updatePicture: authedProcedure
     .input(z.instanceof(File))
     .handler(async ({ context, input }) => {
-
       const extention = input.name.substring(
         input.name.lastIndexOf("."),
         input.name.length,
@@ -281,13 +280,16 @@ export const userRouter = {
         }
       }
 
-      const u = await db
-        .update(users)
-        .set({ photo: S3_BUCKET_URL + objectKey })
-        .where(eq(users.id, context.user.id))
-        .returning();
+      const newPhotoUrl = S3_BUCKET_URL + objectKey;
 
-      pubSub.publish(`user-${context.user.id}`, { user: u[0] });
+      await db
+        .update(users)
+        .set({ photo: newPhotoUrl })
+        .where(eq(users.id, context.user.id));
+
+      context.user.photo = newPhotoUrl;
+
+      pubSub.publish(`user-${context.user.id}`, { user: context.user });
 
       return context.user;
     }),

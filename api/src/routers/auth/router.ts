@@ -150,7 +150,7 @@ export const authRouter = {
 
       await db.insert(tokens).values(tokensData);
 
-      const verifyEmailEntry = await db
+      const [verifyEmailEntry] = await db
         .insert(emailVerifications)
         .values({
           email: input.email,
@@ -162,7 +162,7 @@ export const authRouter = {
 
       await sendSignupVerificationEmail({
         email: input.email,
-        token: verifyEmailEntry[0].id,
+        token: verifyEmailEntry.id,
         username: input.username,
       });
 
