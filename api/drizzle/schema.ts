@@ -1,4 +1,7 @@
+import type { CustomTypeValues } from "drizzle-orm/pg-core";
+import type { Location } from "../src/routers/users/types";
 import { sql } from "drizzle-orm";
+import { Geometry } from "wkx";
 import {
   pgTable,
   integer,
@@ -11,9 +14,6 @@ import {
   pgEnum,
   customType,
 } from "drizzle-orm/pg-core";
-import { Geometry } from "wkx";
-import type { CustomTypeValues } from "drizzle-orm/pg-core";
-import type { Location } from "../src/routers/users/types";
 
 export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
   return customType<{
@@ -177,7 +177,7 @@ export const beepStatuses = [
 
 export const beepStatusEnum = pgEnum("beep_status", beepStatuses);
 
-export const beep = pgTable(
+export const beeps = pgTable(
   "beep",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
@@ -234,7 +234,7 @@ export const reports = pgTable("report", {
     mode: "date",
   }).notNull(),
   handled: boolean("handled").default(false).notNull(),
-  beep_id: varchar("beep_id", { length: 255 }).references(() => beep.id, {
+  beep_id: varchar("beep_id", { length: 255 }).references(() => beeps.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
@@ -262,7 +262,7 @@ export const ratings = pgTable(
     }).notNull(),
     beep_id: varchar("beep_id", { length: 255 })
       .notNull()
-      .references(() => beep.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => beeps.id, { onUpdate: "cascade", onDelete: "cascade" }),
   },
   (table) => [
     unique("rating_beep_id_rater_id_unique").on(table.rater_id, table.beep_id),

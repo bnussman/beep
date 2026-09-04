@@ -109,7 +109,7 @@ export const mustHaveBeenInAcceptedBeep = o
       return opts.next(opts);
     }
 
-    const acceptedOrCompleteBeep = await db.query.beep.findFirst({
+    const acceptedOrCompleteBeep = await db.query.beeps.findFirst({
       where: {
         AND: [
           { OR: [isAcceptedBeepNew, { status: "complete" }] },
@@ -150,7 +150,7 @@ export const mustBeInAcceptedBeep = o
       return opts.next(opts);
     }
 
-    const acceptedBeep = await db.query.beep.findFirst({
+    const acceptedBeep = await db.query.beeps.findFirst({
       where: {
         AND: [
           isAcceptedBeepNew,

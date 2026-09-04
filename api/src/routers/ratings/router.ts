@@ -80,30 +80,30 @@ export const ratingRouter = {
   deleteRating: authedProcedure
     .input(deleteRatingInputSchema)
     .handler(async ({ input, context }) => {
-      const r = await db.query.ratings.findFirst({
+      const rating = await db.query.ratings.findFirst({
         where: { id: input.ratingId },
       });
 
-      if (!r) {
+      if (!rating) {
         throw new ORPCError("NOT_FOUND", {
           message: "Rating not found",
         });
       }
 
-      if (context.user.role === "user" && r.rater_id !== context.user.id) {
+      if (context.user.role === "user" && rating.rater_id !== context.user.id) {
         throw new ORPCError("UNAUTHORIZED", {
           message: "You can't delete a rating that you didn't create.",
         });
       }
 
-      await db.delete(ratings).where(eq(ratings.id, r.id));
+      await db.delete(ratings).where(eq(ratings.id, rating.id));
 
-      const updatedRating = await getUsersAverageRating(r.rated_id);
+      const updatedRating = await getUsersAverageRating(rating.rated_id);
 
       await db
         .update(users)
         .set({ rating: updatedRating })
-        .where(eq(users.id, r.rated_id));
+        .where(eq(users.id, rating.rated_id));
     }),
   createRating: authedProcedure
     .input(createRatingInputSchema)
@@ -118,26 +118,26 @@ export const ratingRouter = {
         });
       }
 
-      const b = await db.query.beep.findFirst({
+      const beep = await db.query.beeps.findFirst({
         where: { id: input.beepId },
       });
 
-      if (!b) {
+      if (!beep) {
         throw new ORPCError("NOT_FOUND", {
           message: "Beep not found",
         });
       }
 
-      if (![b.rider_id, b.beeper_id].includes(context.user.id)) {
+      if (![beep.rider_id, beep.beeper_id].includes(context.user.id)) {
         throw new ORPCError("BAD_REQUEST", {
           message:
             "You must be the rider or beeper of this beep to leave a rating about it.",
         });
       }
 
-      if (b.status !== "complete") {
+      if (beep.status !== "complete") {
         throw new ORPCError("BAD_REQUEST", {
-          message: `You can only leave a rating once the beep is complete. That this beep has a status of ${b.status}`,
+          message: `You can only leave a rating once the beep is complete. That this beep has a status of ${beep.status}`,
         });
       }
 

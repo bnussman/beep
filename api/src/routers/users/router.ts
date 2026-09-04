@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { beep, users, verify_email } from "../../../drizzle/schema";
+import { beeps, users, verify_email } from "../../../drizzle/schema";
 import { db, writeDB } from "../../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
@@ -77,8 +77,8 @@ export const userRouter = {
 
       if (values.isBeeping === false) {
         const countOfInProgressBeeps = await db.$count(
-          beep,
-          and(eq(beep.beeper_id, context.user.id), inProgressBeep),
+          beeps,
+          and(eq(beeps.beeper_id, context.user.id), inProgressBeep),
         );
 
         if (countOfInProgressBeeps > 0) {
@@ -425,10 +425,10 @@ export const userRouter = {
             last: users.last,
             photo: users.photo,
           },
-          beeps: count(beep.beeper_id).as("beeps"),
+          beeps: count(beeps.beeper_id).as("beeps"),
         })
         .from(users)
-        .leftJoin(beep, eq(users.id, beep.beeper_id))
+        .leftJoin(beeps, eq(users.id, beeps.beeper_id))
         .groupBy(users.id)
         .orderBy(sql`beeps desc`)
         .offset((input.page - 1) * input.pageSize)
@@ -456,10 +456,10 @@ export const userRouter = {
             last: users.last,
             photo: users.photo,
           },
-          rides: count(beep.rider_id).as("rides"),
+          rides: count(beeps.rider_id).as("rides"),
         })
         .from(users)
-        .leftJoin(beep, eq(users.id, beep.rider_id))
+        .leftJoin(beeps, eq(users.id, beeps.rider_id))
         .groupBy(users.id)
         .orderBy(sql`rides desc`)
         .offset((input.page - 1) * input.pageSize)

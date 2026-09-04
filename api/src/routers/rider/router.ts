@@ -5,7 +5,7 @@ import { sha256 } from "../../utils/hash";
 import { condensedUserColumns } from "../users/logic";
 import { db } from "../../utils/db";
 import { getDistance } from "../location/logic";
-import { beep, payments, users } from "../../../drizzle/schema";
+import { beeps, payments, users } from "../../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
@@ -149,7 +149,7 @@ export const riderRouter = {
         pick_up_eta_updated_at: null
       } as const;
 
-      const currentRide = await db.query.beep.findFirst({
+      const currentRide = await db.query.beeps.findFirst({
         where: { AND: [{ rider_id: context.user.id }, inProgressBeepNew] },
       });
 
@@ -160,7 +160,7 @@ export const riderRouter = {
         });
       }
 
-      await db.insert(beep).values(newBeep);
+      await db.insert(beeps).values(newBeep);
 
       queue.push({
         ...newBeep,
@@ -379,9 +379,9 @@ export const riderRouter = {
       }
 
       await db
-        .update(beep)
+        .update(beeps)
         .set({ status: "canceled", end: new Date() })
-        .where(eq(beep.id, entry.id));
+        .where(eq(beeps.id, entry.id));
 
       queue = queue.filter((beep) => beep.id !== entry.id);
 
@@ -414,7 +414,7 @@ export const riderRouter = {
       return true;
     }),
   getLastBeepToRate: authedProcedure.handler(async ({ context }) => {
-    const mostRecentCompletedBeep = await db.query.beep.findFirst({
+    const mostRecentCompletedBeep = await db.query.beeps.findFirst({
       orderBy: { start: "desc" },
       where: {
         OR: [{ rider_id: context.user.id }, { beeper_id: context.user.id }],
@@ -448,15 +448,15 @@ export const riderRouter = {
   setBeepLiveActivityToken: authedProcedure
     .input(setBeepLiveActivityTokenInputSchema)
     .handler(async ({ context, input }) => {
-      const b = await db.query.beep.findFirst({
+      const beep = await db.query.beeps.findFirst({
         where: { id: input.beepId },
       });
 
-      if (!b) {
+      if (!beep) {
         throw new ORPCError("NOT_FOUND", { message: "Beep not found." });
       }
 
-      if (context.user.id !== b.rider_id) {
+      if (context.user.id !== beep.rider_id) {
         throw new ORPCError("FORBIDDEN", {
           message:
             "You must be the rider of the beep to set the rider live activity token",
@@ -466,27 +466,27 @@ export const riderRouter = {
       console.log("Got new push token for activity", input.activityId);
 
       await db
-        .update(beep)
+        .update(beeps)
         .set({
           rider_live_activity_token: input.token,
           rider_live_activity_id: input.activityId,
         })
-        .where(eq(beep.id, b.id));
+        .where(eq(beeps.id, beep.id));
 
       return {};
     }),
   updateLiveActivityToken: authedProcedure
     .input(updateLiveActivityTokenInputSchema)
     .handler(async ({ input, context }) => {
-      const b = await db.query.beep.findFirst({
+      const beep = await db.query.beeps.findFirst({
         where: { rider_live_activity_id: input.activityId },
       });
 
-      if (!b) {
+      if (!beep) {
         throw new ORPCError("NOT_FOUND", { message: "Beep not found." });
       }
 
-      if (b.rider_id !== context.user.id) {
+      if (beep.rider_id !== context.user.id) {
         throw new ORPCError("FORBIDDEN", {
           message:
             "You must be the rider of the beep to set the rider live activity token",
@@ -496,9 +496,9 @@ export const riderRouter = {
       console.log("Got updated push token for activity", input.activityId);
 
       await db
-        .update(beep)
+        .update(beeps)
         .set({ rider_live_activity_token: input.token })
-        .where(eq(beep.id, b.id));
+        .where(eq(beeps.id, beep.id));
 
       return {};
     }),

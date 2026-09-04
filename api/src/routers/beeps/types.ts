@@ -1,3 +1,3 @@
-import { beep } from "../../../drizzle/schema";
+import { beeps } from "../../../drizzle/schema";
 
-export type Beep = typeof beep.$inferSelect;
+export type Beep = typeof beeps.$inferSelect;
