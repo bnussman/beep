@@ -4,7 +4,7 @@ import { isAcceptedBeepNew } from "../routers/beeps/logic";
 import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 import { os, ORPCError, onError, StandardLazyRequest } from "@orpc/server";
-import { token, user } from "../../drizzle/schema";
+import { token, users } from "../../drizzle/schema";
 import { DrizzleQueryError, eq } from "drizzle-orm";
 import { StandardHandlerInterceptor } from "@orpc/server/standard";
 
@@ -16,7 +16,7 @@ async function createContext(bearerToken: string | undefined) {
   const result = await db
     .select()
     .from(token)
-    .leftJoin(user, eq(token.user_id, user.id))
+    .leftJoin(users, eq(token.user_id, users.id))
     .where(eq(token.id, bearerToken));
 
   const session = result[0];

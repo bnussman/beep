@@ -5,7 +5,7 @@ import { sha256 } from "../../utils/hash";
 import { condensedUserColumns } from "../users/logic";
 import { db } from "../../utils/db";
 import { getDistance } from "../location/logic";
-import { beep, payment, user } from "../../../drizzle/schema";
+import { beep, payment, users } from "../../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
@@ -47,27 +47,27 @@ export const riderRouter = {
 
       const beepers = await db
         .selectDistinct({
-          first: user.first,
-          last: user.last,
-          username: user.username,
-          id: user.id,
-          photo: user.photo,
-          rating: user.rating,
-          singlesRate: user.singlesRate,
-          groupRate: user.groupRate,
-          queueSize: user.queueSize,
-          capacity: user.capacity,
-          ...(context.user.role === "admin" && { location: user.location }),
+          first: users.first,
+          last: users.last,
+          username: users.username,
+          id: users.id,
+          photo: users.photo,
+          rating: users.rating,
+          singlesRate: users.singlesRate,
+          groupRate: users.groupRate,
+          queueSize: users.queueSize,
+          capacity: users.capacity,
+          ...(context.user.role === "admin" && { location: users.location }),
           distance:
             sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input?.latitude ?? 0},${input?.longitude ?? 0}))`.as(
               "distance",
             ),
           isPremium: sql<boolean>`${payment.id} IS NOT NULL`,
         })
-        .from(user)
+        .from(users)
         .where(({ distance }) =>
           and(
-            eq(user.isBeeping, true),
+            eq(users.isBeeping, true),
             input
               ? lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34)
               : undefined,
@@ -77,7 +77,7 @@ export const riderRouter = {
         .leftJoin(
           payment,
           and(
-            eq(payment.user_id, user.id),
+            eq(payment.user_id, users.id),
             gte(payment.expires, new Date()),
             or(
               eq(payment.productId, "top_of_beeper_list_1_hour"),
@@ -99,7 +99,7 @@ export const riderRouter = {
         longitude: input.longitude,
       };
 
-      await db.update(user).set({ location }).where(eq(user.id, context.user.id));
+      await db.update(users).set({ location }).where(eq(users.id, context.user.id));
 
       pubSub.publish(`user-${context.user.id}`, { user: { ...context.user, location } });
 
@@ -109,7 +109,7 @@ export const riderRouter = {
         });
       }
 
-      const beeper = await db.query.user.findFirst({
+      const beeper = await db.query.users.findFirst({
         where: { id: input.beeperId },
       });
 
@@ -273,7 +273,7 @@ export const riderRouter = {
     .input(z.uuid())
     .use(mustBeInAcceptedBeep)
     .handler(async function* ({ input, signal }) {
-      const beeper = await db.query.user.findFirst({
+      const beeper = await db.query.users.findFirst({
         where: { id: input },
         columns: { location: true },
       });
@@ -297,20 +297,20 @@ export const riderRouter = {
   beepersNearMe: authedProcedure
     .input(locationSchema)
     .handler(async ({ input }) => {
-      const users = await db
+      const usersData = await db
         .select({
-          id: user.id,
-          location: user.location,
+          id: users.id,
+          location: users.location,
         })
-        .from(user)
+        .from(users)
         .where(
           and(
-            eq(user.isBeeping, true),
+            eq(users.isBeeping, true),
             sql`ST_DWithin(location::geography, ST_MakePoint(${input.latitude},${input.longitude})::geography, ${DEFAULT_LOCATION_RADIUS * 1609.34})`,
           ),
         );
 
-      return users.map((user) => ({
+      return usersData.map((user) => ({
         id: sha256(user.id),
         location: user.location,
       }));
@@ -337,7 +337,7 @@ export const riderRouter = {
   leaveQueue: authedProcedure
     .input(leaveQueueInputSchema)
     .handler(async ({ context, input }) => {
-      const beeper = await db.query.user.findFirst({
+      const beeper = await db.query.users.findFirst({
         where: { id: input.beeperId },
       });
 
@@ -407,9 +407,9 @@ export const riderRouter = {
       }
 
       await db
-        .update(user)
+        .update(users)
         .set({ queueSize: getQueueSize(queue) })
-        .where(eq(user.id, beeper.id));
+        .where(eq(users.id, beeper.id));
 
       return true;
     }),

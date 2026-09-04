@@ -3,7 +3,7 @@ import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
 import { authedProcedure } from "../../utils/orpc";
 import { pubSub } from "../../utils/pubsub";
-import { beep, user } from "../../../drizzle/schema";
+import { beep, users } from "../../../drizzle/schema";
 import { queueResponseSchema } from "./schemas";
 import { updateBeepAsBeeperInputSchema } from "../beeps/schemas";
 import { updateLiveActivity } from "../../utils/live-activities";
@@ -117,9 +117,9 @@ export const beeperRouter = {
 
       if (isQueueSizeChanging) {
         await db
-          .update(user)
+          .update(users)
           .set({ queueSize: getQueueSize(queue) })
-          .where(eq(user.id, context.user.id));
+          .where(eq(users.id, context.user.id));
       }
 
       for (const beep of queue) {

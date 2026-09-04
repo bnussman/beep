@@ -3,7 +3,7 @@ import { db } from "../../utils/db";
 import { ORPCError } from "@orpc/server";
 import { pubSub } from "../../utils/pubsub";
 import { count, eq, and } from "drizzle-orm";
-import { beep, user } from "../../../drizzle/schema";
+import { beep, users } from "../../../drizzle/schema";
 import { updateLiveActivity } from "../../utils/live-activities";
 import { clearQueueInputSchema, editBeepInputSchema, getBeepsInputSchema } from "./schemas";
 import { condensedUserColumns } from "../users/logic";
@@ -152,7 +152,7 @@ export const beepRouter = {
 
       await db.update(beep).set(input.data).where(eq(beep.id, input.beepId));
 
-      const beeper = await db.query.user.findFirst({
+      const beeper = await db.query.users.findFirst({
         where: { id: b.beeper_id },
       });
 
@@ -190,7 +190,7 @@ export const beepRouter = {
   clearQueue: adminProcedure
     .input(clearQueueInputSchema)
     .handler(async ({ input }) => {
-      const beeper = await db.query.user.findFirst({
+      const beeper = await db.query.users.findFirst({
         where: { id: input.userId },
         with: {
           beeps: {
@@ -250,16 +250,16 @@ export const beepRouter = {
 
       sendNotifications(notifications);
 
-      const u = await db
-        .update(user)
+      const [user] = await db
+        .update(users)
         .set({
           ...(input.stopBeeping ? { isBeeping: false } : {}),
           queueSize: 0,
         })
-        .where(eq(user.id, beeper.id))
+        .where(eq(users.id, beeper.id))
         .returning();
 
-      pubSub.publish(`user-${beeper.id}`, { user: u[0] });
+      pubSub.publish(`user-${beeper.id}`, { user });
       pubSub.publish(`queue-${beeper.id}`, { queue: [] });
     }),
 };

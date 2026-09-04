@@ -2,7 +2,7 @@ import { z } from "zod";
 import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { db } from "../../utils/db";
 import { count, eq } from "drizzle-orm";
-import { ratings, user } from "../../../drizzle/schema";
+import { ratings, users } from "../../../drizzle/schema";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
 import { getUsersAverageRating } from "./logic";
@@ -101,18 +101,18 @@ export const ratingRouter = {
       const updatedRating = await getUsersAverageRating(r.rated_id);
 
       await db
-        .update(user)
+        .update(users)
         .set({ rating: updatedRating })
-        .where(eq(user.id, r.rated_id));
+        .where(eq(users.id, r.rated_id));
     }),
   createRating: authedProcedure
     .input(createRatingInputSchema)
     .handler(async ({ context, input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input.userId },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND", {
           message: "User not found",
         });
@@ -149,24 +149,27 @@ export const ratingRouter = {
           stars: input.stars,
           message: input.message,
           beep_id: input.beepId,
-          rated_id: input.userId,
+          rated_id: user.id,
           rater_id: context.user.id,
         })
         .returning();
 
-      const avgRating = await getUsersAverageRating(u.id);
+      const avgRating = await getUsersAverageRating(user.id);
 
-      await db.update(user).set({ rating: avgRating }).where(eq(user.id, u.id));
+      await db
+        .update(users)
+        .set({ rating: avgRating })
+        .where(eq(users.id, user.id));
 
-      const updatedUser = { ...u, rating: avgRating };
+      user.rating = avgRating;
 
-      pubSub.publish(`user-${u.id}`, { user: updatedUser });
+      pubSub.publish(`user-${user.id}`, { user });
 
-      if (u.pushToken) {
+      if (user.pushToken) {
         sendNotification({
-          to: u.pushToken,
+          to: user.pushToken,
           title: `You got rated ⭐️`,
-          body: `${context.user.first} ${context.user.last} rated you ${input.stars} stars!`,
+          body: `${context.user.first} ${context.user.last} rated you ${input.stars} stars.`,
         });
       }
 

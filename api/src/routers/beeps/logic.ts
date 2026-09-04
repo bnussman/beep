@@ -296,7 +296,7 @@ export async function sendBeepUpdateNotificationToRider(
 }
 
 async function getUsersPushToken(userId: string) {
-  const rider = await db.query.user.findFirst({
+  const rider = await db.query.users.findFirst({
     columns: {
       pushToken: true,
     },

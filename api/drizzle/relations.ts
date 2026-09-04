@@ -8,13 +8,13 @@ import {
   ratings,
   report,
   token,
-  user,
+  users,
   verify_email,
 } from "./schema";
 
 export const relations = defineRelations(
   {
-    user,
+    users,
     token,
     payment,
     forgot_password,
@@ -27,102 +27,102 @@ export const relations = defineRelations(
   },
   (r) => ({
     token: {
-      user: r.one.user({
+      user: r.one.users({
         from: r.token.user_id,
-        to: r.user.id,
+        to: r.users.id,
         optional: false,
       }),
     },
-    user: {
-      tokens: r.many.token({ from: r.user.id, to: r.token.user_id }),
-      payments: r.many.payment({ from: r.user.id, to: r.payment.user_id }),
+    users: {
+      tokens: r.many.token({ from: r.users.id, to: r.token.user_id }),
+      payments: r.many.payment({ from: r.users.id, to: r.payment.user_id }),
       forgot_passwords: r.many.forgot_password({
-        from: r.user.id,
+        from: r.users.id,
         to: r.forgot_password.user_id,
       }),
       verify_emails: r.many.verify_email({
-        from: r.user.id,
+        from: r.users.id,
         to: r.verify_email.user_id,
       }),
-      feedbacks: r.many.feedback({ from: r.user.id, to: r.feedback.user_id }),
-      cars: r.many.car({ from: r.user.id, to: r.car.user_id }),
+      feedbacks: r.many.feedback({ from: r.users.id, to: r.feedback.user_id }),
+      cars: r.many.car({ from: r.users.id, to: r.car.user_id }),
       beeps: r.many.beep({
-        from: r.user.id,
+        from: r.users.id,
         to: r.beep.beeper_id,
         alias: "beeper",
       }),
       rides: r.many.beep({
-        from: r.user.id,
+        from: r.users.id,
         to: r.beep.rider_id,
         alias: "rider",
       }),
       reports: r.many.report({
-        from: r.user.id,
+        from: r.users.id,
         to: r.report.reporter_id,
         alias: "reporter",
       }),
       complaints: r.many.report({
-        from: r.user.id,
+        from: r.users.id,
         to: r.report.reported_id,
         alias: "reported",
       }),
       ratings: r.many.ratings({
-        from: r.user.id,
+        from: r.users.id,
         to: r.ratings.rater_id,
         alias: "rater",
       }),
       reviews: r.many.ratings({
-        from: r.user.id,
+        from: r.users.id,
         to: r.ratings.rated_id,
         alias: "rated",
       }),
       handledRatings: r.many.ratings({
-        from: r.user.id,
+        from: r.users.id,
         to: r.ratings.rated_id,
         alias: "handler",
       }),
     },
     payment: {
-      user: r.one.user({
+      user: r.one.users({
         from: r.payment.user_id,
-        to: r.user.id,
+        to: r.users.id,
         optional: false,
       }),
     },
     forgot_password: {
-      user: r.one.user({
+      user: r.one.users({
         from: r.forgot_password.user_id,
-        to: r.user.id,
+        to: r.users.id,
         optional: false,
       }),
     },
     verify_email: {
-      user: r.one.user({
+      user: r.one.users({
         from: r.verify_email.user_id,
-        to: r.user.id,
+        to: r.users.id,
         optional: false,
       }),
     },
     feedback: {
-      user: r.one.user({
+      user: r.one.users({
         from: r.feedback.user_id,
-        to: r.user.id,
+        to: r.users.id,
         optional: false,
       }),
     },
     car: {
-      user: r.one.user({ from: r.car.user_id, to: r.user.id, optional: false }),
+      user: r.one.users({ from: r.car.user_id, to: r.users.id, optional: false }),
     },
     beep: {
-      beeper: r.one.user({
+      beeper: r.one.users({
         from: r.beep.beeper_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "beeper",
         optional: false,
       }),
-      rider: r.one.user({
+      rider: r.one.users({
         from: r.beep.rider_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "rider",
         optional: false,
       }),
@@ -130,36 +130,36 @@ export const relations = defineRelations(
       reports: r.many.report({ from: r.beep.id, to: r.report.beep_id }),
     },
     report: {
-      reporter: r.one.user({
+      reporter: r.one.users({
         from: r.report.reporter_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "reporter",
         optional: false,
       }),
-      reported: r.one.user({
+      reported: r.one.users({
         from: r.report.reported_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "reported",
         optional: false,
       }),
-      handledBy: r.one.user({
+      handledBy: r.one.users({
         from: r.report.handled_by_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "handler",
       }),
       beep: r.one.beep({ from: r.report.beep_id, to: r.beep.id }),
       rating: r.one.ratings({ from: r.report.rating_id, to: r.ratings.id }),
     },
     ratings: {
-      rater: r.one.user({
+      rater: r.one.users({
         from: r.ratings.rater_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "rater",
         optional: false,
       }),
-      rated: r.one.user({
+      rated: r.one.users({
         from: r.ratings.rated_id,
-        to: r.user.id,
+        to: r.users.id,
         alias: "rated",
         optional: false,
       }),
