@@ -20,7 +20,7 @@ export const deleteCarInputSchema =
 export const getCarsInputSchema =
   z.object({
     pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-    cursor: z.number().optional().default(1),
+    page: z.number().min(1).default(1),
     userId: z.uuid().optional(),
   });
 

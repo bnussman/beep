@@ -32,7 +32,7 @@ export const carRouter = {
       const [cars, countData] = await Promise.all([
         db.query.cars.findMany({
           limit: input.pageSize,
-          offset: getOffsetFromPage(input.cursor, input.pageSize),
+          offset: getOffsetFromPage(input.page, input.pageSize),
           orderBy: { created: "desc" },
           where: input.userId ? { user_id: input.userId } : {},
           with: {
@@ -52,7 +52,7 @@ export const carRouter = {
 
       return {
         cars,
-        page: input.cursor,
+        page: input.page,
         pageSize: input.pageSize,
         pages: getPagesFromCount(results, input.pageSize),
         results,

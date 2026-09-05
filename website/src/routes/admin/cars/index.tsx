@@ -44,7 +44,7 @@ function Cars() {
 
   const { data, isLoading, error } = useQuery(
     orpc.car.cars.queryOptions({
-      input: { cursor: page },
+      input: { page },
       placeholderData: keepPreviousData
     }),
   );

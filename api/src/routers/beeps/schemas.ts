@@ -15,8 +15,7 @@ export const editBeepInputSchema = z.object({
 
 export const getBeepsInputSchema =
   z.object({
-    cursor: z.number().min(1).optional(),
-    page: z.number().min(1).optional(),
+    page: z.number().min(1).default(1),
     pageSize: z.number().default(DEFAULT_PAGE_SIZE),
     inProgress: z.boolean().optional(),
     status: z.array(z.enum(beepStatuses)).optional(),

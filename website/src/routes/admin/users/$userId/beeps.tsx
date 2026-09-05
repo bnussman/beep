@@ -36,7 +36,7 @@ function BeepsTable() {
     orpc.beep.beeps.queryOptions({
       input: {
         userId,
-        cursor: currentPage,
+        page: currentPage,
         pageSize: 10,
       }
     }),

@@ -43,11 +43,9 @@ export const beepRouter = {
         }),
       };
 
-      const page = input.cursor ?? input.page ?? 1;
-
       const [beeps, countData] = await Promise.all([
         db.query.beeps.findMany({
-          offset: getOffsetFromPage(page, input.pageSize),
+          offset: getOffsetFromPage(input.page, input.pageSize),
           limit: input.pageSize,
           where,
           orderBy: { start: "desc" },
@@ -84,7 +82,7 @@ export const beepRouter = {
 
       return {
         beeps,
-        page,
+        page: input.page,
         pages: getPagesFromCount(results, input.pageSize),
         pageSize: input.pageSize,
         results,

@@ -23,7 +23,7 @@ export const ratingRouter = {
 
       const [ratings, ratingsCount] = await Promise.all([
         db.query.ratings.findMany({
-          offset: getOffsetFromPage(input.cursor, input.pageSize),
+          offset: getOffsetFromPage(input.page, input.pageSize),
           limit: input.pageSize,
           where,
           columns: {
@@ -52,7 +52,7 @@ export const ratingRouter = {
       return {
         ratings,
         pageSize: input.pageSize,
-        page: input.cursor,
+        page: input.page,
         pages: getPagesFromCount(results, input.pageSize),
         results,
       };

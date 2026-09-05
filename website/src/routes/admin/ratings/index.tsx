@@ -38,9 +38,7 @@ function Ratings() {
 
   const { data, isLoading, error } = useQuery(
     orpc.rating.ratings.queryOptions({
-      input: {
-        cursor: page,
-      },
+      input: { page },
       placeholderData: keepPreviousData
     }),
   );
