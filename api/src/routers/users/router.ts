@@ -11,7 +11,7 @@ import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
 import { inProgressBeep, updateEta } from "../beeps/logic";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
-import { activePaymentsInputSchema, adminEditUserInputSchema, editUserInputSchema, listsUsersInputSchema, listsUsersWithBeepsInputSchema, listsUsersWithRidesInputSchema, sendTestEmailInputSchema, syncUserPaymentsInputSchema, userSchema } from "./schemas";
+import { activePaymentsInputSchema, adminEditUserInputSchema, editUserInputSchema, listsUsersInputSchema, sendTestEmailInputSchema, syncUserPaymentsInputSchema, userSchema } from "./schemas";
 import { getActivePayments } from "../payments/logic";
 import {
   adminProcedure,
@@ -22,6 +22,7 @@ import {
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../../utils/constants";
+import { paginationSchema } from "../../utils/pagination";
 
 export const userRouter = {
   me: authedProcedure
@@ -295,6 +296,7 @@ export const userRouter = {
     }),
   users: adminProcedure
     .input(listsUsersInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const lowercaseQuery = input.query?.toLowerCase();
 
@@ -417,7 +419,7 @@ export const userRouter = {
       return u;
     }),
   usersWithBeeps: adminProcedure
-    .input(listsUsersWithBeepsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const usersData = await db
         .select({
@@ -448,7 +450,7 @@ export const userRouter = {
       };
     }),
   usersWithRides: adminProcedure
-    .input(listsUsersWithRidesInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const usersData = await db
         .select({

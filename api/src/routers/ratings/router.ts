@@ -9,11 +9,12 @@ import { getUsersAverageRating } from "./logic";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { createRatingInputSchema, deleteRatingInputSchema, listRatingsInputSchema } from "./schemas";
-import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const ratingRouter = {
   ratings: authedProcedure
     .input(listRatingsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const where = input.userId
         ? {

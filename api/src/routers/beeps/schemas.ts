@@ -1,6 +1,5 @@
 import z from "zod";
 import { beepStatuses } from "../../../drizzle/schema";
-import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 
 export const editBeepInputSchema = z.object({
   beepId: z.uuid(),
@@ -15,8 +14,6 @@ export const editBeepInputSchema = z.object({
 
 export const getBeepsInputSchema =
   z.object({
-    page: z.number().min(1).default(1),
-    pageSize: z.number().default(DEFAULT_PAGE_SIZE),
     inProgress: z.boolean().optional(),
     status: z.array(z.enum(beepStatuses)).optional(),
     userId: z.string().optional(),

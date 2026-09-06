@@ -6,11 +6,12 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { createReportInputSchema, listReportsInputSchema, updateReportInputSchema } from "./schemas";
-import { getOffsetFromPage } from "../../utils/pagination";
+import { getOffsetFromPage, paginationSchema } from "../../utils/pagination";
 
 export const reportRouter = {
   reports: adminProcedure
     .input(listReportsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const where = input.userId
         ? {

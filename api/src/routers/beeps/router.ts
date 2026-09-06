@@ -23,11 +23,12 @@ import {
   inProgressBeep,
   inProgressBeepNew,
 } from "./logic";
-import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const beepRouter = {
   beeps: authedProcedure
     .input(getBeepsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input, context }) => {
       if (context.user.role !== "admin" && input.userId !== context.user.id) {
         throw new ORPCError("UNAUTHORIZED", {

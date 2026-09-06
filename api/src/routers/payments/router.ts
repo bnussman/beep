@@ -4,11 +4,12 @@ import { count } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { listPaymentsInputSchema } from "./schemas";
-import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const paymentRouter = {
   payments: authedProcedure
     .input(listPaymentsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input, context }) => {
       const userId = input.userId ?? context.user.id;
 

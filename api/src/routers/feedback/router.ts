@@ -4,13 +4,13 @@ import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
 import { feedbacks } from "../../../drizzle/schema";
 import { condensedUserColumns } from "../users/logic";
-import { createFeedbackInputSchema, getFeedbacksInputSchema } from "./schemas";
+import { createFeedbackInputSchema } from "./schemas";
 import { getFeedbacksCount } from "./logic";
-import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const feedbackRouter = {
   feedback: adminProcedure
-    .input(getFeedbacksInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const [feedbacks, results] = await Promise.all([
         db.query.feedbacks.findMany({

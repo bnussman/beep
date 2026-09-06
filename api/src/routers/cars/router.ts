@@ -21,11 +21,12 @@ import {
   getCarsInputSchema,
   updateCarInputSchema
 } from "./schemas";
-import { getOffsetFromPage, getPagesFromCount } from "../../utils/pagination";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const carRouter = {
   cars: authedProcedure
     .input(getCarsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const where = input.userId ? { user_id: input.userId } : {};
 

@@ -1,6 +1,5 @@
 import z from "zod";
 import { isAlpha, isMobilePhone } from "validator";
-import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 
 export const userSchema = z.object({
   id: z.string(),
@@ -54,8 +53,6 @@ export const locationSchema = z.object({
 });
 
 export const listsUsersInputSchema = z.object({
-  page: z.number().default(1),
-  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
   query: z.string().optional(),
   isBeeping: z.boolean().optional(),
 });
@@ -108,15 +105,5 @@ export const syncUserPaymentsInputSchema = z.object({
 
 export const activePaymentsInputSchema =
   z.object({ userId: z.uuid() }).optional()
-
-export const listsUsersWithBeepsInputSchema = z.object({
-  page: z.number().default(1),
-  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-});
-
-export const listsUsersWithRidesInputSchema = z.object({
-  page: z.number().default(1),
-  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-});
 
 export const sendTestEmailInputSchema = z.object({ userId: z.uuid() })
