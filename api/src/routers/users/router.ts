@@ -359,7 +359,7 @@ export const userRouter = {
   publicUser: authedProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const u = await db.query.users.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input },
         columns: {
           id: true,
@@ -377,33 +377,33 @@ export const userRouter = {
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return u;
+      return user;
     }),
   getUserPrivateDetails: authedProcedure
     .input(z.uuid())
     .use(mustHaveBeenInAcceptedBeep)
     .handler(async ({ input }) => {
-      const u = await db.query.users.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input },
         columns: {
           phone: true,
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return u;
+      return user;
     }),
   user: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const u = await db.query.users.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input },
         columns: {
           password: false,
@@ -412,11 +412,11 @@ export const userRouter = {
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return u;
+      return user;
     }),
   usersWithBeeps: adminProcedure
     .input(paginationSchema)
