@@ -12,37 +12,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/setup@v2
-        with:
-          require-lockfile: true
-      - run: pnpm --filter @beep/api typecheck
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun --filter @beep/api typecheck
   website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/setup@v2
-        with:
-          require-lockfile: true
-      - run: pnpm i --frozen-lockfile
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
       - run: pnpm --filter @beep/website typecheck
   app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/setup@v2
-        with:
-          require-lockfile: true
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm --filter @beep/app typecheck
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun --filter @beep/app typecheck
   expo-doctor:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: oven-sh/setup-bun@v2 
-      - uses: pnpm/setup@v2
-        with:
-          require-lockfile: true
-      - run: pnpm i --frozen-lockfile
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
       - run: bunx expo-doctor --verbose
         continue-on-error: true
         working-directory: app
