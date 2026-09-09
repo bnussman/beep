@@ -21,7 +21,7 @@ jobs:
           node-version: latest
       - run: docker compose up -d
       - run: bun install --frozen-lockfile
-      - run: bun exec playwright install --with-deps --only-shell chromium
+      - run: bun playwright install --with-deps --only-shell chromium
         working-directory: ./test
       - run: bun drizzle-kit push --force
         working-directory: ./api
