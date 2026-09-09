@@ -11,7 +11,7 @@
     "start:app": "bun --filter @beep/app start",
     "start:website": "bun --filter @beep/website dev",
     "build:website": "bun --filter @beep/website build",
-    "typecheck": "bun run --parallel --filter '*'  typecheck"
+    "typecheck": "bun run --parallel --filter '*' typecheck"
   },
   "private": true,
   "packageManager": "bun@1.4.2",
