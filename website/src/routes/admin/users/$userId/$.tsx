@@ -38,7 +38,7 @@ function Details() {
         <Stack direction="row" spacing={1} sx={{
           alignItems: "center"
         }}>
-          <Indicator sx={{ marginRight: 2 }} color={user.isEmailVerified ? "green" : "red"} />
+          <Indicator color={user.isEmailVerified ? "green" : "red"} />
           <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
@@ -47,7 +47,7 @@ function Details() {
         <Stack direction="row" spacing={1} sx={{
           alignItems: "center"
         }}>
-          <Indicator sx={{ marginRight: 2 }} color={user.isStudent ? "green" : "red"} />
+          <Indicator color={user.isStudent ? "green" : "red"} />
           <Typography>{user.isStudent ? "Yes" : "No"}</Typography>
         </Stack>
       </Box>
@@ -56,7 +56,7 @@ function Details() {
         <Stack direction="row" spacing={1} sx={{
           alignItems: "center"
         }}>
-          <Indicator sx={{ marginRight: 2 }} color={user.isBeeping ? "green" : "red"} />
+          <Indicator color={user.isBeeping ? "green" : "red"} />
           <Typography>{user.isBeeping ? "Yes" : "No"}</Typography>
         </Stack>
       </Box>
