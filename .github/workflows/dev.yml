@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-      - run: bun install  --os linux --frozen-lockfile --trusted-dependency="*"
+      - run: npm install --legacy-peer-deps
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
