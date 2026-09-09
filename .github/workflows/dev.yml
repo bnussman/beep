@@ -19,10 +19,11 @@ jobs:
       url: https://dev.ridebeep.app
     steps:
       - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-node@v7
         with:
           node-version: latest
-      - run: npm install
+      - run: bun install --frozen-lockfile
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
