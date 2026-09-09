@@ -9,6 +9,7 @@ import { Loading } from "../../../../components/Loading";
 
 export const Route = createFileRoute('/admin/users/$userId/$')({
   component: Details,
+  ssr: false,
 });
 
 function Details() {
