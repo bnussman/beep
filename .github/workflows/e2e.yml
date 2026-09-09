@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/setup@v2
-        with:
-          require-lockfile: true
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -23,11 +20,12 @@ jobs:
         with:
           node-version: latest
       - run: docker compose up -d
-      - run: pnpm exec playwright install --with-deps --only-shell chromium
+      - run: bun install --frozen-lockfile
+      - run: bun exec playwright install --with-deps --only-shell chromium
         working-directory: ./test
-      - run: pnpm drizzle-kit push --force
+      - run: bun drizzle-kit push --force
         working-directory: ./api
-      - run: pnpm --filter @beep/test test
+      - run: bun --filter @beep/test test
       - uses: actions/upload-artifact@v7
         if: always()
         with:

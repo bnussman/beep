@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: pnpm --filter @beep/website typecheck
+      - run: bun --filter @beep/website typecheck
   app:
     runs-on: ubuntu-latest
     steps:
