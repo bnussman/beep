@@ -2,5 +2,5 @@ name: beep
 runtime:
   name: nodejs
   options:
-    packagemanager: pnpm
+    packagemanager: bun
 description: Beep Kubernetes Deployment

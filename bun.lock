@@ -7,6 +7,7 @@
     },
     "api": {
       "name": "@beep/api",
+      "version": "0.0.0",
       "dependencies": {
         "@banksnussman/osrm": "^0.0.4",
         "@banksnussman/photon": "^0.0.5",
@@ -38,6 +39,7 @@
     },
     "app": {
       "name": "@beep/app",
+      "version": "2.22.0",
       "dependencies": {
         "@base-ui/react": "^1.5.0",
         "@expo/ui": "^57.0.7",
@@ -115,12 +117,14 @@
     },
     "test": {
       "name": "@beep/test",
+      "version": "0.0.0",
       "devDependencies": {
         "@playwright/test": "^1.63.0",
       },
     },
     "website": {
       "name": "@beep/website",
+      "version": "0.0.0",
       "dependencies": {
         "@emotion/cache": "^11.14.0",
         "@emotion/react": "^11.14.0",

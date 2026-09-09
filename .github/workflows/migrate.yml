@@ -19,19 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - uses: pnpm/setup@v2
-        with:
-          require-lockfile: true
       - uses: actions/setup-node@v7
         with:
           node-version: latest
-      - run: pnpm i --frozen-lockfile
+      - run: bun install --frozen-lockfile
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
-      - run: pnpm drizzle-kit migrate
+      - run: bun drizzle-kit migrate
         working-directory: api
         env:
           DB_USER: ${{ secrets.DB_USER }}
