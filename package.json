@@ -13,8 +13,5 @@
     "build:website": "pnpm --filter @beep/website build",
     "typecheck": "pnpm run --parallel typecheck"
   },
-  "private": true,
-  "volta": {
-    "node": "24.3.0"
-  }
+  "private": true
 }
