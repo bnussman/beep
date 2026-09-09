@@ -17,16 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-      - uses: actions/setup-node@v6
-        with:
-          node-version: latest
       - run: bun install --frozen-lockfile
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
-      - run: bun drizzle-kit migrate
+      - run: bun --bun drizzle-kit migrate
         working-directory: api
         env:
           DB_USER: ${{ secrets.DB_USER }}
