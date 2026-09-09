@@ -8,7 +8,13 @@ export function TableLoading(props: TableCellProps) {
   return (
     <TableRow>
       <TableCell {...props}>
-        <Box display="flex" alignItems="center" justifyContent="center" py={10}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 10
+          }}>
           <CircularProgress />
         </Box>
       </TableCell>

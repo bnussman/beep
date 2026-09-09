@@ -35,22 +35,28 @@ function Details() {
     <Stack spacing={2}>
       <Box>
         <strong>Email</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Indicator sx={{ marginRight: 2 }} color={user.isEmailVerified ? "green" : "red"} />
           <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
       <Box>
         <strong>Student</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.isStudent ? "green" : "red"} />
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Indicator sx={{ marginRight: 2 }} color={user.isStudent ? "green" : "red"} />
           <Typography>{user.isStudent ? "Yes" : "No"}</Typography>
         </Stack>
       </Box>
       <Box>
         <strong>Beeping</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.isBeeping ? "green" : "red"} />
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Indicator sx={{ marginRight: 2 }} color={user.isBeeping ? "green" : "red"} />
           <Typography>{user.isBeeping ? "Yes" : "No"}</Typography>
         </Stack>
       </Box>

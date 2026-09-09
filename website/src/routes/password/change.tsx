@@ -72,7 +72,9 @@ function ChangePassword() {
       <Card sx={{ p: 3 }}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Stack spacing={2}>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" sx={{
+              fontWeight: "bold"
+            }}>
               Change Password
             </Typography>
             {data && (
@@ -109,7 +111,11 @@ function ChangePassword() {
                 />
               )}
             />
-            <Box display="flex" justifyContent="flex-end">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end"
+              }}>
               <Button
                 loading={form.formState.isSubmitting}
                 type="submit"

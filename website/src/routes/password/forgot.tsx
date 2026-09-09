@@ -58,7 +58,9 @@ function ForgotPassword() {
           )}
         >
           <Stack spacing={2}>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" sx={{
+              fontWeight: "bold"
+            }}>
               Forgot Password
             </Typography>
             {form.formState.errors.root?.message && (
@@ -91,7 +93,11 @@ function ForgotPassword() {
                 />
               )}
             />
-            <Box display="flex" justifyContent="flex-end">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end"
+              }}>
               <Button
                 type="submit"
                 loading={isPending}

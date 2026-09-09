@@ -61,7 +61,9 @@ function Notifications() {
   return (
     <Card sx={{ p: 3 }}>
       <Stack spacing={2}>
-        <Typography variant="h4" fontWeight="bold">
+        <Typography variant="h4" sx={{
+          fontWeight: "bold"
+        }}>
           Notifications
         </Typography>
         <Typography>Use this tool to send mass notifications.</Typography>
@@ -114,7 +116,11 @@ function Notifications() {
             />
           )}
         />
-        <Box display="flex" justifyContent="flex-end">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end"
+          }}>
           <Button
             onClick={() => setIsConfirmOpen(true)}
             variant="contained"

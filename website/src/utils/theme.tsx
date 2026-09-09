@@ -41,7 +41,11 @@ export const theme = createTheme({
     MuiDialogTitle: {
       defaultProps: {
         variant: "h5",
-        fontWeight: "bold",
+      },
+      styleOverrides: {
+        root: {
+          fontWeight: "bold",
+        }
       },
     },
     MuiPopover: {

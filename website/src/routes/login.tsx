@@ -50,7 +50,9 @@ function Login() {
       <Card sx={{ p: 3 }}>
         <form onSubmit={form.handleSubmit((values) => login(values))}>
           <Stack spacing={2}>
-            <Typography fontWeight="bold" variant="h4">
+            <Typography variant="h4" sx={{
+              fontWeight: "bold"
+            }}>
               Login
             </Typography>
             {form.formState.errors.root?.message && (
@@ -88,7 +90,9 @@ function Login() {
                 />
               )}
             />
-            <Stack direction="row" justifyContent="space-between">
+            <Stack direction="row" sx={{
+              justifyContent: "space-between"
+            }}>
               <Button LinkComponent={Link} href="/password/forgot">
                 Forgot Password
               </Button>

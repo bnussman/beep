@@ -75,7 +75,9 @@ function Users() {
 
   return (
     <Stack>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>
         Users
       </Typography>
       <Stack spacing={1}>
@@ -126,7 +128,9 @@ function Users() {
                 <TableRow key={user.id}>
                   <TableCell>
                     <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-                      <Stack direction="row" alignItems="center" spacing={1}>
+                      <Stack direction="row" spacing={1} sx={{
+                        alignItems: "center"
+                      }}>
                         <Avatar src={user.photo ?? undefined} />
                         <Typography>
                           {user.first} {user.last}

@@ -12,7 +12,9 @@ export function TableCellUser(props: Props) {
   return (
     <TableCell>
       <Link to="/admin/users/$userId" params={{ userId: props.user.id }} {...props.linkProps}>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           <Avatar src={props.user.photo ?? undefined} />
           <Typography>{props.user.first} {props.user.last}</Typography>
         </Stack>

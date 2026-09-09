@@ -64,7 +64,9 @@ export function SendNotificationDialog(props: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTitle>Send Notification</DialogTitle>
         <DialogContent>
-          <Stack spacing={2} mt={1}>
+          <Stack spacing={2} sx={{
+            mt: 1
+          }}>
             {form.formState.errors.root?.message && (
               <Alert severity="error">{form.formState.errors.root.message}</Alert>
             )}

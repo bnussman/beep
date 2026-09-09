@@ -57,7 +57,9 @@ function Feedback() {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>
         Feedback
       </Typography>
       <PaginationFooter

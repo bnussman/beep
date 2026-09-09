@@ -148,12 +148,15 @@ function User() {
     <Stack spacing={2}>
       <Stack
         direction="row"
-        gap={2}
-        alignItems="center"
-        justifyContent="space-between"
-        flexWrap="wrap"
-      >
-        <Stack direction="row" alignItems="center" spacing={2}>
+        sx={{
+          gap: 2,
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap"
+        }}>
+        <Stack direction="row" spacing={2} sx={{
+          alignItems: "center"
+        }}>
           <Avatar
             src={user.photo ?? ""}
             onClick={user.photo ? () => setIsPhotoOpen(true) : undefined}
@@ -164,13 +167,19 @@ function User() {
             }}
           />
           <Stack>
-            <Typography fontWeight="bold" variant="h4">
+            <Typography variant="h4" sx={{
+              fontWeight: "bold"
+            }}>
               {user.first} {user.last}
             </Typography>
             <Typography>{user.username}</Typography>
-            <Typography fontSize="12px">{user.id}</Typography>
+            <Typography sx={{
+              fontSize: "12px"
+            }}>{user.id}</Typography>
             {user.created && (
-              <Typography fontSize="12px">
+              <Typography sx={{
+                fontSize: "12px"
+              }}>
                 Joined {DateTime.fromJSDate(user.created).toRelative()}
               </Typography>
             )}
@@ -178,10 +187,11 @@ function User() {
         </Stack>
         <Stack
           direction="row"
-          gap={1}
-          flexWrap="wrap"
-          justifyContent="flex-end"
-        >
+          sx={{
+            gap: 1,
+            flexWrap: "wrap",
+            justifyContent: "flex-end"
+          }}>
           <Button
             LinkComponent={Link}
             href={`/admin/users/${user.id}/edit`}
