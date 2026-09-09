@@ -16,7 +16,7 @@ export const Route = createFileRoute('/admin/users/$userId/edit/location')({
 function EditLocation() {
   const { userId } = Route.useParams();
 
-  const { data: user, isLoading, error } = useQuery(
+  const { data: user, isPending, error } = useQuery(
     orpc.user.user.queryOptions({ input: userId })
   );
 
@@ -55,16 +55,12 @@ function EditLocation() {
     setLatitude(data.lngLat.lat);
   };
 
-  if (isLoading) {
-    <Loading />;
+  if (isPending) {
+    return <Loading />;
   }
 
   if (error) {
     return <Alert severity="error">{error.message}</Alert>;
-  }
-
-  if (!user) {
-    return null;
   }
 
   return (

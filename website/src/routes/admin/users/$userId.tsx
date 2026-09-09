@@ -30,6 +30,7 @@ import {
 
 export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
+  ssr: false,
 });
 
 function User() {

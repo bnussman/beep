@@ -5,6 +5,7 @@ import { Alert, Stack, Typography, Box, Link } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../../utils/utils";
 import { orpc } from "../../../../utils/orpc";
+import { Loading } from "../../../../components/Loading";
 
 export const Route = createFileRoute('/admin/users/$userId/$')({
   component: Details,
@@ -15,14 +16,14 @@ function Details() {
 
   const {
     data: user,
-    isLoading,
+    isPending,
     error,
   } = useQuery(
     orpc.user.user.queryOptions({ input: userId })
   );
 
-  if (isLoading || !user) {
-    return null;
+  if (isPending) {
+    return <Loading />;
   }
 
   if (error) {
