@@ -13,5 +13,12 @@
     "build:website": "pnpm --filter @beep/website build",
     "typecheck": "pnpm run --parallel typecheck"
   },
-  "private": true
+  "private": true,
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12",
+      "onFail": "download"
+    }
+  }
 }
