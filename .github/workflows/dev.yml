@@ -27,7 +27,7 @@ jobs:
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
-      - uses: pulumi/actions@v6
+      - uses: pulumi/actions@v7
         with:
           command: up
           stack-name: dev
