@@ -14,11 +14,5 @@
     "typecheck": "pnpm run --parallel typecheck"
   },
   "private": true,
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12",
-      "onFail": "download"
-    }
-  }
+  "packageManager": "pnpm@12.3.4"
 }
