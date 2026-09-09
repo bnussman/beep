@@ -15,7 +15,6 @@
   },
   "private": true,
   "packageManager": "bun@1.4.2",
-  "trustedDependencies": ["drizzle-kit", "@pulumi/pulumi", "@pulumi/kubernetes", "@pulumi/docker"],
   "workspaces": [
     "app",
     "website",
