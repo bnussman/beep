@@ -2,6 +2,10 @@ import React from "react";
 import { default as _Map } from "react-map-gl/maplibre";
 import { useColorScheme } from "@mui/material";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { setWorkerUrl } from "maplibre-gl";
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+
+setWorkerUrl(workerUrl);
 
 export function Map(props: React.ComponentProps<typeof _Map>) {
   const { colorScheme } = useColorScheme();
