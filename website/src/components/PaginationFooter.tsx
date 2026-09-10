@@ -16,7 +16,13 @@ export function PaginationFooter({ pageSize, ...props }: Props) {
   const results = formatter.format(props.results ?? 0);
 
   return (
-    <Stack direction="row" alignItems="center" justifyContent="flex-end" spacing={2}>
+    <Stack
+      direction="row"
+      spacing={2}
+      sx={{
+        alignItems: "center",
+        justifyContent: "flex-end"
+      }}>
       <Typography>
         {startIndex + 1}-{endIndex} of {results}
       </Typography>

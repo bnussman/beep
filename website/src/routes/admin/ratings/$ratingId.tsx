@@ -85,8 +85,15 @@ function Rating() {
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4" fontWeight="bold">
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+        <Typography variant="h4" sx={{
+          fontWeight: "bold"
+        }}>
           Rating
         </Typography>
         <Button
@@ -101,7 +108,11 @@ function Rating() {
         <Grid container rowSpacing={2} columnSpacing={2}>
           {items.map((item) => (
             <Grid size={{ xs: 12, md: 6 }} key={item.title}>
-              <Typography fontWeight="bold" fontSize="0.95rem">
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "0.95rem"
+                }}>
                 {item.title}
               </Typography>
               {item.content}

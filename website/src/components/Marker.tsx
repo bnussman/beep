@@ -43,7 +43,9 @@ export function Marker(props: Props) {
     return (
       <div>
         <_Marker longitude={longitude} latitude={latitude}>
-          <Stack alignItems="center" onClick={handleClick}>
+          <Stack onClick={handleClick} sx={{
+            alignItems: "center"
+          }}>
             <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
             <Typography>{name}</Typography>
           </Stack>
@@ -59,9 +61,13 @@ export function Marker(props: Props) {
         >
           <Stack spacing={1} divider={<Divider />}>
             <Link component={RouterLink} to={`/admin/users/${userId}/queue`}>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
                 <Avatar src={photo || ""} />
-                <Typography fontWeight="bold">{name}</Typography>
+                <Typography sx={{
+                  fontWeight: "bold"
+                }}>{name}</Typography>
               </Stack>
             </Link>
             <QueuePreview userId={userId} />
@@ -77,7 +83,9 @@ export function Marker(props: Props) {
   return (
     <_Marker latitude={latitude} longitude={longitude}>
       <Tooltip title={`${latitude}, ${longitude}`} arrow>
-        <Stack alignItems="center">
+        <Stack sx={{
+          alignItems: "center"
+        }}>
           <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
           <Typography>{name}</Typography>
         </Stack>

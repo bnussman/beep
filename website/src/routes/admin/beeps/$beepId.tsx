@@ -107,7 +107,9 @@ function Beep() {
     {
       title: "Status",
       content: (
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           <Typography sx={{ textTransform: "capitalize" }}>
             {beep.status.replaceAll("_", " ")}
           </Typography>
@@ -184,9 +186,18 @@ function Beep() {
   ];
 
   return (
-    <Stack spacing={2} pb={4}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h4" fontWeight="bold">
+    <Stack spacing={2} sx={{
+      pb: 4
+    }}>
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}>
+        <Typography variant="h4" sx={{
+          fontWeight: "bold"
+        }}>
           Beep
         </Typography>
         <Button
@@ -201,7 +212,11 @@ function Beep() {
         <Grid container rowSpacing={2} columnSpacing={2}>
           {items.map((item) => (
             <Grid size={{ xs: 12, md: 6 }} key={item.title}>
-              <Typography fontWeight="bold" fontSize="0.95rem">
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "0.95rem"
+                }}>
                 {item.title}
               </Typography>
               {item.content}

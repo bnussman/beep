@@ -39,11 +39,12 @@ export function QueuePreview({ userId }: Props) {
   if (isLoading) {
     return (
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height="100px"
-      >
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100px"
+        }}>
         <CircularProgress size={24} />
       </Box>
     );
@@ -52,11 +53,12 @@ export function QueuePreview({ userId }: Props) {
   if (error) {
     return (
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height="100px"
-      >
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100px"
+        }}>
         {error.message}
       </Box>
     );
@@ -65,13 +67,13 @@ export function QueuePreview({ userId }: Props) {
   if (data?.length === 0) {
     return (
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        height="100px"
-      >
-        This user's queue is empty.
-      </Box>
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100px"
+        }}>This user's queue is empty.
+              </Box>
     );
   }
 
@@ -83,12 +85,18 @@ export function QueuePreview({ userId }: Props) {
           to={`/admin/users/${beep.rider.id}`}
           key={beep.id}
         >
-          <Stack key={beep.id} direction="row" spacing={1} alignItems="center">
+          <Stack key={beep.id} direction="row" spacing={1} sx={{
+            alignItems: "center"
+          }}>
             <Avatar
               src={beep.rider.photo || ""}
               sx={{ width: 24, height: 24 }}
             />
-            <Box fontWeight="bold" whiteSpace="nowrap">
+            <Box
+              sx={{
+                fontWeight: "bold",
+                whiteSpace: "nowrap"
+              }}>
               {beep.rider.first} {beep.rider.last}
             </Box>
             <Typography>{beep.status.replaceAll("_", " ")}</Typography>

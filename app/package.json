@@ -73,14 +73,18 @@
     "typescript": "^6.0.3"
   },
   "private": true,
-  "volta": {
-    "node": "22.0.0"
-  },
   "expo": {
     "doctor": {
       "reactNativeDirectoryCheck": {
         "listUnknownPackages": false
       }
+    }
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.4.0",
+      "onFail": "download"
     }
   }
 }

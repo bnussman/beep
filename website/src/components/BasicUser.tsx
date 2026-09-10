@@ -16,7 +16,9 @@ export function BasicUser(props: Props) {
 
   return (
     <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-      <Stack direction="row" alignItems="center" spacing={1.5}>
+      <Stack direction="row" spacing={1.5} sx={{
+        alignItems: "center"
+      }}>
         <Typography>
           {user.first} {user.last}
         </Typography>

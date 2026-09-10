@@ -57,8 +57,12 @@ function ActiveBeeps() {
 
   return (
     <Stack spacing={1}>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Typography fontWeight="bold" variant="h4">
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center"
+      }}>
+        <Typography variant="h4" sx={{
+          fontWeight: "bold"
+        }}>
           Beeps
         </Typography>
         <Chip
@@ -110,7 +114,9 @@ function ActiveBeeps() {
                   {DateTime.fromJSDate(beep.start).toRelative()}
                 </TableCell>
                 <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack direction="row" spacing={1} sx={{
+                    alignItems: "center"
+                  }}>
                     <Indicator color={beepStatusMap[beep.status]} />
                     <Typography sx={{ textTransform: "capitalize" }}>
                       {beep.status.replaceAll("_", " ")}

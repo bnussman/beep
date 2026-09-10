@@ -53,7 +53,7 @@ export function DeleteCarDialog(props: Props) {
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle fontSize="lg" fontWeight="bold">
+      <DialogTitle>
         Delete {car?.user.first}'s {car?.make} {car?.model}?
       </DialogTitle>
       <DialogContent>

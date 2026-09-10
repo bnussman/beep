@@ -84,7 +84,9 @@ function BeepsTable() {
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>
                 <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack direction="row" spacing={1} sx={{
+                    alignItems: "center"
+                  }}>
                     <Indicator color={beepStatusMap[beep.status]} />
                     <Typography sx={{ textTransform: "capitalize" }}>
                       {beep.status.replaceAll("_", " ")}

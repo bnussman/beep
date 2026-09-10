@@ -26,7 +26,9 @@ function Redis() {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>
         Redis Channels
       </Typography>
       <ul style={{ paddingLeft: 20 }}>

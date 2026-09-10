@@ -79,8 +79,15 @@ function Report() {
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4" fontWeight="bold">
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+        <Typography variant="h4" sx={{
+          fontWeight: "bold"
+        }}>
           Report
         </Typography>
         <Button
@@ -93,13 +100,19 @@ function Report() {
       </Stack>
       <Card sx={{ p: 2, pt: 1 }}>
         <Stack spacing={2}>
-          <Typography variant="h5" fontWeight="bold">
+          <Typography variant="h5" sx={{
+            fontWeight: "bold"
+          }}>
             Details
           </Typography>
           <Stack spacing={1}>
-            <Typography fontWeight="bold">Reporter</Typography>
+            <Typography sx={{
+              fontWeight: "bold"
+            }}>Reporter</Typography>
             <Link to="/admin/users/$userId" params={{ userId: report.reporter.id }}>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
                 <Avatar src={report.reporter.photo ?? undefined} />
                 <Typography>
                   {report.reporter.first} {report.reporter.last}
@@ -108,9 +121,13 @@ function Report() {
             </Link>
           </Stack>
           <Stack spacing={1}>
-            <Typography fontWeight="bold">Reported</Typography>
+            <Typography sx={{
+              fontWeight: "bold"
+            }}>Reported</Typography>
             <Link to="/admin/users/$userId" params={{ userId: report.reported.id }}>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
                 <Avatar src={report.reported.photo ?? undefined} />
                 <Typography>
                   {report.reported.first} {report.reported.last}
@@ -119,17 +136,23 @@ function Report() {
             </Link>
           </Stack>
           <Stack spacing={1}>
-            <Typography fontWeight="bold">Reason</Typography>
+            <Typography sx={{
+              fontWeight: "bold"
+            }}>Reason</Typography>
             <Typography>{report.reason}</Typography>
           </Stack>
           <Stack spacing={1}>
-            <Typography fontWeight="bold">Date</Typography>
+            <Typography sx={{
+              fontWeight: "bold"
+            }}>Date</Typography>
             <Typography>
               {new Date(report.timestamp).toLocaleString()}
             </Typography>
           </Stack>
           <Stack spacing={1}>
-            <Typography fontWeight="bold">Beep</Typography>
+            <Typography sx={{
+              fontWeight: "bold"
+            }}>Beep</Typography>
             <Typography>
               {report.beep_id ? (
                 <Link to="/admin/beeps/$beepId" params={{ beepId: report.beep_id }}>{report.beep_id}</Link>
@@ -139,7 +162,9 @@ function Report() {
             </Typography>
           </Stack>
           <Stack spacing={1}>
-            <Typography fontWeight="bold">Rating</Typography>
+            <Typography sx={{
+              fontWeight: "bold"
+            }}>Rating</Typography>
             <Typography>
               {report.rating_id ? (
                 <Link to="/admin/ratings/$ratingId" params={{ ratingId: report.rating_id }}>{report.rating_id}</Link>
@@ -155,15 +180,22 @@ function Report() {
           <Stack spacing={2}>
             <Stack
               direction="row"
-              justifyContent="space-between"
-              flexWrap="wrap"
-            >
-              <Typography variant="h5" fontWeight="bold">
+              sx={{
+                justifyContent: "space-between",
+                flexWrap: "wrap"
+              }}>
+              <Typography variant="h5" sx={{
+                fontWeight: "bold"
+              }}>
                 Admin Notes
               </Typography>
               {report.handledBy && (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography fontWeight="bold">Resolved By</Typography>
+                <Stack direction="row" spacing={1} sx={{
+                  alignItems: "center"
+                }}>
+                  <Typography sx={{
+                    fontWeight: "bold"
+                  }}>Resolved By</Typography>
                   <Avatar
                     src={report.handledBy.photo ?? undefined}
                     sx={{ width: 24, height: 24 }}
@@ -187,7 +219,9 @@ function Report() {
                 />
               )}
             />
-            <Stack direction="row" justifyContent="space-between">
+            <Stack direction="row" sx={{
+              justifyContent: "space-between"
+            }}>
               <Controller
                 control={form.control}
                 name="handled"
