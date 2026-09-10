@@ -1,4 +1,4 @@
-FROM oven/bun:canary-alpine
+FROM oven/bun:1.4.2-alpine
 
 WORKDIR /usr/api
 

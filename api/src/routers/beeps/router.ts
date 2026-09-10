@@ -3,7 +3,7 @@ import { db } from "../../utils/db";
 import { ORPCError } from "@orpc/server";
 import { pubSub } from "../../utils/pubsub";
 import { count, eq, and } from "drizzle-orm";
-import { beep, user } from "../../../drizzle/schema";
+import { beeps, users } from "../../../drizzle/schema";
 import { updateLiveActivity } from "../../utils/live-activities";
 import { clearQueueInputSchema, editBeepInputSchema, getBeepsInputSchema } from "./schemas";
 import { condensedUserColumns } from "../users/logic";
@@ -23,10 +23,12 @@ import {
   inProgressBeep,
   inProgressBeepNew,
 } from "./logic";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const beepRouter = {
   beeps: authedProcedure
     .input(getBeepsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input, context }) => {
       if (context.user.role !== "admin" && input.userId !== context.user.id) {
         throw new ORPCError("UNAUTHORIZED", {
@@ -42,12 +44,9 @@ export const beepRouter = {
         }),
       };
 
-      const page = input.cursor ?? input.page ?? 1;
-      const offset = (page - 1) * input.pageSize;
-
       const [beeps, countData] = await Promise.all([
-        db.query.beep.findMany({
-          offset,
+        db.query.beeps.findMany({
+          offset: getOffsetFromPage(input.page, input.pageSize),
           limit: input.pageSize,
           where,
           orderBy: { start: "desc" },
@@ -71,7 +70,7 @@ export const beepRouter = {
             ratings: true,
           },
         }),
-        db.query.beep.findMany({
+        db.query.beeps.findMany({
           columns: {},
           extras: {
             count: count(),
@@ -84,8 +83,8 @@ export const beepRouter = {
 
       return {
         beeps,
-        page,
-        pages: Math.ceil(results / input.pageSize),
+        page: input.page,
+        pages: getPagesFromCount(results, input.pageSize),
         pageSize: input.pageSize,
         results,
       };
@@ -93,7 +92,7 @@ export const beepRouter = {
   beep: authedProcedure
     .input(z.uuid())
     .handler(async ({ input, context }) => {
-      const b = await db.query.beep.findFirst({
+      const beep = await db.query.beeps.findFirst({
         where: { id: input },
         with: {
           beeper: {
@@ -105,7 +104,7 @@ export const beepRouter = {
         },
       });
 
-      if (!b) {
+      if (!beep) {
         throw new ORPCError("NOT_FOUND", {
           message: "Beep not found",
         });
@@ -113,47 +112,47 @@ export const beepRouter = {
 
       if (
         context.user.role === "user" &&
-        ![b.beeper_id, b.rider_id].includes(context.user.id)
+        ![beep.beeper_id, beep.rider_id].includes(context.user.id)
       ) {
         throw new ORPCError("FORBIDDEN", {
           message: "You can't view a beep that you are not involved in.",
         });
       }
 
-      return b;
+      return beep;
     }),
   deleteBeep: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      await db.delete(beep).where(eq(beep.id, input));
+      await db.delete(beeps).where(eq(beeps.id, input));
     }),
   editBeep: authedProcedure
     .input(editBeepInputSchema)
     .handler(async ({ context, input }) => {
-      const b = await db.query.beep.findFirst({
+      const beep = await db.query.beeps.findFirst({
         where: { id: input.beepId },
       });
 
-      if (!b) {
+      if (!beep) {
         throw new ORPCError("NOT_FOUND", { message: "Beep not found" });
       }
 
-      if (b.rider_id !== context.user.id) {
+      if (beep.rider_id !== context.user.id) {
         throw new ORPCError("FORBIDDEN", {
           message: "You can't edit a beep that you are not involved in.",
         });
       }
 
-      if (!getIsInProgressBeep(b)) {
+      if (!getIsInProgressBeep(beep)) {
         throw new ORPCError("BAD_REQUEST", {
-          message: `You can't edit beep with status ${beep.status}.`,
+          message: `You can't edit beep with status ${beeps.status}.`,
         });
       }
 
-      await db.update(beep).set(input.data).where(eq(beep.id, input.beepId));
+      await db.update(beeps).set(input.data).where(eq(beeps.id, input.beepId));
 
-      const beeper = await db.query.user.findFirst({
-        where: { id: b.beeper_id },
+      const beeper = await db.query.users.findFirst({
+        where: { id: beep.beeper_id },
       });
 
       const keyToFieldMap = {
@@ -175,7 +174,7 @@ export const beepRouter = {
       }
 
       // publish updated queue to beeper
-      const queue = await getBeeperQueue(b.beeper_id);
+      const queue = await getBeeperQueue(beep.beeper_id);
 
       for (const beep of queue) {
         pubSub.publish(`ride-${beep.rider_id}`, {
@@ -183,14 +182,14 @@ export const beepRouter = {
         });
       }
 
-      pubSub.publish(`queue-${b.beeper_id}`, { queue });
+      pubSub.publish(`queue-${beep.beeper_id}`, { queue });
 
-      return b;
+      return beep;
     }),
   clearQueue: adminProcedure
     .input(clearQueueInputSchema)
     .handler(async ({ input }) => {
-      const beeper = await db.query.user.findFirst({
+      const beeper = await db.query.users.findFirst({
         where: { id: input.userId },
         with: {
           beeps: {
@@ -215,9 +214,9 @@ export const beepRouter = {
       }
 
       await db
-        .update(beep)
+        .update(beeps)
         .set({ status: "canceled" })
-        .where(and(eq(beep.beeper_id, beeper.id), inProgressBeep));
+        .where(and(eq(beeps.beeper_id, beeper.id), inProgressBeep));
 
       const notifications: PushNotification[] = [];
 
@@ -250,16 +249,16 @@ export const beepRouter = {
 
       sendNotifications(notifications);
 
-      const u = await db
-        .update(user)
+      const [user] = await db
+        .update(users)
         .set({
           ...(input.stopBeeping ? { isBeeping: false } : {}),
           queueSize: 0,
         })
-        .where(eq(user.id, beeper.id))
+        .where(eq(users.id, beeper.id))
         .returning();
 
-      pubSub.publish(`user-${beeper.id}`, { user: u[0] });
+      pubSub.publish(`user-${beeper.id}`, { user });
       pubSub.publish(`queue-${beeper.id}`, { queue: [] });
     }),
 };

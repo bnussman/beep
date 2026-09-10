@@ -50,7 +50,7 @@ export function DeleteFeedbackDialog(props: Props) {
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle fontSize="lg" fontWeight="bold">
+      <DialogTitle>
         Delete {feedback?.user.first} {feedback?.user.last}'s feedback?
       </DialogTitle>
       <DialogContent>

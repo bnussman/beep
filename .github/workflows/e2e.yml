@@ -12,25 +12,18 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 11.10.0
-          run_install: false
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: latest
-          cache: pnpm
       - run: docker compose up -d
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps --only-shell chromium
+      - run: bun install --frozen-lockfile
+      - run: bun playwright install --with-deps --only-shell chromium
         working-directory: ./test
-      - run: pnpm drizzle-kit push --force
+      - run: bun drizzle-kit push --force
         working-directory: ./api
-      - run: pnpm --filter @beep/test test
+      - run: bun --filter @beep/test test
       - uses: actions/upload-artifact@v7
         if: always()
         with:

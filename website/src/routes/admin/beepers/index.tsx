@@ -71,8 +71,12 @@ function Beepers() {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Typography fontWeight="bold" variant="h4">
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center"
+      }}>
+        <Typography variant="h4" sx={{
+          fontWeight: "bold"
+        }}>
           Beepers
         </Typography>
         <Chip
@@ -101,12 +105,16 @@ function Beepers() {
               <TableRow key={beeper.id}>
                 <TableCell>
                   <Link component={RouterLink} to={`/admin/users/${beeper.id}`}>
-                    <Stack direction="row" alignItems="center" spacing={1}>
+                    <Stack direction="row" spacing={1} sx={{
+                      alignItems: "center"
+                    }}>
                       <Avatar src={beeper.photo ?? undefined} />
                       <Typography>
                         {beeper.first} {beeper.last}
                       </Typography>
-                      <Box flexGrow={1} />
+                      <Box sx={{
+                        flexGrow: 1
+                      }} />
                       {beeper.isPremium && (
                         <Chip label="Premium 👑" size="small" />
                       )}

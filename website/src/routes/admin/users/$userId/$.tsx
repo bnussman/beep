@@ -5,9 +5,11 @@ import { Alert, Stack, Typography, Box, Link } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../../utils/utils";
 import { orpc } from "../../../../utils/orpc";
+import { Loading } from "../../../../components/Loading";
 
 export const Route = createFileRoute('/admin/users/$userId/$')({
   component: Details,
+  ssr: false,
 });
 
 function Details() {
@@ -15,14 +17,14 @@ function Details() {
 
   const {
     data: user,
-    isLoading,
+    isPending,
     error,
   } = useQuery(
     orpc.user.user.queryOptions({ input: userId })
   );
 
-  if (isLoading || !user) {
-    return null;
+  if (isPending) {
+    return <Loading />;
   }
 
   if (error) {
@@ -33,22 +35,28 @@ function Details() {
     <Stack spacing={2}>
       <Box>
         <strong>Email</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Indicator color={user.isEmailVerified ? "green" : "red"} />
           <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
       <Box>
         <strong>Student</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.isStudent ? "green" : "red"} />
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Indicator color={user.isStudent ? "green" : "red"} />
           <Typography>{user.isStudent ? "Yes" : "No"}</Typography>
         </Stack>
       </Box>
       <Box>
         <strong>Beeping</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.isBeeping ? "green" : "red"} />
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Indicator color={user.isBeeping ? "green" : "red"} />
           <Typography>{user.isBeeping ? "Yes" : "No"}</Typography>
         </Stack>
       </Box>

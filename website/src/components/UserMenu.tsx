@@ -66,8 +66,10 @@ export function UserMenu() {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "user-button",
+        slotProps={{
+          list: {
+            "aria-labelledby": "user-button",
+          }
         }}
       >
         <MenuItem component={Link} onClick={handleClose} to="/profile/edit">

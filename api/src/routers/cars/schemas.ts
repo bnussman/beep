@@ -1,6 +1,6 @@
 import z from "zod";
 import { getMakes } from "car-info";
-import { CAR_COLOR_OPTIONS, DEFAULT_PAGE_SIZE } from "../../utils/constants";
+import { CAR_COLOR_OPTIONS } from "../../utils/constants";
 
 export const createCarInputSchema =
   z.object({
@@ -19,8 +19,6 @@ export const deleteCarInputSchema =
 
 export const getCarsInputSchema =
   z.object({
-    pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-    cursor: z.number().optional().default(1),
     userId: z.uuid().optional(),
   });
 

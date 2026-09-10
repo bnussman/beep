@@ -71,7 +71,9 @@ function QueueTable() {
               <TableCell>{beep.groupSize}</TableCell>
               <TableCell>{DateTime.fromJSDate(beep.start).toRelative()}</TableCell>
               <TableCell>
-                <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1} sx={{
+                  alignItems: "center"
+                }}>
                   <Indicator color={beepStatusMap[beep.status]} />
                   <Typography sx={{ textTransform: "capitalize" }}>
                     {beep.status.replaceAll("_", " ")}

@@ -94,7 +94,9 @@ function SignUp() {
       <Card sx={{ p: 3 }}>
         <form onSubmit={onSubmit}>
           <Stack spacing={2}>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" sx={{
+              fontWeight: "bold"
+            }}>
               Sign Up
             </Typography>
             <Stack spacing={1}>
@@ -125,7 +127,9 @@ function SignUp() {
               )}
             </Stack>
             <Stack direction="row" spacing={2}>
-              <Stack spacing={2} flexGrow={1}>
+              <Stack spacing={2} sx={{
+                flexGrow: 1
+              }}>
                 <Controller
                   control={control}
                   name="first"
@@ -229,7 +233,11 @@ function SignUp() {
                 />
               )}
             />
-            <Box display="flex" justifyContent="flex-end">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end"
+              }}>
               <Button type="submit" loading={isPending} variant="contained">
                 Sign Up
               </Button>

@@ -110,7 +110,9 @@ function EditProfile() {
       <Card sx={{ p: 3 }}>
         <form onSubmit={onSubmit}>
           <Stack spacing={2}>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" sx={{
+              fontWeight: "bold"
+            }}>
               Edit Profile
             </Typography>
             {errors.root?.message && (
@@ -121,7 +123,9 @@ function EditProfile() {
             )}
             {uploadError && <Alert severity="error">{uploadError.message}</Alert>}
             <Stack direction="row" spacing={2}>
-              <Stack spacing={2} flexGrow={1}>
+              <Stack spacing={2} sx={{
+                flexGrow: 1
+              }}>
                 <Controller
                   control={control}
                   name="first"
@@ -224,7 +228,11 @@ function EditProfile() {
                 />
               )}
             />
-            <Box display="flex" justifyContent="flex-end">
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end"
+              }}>
               <Button
                 type="submit"
                 variant="contained"

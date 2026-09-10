@@ -1,5 +1,5 @@
 import { db } from "../../utils/db";
-import { user } from "../../../drizzle/schema";
+import { users } from "../../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { adminProcedure } from "../../utils/orpc";
@@ -13,17 +13,17 @@ export const notificationRouter = {
   sendNotification: adminProcedure
     .input(sendNotificationInputSchema)
     .handler(async ({ input }) => {
-      const users = await db
-        .select({ pushToken: user.pushToken })
-        .from(user)
+      const usersData = await db
+        .select({ pushToken: users.pushToken })
+        .from(users)
         .where(
           and(
-            isNotNull(user.pushToken),
-            input.emailMatch ? like(user.email, input.emailMatch) : undefined,
+            isNotNull(users.pushToken),
+            input.emailMatch ? like(users.email, input.emailMatch) : undefined,
           ),
         );
 
-      const to = users
+      const to = usersData
         .map((u) => u.pushToken)
         .filter((pushToken) => pushToken !== null);
 
@@ -34,17 +34,17 @@ export const notificationRouter = {
   sendNotificationToUser: adminProcedure
     .input(sendNotificationToUserInputSchema)
     .handler(async ({ input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input.userId },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND", {
           message: "User not found.",
         });
       }
 
-      if (!u.pushToken) {
+      if (!user.pushToken) {
         throw new ORPCError("BAD_REQUEST", {
           message:
             "User does not have a push token. Can't send them a notification.",
@@ -52,7 +52,7 @@ export const notificationRouter = {
       }
 
       await sendNotification({
-        to: u.pushToken,
+        to: user.pushToken,
         title: input.title,
         body: input.body,
       });

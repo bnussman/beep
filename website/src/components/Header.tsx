@@ -51,22 +51,34 @@ export function Header() {
       })}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Stack direction="row" spacing={4} alignItems="center">
+        <Stack direction="row" spacing={4} sx={{
+          alignItems: "center"
+        }}>
           <Link component={RouterLink} to="/">
-            <Stack direction="row" alignItems="center" gap={2}>
+            <Stack
+              direction="row"
+              sx={{
+                alignItems: "center",
+                gap: 2
+              }}>
               <Typography
-                fontWeight="bold"
                 variant="h1"
-                fontSize="1.5rem"
-                sx={{ display: { xs: "none", sm: "none", md: "block" } }}
-              >
+                sx={{
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                  display: { xs: "none", sm: "none", md: "block" }
+                }}>
                 Ride Beep App
               </Typography>
-              <Typography fontSize="1.5rem">🚕</Typography>
+              <Typography sx={{
+                fontSize: "1.5rem"
+              }}>🚕</Typography>
             </Stack>
           </Link>
         </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           {user?.role === "admin" && <AdminMenu />}
           {user && <UserMenu />}
           {!user && (

@@ -108,49 +108,77 @@ function Ride() {
 
   if (!ride) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" py={2}>
-        User is not in a beep!
-      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 2
+        }}>User is not in a beep!
+              </Box>
     );
   }
 
   return (
-    <Stack direction="row" gap={2}>
+    <Stack direction="row" sx={{
+      gap: 2
+    }}>
       <Stack spacing={1}>
         <Box>
-          <Typography fontWeight="bold">Beeper</Typography>
+          <Typography sx={{
+            fontWeight: "bold"
+          }}>Beeper</Typography>
           <BasicUser user={ride.beeper} />
         </Box>
         <Box>
-          <Typography fontWeight="bold">Status</Typography>
-          <Stack direction="row" alignItems="center" gap={1}>
-            <Typography textTransform="capitalize">
+          <Typography sx={{
+            fontWeight: "bold"
+          }}>Status</Typography>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 1
+            }}>
+            <Typography sx={{
+              textTransform: "capitalize"
+            }}>
               {ride.status.replaceAll("_", " ")}
             </Typography>
             <Indicator color={beepStatusMap[ride.status]} />
           </Stack>
         </Box>
         <Box>
-          <Typography fontWeight="bold">Origin</Typography>
+          <Typography sx={{
+            fontWeight: "bold"
+          }}>Origin</Typography>
           <Typography>{ride.origin}</Typography>
         </Box>
         <Box>
-          <Typography fontWeight="bold">Destination</Typography>
+          <Typography sx={{
+            fontWeight: "bold"
+          }}>Destination</Typography>
           <Typography>{ride.destination}</Typography>
         </Box>
         <Box>
-          <Typography fontWeight="bold">Group Size</Typography>
+          <Typography sx={{
+            fontWeight: "bold"
+          }}>Group Size</Typography>
           <Typography>{ride.groupSize}</Typography>
         </Box>
         <Box>
-          <Typography fontWeight="bold">Started</Typography>
+          <Typography sx={{
+            fontWeight: "bold"
+          }}>Started</Typography>
           <Typography style={{ textWrap: "nowrap" }}>
             {new Date(ride.start).toLocaleString()}
           </Typography>
           <Typography>{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
         </Box>
       </Stack>
-      <Box width="100%">
+      <Box sx={{
+        width: "100%"
+      }}>
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>

@@ -56,7 +56,9 @@ function Beeps() {
 
   return (
     <Stack spacing={1}>
-      <Typography fontWeight="bold" variant="h4">
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>
         Beeps
       </Typography>
       <PaginationFooter
@@ -100,7 +102,9 @@ function Beeps() {
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>
                 <TableCell>
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack direction="row" spacing={1} sx={{
+                    alignItems: "center"
+                  }}>
                     <Indicator color={beepStatusMap[beep.status]} />
                     <Typography sx={{ textTransform: "capitalize" }}>
                       {beep.status.replaceAll("_", " ")}

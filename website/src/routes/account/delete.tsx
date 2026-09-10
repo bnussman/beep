@@ -53,7 +53,9 @@ function DeleteAccount() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h4" fontWeight="bold">Delete Account</Typography>
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>Delete Account</Typography>
       <Alert severity="info">
         When your account is deleted, we try not retain any of your data.
         It may exist in our database backups for some amount of time.

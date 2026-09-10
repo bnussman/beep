@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/bun";
 import { eq, or } from "drizzle-orm";
 import { db } from "../../utils/db";
-import { beep } from "../../../drizzle/schema";
+import { beeps } from "../../../drizzle/schema";
 import { pubSub } from "../../utils/pubsub";
 import { sendNotification } from "../../utils/notifications";
 import { updateLiveActivity } from "../../utils/live-activities";
@@ -11,11 +11,11 @@ import { Beep } from "./types";
 import type { Location, User } from "../users/types";
 
 export const inProgressBeep = or(
-  eq(beep.status, "waiting"),
-  eq(beep.status, "accepted"),
-  eq(beep.status, "on_the_way"),
-  eq(beep.status, "here"),
-  eq(beep.status, "in_progress"),
+  eq(beeps.status, "waiting"),
+  eq(beeps.status, "accepted"),
+  eq(beeps.status, "on_the_way"),
+  eq(beeps.status, "here"),
+  eq(beeps.status, "in_progress"),
 );
 
 export const inProgressBeepNew = {
@@ -61,7 +61,7 @@ export function getQueueSize(queue: Beep[]) {
 }
 
 export async function getBeeperQueue(beeperId: string) {
-  return await db.query.beep.findMany({
+  return await db.query.beeps.findMany({
     where: { AND: [inProgressBeepNew, { beeper_id: beeperId }] },
     orderBy: { start: "asc" },
     with: {
@@ -72,7 +72,7 @@ export async function getBeeperQueue(beeperId: string) {
 }
 
 export async function getRidersCurrentRide(userId: string) {
-  const beep = await db.query.beep.findFirst({
+  const beep = await db.query.beeps.findFirst({
     where: {
       AND: [inProgressBeepNew, { rider_id: userId }],
     },
@@ -182,12 +182,12 @@ export async function sendBeepUpdateNotificationToRider(
         body: "Your beeper is on their way.",
       };
 
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
-      if (c) {
-        alert.body = `Your beeper is on their way in a ${c.color} ${c.make} ${c.model}`;
+      if (car) {
+        alert.body = `Your beeper is on their way in a ${car.color} ${car.make} ${car.model}`;
       }
 
       if (beep.rider_live_activity_token) {
@@ -196,9 +196,7 @@ export async function sendBeepUpdateNotificationToRider(
           alert,
           name: "RiderActivity",
           props: {
-            car: c
-              ? { make: c.make, model: c.model, color: c.color }
-              : undefined,
+            car,
             positionInQueue: beep.position,
             etaMinutes: undefined, // @todo
             name: beeper.first,
@@ -222,12 +220,12 @@ export async function sendBeepUpdateNotificationToRider(
         title: `${beeper.first} ${beeper.last} is here`,
         body: "Your beeper is here to pick you up.",
       };
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
-      if (c) {
-        alert.body = `Look for a ${c.color} ${c.make} ${c.model}`;
+      if (car) {
+        alert.body = `Look for a ${car.color} ${car.make} ${car.model}`;
       }
 
       if (beep.rider_live_activity_token) {
@@ -236,9 +234,7 @@ export async function sendBeepUpdateNotificationToRider(
           alert,
           name: "RiderActivity",
           props: {
-            car: c
-              ? { make: c.make, model: c.model, color: c.color }
-              : undefined,
+            car,
             positionInQueue: beep.position,
             name: beeper.first,
             status: beep.status,
@@ -296,18 +292,22 @@ export async function sendBeepUpdateNotificationToRider(
 }
 
 async function getUsersPushToken(userId: string) {
-  const rider = await db.query.user.findFirst({
+  const rider = await db.query.users.findFirst({
     columns: {
       pushToken: true,
     },
     where: { id: userId },
   });
 
-  return rider?.pushToken ?? null;
+  if (!rider) {
+    return null;
+  }
+
+  return rider.pushToken;
 }
 
 export async function updateEta(beeperId: string, location: Location) {
-  const currentBeep = await db.query.beep.findFirst({
+  const currentBeep = await db.query.beeps.findFirst({
     where: { AND: [{ beeper_id: beeperId }, inProgressBeepNew] },
     orderBy: { start: 'asc' },
     with: {
@@ -343,7 +343,7 @@ export async function updateEta(beeperId: string, location: Location) {
 
   pubSub.publish(`ride-${currentBeep.rider_id}`, { ride: values });
 
-  await db.update(beep).set(values).where(eq(beep.id, currentBeep.id));
+  await db.update(beeps).set(values).where(eq(beeps.id, currentBeep.id));
 }
 
 export async function getETA(locations: Location[]) {

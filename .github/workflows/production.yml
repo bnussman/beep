@@ -18,23 +18,13 @@ jobs:
       name: production
       url: https://ridebeep.app
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 11.10.0
-          run_install: false
-      - uses: actions/setup-node@v6
-        with:
-          cache: pnpm
-          node-version: latest
-      - run: pnpm i --frozen-lockfile
+      - run: bun install --frozen-lockfile
       - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
-      - uses: pulumi/actions@v6
+      - uses: pulumi/actions@v7
         with:
           command: up
           stack-name: production
@@ -42,26 +32,22 @@ jobs:
         env:
           secrets: ${{ toJSON(secrets) }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          ACTOR: ${{ github.actor }}
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v7
         with:
-          version: 11.10.0
-          run_install: false
-      - uses: actions/setup-node@v6
-        with:
-          cache: pnpm
           node-version: latest
       - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-      - run: pnpm i --frozen-lockfile
+      - run: bun install --frozen-lockfile
       - run: eas update --auto --environment production
         env:
           EAS_SKIP_AUTO_FINGERPRINT: 1

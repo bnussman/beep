@@ -38,9 +38,7 @@ function Ratings() {
 
   const { data, isLoading, error } = useQuery(
     orpc.rating.ratings.queryOptions({
-      input: {
-        cursor: page,
-      },
+      input: { page },
       placeholderData: keepPreviousData
     }),
   );
@@ -53,7 +51,9 @@ function Ratings() {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>
         Ratings
       </Typography>
       <PaginationFooter

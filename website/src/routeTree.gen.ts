@@ -9,69 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DownloadRouteImport } from './routes/download'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileEditRouteImport } from './routes/profile.edit'
-import { Route as PasswordForgotRouteImport } from './routes/password/forgot'
-import { Route as PasswordChangeRouteImport } from './routes/password/change'
-import { Route as AdminRedisRouteImport } from './routes/admin/redis'
-import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
-import { Route as AdminHealthRouteImport } from './routes/admin/health'
+import { Route as DownloadRouteImport } from './routes/download'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AccountDeleteRouteImport } from './routes/account/delete'
-import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
-import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports/index'
-import { Route as AdminRatingsIndexRouteImport } from './routes/admin/ratings/index'
-import { Route as AdminNotificationsIndexRouteImport } from './routes/admin/notifications/index'
-import { Route as AdminLeaderboardsIndexRouteImport } from './routes/admin/leaderboards/index'
-import { Route as AdminFeedbackIndexRouteImport } from './routes/admin/feedback/index'
-import { Route as AdminCarsIndexRouteImport } from './routes/admin/cars/index'
-import { Route as AdminBeepsIndexRouteImport } from './routes/admin/beeps/index'
-import { Route as AdminBeepersIndexRouteImport } from './routes/admin/beepers/index'
-import { Route as PasswordResetIdRouteImport } from './routes/password/reset.$id'
-import { Route as AdminUsersDomainRouteImport } from './routes/admin/users/domain'
-import { Route as AdminUsersUserIdRouteImport } from './routes/admin/users/$userId'
-import { Route as AdminReportsReportIdRouteImport } from './routes/admin/reports/$reportId'
-import { Route as AdminRatingsRatingIdRouteImport } from './routes/admin/ratings/$ratingId'
-import { Route as AdminLeaderboardsRidesRouteImport } from './routes/admin/leaderboards/rides'
-import { Route as AdminLeaderboardsBeepsRouteImport } from './routes/admin/leaderboards/beeps'
-import { Route as AdminBeepsActiveRouteImport } from './routes/admin/beeps/active'
-import { Route as AdminBeepsBeepIdRouteImport } from './routes/admin/beeps/$beepId'
+import { Route as AdminHealthRouteImport } from './routes/admin/health'
+import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
+import { Route as AdminRedisRouteImport } from './routes/admin/redis'
+import { Route as PasswordChangeRouteImport } from './routes/password/change'
+import { Route as PasswordForgotRouteImport } from './routes/password/forgot'
+import { Route as ProfileEditRouteImport } from './routes/profile.edit'
 import { Route as AccountVerifyIdRouteImport } from './routes/account/verify.$id'
-import { Route as AdminUsersUserIdRideRouteImport } from './routes/admin/users/$userId/ride'
-import { Route as AdminUsersUserIdReportsRouteImport } from './routes/admin/users/$userId/reports'
-import { Route as AdminUsersUserIdRatingsRouteImport } from './routes/admin/users/$userId/ratings'
-import { Route as AdminUsersUserIdQueueRouteImport } from './routes/admin/users/$userId/queue'
-import { Route as AdminUsersUserIdPaymentsRouteImport } from './routes/admin/users/$userId/payments'
-import { Route as AdminUsersUserIdLocationRouteImport } from './routes/admin/users/$userId/location'
-import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users/$userId/edit'
-import { Route as AdminUsersUserIdCarsRouteImport } from './routes/admin/users/$userId/cars'
-import { Route as AdminUsersUserIdBeepsRouteImport } from './routes/admin/users/$userId/beeps'
+import { Route as AdminBeepersIndexRouteImport } from './routes/admin/beepers/index'
+import { Route as AdminBeepsIndexRouteImport } from './routes/admin/beeps/index'
+import { Route as AdminBeepsBeepIdRouteImport } from './routes/admin/beeps/$beepId'
+import { Route as AdminBeepsActiveRouteImport } from './routes/admin/beeps/active'
+import { Route as AdminCarsIndexRouteImport } from './routes/admin/cars/index'
+import { Route as AdminFeedbackIndexRouteImport } from './routes/admin/feedback/index'
+import { Route as AdminLeaderboardsIndexRouteImport } from './routes/admin/leaderboards/index'
+import { Route as AdminLeaderboardsBeepsRouteImport } from './routes/admin/leaderboards/beeps'
+import { Route as AdminLeaderboardsRidesRouteImport } from './routes/admin/leaderboards/rides'
+import { Route as AdminNotificationsIndexRouteImport } from './routes/admin/notifications/index'
+import { Route as AdminRatingsIndexRouteImport } from './routes/admin/ratings/index'
+import { Route as AdminRatingsRatingIdRouteImport } from './routes/admin/ratings/$ratingId'
+import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports/index'
+import { Route as AdminReportsReportIdRouteImport } from './routes/admin/reports/$reportId'
+import { Route as AdminUsersIndexRouteImport } from './routes/admin/users/index'
+import { Route as AdminUsersUserIdRouteImport } from './routes/admin/users/$userId'
+import { Route as AdminUsersDomainRouteImport } from './routes/admin/users/domain'
+import { Route as PasswordResetIdRouteImport } from './routes/password/reset.$id'
 import { Route as AdminUsersUserIdSplatRouteImport } from './routes/admin/users/$userId/$'
-import { Route as AdminUsersUserIdEditLocationRouteImport } from './routes/admin/users/$userId/edit/location'
+import { Route as AdminUsersUserIdBeepsRouteImport } from './routes/admin/users/$userId/beeps'
+import { Route as AdminUsersUserIdCarsRouteImport } from './routes/admin/users/$userId/cars'
+import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users/$userId/edit'
+import { Route as AdminUsersUserIdLocationRouteImport } from './routes/admin/users/$userId/location'
+import { Route as AdminUsersUserIdPaymentsRouteImport } from './routes/admin/users/$userId/payments'
+import { Route as AdminUsersUserIdQueueRouteImport } from './routes/admin/users/$userId/queue'
+import { Route as AdminUsersUserIdRatingsRouteImport } from './routes/admin/users/$userId/ratings'
+import { Route as AdminUsersUserIdReportsRouteImport } from './routes/admin/users/$userId/reports'
+import { Route as AdminUsersUserIdRideRouteImport } from './routes/admin/users/$userId/ride'
 import { Route as AdminUsersUserIdEditSplatRouteImport } from './routes/admin/users/$userId/edit/$'
+import { Route as AdminUsersUserIdEditLocationRouteImport } from './routes/admin/users/$userId/edit/location'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadRoute = DownloadRouteImport.update({
@@ -79,39 +64,24 @@ const DownloadRoute = DownloadRouteImport.update({
   path: '/download',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileEditRoute = ProfileEditRouteImport.update({
-  id: '/profile/edit',
-  path: '/profile/edit',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PasswordForgotRoute = PasswordForgotRouteImport.update({
-  id: '/password/forgot',
-  path: '/password/forgot',
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PasswordChangeRoute = PasswordChangeRouteImport.update({
-  id: '/password/change',
-  path: '/password/change',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRedisRoute = AdminRedisRouteImport.update({
-  id: '/admin/redis',
-  path: '/admin/redis',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
-  id: '/admin/payments',
-  path: '/admin/payments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminHealthRoute = AdminHealthRouteImport.update({
-  id: '/admin/health',
-  path: '/admin/health',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountDeleteRoute = AccountDeleteRouteImport.update({
@@ -119,94 +89,34 @@ const AccountDeleteRoute = AccountDeleteRouteImport.update({
   path: '/account/delete',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
-  id: '/admin/users/',
-  path: '/admin/users/',
+const AdminHealthRoute = AdminHealthRouteImport.update({
+  id: '/admin/health',
+  path: '/admin/health',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
-  id: '/admin/reports/',
-  path: '/admin/reports/',
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/admin/payments',
+  path: '/admin/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRatingsIndexRoute = AdminRatingsIndexRouteImport.update({
-  id: '/admin/ratings/',
-  path: '/admin/ratings/',
+const AdminRedisRoute = AdminRedisRouteImport.update({
+  id: '/admin/redis',
+  path: '/admin/redis',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminNotificationsIndexRoute = AdminNotificationsIndexRouteImport.update({
-  id: '/admin/notifications/',
-  path: '/admin/notifications/',
+const PasswordChangeRoute = PasswordChangeRouteImport.update({
+  id: '/password/change',
+  path: '/password/change',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminLeaderboardsIndexRoute = AdminLeaderboardsIndexRouteImport.update({
-  id: '/admin/leaderboards/',
-  path: '/admin/leaderboards/',
+const PasswordForgotRoute = PasswordForgotRouteImport.update({
+  id: '/password/forgot',
+  path: '/password/forgot',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminFeedbackIndexRoute = AdminFeedbackIndexRouteImport.update({
-  id: '/admin/feedback/',
-  path: '/admin/feedback/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminCarsIndexRoute = AdminCarsIndexRouteImport.update({
-  id: '/admin/cars/',
-  path: '/admin/cars/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBeepsIndexRoute = AdminBeepsIndexRouteImport.update({
-  id: '/admin/beeps/',
-  path: '/admin/beeps/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBeepersIndexRoute = AdminBeepersIndexRouteImport.update({
-  id: '/admin/beepers/',
-  path: '/admin/beepers/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PasswordResetIdRoute = PasswordResetIdRouteImport.update({
-  id: '/password/reset/$id',
-  path: '/password/reset/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminUsersDomainRoute = AdminUsersDomainRouteImport.update({
-  id: '/admin/users/domain',
-  path: '/admin/users/domain',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
-  id: '/admin/users/$userId',
-  path: '/admin/users/$userId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminReportsReportIdRoute = AdminReportsReportIdRouteImport.update({
-  id: '/admin/reports/$reportId',
-  path: '/admin/reports/$reportId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRatingsRatingIdRoute = AdminRatingsRatingIdRouteImport.update({
-  id: '/admin/ratings/$ratingId',
-  path: '/admin/ratings/$ratingId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLeaderboardsRidesRoute = AdminLeaderboardsRidesRouteImport.update({
-  id: '/admin/leaderboards/rides',
-  path: '/admin/leaderboards/rides',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLeaderboardsBeepsRoute = AdminLeaderboardsBeepsRouteImport.update({
-  id: '/admin/leaderboards/beeps',
-  path: '/admin/leaderboards/beeps',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBeepsActiveRoute = AdminBeepsActiveRouteImport.update({
-  id: '/admin/beeps/active',
-  path: '/admin/beeps/active',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBeepsBeepIdRoute = AdminBeepsBeepIdRouteImport.update({
-  id: '/admin/beeps/$beepId',
-  path: '/admin/beeps/$beepId',
+const ProfileEditRoute = ProfileEditRouteImport.update({
+  id: '/profile/edit',
+  path: '/profile/edit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountVerifyIdRoute = AccountVerifyIdRouteImport.update({
@@ -214,46 +124,99 @@ const AccountVerifyIdRoute = AccountVerifyIdRouteImport.update({
   path: '/account/verify/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersUserIdRideRoute = AdminUsersUserIdRideRouteImport.update({
-  id: '/ride',
-  path: '/ride',
-  getParentRoute: () => AdminUsersUserIdRoute,
+const AdminBeepersIndexRoute = AdminBeepersIndexRouteImport.update({
+  id: '/admin/beepers/',
+  path: '/admin/beepers/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersUserIdReportsRoute = AdminUsersUserIdReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AdminUsersUserIdRoute,
+const AdminBeepsIndexRoute = AdminBeepsIndexRouteImport.update({
+  id: '/admin/beeps/',
+  path: '/admin/beeps/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersUserIdRatingsRoute = AdminUsersUserIdRatingsRouteImport.update({
-  id: '/ratings',
-  path: '/ratings',
-  getParentRoute: () => AdminUsersUserIdRoute,
+const AdminBeepsBeepIdRoute = AdminBeepsBeepIdRouteImport.update({
+  id: '/admin/beeps/$beepId',
+  path: '/admin/beeps/$beepId',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersUserIdQueueRoute = AdminUsersUserIdQueueRouteImport.update({
-  id: '/queue',
-  path: '/queue',
-  getParentRoute: () => AdminUsersUserIdRoute,
+const AdminBeepsActiveRoute = AdminBeepsActiveRouteImport.update({
+  id: '/admin/beeps/active',
+  path: '/admin/beeps/active',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersUserIdPaymentsRoute =
-  AdminUsersUserIdPaymentsRouteImport.update({
-    id: '/payments',
-    path: '/payments',
-    getParentRoute: () => AdminUsersUserIdRoute,
-  } as any)
-const AdminUsersUserIdLocationRoute =
-  AdminUsersUserIdLocationRouteImport.update({
-    id: '/location',
-    path: '/location',
-    getParentRoute: () => AdminUsersUserIdRoute,
-  } as any)
-const AdminUsersUserIdEditRoute = AdminUsersUserIdEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => AdminUsersUserIdRoute,
+const AdminCarsIndexRoute = AdminCarsIndexRouteImport.update({
+  id: '/admin/cars/',
+  path: '/admin/cars/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersUserIdCarsRoute = AdminUsersUserIdCarsRouteImport.update({
-  id: '/cars',
-  path: '/cars',
+const AdminFeedbackIndexRoute = AdminFeedbackIndexRouteImport.update({
+  id: '/admin/feedback/',
+  path: '/admin/feedback/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeaderboardsIndexRoute = AdminLeaderboardsIndexRouteImport.update({
+  id: '/admin/leaderboards/',
+  path: '/admin/leaderboards/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeaderboardsBeepsRoute = AdminLeaderboardsBeepsRouteImport.update({
+  id: '/admin/leaderboards/beeps',
+  path: '/admin/leaderboards/beeps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeaderboardsRidesRoute = AdminLeaderboardsRidesRouteImport.update({
+  id: '/admin/leaderboards/rides',
+  path: '/admin/leaderboards/rides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminNotificationsIndexRoute = AdminNotificationsIndexRouteImport.update({
+  id: '/admin/notifications/',
+  path: '/admin/notifications/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRatingsIndexRoute = AdminRatingsIndexRouteImport.update({
+  id: '/admin/ratings/',
+  path: '/admin/ratings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRatingsRatingIdRoute = AdminRatingsRatingIdRouteImport.update({
+  id: '/admin/ratings/$ratingId',
+  path: '/admin/ratings/$ratingId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
+  id: '/admin/reports/',
+  path: '/admin/reports/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReportsReportIdRoute = AdminReportsReportIdRouteImport.update({
+  id: '/admin/reports/$reportId',
+  path: '/admin/reports/$reportId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersIndexRoute = AdminUsersIndexRouteImport.update({
+  id: '/admin/users/',
+  path: '/admin/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
+  id: '/admin/users/$userId',
+  path: '/admin/users/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersDomainRoute = AdminUsersDomainRouteImport.update({
+  id: '/admin/users/domain',
+  path: '/admin/users/domain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PasswordResetIdRoute = PasswordResetIdRouteImport.update({
+  id: '/password/reset/$id',
+  path: '/password/reset/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersUserIdSplatRoute = AdminUsersUserIdSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => AdminUsersUserIdRoute,
 } as any)
 const AdminUsersUserIdBeepsRoute = AdminUsersUserIdBeepsRouteImport.update({
@@ -261,21 +224,58 @@ const AdminUsersUserIdBeepsRoute = AdminUsersUserIdBeepsRouteImport.update({
   path: '/beeps',
   getParentRoute: () => AdminUsersUserIdRoute,
 } as any)
-const AdminUsersUserIdSplatRoute = AdminUsersUserIdSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
+const AdminUsersUserIdCarsRoute = AdminUsersUserIdCarsRouteImport.update({
+  id: '/cars',
+  path: '/cars',
   getParentRoute: () => AdminUsersUserIdRoute,
 } as any)
-const AdminUsersUserIdEditLocationRoute =
-  AdminUsersUserIdEditLocationRouteImport.update({
+const AdminUsersUserIdEditRoute = AdminUsersUserIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AdminUsersUserIdRoute,
+} as any)
+const AdminUsersUserIdLocationRoute =
+  AdminUsersUserIdLocationRouteImport.update({
     id: '/location',
     path: '/location',
-    getParentRoute: () => AdminUsersUserIdEditRoute,
+    getParentRoute: () => AdminUsersUserIdRoute,
   } as any)
+const AdminUsersUserIdPaymentsRoute =
+  AdminUsersUserIdPaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AdminUsersUserIdRoute,
+  } as any)
+const AdminUsersUserIdQueueRoute = AdminUsersUserIdQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => AdminUsersUserIdRoute,
+} as any)
+const AdminUsersUserIdRatingsRoute = AdminUsersUserIdRatingsRouteImport.update({
+  id: '/ratings',
+  path: '/ratings',
+  getParentRoute: () => AdminUsersUserIdRoute,
+} as any)
+const AdminUsersUserIdReportsRoute = AdminUsersUserIdReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminUsersUserIdRoute,
+} as any)
+const AdminUsersUserIdRideRoute = AdminUsersUserIdRideRouteImport.update({
+  id: '/ride',
+  path: '/ride',
+  getParentRoute: () => AdminUsersUserIdRoute,
+} as any)
 const AdminUsersUserIdEditSplatRoute =
   AdminUsersUserIdEditSplatRouteImport.update({
     id: '/$',
     path: '/$',
+    getParentRoute: () => AdminUsersUserIdEditRoute,
+  } as any)
+const AdminUsersUserIdEditLocationRoute =
+  AdminUsersUserIdEditLocationRouteImport.update({
+    id: '/location',
+    path: '/location',
     getParentRoute: () => AdminUsersUserIdEditRoute,
   } as any)
 
@@ -596,32 +596,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/download': {
@@ -631,53 +610,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/edit': {
-      id: '/profile/edit'
-      path: '/profile/edit'
-      fullPath: '/profile/edit'
-      preLoaderRoute: typeof ProfileEditRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/password/forgot': {
-      id: '/password/forgot'
-      path: '/password/forgot'
-      fullPath: '/password/forgot'
-      preLoaderRoute: typeof PasswordForgotRouteImport
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/password/change': {
-      id: '/password/change'
-      path: '/password/change'
-      fullPath: '/password/change'
-      preLoaderRoute: typeof PasswordChangeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/redis': {
-      id: '/admin/redis'
-      path: '/admin/redis'
-      fullPath: '/admin/redis'
-      preLoaderRoute: typeof AdminRedisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/payments': {
-      id: '/admin/payments'
-      path: '/admin/payments'
-      fullPath: '/admin/payments'
-      preLoaderRoute: typeof AdminPaymentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/health': {
-      id: '/admin/health'
-      path: '/admin/health'
-      fullPath: '/admin/health'
-      preLoaderRoute: typeof AdminHealthRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/delete': {
@@ -687,130 +645,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountDeleteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/users/': {
-      id: '/admin/users/'
-      path: '/admin/users'
-      fullPath: '/admin/users/'
-      preLoaderRoute: typeof AdminUsersIndexRouteImport
+    '/admin/health': {
+      id: '/admin/health'
+      path: '/admin/health'
+      fullPath: '/admin/health'
+      preLoaderRoute: typeof AdminHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/reports/': {
-      id: '/admin/reports/'
-      path: '/admin/reports'
-      fullPath: '/admin/reports/'
-      preLoaderRoute: typeof AdminReportsIndexRouteImport
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/admin/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/ratings/': {
-      id: '/admin/ratings/'
-      path: '/admin/ratings'
-      fullPath: '/admin/ratings/'
-      preLoaderRoute: typeof AdminRatingsIndexRouteImport
+    '/admin/redis': {
+      id: '/admin/redis'
+      path: '/admin/redis'
+      fullPath: '/admin/redis'
+      preLoaderRoute: typeof AdminRedisRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/notifications/': {
-      id: '/admin/notifications/'
-      path: '/admin/notifications'
-      fullPath: '/admin/notifications/'
-      preLoaderRoute: typeof AdminNotificationsIndexRouteImport
+    '/password/change': {
+      id: '/password/change'
+      path: '/password/change'
+      fullPath: '/password/change'
+      preLoaderRoute: typeof PasswordChangeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/leaderboards/': {
-      id: '/admin/leaderboards/'
-      path: '/admin/leaderboards'
-      fullPath: '/admin/leaderboards/'
-      preLoaderRoute: typeof AdminLeaderboardsIndexRouteImport
+    '/password/forgot': {
+      id: '/password/forgot'
+      path: '/password/forgot'
+      fullPath: '/password/forgot'
+      preLoaderRoute: typeof PasswordForgotRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/feedback/': {
-      id: '/admin/feedback/'
-      path: '/admin/feedback'
-      fullPath: '/admin/feedback/'
-      preLoaderRoute: typeof AdminFeedbackIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/cars/': {
-      id: '/admin/cars/'
-      path: '/admin/cars'
-      fullPath: '/admin/cars/'
-      preLoaderRoute: typeof AdminCarsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/beeps/': {
-      id: '/admin/beeps/'
-      path: '/admin/beeps'
-      fullPath: '/admin/beeps/'
-      preLoaderRoute: typeof AdminBeepsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/beepers/': {
-      id: '/admin/beepers/'
-      path: '/admin/beepers'
-      fullPath: '/admin/beepers/'
-      preLoaderRoute: typeof AdminBeepersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/password/reset/$id': {
-      id: '/password/reset/$id'
-      path: '/password/reset/$id'
-      fullPath: '/password/reset/$id'
-      preLoaderRoute: typeof PasswordResetIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/users/domain': {
-      id: '/admin/users/domain'
-      path: '/admin/users/domain'
-      fullPath: '/admin/users/domain'
-      preLoaderRoute: typeof AdminUsersDomainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/users/$userId': {
-      id: '/admin/users/$userId'
-      path: '/admin/users/$userId'
-      fullPath: '/admin/users/$userId'
-      preLoaderRoute: typeof AdminUsersUserIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/reports/$reportId': {
-      id: '/admin/reports/$reportId'
-      path: '/admin/reports/$reportId'
-      fullPath: '/admin/reports/$reportId'
-      preLoaderRoute: typeof AdminReportsReportIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/ratings/$ratingId': {
-      id: '/admin/ratings/$ratingId'
-      path: '/admin/ratings/$ratingId'
-      fullPath: '/admin/ratings/$ratingId'
-      preLoaderRoute: typeof AdminRatingsRatingIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/leaderboards/rides': {
-      id: '/admin/leaderboards/rides'
-      path: '/admin/leaderboards/rides'
-      fullPath: '/admin/leaderboards/rides'
-      preLoaderRoute: typeof AdminLeaderboardsRidesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/leaderboards/beeps': {
-      id: '/admin/leaderboards/beeps'
-      path: '/admin/leaderboards/beeps'
-      fullPath: '/admin/leaderboards/beeps'
-      preLoaderRoute: typeof AdminLeaderboardsBeepsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/beeps/active': {
-      id: '/admin/beeps/active'
-      path: '/admin/beeps/active'
-      fullPath: '/admin/beeps/active'
-      preLoaderRoute: typeof AdminBeepsActiveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/beeps/$beepId': {
-      id: '/admin/beeps/$beepId'
-      path: '/admin/beeps/$beepId'
-      fullPath: '/admin/beeps/$beepId'
-      preLoaderRoute: typeof AdminBeepsBeepIdRouteImport
+    '/profile/edit': {
+      id: '/profile/edit'
+      path: '/profile/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof ProfileEditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/verify/$id': {
@@ -820,60 +694,137 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountVerifyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/ride': {
-      id: '/admin/users/$userId/ride'
-      path: '/ride'
-      fullPath: '/admin/users/$userId/ride'
-      preLoaderRoute: typeof AdminUsersUserIdRideRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/beepers/': {
+      id: '/admin/beepers/'
+      path: '/admin/beepers'
+      fullPath: '/admin/beepers/'
+      preLoaderRoute: typeof AdminBeepersIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/reports': {
-      id: '/admin/users/$userId/reports'
-      path: '/reports'
-      fullPath: '/admin/users/$userId/reports'
-      preLoaderRoute: typeof AdminUsersUserIdReportsRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/beeps/': {
+      id: '/admin/beeps/'
+      path: '/admin/beeps'
+      fullPath: '/admin/beeps/'
+      preLoaderRoute: typeof AdminBeepsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/ratings': {
-      id: '/admin/users/$userId/ratings'
-      path: '/ratings'
-      fullPath: '/admin/users/$userId/ratings'
-      preLoaderRoute: typeof AdminUsersUserIdRatingsRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/beeps/$beepId': {
+      id: '/admin/beeps/$beepId'
+      path: '/admin/beeps/$beepId'
+      fullPath: '/admin/beeps/$beepId'
+      preLoaderRoute: typeof AdminBeepsBeepIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/queue': {
-      id: '/admin/users/$userId/queue'
-      path: '/queue'
-      fullPath: '/admin/users/$userId/queue'
-      preLoaderRoute: typeof AdminUsersUserIdQueueRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/beeps/active': {
+      id: '/admin/beeps/active'
+      path: '/admin/beeps/active'
+      fullPath: '/admin/beeps/active'
+      preLoaderRoute: typeof AdminBeepsActiveRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/payments': {
-      id: '/admin/users/$userId/payments'
-      path: '/payments'
-      fullPath: '/admin/users/$userId/payments'
-      preLoaderRoute: typeof AdminUsersUserIdPaymentsRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/cars/': {
+      id: '/admin/cars/'
+      path: '/admin/cars'
+      fullPath: '/admin/cars/'
+      preLoaderRoute: typeof AdminCarsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/location': {
-      id: '/admin/users/$userId/location'
-      path: '/location'
-      fullPath: '/admin/users/$userId/location'
-      preLoaderRoute: typeof AdminUsersUserIdLocationRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/feedback/': {
+      id: '/admin/feedback/'
+      path: '/admin/feedback'
+      fullPath: '/admin/feedback/'
+      preLoaderRoute: typeof AdminFeedbackIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/edit': {
-      id: '/admin/users/$userId/edit'
-      path: '/edit'
-      fullPath: '/admin/users/$userId/edit'
-      preLoaderRoute: typeof AdminUsersUserIdEditRouteImport
-      parentRoute: typeof AdminUsersUserIdRoute
+    '/admin/leaderboards/': {
+      id: '/admin/leaderboards/'
+      path: '/admin/leaderboards'
+      fullPath: '/admin/leaderboards/'
+      preLoaderRoute: typeof AdminLeaderboardsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/users/$userId/cars': {
-      id: '/admin/users/$userId/cars'
-      path: '/cars'
-      fullPath: '/admin/users/$userId/cars'
-      preLoaderRoute: typeof AdminUsersUserIdCarsRouteImport
+    '/admin/leaderboards/beeps': {
+      id: '/admin/leaderboards/beeps'
+      path: '/admin/leaderboards/beeps'
+      fullPath: '/admin/leaderboards/beeps'
+      preLoaderRoute: typeof AdminLeaderboardsBeepsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/leaderboards/rides': {
+      id: '/admin/leaderboards/rides'
+      path: '/admin/leaderboards/rides'
+      fullPath: '/admin/leaderboards/rides'
+      preLoaderRoute: typeof AdminLeaderboardsRidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/notifications/': {
+      id: '/admin/notifications/'
+      path: '/admin/notifications'
+      fullPath: '/admin/notifications/'
+      preLoaderRoute: typeof AdminNotificationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ratings/': {
+      id: '/admin/ratings/'
+      path: '/admin/ratings'
+      fullPath: '/admin/ratings/'
+      preLoaderRoute: typeof AdminRatingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ratings/$ratingId': {
+      id: '/admin/ratings/$ratingId'
+      path: '/admin/ratings/$ratingId'
+      fullPath: '/admin/ratings/$ratingId'
+      preLoaderRoute: typeof AdminRatingsRatingIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reports/': {
+      id: '/admin/reports/'
+      path: '/admin/reports'
+      fullPath: '/admin/reports/'
+      preLoaderRoute: typeof AdminReportsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reports/$reportId': {
+      id: '/admin/reports/$reportId'
+      path: '/admin/reports/$reportId'
+      fullPath: '/admin/reports/$reportId'
+      preLoaderRoute: typeof AdminReportsReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users/': {
+      id: '/admin/users/'
+      path: '/admin/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AdminUsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users/$userId': {
+      id: '/admin/users/$userId'
+      path: '/admin/users/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminUsersUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users/domain': {
+      id: '/admin/users/domain'
+      path: '/admin/users/domain'
+      fullPath: '/admin/users/domain'
+      preLoaderRoute: typeof AdminUsersDomainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/password/reset/$id': {
+      id: '/password/reset/$id'
+      path: '/password/reset/$id'
+      fullPath: '/password/reset/$id'
+      preLoaderRoute: typeof PasswordResetIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users/$userId/$': {
+      id: '/admin/users/$userId/$'
+      path: '/$'
+      fullPath: '/admin/users/$userId/$'
+      preLoaderRoute: typeof AdminUsersUserIdSplatRouteImport
       parentRoute: typeof AdminUsersUserIdRoute
     }
     '/admin/users/$userId/beeps': {
@@ -883,25 +834,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersUserIdBeepsRouteImport
       parentRoute: typeof AdminUsersUserIdRoute
     }
-    '/admin/users/$userId/$': {
-      id: '/admin/users/$userId/$'
-      path: '/$'
-      fullPath: '/admin/users/$userId/$'
-      preLoaderRoute: typeof AdminUsersUserIdSplatRouteImport
+    '/admin/users/$userId/cars': {
+      id: '/admin/users/$userId/cars'
+      path: '/cars'
+      fullPath: '/admin/users/$userId/cars'
+      preLoaderRoute: typeof AdminUsersUserIdCarsRouteImport
       parentRoute: typeof AdminUsersUserIdRoute
     }
-    '/admin/users/$userId/edit/location': {
-      id: '/admin/users/$userId/edit/location'
+    '/admin/users/$userId/edit': {
+      id: '/admin/users/$userId/edit'
+      path: '/edit'
+      fullPath: '/admin/users/$userId/edit'
+      preLoaderRoute: typeof AdminUsersUserIdEditRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
+    }
+    '/admin/users/$userId/location': {
+      id: '/admin/users/$userId/location'
       path: '/location'
-      fullPath: '/admin/users/$userId/edit/location'
-      preLoaderRoute: typeof AdminUsersUserIdEditLocationRouteImport
-      parentRoute: typeof AdminUsersUserIdEditRoute
+      fullPath: '/admin/users/$userId/location'
+      preLoaderRoute: typeof AdminUsersUserIdLocationRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
+    }
+    '/admin/users/$userId/payments': {
+      id: '/admin/users/$userId/payments'
+      path: '/payments'
+      fullPath: '/admin/users/$userId/payments'
+      preLoaderRoute: typeof AdminUsersUserIdPaymentsRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
+    }
+    '/admin/users/$userId/queue': {
+      id: '/admin/users/$userId/queue'
+      path: '/queue'
+      fullPath: '/admin/users/$userId/queue'
+      preLoaderRoute: typeof AdminUsersUserIdQueueRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
+    }
+    '/admin/users/$userId/ratings': {
+      id: '/admin/users/$userId/ratings'
+      path: '/ratings'
+      fullPath: '/admin/users/$userId/ratings'
+      preLoaderRoute: typeof AdminUsersUserIdRatingsRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
+    }
+    '/admin/users/$userId/reports': {
+      id: '/admin/users/$userId/reports'
+      path: '/reports'
+      fullPath: '/admin/users/$userId/reports'
+      preLoaderRoute: typeof AdminUsersUserIdReportsRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
+    }
+    '/admin/users/$userId/ride': {
+      id: '/admin/users/$userId/ride'
+      path: '/ride'
+      fullPath: '/admin/users/$userId/ride'
+      preLoaderRoute: typeof AdminUsersUserIdRideRouteImport
+      parentRoute: typeof AdminUsersUserIdRoute
     }
     '/admin/users/$userId/edit/$': {
       id: '/admin/users/$userId/edit/$'
       path: '/$'
       fullPath: '/admin/users/$userId/edit/$'
       preLoaderRoute: typeof AdminUsersUserIdEditSplatRouteImport
+      parentRoute: typeof AdminUsersUserIdEditRoute
+    }
+    '/admin/users/$userId/edit/location': {
+      id: '/admin/users/$userId/edit/location'
+      path: '/location'
+      fullPath: '/admin/users/$userId/edit/location'
+      preLoaderRoute: typeof AdminUsersUserIdEditLocationRouteImport
       parentRoute: typeof AdminUsersUserIdEditRoute
     }
   }

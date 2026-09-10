@@ -66,7 +66,9 @@ function Rides() {
               <TableRow key={user.id}>
                 <TableCell>
                   <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-                    <Stack direction="row" alignItems="center" spacing={1}>
+                    <Stack direction="row" spacing={1} sx={{
+                      alignItems: "center"
+                    }}>
                       <Avatar src={user.photo ?? undefined} />
                       <Typography>
                         {user.first} {user.last}

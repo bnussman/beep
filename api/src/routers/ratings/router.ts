@@ -2,17 +2,19 @@ import { z } from "zod";
 import { adminProcedure, authedProcedure } from "../../utils/orpc";
 import { db } from "../../utils/db";
 import { count, eq } from "drizzle-orm";
-import { rating, user } from "../../../drizzle/schema";
+import { ratings, users } from "../../../drizzle/schema";
 import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
 import { getUsersAverageRating } from "./logic";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { createRatingInputSchema, deleteRatingInputSchema, listRatingsInputSchema } from "./schemas";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const ratingRouter = {
   ratings: authedProcedure
     .input(listRatingsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const where = input.userId
         ? {
@@ -21,8 +23,8 @@ export const ratingRouter = {
         : {};
 
       const [ratings, ratingsCount] = await Promise.all([
-        db.query.rating.findMany({
-          offset: (input.cursor - 1) * input.pageSize,
+        db.query.ratings.findMany({
+          offset: getOffsetFromPage(input.page, input.pageSize),
           limit: input.pageSize,
           where,
           columns: {
@@ -39,7 +41,7 @@ export const ratingRouter = {
             },
           },
         }),
-        db.query.rating.findMany({
+        db.query.ratings.findMany({
           columns: {},
           extras: { count: count() },
           where,
@@ -51,15 +53,15 @@ export const ratingRouter = {
       return {
         ratings,
         pageSize: input.pageSize,
-        page: input.cursor,
-        pages: Math.ceil(results / input.pageSize),
+        page: input.page,
+        pages: getPagesFromCount(results, input.pageSize),
         results,
       };
     }),
   rating: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const r = await db.query.rating.findFirst({
+      const rating = await db.query.ratings.findFirst({
         where: { id: input },
         with: {
           rater: {
@@ -71,102 +73,105 @@ export const ratingRouter = {
         },
       });
 
-      if (!r) {
+      if (!rating) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return r;
+      return rating;
     }),
   deleteRating: authedProcedure
     .input(deleteRatingInputSchema)
     .handler(async ({ input, context }) => {
-      const r = await db.query.rating.findFirst({
+      const rating = await db.query.ratings.findFirst({
         where: { id: input.ratingId },
       });
 
-      if (!r) {
+      if (!rating) {
         throw new ORPCError("NOT_FOUND", {
           message: "Rating not found",
         });
       }
 
-      if (context.user.role === "user" && r.rater_id !== context.user.id) {
+      if (context.user.role === "user" && rating.rater_id !== context.user.id) {
         throw new ORPCError("UNAUTHORIZED", {
           message: "You can't delete a rating that you didn't create.",
         });
       }
 
-      await db.delete(rating).where(eq(rating.id, r.id));
+      await db.delete(ratings).where(eq(ratings.id, rating.id));
 
-      const updatedRating = await getUsersAverageRating(r.rated_id);
+      const updatedRating = await getUsersAverageRating(rating.rated_id);
 
       await db
-        .update(user)
+        .update(users)
         .set({ rating: updatedRating })
-        .where(eq(user.id, r.rated_id));
+        .where(eq(users.id, rating.rated_id));
     }),
   createRating: authedProcedure
     .input(createRatingInputSchema)
     .handler(async ({ context, input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input.userId },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND", {
           message: "User not found",
         });
       }
 
-      const b = await db.query.beep.findFirst({
+      const beep = await db.query.beeps.findFirst({
         where: { id: input.beepId },
       });
 
-      if (!b) {
+      if (!beep) {
         throw new ORPCError("NOT_FOUND", {
           message: "Beep not found",
         });
       }
 
-      if (![b.rider_id, b.beeper_id].includes(context.user.id)) {
+      if (![beep.rider_id, beep.beeper_id].includes(context.user.id)) {
         throw new ORPCError("BAD_REQUEST", {
           message:
             "You must be the rider or beeper of this beep to leave a rating about it.",
         });
       }
 
-      if (b.status !== "complete") {
+      if (beep.status !== "complete") {
         throw new ORPCError("BAD_REQUEST", {
-          message: `You can only leave a rating once the beep is complete. That this beep has a status of ${b.status}`,
+          message: `You can only leave a rating once the beep is complete. That this beep has a status of ${beep.status}`,
         });
       }
 
       const r = await db
-        .insert(rating)
+        .insert(ratings)
         .values({
           id: crypto.randomUUID(),
           timestamp: new Date(),
           stars: input.stars,
           message: input.message,
           beep_id: input.beepId,
-          rated_id: input.userId,
+          rated_id: user.id,
           rater_id: context.user.id,
         })
         .returning();
 
-      const avgRating = await getUsersAverageRating(u.id);
+      const avgRating = await getUsersAverageRating(user.id);
 
-      await db.update(user).set({ rating: avgRating }).where(eq(user.id, u.id));
+      await db
+        .update(users)
+        .set({ rating: avgRating })
+        .where(eq(users.id, user.id));
 
-      const updatedUser = { ...u, rating: avgRating };
+      user.rating = avgRating;
 
-      pubSub.publish(`user-${u.id}`, { user: updatedUser });
+      pubSub.publish(`user-${user.id}`, { user });
 
-      if (u.pushToken) {
+      if (user.pushToken) {
         sendNotification({
-          to: u.pushToken,
+          to: user.pushToken,
           title: `You got rated ⭐️`,
-          body: `${context.user.first} ${context.user.last} rated you ${input.stars} stars!`,
+          body: `${context.user.first} ${context.user.last} rated you ${input.stars} stars.`,
         });
       }
 

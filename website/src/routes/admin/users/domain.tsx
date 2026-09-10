@@ -15,7 +15,9 @@ function UsersByDomain() {
 
   return (
     <Stack spacing={2}>
-      <Typography fontWeight="bold" variant="h4">Users by Domain</Typography>
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>Users by Domain</Typography>
       <TableContainer component={Paper} variant="outlined">
         <Table>
           <TableHead>

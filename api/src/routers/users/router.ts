@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { beep, user, verify_email } from "../../../drizzle/schema";
+import { beeps, emailVerifications, users } from "../../../drizzle/schema";
 import { db, writeDB } from "../../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
@@ -11,7 +11,7 @@ import { sendNotification } from "../../utils/notifications";
 import { pubSub } from "../../utils/pubsub";
 import { inProgressBeep, updateEta } from "../beeps/logic";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
-import { activePaymentsInputSchema, adminEditUserInputSchema, editUserInputSchema, listsUsersInputSchema, listsUsersWithBeepsInputSchema, listsUsersWithRidesInputSchema, sendTestEmailInputSchema, syncUserPaymentsInputSchema, userSchema } from "./schemas";
+import { activePaymentsInputSchema, adminEditUserInputSchema, editUserInputSchema, listsUsersInputSchema, sendTestEmailInputSchema, syncUserPaymentsInputSchema, userSchema } from "./schemas";
 import { getActivePayments } from "../payments/logic";
 import {
   adminProcedure,
@@ -22,6 +22,7 @@ import {
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../../utils/constants";
+import { paginationSchema } from "../../utils/pagination";
 
 export const userRouter = {
   me: authedProcedure
@@ -47,7 +48,7 @@ export const userRouter = {
       if (context.user.id === userId) {
         yield context.user;
       } else {
-        const user = await db.query.user.findFirst({
+        const user = await db.query.users.findFirst({
           where: { id: userId },
           columns: { password: false, passwordType: false },
         })
@@ -73,12 +74,12 @@ export const userRouter = {
   edit: authedProcedure
     .input(editUserInputSchema)
     .handler(async ({ context, input }) => {
-      const values: Partial<typeof user.$inferInsert> = input;
+      const values: Partial<typeof users.$inferInsert> = input;
 
       if (values.isBeeping === false) {
         const countOfInProgressBeeps = await db.$count(
-          beep,
-          and(eq(beep.beeper_id, context.user.id), inProgressBeep),
+          beeps,
+          and(eq(beeps.beeper_id, context.user.id), inProgressBeep),
         );
 
         if (countOfInProgressBeeps > 0) {
@@ -95,8 +96,8 @@ export const userRouter = {
         values.isEmailVerified = false;
 
         await db
-          .delete(verify_email)
-          .where(eq(verify_email.user_id, context.user.id));
+          .delete(emailVerifications)
+          .where(eq(emailVerifications.user_id, context.user.id));
 
         const verifyEmailEntry = {
           id: crypto.randomUUID(),
@@ -105,7 +106,7 @@ export const userRouter = {
           time: new Date(),
         };
 
-        await db.insert(verify_email).values(verifyEmailEntry);
+        await db.insert(emailVerifications).values(verifyEmailEntry);
 
         const mailOptions: SendMailOptions = {
           from: "Beep App <banks@ridebeep.app>",
@@ -131,10 +132,11 @@ export const userRouter = {
           });
         }
 
-        const c = await db.query.car.findFirst({
+        const car = await db.query.cars.findFirst({
           where: { user_id: context.user.id, default: true },
         });
-        if (!c) {
+
+        if (!car) {
           throw new ORPCError("BAD_REQUEST", {
             message: "You must have a default car to beep.",
           });
@@ -142,12 +144,12 @@ export const userRouter = {
       }
 
       if ("location" in values) {
-        await writeDB.update(user).set(values).where(eq(user.id, context.user.id));
+        await writeDB.update(users).set(values).where(eq(users.id, context.user.id));
       } else {
         await db
-          .update(user)
+          .update(users)
           .set(values)
-          .where(eq(user.id, context.user.id));
+          .where(eq(users.id, context.user.id));
       }
 
       Object.assign(context.user, values);
@@ -170,7 +172,7 @@ export const userRouter = {
   editAdmin: adminProcedure
     .input(adminEditUserInputSchema)
     .handler(async ({ input }) => {
-      const existingUser = await db.query.user.findFirst({
+      const existingUser = await db.query.users.findFirst({
         where: { id: input.userId },
         columns: {
           isEmailVerified: true,
@@ -205,18 +207,18 @@ export const userRouter = {
         await s3.delete(existingUser.photo);
       }
 
-      const u = await db
-        .update(user)
+      const [user] = await db
+        .update(users)
         .set(input.data)
-        .where(eq(user.id, input.userId))
+        .where(eq(users.id, input.userId))
         .returning();
 
-      pubSub.publish(`user-${u[0].id}`, { user: u[0] });
+      pubSub.publish(`user-${user.id}`, { user });
 
-      if (u[0].location) {
+      if (user.location) {
         const data = {
-          id: u[0].id,
-          location: u[0].location,
+          id: user.id,
+          location: user.location,
         };
 
         updateEta(input.userId, data.location);
@@ -224,7 +226,7 @@ export const userRouter = {
         pubSub.publish("locations", data);
       }
 
-      return u[0];
+      return user;
     }),
   syncPayments: authedProcedure
     .input(syncUserPaymentsInputSchema)
@@ -256,7 +258,6 @@ export const userRouter = {
   updatePicture: authedProcedure
     .input(z.instanceof(File))
     .handler(async ({ context, input }) => {
-
       const extention = input.name.substring(
         input.name.lastIndexOf("."),
         input.name.length,
@@ -280,33 +281,37 @@ export const userRouter = {
         }
       }
 
-      const u = await db
-        .update(user)
-        .set({ photo: S3_BUCKET_URL + objectKey })
-        .where(eq(user.id, context.user.id))
-        .returning();
+      const newPhotoUrl = S3_BUCKET_URL + objectKey;
 
-      pubSub.publish(`user-${context.user.id}`, { user: u[0] });
+      await db
+        .update(users)
+        .set({ photo: newPhotoUrl })
+        .where(eq(users.id, context.user.id));
+
+      context.user.photo = newPhotoUrl;
+
+      pubSub.publish(`user-${context.user.id}`, { user: context.user });
 
       return context.user;
     }),
   users: adminProcedure
     .input(listsUsersInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
       const lowercaseQuery = input.query?.toLowerCase();
 
       const where = and(
-        input.isBeeping ? eq(user.isBeeping, true) : undefined,
+        input.isBeeping ? eq(users.isBeeping, true) : undefined,
         input.query
           ? or(
-              eq(user.id, input.query),
-              like(sql`lower(${user.first})`, `%${lowercaseQuery}%`),
-              like(sql`lower(${user.last})`, `%${lowercaseQuery}%`),
-              like(sql`lower(${user.email})`, `%${lowercaseQuery}%`),
-              like(sql`lower(${user.phone})`, `%${lowercaseQuery}%`),
-              like(sql`lower(${user.username})`, `%${lowercaseQuery}%`),
+              eq(users.id, input.query),
+              like(sql`lower(${users.first})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${users.last})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${users.email})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${users.phone})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${users.username})`, `%${lowercaseQuery}%`),
               like(
-                sql`lower(${user.first} || ' ' || ${user.last})`,
+                sql`lower(${users.first} || ' ' || ${users.last})`,
                 `%${lowercaseQuery}%`,
               ),
             )
@@ -315,37 +320,37 @@ export const userRouter = {
 
       const offset = (input.page - 1) * input.pageSize;
 
-      const [users, usersCount] = await Promise.all([
+      const [usersData, usersCount] = await Promise.all([
         db
           .select({
-            id: user.id,
-            first: user.first,
-            last: user.last,
-            photo: user.photo,
-            email: user.email,
-            username: user.username,
-            isStudent: user.isStudent,
-            isEmailVerified: user.isEmailVerified,
-            isBeeping: user.isBeeping,
-            created: user.created,
-            location: user.location,
-            queueSize: user.queueSize,
-            groupRate: user.groupRate,
-            singlesRate: user.singlesRate,
-            capacity: user.capacity,
+            id: users.id,
+            first: users.first,
+            last: users.last,
+            photo: users.photo,
+            email: users.email,
+            username: users.username,
+            isStudent: users.isStudent,
+            isEmailVerified: users.isEmailVerified,
+            isBeeping: users.isBeeping,
+            created: users.created,
+            location: users.location,
+            queueSize: users.queueSize,
+            groupRate: users.groupRate,
+            singlesRate: users.singlesRate,
+            capacity: users.capacity,
           })
-          .from(user)
+          .from(users)
           .where(where)
-          .orderBy(sql`${user.created} desc nulls last`)
+          .orderBy(sql`${users.created} desc nulls last`)
           .limit(input.pageSize)
           .offset(offset),
-        db.select({ count: count() }).from(user).where(where),
+        db.select({ count: count() }).from(users).where(where),
       ]);
 
       const results = usersCount[0].count;
 
       return {
-        users,
+        users: usersData,
         page: input.page,
         pages: Math.ceil(results / input.pageSize),
         results,
@@ -354,7 +359,7 @@ export const userRouter = {
   publicUser: authedProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input },
         columns: {
           id: true,
@@ -372,33 +377,33 @@ export const userRouter = {
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return u;
+      return user;
     }),
   getUserPrivateDetails: authedProcedure
     .input(z.uuid())
     .use(mustHaveBeenInAcceptedBeep)
     .handler(async ({ input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input },
         columns: {
           phone: true,
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return u;
+      return user;
     }),
   user: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input },
         columns: {
           password: false,
@@ -407,37 +412,37 @@ export const userRouter = {
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return u;
+      return user;
     }),
   usersWithBeeps: adminProcedure
-    .input(listsUsersWithBeepsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
-      const users = await db
+      const usersData = await db
         .select({
           user: {
-            id: user.id,
-            first: user.first,
-            last: user.last,
-            photo: user.photo,
+            id: users.id,
+            first: users.first,
+            last: users.last,
+            photo: users.photo,
           },
-          beeps: count(beep.beeper_id).as("beeps"),
+          beeps: count(beeps.beeper_id).as("beeps"),
         })
-        .from(user)
-        .leftJoin(beep, eq(user.id, beep.beeper_id))
-        .groupBy(user.id)
+        .from(users)
+        .leftJoin(beeps, eq(users.id, beeps.beeper_id))
+        .groupBy(users.id)
         .orderBy(sql`beeps desc`)
         .offset((input.page - 1) * input.pageSize)
         .limit(input.pageSize);
 
-      const usersCount = await db.select({ count: count() }).from(user);
+      const usersCount = await db.select({ count: count() }).from(users);
       const results = usersCount[0].count;
 
       return {
-        users,
+        users: usersData,
         page: input.page,
         pages: Math.ceil(results / input.pageSize),
         pageSize: input.pageSize,
@@ -445,30 +450,30 @@ export const userRouter = {
       };
     }),
   usersWithRides: adminProcedure
-    .input(listsUsersWithRidesInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input }) => {
-      const users = await db
+      const usersData = await db
         .select({
           user: {
-            id: user.id,
-            first: user.first,
-            last: user.last,
-            photo: user.photo,
+            id: users.id,
+            first: users.first,
+            last: users.last,
+            photo: users.photo,
           },
-          rides: count(beep.rider_id).as("rides"),
+          rides: count(beeps.rider_id).as("rides"),
         })
-        .from(user)
-        .leftJoin(beep, eq(user.id, beep.rider_id))
-        .groupBy(user.id)
+        .from(users)
+        .leftJoin(beeps, eq(users.id, beeps.rider_id))
+        .groupBy(users.id)
         .orderBy(sql`rides desc`)
         .offset((input.page - 1) * input.pageSize)
         .limit(input.pageSize);
 
-      const usersCount = await db.select({ count: count() }).from(user);
+      const usersCount = await db.select({ count: count() }).from(users);
       const results = usersCount[0].count;
 
       return {
-        users,
+        users: usersData,
         results,
         page: input.page,
         pages: Math.ceil(results / input.pageSize),
@@ -481,7 +486,7 @@ export const userRouter = {
         domain: sql<string>`substring(email from '@(.*)$')`.as("domain"),
         count: count(),
       })
-      .from(user)
+      .from(users)
       .groupBy(sql`domain`)
       .orderBy(sql`count desc`);
   }),
@@ -493,31 +498,31 @@ export const userRouter = {
         });
       }
 
-      await db.delete(user).where(eq(user.id, context.user.id));
+      await db.delete(users).where(eq(users.id, context.user.id));
     }),
   deleteUser: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
-      await db.delete(user).where(eq(user.id, input));
+      await db.delete(users).where(eq(users.id, input));
     }),
   getUsersDefaultCar: authedProcedure
     .input(z.uuid())
     .use(mustHaveBeenInAcceptedBeep)
     .handler(async ({ input }) => {
-      const c = await db.query.car.findFirst({
+      const car = await db.query.cars.findFirst({
         where: { user_id: input, default: true },
       });
 
-      if (!c) {
+      if (!car) {
         throw new ORPCError("NOT_FOUND");
       }
 
-      return c;
+      return car;
     }),
   sendTestEmail: adminProcedure
     .input(sendTestEmailInputSchema)
     .handler(async ({ input }) => {
-      const user = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { id: input.userId },
         columns: { email: true, username: true, role: true },
       });

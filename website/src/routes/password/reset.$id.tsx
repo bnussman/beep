@@ -56,7 +56,9 @@ function ResetPassword() {
     <Card sx={{ p: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h4" sx={{
+            fontWeight: "bold"
+          }}>
             Reset Password
           </Typography>
           {errors.root?.message && (
@@ -80,7 +82,9 @@ function ResetPassword() {
               />
             )}
           />
-          <Stack direction="row" justifyContent="flex-end">
+          <Stack direction="row" sx={{
+            justifyContent: "flex-end"
+          }}>
             <Button type="submit" loading={isSubmitting} variant="contained">
               Reset Password
             </Button>

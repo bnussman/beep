@@ -17,8 +17,7 @@ This is the monorepo for the Beep App. The *Beep App* is a full stack ride share
 
 #### Required
 - [Bun](https://bun.sh/docs/installation)
-- [Node.js](https://nodejs.org/) (I reccomend using [Volta](https://docs.volta.sh/guide/getting-started) to install)
-- [pnpm](https://pnpm.io/installation)
+- [Node.js](https://nodejs.org/) (I reccomend installing Node with a tool like Volta or fnm)
 - [Docker Compose](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 
 #### Optional
@@ -38,7 +37,7 @@ cd beep
 
 Install dependencies
 ```
-pnpm i
+bun install
 ```
 
 Bring local db and redis up with Docker
@@ -48,12 +47,12 @@ docker-compose up -d
 
 Create the database schema (run this in the `api/` directory)
 ```
-pnpm db:push
+bun db:push
 ```
 
 To run the development envrionment use in the repo's root
 ```
-pnpm dev
+bun dev
 ```
 
 ### 🌎 Services running for local development

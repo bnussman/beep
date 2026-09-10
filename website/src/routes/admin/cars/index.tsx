@@ -44,7 +44,7 @@ function Cars() {
 
   const { data, isLoading, error } = useQuery(
     orpc.car.cars.queryOptions({
-      input: { cursor: page },
+      input: { page },
       placeholderData: keepPreviousData
     }),
   );
@@ -67,7 +67,9 @@ function Cars() {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="h4" fontWeight="bold">
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>
         Cars
       </Typography>
       <PaginationFooter

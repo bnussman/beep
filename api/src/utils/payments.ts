@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/bun";
 import type { Webhook } from "@banksnussman/revenuecat/webhook";
 import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
-import { productEnum, payment, storeEnum } from "../../drizzle/schema";
+import { productEnum, payments, storeEnum } from "../../drizzle/schema";
 import { getActivePayments } from "../routers/payments/logic";
 import { subscribers } from "@banksnussman/revenuecat/v1";
 
@@ -55,7 +55,7 @@ export async function syncUserPayments(userId: string) {
       const created = new Date(paymentItem.purchase_date);
 
       try {
-        await db.insert(payment).values({
+        await db.insert(payments).values({
           id: paymentItem.id,
           user_id: userId,
           store: paymentItem.store as Store,

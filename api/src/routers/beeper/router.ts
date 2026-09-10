@@ -3,7 +3,7 @@ import { db } from "../../utils/db";
 import { eq } from "drizzle-orm";
 import { authedProcedure } from "../../utils/orpc";
 import { pubSub } from "../../utils/pubsub";
-import { beep, user } from "../../../drizzle/schema";
+import { beeps, users } from "../../../drizzle/schema";
 import { queueResponseSchema } from "./schemas";
 import { updateBeepAsBeeperInputSchema } from "../beeps/schemas";
 import { updateLiveActivity } from "../../utils/live-activities";
@@ -95,7 +95,7 @@ export const beeperRouter = {
         input.data.status === "canceled";
       const isQueueSizeChanging = isStartingBeep || isEndingBeep;
 
-      const values: Partial<typeof beep.$inferInsert> = {
+      const values: Partial<typeof beeps.$inferInsert> = {
         status: input.data.status,
         ...(isEndingBeep && {
           end: new Date(),
@@ -111,15 +111,15 @@ export const beeperRouter = {
         }
       }
 
-      await db.update(beep).set(values).where(eq(beep.id, queueEntry.id));
+      await db.update(beeps).set(values).where(eq(beeps.id, queueEntry.id));
 
       Object.assign(queueEntry, values);
 
       if (isQueueSizeChanging) {
         await db
-          .update(user)
+          .update(users)
           .set({ queueSize: getQueueSize(queue) })
-          .where(eq(user.id, context.user.id));
+          .where(eq(users.id, context.user.id));
       }
 
       for (const beep of queue) {

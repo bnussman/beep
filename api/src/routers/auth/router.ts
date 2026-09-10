@@ -1,6 +1,6 @@
 import { authedProcedure, o } from "../../utils/orpc";
 import { db } from "../../utils/db";
-import { forgot_password, token, user, verify_email } from "../../../drizzle/schema";
+import { emailVerifications, forgotPasswords, tokens, users } from "../../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";
 import { password as bunPassword } from "bun";
 import { s3 } from "../../utils/s3";
@@ -19,7 +19,7 @@ export const authRouter = {
     .handler(async ({ input }) => {
       const { username, password, pushToken } = input;
 
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: {
           OR: [
             { username },
@@ -31,7 +31,7 @@ export const authRouter = {
         },
       });
 
-      if (!u) {
+      if (!user) {
         throw new ORPCError("NOT_FOUND", {
           message: "User does not exist or credentials are incorrect.",
         });
@@ -39,19 +39,19 @@ export const authRouter = {
 
       let isPasswordCorrect = false;
 
-      switch (u.passwordType) {
+      switch (user.passwordType) {
         case "sha256":
-          isPasswordCorrect = sha256(password) === u.password;
+          isPasswordCorrect = sha256(password) === user.password;
           break;
         case "bcrypt":
           isPasswordCorrect = await bunPassword.verify(
             password,
-            u.password,
+            user.password,
             "bcrypt",
           );
           break;
         default:
-          throw new Error(`Unknown password type ${u.passwordType}`);
+          throw new Error(`Unknown password type ${user.passwordType}`);
       }
 
       if (!isPasswordCorrect) {
@@ -60,23 +60,23 @@ export const authRouter = {
         });
       }
 
-      const tokens = {
+      const tokenData = {
         id: crypto.randomUUID(),
         tokenid: crypto.randomUUID(),
-        user_id: u.id,
+        user_id: user.id,
       };
 
-      await db.insert(token).values(tokens);
+      await db.insert(tokens).values(tokenData);
 
       if (pushToken) {
         await db
-          .update(user)
+          .update(users)
           .set({ pushToken: pushToken })
-          .where(eq(user.id, u.id));
-        u.pushToken = pushToken;
+          .where(eq(users.id, user.id));
+        user.pushToken = pushToken;
       }
 
-      return { user: u, tokens };
+      return { user, tokens: tokenData };
     }),
   signup: o
     .input(signupSchema)
@@ -84,7 +84,7 @@ export const authRouter = {
     .handler(async ({ input }) => {
       const userId = crypto.randomUUID();
 
-      const existing = await db.query.user.findFirst({
+      const existing = await db.query.users.findFirst({
         where: {
           RAW: (table) =>
             sql`lower(${table.email}) = ${input.email.toLowerCase()}`,
@@ -126,8 +126,8 @@ export const authRouter = {
 
       const password = await bunPassword.hash(input.password, "bcrypt");
 
-      const u = await db
-        .insert(user)
+      const [user] = await db
+        .insert(users)
         .values({
           id: userId,
           ...input,
@@ -142,16 +142,16 @@ export const authRouter = {
         })
         .returning();
 
-      const tokens = {
+      const tokensData = {
         id: crypto.randomUUID(),
         tokenid: crypto.randomUUID(),
         user_id: userId,
       };
 
-      await db.insert(token).values(tokens);
+      await db.insert(tokens).values(tokensData);
 
-      const verifyEmailEntry = await db
-        .insert(verify_email)
+      const [verifyEmailEntry] = await db
+        .insert(emailVerifications)
         .values({
           email: input.email,
           id: crypto.randomUUID(),
@@ -162,37 +162,37 @@ export const authRouter = {
 
       await sendSignupVerificationEmail({
         email: input.email,
-        token: verifyEmailEntry[0].id,
+        token: verifyEmailEntry.id,
         username: input.username,
       });
 
-      return { user: u[0], tokens };
+      return { user, tokens: tokensData };
     }),
   logout: authedProcedure
     .input(logoutInput)
     .handler(async ({ context, input }) => {
-      await db.delete(token).where(eq(token.id, context.token.id));
+      await db.delete(tokens).where(eq(tokens.id, context.token.id));
 
       if (input.isApp) {
         await db
-          .update(user)
+          .update(users)
           .set({ pushToken: null })
-          .where(eq(user.id, context.user.id));
+          .where(eq(users.id, context.user.id));
       }
     }),
   forgotPassword: o
     .input(forgotPasswordInput)
     .handler(async ({ input }) => {
-      const u = await db.query.user.findFirst({
+      const user = await db.query.users.findFirst({
         where: { email: input.email },
       });
 
-      if (!u) {
+      if (!user) {
         return input.email;
       }
 
-      const existingForgotPassword = await db.query.forgot_password.findFirst({
-        where: { user_id: u.id },
+      const existingForgotPassword = await db.query.forgotPasswords.findFirst({
+        where: { user_id: user.id },
       });
 
       if (existingForgotPassword) {
@@ -200,41 +200,41 @@ export const authRouter = {
           // The user's existing forgot password request has expired.
           // We will delete it, and proceed with creating a new one.
           await db
-            .delete(forgot_password)
-            .where(eq(forgot_password.id, existingForgotPassword.id));
+            .delete(forgotPasswords)
+            .where(eq(forgotPasswords.id, existingForgotPassword.id));
         } else {
           // The user has an existing forgot password link that is still valid.
           // Keep the same entry in the database, just resend the email.
           await sendResetPasswordEmail({
-            email: u.email,
-            username: u.username,
+            email: user.email,
+            username: user.username,
             token: existingForgotPassword.id,
           });
 
-          return u.email;
+          return user.email;
         }
       }
 
       const forgotPasswordValues = {
         id: crypto.randomUUID(),
         time: new Date(),
-        user_id: u.id,
+        user_id: user.id,
       };
 
-      await db.insert(forgot_password).values(forgotPasswordValues);
+      await db.insert(forgotPasswords).values(forgotPasswordValues);
 
       await sendResetPasswordEmail({
-        email: u.email,
-        username: u.username,
+        email: user.email,
+        username: user.username,
         token: forgotPasswordValues.id,
       });
 
-      return u.email;
+      return user.email;
     }),
   resetPassword: o
     .input(resetPasswordInput)
     .handler(async ({ input }) => {
-      const forgotPassword = await db.query.forgot_password.findFirst({
+      const forgotPassword = await db.query.forgotPasswords.findFirst({
         where: { id: input.id },
       });
 
@@ -246,8 +246,8 @@ export const authRouter = {
 
       if (isExpired(forgotPassword.time)) {
         await db
-          .delete(forgot_password)
-          .where(eq(forgot_password.id, forgotPassword.id));
+          .delete(forgotPasswords)
+          .where(eq(forgotPasswords.id, forgotPassword.id));
 
         throw new ORPCError("NOT_FOUND", {
           message: "This password reset request has expired.",
@@ -255,26 +255,26 @@ export const authRouter = {
       }
 
       await db
-        .update(user)
+        .update(users)
         .set({
           password: await bunPassword.hash(input.password, "bcrypt"),
           passwordType: "bcrypt",
         })
-        .where(eq(user.id, forgotPassword.user_id));
+        .where(eq(users.id, forgotPassword.user_id));
 
       await db
-        .delete(forgot_password)
-        .where(eq(forgot_password.id, forgotPassword.id));
+        .delete(forgotPasswords)
+        .where(eq(forgotPasswords.id, forgotPassword.id));
 
       // Remove all of the user's auth tokens because they have a new password.
-      await db.delete(token).where(eq(token.user_id, forgotPassword.user_id));
+      await db.delete(tokens).where(eq(tokens.user_id, forgotPassword.user_id));
 
       return true;
     }),
   verifyAccount: o
     .input(verifyAccountInput)
     .handler(async ({ input }) => {
-      const verifyAccountEntry = await db.query.verify_email.findFirst({
+      const verifyAccountEntry = await db.query.emailVerifications.findFirst({
         where: { id: input.id },
         with: {
           user: true,
@@ -289,8 +289,8 @@ export const authRouter = {
 
       if (isExpired(verifyAccountEntry.time)) {
         await db
-          .delete(verify_email)
-          .where(eq(verify_email.id, verifyAccountEntry.id));
+          .delete(emailVerifications)
+          .where(eq(emailVerifications.id, verifyAccountEntry.id));
 
         throw new ORPCError("NOT_FOUND", {
           message:
@@ -300,8 +300,8 @@ export const authRouter = {
 
       if (verifyAccountEntry.email !== verifyAccountEntry.user.email) {
         await db
-          .delete(verify_email)
-          .where(eq(verify_email.id, verifyAccountEntry.id));
+          .delete(emailVerifications)
+          .where(eq(emailVerifications.id, verifyAccountEntry.id));
 
         throw new ORPCError("BAD_REQUEST", {
           message:
@@ -314,22 +314,22 @@ export const authRouter = {
         ? { isStudent: true, isEmailVerified: true }
         : { isEmailVerified: true };
 
-      const u = await db
-        .update(user)
+      const [user] = await db
+        .update(users)
         .set(values)
-        .where(eq(user.id, verifyAccountEntry.user_id))
+        .where(eq(users.id, verifyAccountEntry.user_id))
         .returning();
 
       await db
-        .delete(verify_email)
-        .where(eq(verify_email.id, verifyAccountEntry.id));
+        .delete(emailVerifications)
+        .where(eq(emailVerifications.id, verifyAccountEntry.id));
 
-      pubSub.publish(`user-${u[0].id}`, { user: u[0] });
+      pubSub.publish(`user-${user.id}`, { user });
 
-      return u[0].email;
+      return user.email;
     }),
   resendVerification: authedProcedure.handler(async ({ context }) => {
-    await db.delete(verify_email).where(eq(verify_email.user_id, context.user.id));
+    await db.delete(emailVerifications).where(eq(emailVerifications.user_id, context.user.id));
 
     const verifyEmailEntry = {
       id: crypto.randomUUID(),
@@ -338,7 +338,7 @@ export const authRouter = {
       time: new Date(),
     };
 
-    await db.insert(verify_email).values(verifyEmailEntry);
+    await db.insert(emailVerifications).values(verifyEmailEntry);
 
     await sendSignupVerificationEmail({
       email: verifyEmailEntry.email,
@@ -353,16 +353,16 @@ export const authRouter = {
       const password = await bunPassword.hash(input.password, "bcrypt");
 
       await db
-        .update(user)
+        .update(users)
         .set({ password, passwordType: "bcrypt" })
-        .where(eq(user.id, context.user.id));
+        .where(eq(users.id, context.user.id));
 
       await db
-        .delete(token)
+        .delete(tokens)
         .where(
           and(
-            eq(token.user_id, context.user.id),
-            ne(token.id, context.token.id)
+            eq(tokens.user_id, context.user.id),
+            ne(tokens.id, context.token.id)
           )
         );
 

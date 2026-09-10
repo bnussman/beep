@@ -70,7 +70,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cd .. && docker compose up -d && pnpm dev',
+    command: 'cd .. && docker compose up -d && bun run dev',
     url: 'http://127.0.0.1:8081',
     reuseExistingServer: true,
     stdout: 'pipe',

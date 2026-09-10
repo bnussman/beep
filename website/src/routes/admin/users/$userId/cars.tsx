@@ -37,7 +37,7 @@ function CarsTable() {
     orpc.car.cars.queryOptions({
       input: {
         userId,
-        cursor: currentPage,
+        page: currentPage,
         pageSize: 10,
       },
       placeholderData: keepPreviousData,

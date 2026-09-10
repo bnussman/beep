@@ -31,7 +31,9 @@ function Leaderboards() {
 
   return (
     <Stack>
-      <Typography variant="h4" fontWeight="bold">Leaderboards</Typography>
+      <Typography variant="h4" sx={{
+        fontWeight: "bold"
+      }}>Leaderboards</Typography>
       <Stack spacing={1}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={index === -1 ? 0 : index}>

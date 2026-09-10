@@ -28,9 +28,14 @@ function LocationView() {
 
   if (!user?.location) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" py={2}>
-        This user does not have location data.
-      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 2
+        }}>This user does not have location data.
+              </Box>
     );
   }
 

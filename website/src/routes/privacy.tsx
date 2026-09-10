@@ -9,7 +9,11 @@ export const Route = createFileRoute('/privacy')({
 const Introduction = () => {
   return (
     <Box>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         Thank you for choosing to be part of our community at Ride Beep (“Company”, “we”, “us”, or “our”). We
         are committed to protecting your personal information and your right to privacy. If you have any
         questions or concerns about this privacy notice, or our practices with regards to your personal
@@ -24,7 +28,12 @@ const Introduction = () => {
         Thisprivacy notice applies to all information collected through our Services (which, as described
         above, includes our Website and App), as well as any related services, sales, marketing or events.
       </Typography>
-      <Typography fontSize='sm' fontWeight='bold' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          fontWeight: 'bold',
+          margin: 2
+        }}>
         Please read this privacy notice carefully as it will help you understand what we do with the
         information that we collect.
       </Typography>
@@ -35,11 +44,22 @@ const Introduction = () => {
 const InformationCollected = () => {
   return (
     <Box>
-      <Typography fontSize='md' fontWeight='bold' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'md',
+          fontWeight: 'bold',
+          margin: 2
+        }}>
         Personal information you disclose to us
       </Typography>
-      <Typography fontSize='sm' margin={2}>
-        <Box marginBottom={2}><i><b>In short:</b> We collect information that you provide to us. </i><br /></Box>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          marginBottom: 2
+        }}><i><b>In short:</b> We collect information that you provide to us. </i><br /></Box>
         We collect personal information that you voluntarily provide to us when you register on the Services,
         express an interest in obtaining information about us or our products and Services, when you
         participate in activities on the Services (such as by posting messages in our online forums or
@@ -48,17 +68,32 @@ const InformationCollected = () => {
         Services, the choices you make and the products and features you use. The personal information we
         collect may include the following:
       </Typography>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         <b>Personal information provided by you.</b> We collect names; phone numbers; email addresses; usernames;
         passwords; venmo username; and other similar information.
         All personal information that you provide to us must be true, complete and accurate, and you must
         notify us of any changes to such personal information.
       </Typography>
-      <Typography fontSize='md' fontWeight='bold' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'md',
+          fontWeight: 'bold',
+          margin: 2
+        }}>
         Information automatically collected
       </Typography>
-      <Typography fontSize='sm' margin={2}>
-        <Box marginBottom={2}><i><b>In short:</b> Some information — such as your Internet Protocol (IP)
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          marginBottom: 2
+        }}><i><b>In short:</b> Some information — such as your Internet Protocol (IP)
           address and/or browser and device characteristics — is collected automatically when you visit our
           Services. </i><br /></Box>We automatically collect certain information when you visit, use or
         navigate the Services. This information does not reveal your specific identity (like your name
@@ -69,7 +104,9 @@ const InformationCollected = () => {
         Services, and for our internal analytics and reporting purposes.<br />
         Like many businesses, we also collect information through cookies and similar technologies. The
         information we collect includes:
-        <Box margin={3}>
+        <Box sx={{
+          margin: 3
+        }}>
           <ul>
             <li>Log and Usage Data. Log and usage data is service-related, diagnostic usage and performance information our servers automatically collect when you access or use our Services and which we record in log files. Depending on how you interact with us, this log data may include your IP address, device information, browser type and settings and information about your activity in the Services (such as the date/time stamps associated with your usage, pages and files viewed, searches and other actions you take such as which features you use), device event information (such as system activity, error reports (sometimes called 'crash dumps') and hardware settings).</li>
             <li>Device Data. We collect device data such as information about your computer, phone, tablet or other device you use to access the Services. Depending on the device used, this device data may include information such as your IP address (or proxy server), device application identification numbers, location, browser type, hardware model Internet service provider and/or mobile carrier, operating system configuration information.</li>
@@ -77,41 +114,71 @@ const InformationCollected = () => {
           </ul>
         </Box>
       </Typography>
-      <Typography fontSize='md' fontWeight='bold' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'md',
+          fontWeight: 'bold',
+          margin: 2
+        }}>
         Information collected through our app
       </Typography>
-      <Typography fontSize='sm' margin={2}>
-        <Box marginBottom={2}><i><b>In short:</b> We collect information regarding your geo-location,
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          marginBottom: 2
+        }}><i><b>In short:</b> We collect information regarding your geo-location,
           push notifications, when you use our App.</i><br /></Box>
         If you use our App, we also collect the following information: <br />
-        <Box margin={3}>
+        <Box sx={{
+          margin: 3
+        }}>
           <ul>
             <li>Geo-Location Information. We may request access or permission to and track location-based information from your mobile device, either continuously or while you are using our App, to provide certain location-based services. If you wish to change our access or permissions, you may do so in your device's settings.</li>
             <li>Push Notifications. We may request to send you push notifications regarding your account or certain features of the App. If you wish to opt-out from receiving these types of communications, you may turn them off in your device's settings.</li>
           </ul>
           <br />
-          <Typography fontSize='sm'>
+          <Typography sx={{
+            fontSize: 'sm'
+          }}>
             The information is primarily needed to maintain the security and operation of our App,
             for troubleshooting and for our internal analytics and reporting purposes.
           </Typography>
         </Box>
       </Typography>
     </Box>
-  )
+  );
 }
 
 const HowWeUseInfo = () => {
   return (
     <Box>
-      <Typography fontSize='md' fontWeight='bold' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'md',
+          fontWeight: 'bold',
+          margin: 2
+        }}>
         Personal information you disclose to us
       </Typography>
-      <Typography fontSize='sm' margin={2}>
-        <Box marginBottom={2}><i><b>In short:</b> We process your information for purposes
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          marginBottom: 2
+        }}><i><b>In short:</b> We process your information for purposes
           based on legitimate business interests, the fulfillment of our contract with you,
           compliance with our legal obligations, and/or your consent. </i><br /></Box>
       </Typography>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         We use personal information collected via our Services for a variety of business
         purposes described below. We process your personal information for these purposes
         in reliance on our legitimate business interests, in order to enter into or
@@ -124,11 +191,21 @@ const HowWeUseInfo = () => {
         for compliance with our legal obligations. We indicate the specific processing
         grounds we rely on next to each purpose listed below.
       </Typography>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         We use the information we collect or receive:<br />
       </Typography>
-      <Typography fontSize='sm' margin={2}>
-        <Box margin={3}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          margin: 3
+        }}>
           <ul>
             <li><b>To facilitate account creation and logon process.</b> If you choose to link your account with us to a third-party account (such as your Google or Facebook account), we use the information you allowed us to collect from those third parties to facilitate account creation and logon process for the performance of the contract.</li>
             <li><b>To post testimonials.</b> We post testimonials on our Services that may contain personal information. Prior to posting a testimonial, we will obtain your consent to use your name and the consent of the testimonial. If you wish to update, or delete your testimonial, please contact us at banks@ridebeep.app and be sure to include your name, testimonial location, and contact information.</li>
@@ -155,16 +232,32 @@ const HowWeUseInfo = () => {
 const SharedInfo = () => {
   return (
     <Box>
-      <Typography fontSize='sm' margin={2}>
-        <Box marginBottom={2}><i><b>In short:</b> We only share information with your consent,
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          marginBottom: 2
+        }}><i><b>In short:</b> We only share information with your consent,
           to comply with laws, to provide you with services, to protect your rights, or to fulfill
           business obligations.</i></Box>
       </Typography>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         We may process or share your data that we hold based on the following legal basis:
       </Typography>
-      <Typography fontSize='sm' margin={2}>
-        <Box margin={3}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          margin: 3
+        }}>
           <ul>
             <li><b>Consent:</b> We may process your data if you have given us specific consent to
               use your personal information in a specific purpose.</li>
@@ -185,11 +278,21 @@ const SharedInfo = () => {
           </ul>
         </Box>
       </Typography>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         More specifically, we may need to process your data or share your personal information in the following situations:
       </Typography>
-      <Box margin={3}>
-        <Typography fontSize='sm' margin={2}>
+      <Box sx={{
+        margin: 3
+      }}>
+        <Typography
+          sx={{
+            fontSize: 'sm',
+            margin: 2
+          }}>
           <ul>
             <li><b>Business Transfers:</b> We may share or transfer your information
               in connection with, or during negotiations of, any merger, sale of company assets,
@@ -211,11 +314,21 @@ const SharedInfo = () => {
 const Cookies = () => {
   return (
     <Box>
-      <Typography fontSize='sm' margin={2}>
-        <Box marginBottom={2}><i><b>In short:</b> Yes, we use Google Maps for the purpose
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
+        <Box sx={{
+          marginBottom: 2
+        }}><i><b>In short:</b> Yes, we use Google Maps for the purpose
           of providing better service.</i></Box>
       </Typography>
-      <Typography fontSize='sm' margin={2}>
+      <Typography
+        sx={{
+          fontSize: 'sm',
+          margin: 2
+        }}>
         This Website or App uses Google Maps APIs which is subject to Google's Terms of
         Service. You may find the Google Maps APIs Terms of Service here. To find out
         more about Google’s Privacy Policy, please refer to this link.
@@ -227,7 +340,9 @@ const Cookies = () => {
 function Privacy() {
   return (
     <Stack spacing={2}>
-      <Typography variant='h4' fontWeight="bold">
+      <Typography variant='h4' sx={{
+        fontWeight: "bold"
+      }}>
         Privacy Policy
       </Typography>
       <Typography variant="subtitle1">

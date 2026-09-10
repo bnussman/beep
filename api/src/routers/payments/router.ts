@@ -4,10 +4,12 @@ import { count } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { listPaymentsInputSchema } from "./schemas";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const paymentRouter = {
   payments: authedProcedure
     .input(listPaymentsInputSchema)
+    .input(paginationSchema)
     .handler(async ({ input, context }) => {
       const userId = input.userId ?? context.user.id;
 
@@ -23,10 +25,10 @@ export const paymentRouter = {
       };
 
       const [payments, paymentsCount] = await Promise.all([
-        db.query.payment.findMany({
+        db.query.payments.findMany({
           orderBy: { created: "desc" },
           limit: input.pageSize,
-          offset: (input.page - 1) * input.pageSize,
+          offset: getOffsetFromPage(input.page, input.pageSize),
           where,
           with: {
             user: {
@@ -34,7 +36,7 @@ export const paymentRouter = {
             },
           },
         }),
-        db.query.payment.findMany({
+        db.query.payments.findMany({
           columns: {},
           extras: { count: count() },
           where,
@@ -45,7 +47,7 @@ export const paymentRouter = {
 
       return {
         payments,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         page: input.page,
         pageSize: input.pageSize,
         results,

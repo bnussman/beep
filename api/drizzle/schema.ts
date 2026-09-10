@@ -1,4 +1,7 @@
+import type { CustomTypeValues } from "drizzle-orm/pg-core";
+import type { Location } from "../src/routers/users/types";
 import { sql } from "drizzle-orm";
+import { Geometry } from "wkx";
 import {
   pgTable,
   integer,
@@ -11,9 +14,6 @@ import {
   pgEnum,
   customType,
 } from "drizzle-orm/pg-core";
-import { Geometry } from "wkx";
-import type { CustomTypeValues } from "drizzle-orm/pg-core";
-import type { Location } from "../src/routers/users/types";
 
 export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
   return customType<{
@@ -60,7 +60,7 @@ export const userPasswordTypeEnum = pgEnum("user_password_type", [
   "bcrypt",
 ]);
 
-export const user = pgTable(
+export const users = pgTable(
   "user",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
@@ -97,12 +97,12 @@ export const user = pgTable(
   ],
 );
 
-export const token = pgTable("token", {
+export const tokens = pgTable("token", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   tokenid: varchar("tokenid", { length: 255 }).notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
 });
 
 export const productEnum = pgEnum("payment_product", [
@@ -113,13 +113,13 @@ export const productEnum = pgEnum("payment_product", [
 
 export const storeEnum = pgEnum("payment_store", ["play_store", "app_store"]);
 
-export const payment = pgTable(
+export const payments = pgTable(
   "payment",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
     user_id: varchar("user_id", { length: 255 })
       .notNull()
-      .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
     storeId: varchar("store_id", { length: 255 }).notNull(),
     productId: productEnum("product_id").notNull(),
     price: numeric("price").notNull(),
@@ -132,28 +132,28 @@ export const payment = pgTable(
   ],
 );
 
-export const forgot_password = pgTable("forgot_password", {
+export const forgotPasswords = pgTable("forgot_password", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
   time: timestamp("time", { withTimezone: true, mode: "date" }).notNull(),
 });
 
-export const feedback = pgTable("feedback", {
+export const feedbacks = pgTable("feedback", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
   message: varchar("message", { length: 255 }).notNull(),
   created: timestamp("created", { withTimezone: true, mode: "date" }).notNull(),
 });
 
-export const car = pgTable("car", {
+export const cars = pgTable("car", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
   make: varchar("make", { length: 255 }).notNull(),
   model: varchar("model", { length: 255 }).notNull(),
   color: varchar("color", { length: 255 }).notNull(),
@@ -177,16 +177,16 @@ export const beepStatuses = [
 
 export const beepStatusEnum = pgEnum("beep_status", beepStatuses);
 
-export const beep = pgTable(
+export const beeps = pgTable(
   "beep",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
     beeper_id: varchar("beeper_id", { length: 255 })
       .notNull()
-      .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
     rider_id: varchar("rider_id", { length: 255 })
       .notNull()
-      .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
     origin: varchar("origin", { length: 255 }).notNull(),
     destination: varchar("destination", { length: 255 }).notNull(),
     groupSize: integer("group_size").notNull(),
@@ -215,16 +215,16 @@ export const beep = pgTable(
   ],
 );
 
-export const report = pgTable("report", {
+export const reports = pgTable("report", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   reporter_id: varchar("reporter_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
   reported_id: varchar("reported_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
   handled_by_id: varchar("handled_by_id", { length: 255 }).references(
-    () => user.id,
+    () => users.id,
     { onDelete: "set null", onUpdate: "cascade" },
   ),
   reason: varchar("reason", { length: 255 }).notNull(),
@@ -234,26 +234,26 @@ export const report = pgTable("report", {
     mode: "date",
   }).notNull(),
   handled: boolean("handled").default(false).notNull(),
-  beep_id: varchar("beep_id", { length: 255 }).references(() => beep.id, {
+  beep_id: varchar("beep_id", { length: 255 }).references(() => beeps.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
-  rating_id: varchar("rating_id", { length: 255 }).references(() => rating.id, {
+  rating_id: varchar("rating_id", { length: 255 }).references(() => ratings.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
 });
 
-export const rating = pgTable(
+export const ratings = pgTable(
   "rating",
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
     rater_id: varchar("rater_id", { length: 255 })
       .notNull()
-      .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
     rated_id: varchar("rated_id", { length: 255 })
       .notNull()
-      .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
     stars: integer("stars").notNull(),
     message: varchar("message", { length: 255 }),
     timestamp: timestamp("timestamp", {
@@ -262,18 +262,18 @@ export const rating = pgTable(
     }).notNull(),
     beep_id: varchar("beep_id", { length: 255 })
       .notNull()
-      .references(() => beep.id, { onUpdate: "cascade", onDelete: "cascade" }),
+      .references(() => beeps.id, { onUpdate: "cascade", onDelete: "cascade" }),
   },
   (table) => [
     unique("rating_beep_id_rater_id_unique").on(table.rater_id, table.beep_id),
   ],
 );
 
-export const verify_email = pgTable("verify_email", {
+export const emailVerifications = pgTable("verify_email", {
   id: varchar("id", { length: 255 }).primaryKey().notNull(),
   user_id: varchar("user_id", { length: 255 })
     .notNull()
-    .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
+    .references(() => users.id, { onUpdate: "cascade", onDelete: "cascade" }),
   time: timestamp("time", { withTimezone: true, mode: "date" }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
 });

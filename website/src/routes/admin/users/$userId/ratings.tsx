@@ -36,7 +36,7 @@ function RatingsTable() {
     orpc.rating.ratings.queryOptions({
       input: {
         userId,
-        cursor: currentPage,
+        page: currentPage,
         pageSize: 10,
       }
     })

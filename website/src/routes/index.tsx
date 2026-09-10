@@ -19,23 +19,29 @@ function Home() {
   return (
     <Container>
       <Stack
-        height="calc(100vh - 150px)"
-        width="100%"
         direction={{ xs: "column", md: "row" }}
         spacing={3}
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Stack spacing={2} alignItems={{ xs: "center", md: "flex-start" }}>
+        sx={{
+          height: "calc(100vh - 150px)",
+          width: "100%",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+        <Stack spacing={2} sx={{
+          alignItems: { xs: "center", md: "flex-start" }
+        }}>
           <Typography
-            fontWeight="bold"
             variant="h1"
-            fontSize={{ xs: "3.0rem", md: "3.0rem", lg: "3.8rem" }}
-            textAlign={{ xs: "center", sm: "center", md: "unset" }}
-          >
+            sx={{
+              fontWeight: "bold",
+              fontSize: { xs: "3.0rem", md: "3.0rem", lg: "3.8rem" },
+              textAlign: { xs: "center", sm: "center", md: "unset" }
+            }}>
             Ride Beep App
           </Typography>
-          <Typography textAlign={{ xs: "center", md: "unset" }}>
+          <Typography sx={{
+            textAlign: { xs: "center", md: "unset" }
+          }}>
             A rideshare app for students. Ride or drive at your university
             today.
           </Typography>

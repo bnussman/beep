@@ -15,11 +15,14 @@ function Download() {
   return (
     <Stack
       spacing={2}
-      height="200px"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Typography variant="h5" fontWeight="bold">
+      sx={{
+        height: "200px",
+        alignItems: "center",
+        justifyContent: "center"
+      }}>
+      <Typography variant="h5" sx={{
+        fontWeight: "bold"
+      }}>
         Redirecting you to download
       </Typography>
       <CircularProgress />
