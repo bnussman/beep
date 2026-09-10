@@ -20,9 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
-      - uses: actions/setup-node@v7
-        with:
-          node-version: latest
       - run: bun install --frozen-lockfile
       - uses: tailscale/github-action@v4
         with:
@@ -35,8 +32,8 @@ jobs:
         env:
           secrets: ${{ toJSON(secrets) }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          ACTOR: ${{ github.actor }}
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish:
     runs-on: ubuntu-latest
