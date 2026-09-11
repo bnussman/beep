@@ -34,6 +34,9 @@ export function Rating(props: Props) {
         queryClient.invalidateQueries({
           queryKey: orpc.rating.ratings.key()
         });
+        queryClient.invalidateQueries({
+          queryKey: orpc.beep.beeps.key()
+        });
         queryClient.invalidateQueries(
           orpc.rider.getLastBeepToRate.queryOptions(),
         );

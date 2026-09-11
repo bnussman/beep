@@ -27,6 +27,9 @@ export function useBeepMenuOptions(props: Props): Option[] {
         queryClient.invalidateQueries(
           orpc.rider.getLastBeepToRate.queryOptions(),
         );
+        queryClient.invalidateQueries({
+          queryKey: orpc.beep.beeps.key()
+        });
         queryClient.invalidateQueries({ queryKey: orpc.beep.beep.key({ input: beepId })});
       },
       onError(error) {
