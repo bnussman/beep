@@ -83,8 +83,8 @@ export function Rating(props: Props) {
           onLongPress={onLongPress}
           onPress={() =>
             router.push({
-              pathname: "/user/[id]",
-              params: { id: otherUser.id, ratingId: item.id },
+              pathname: "/profile/beeps/[id]",
+              params: { id: item.beep_id, ratingId: item.id },
             })
           }
         >

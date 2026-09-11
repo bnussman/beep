@@ -28,6 +28,7 @@ export default function RateScreen() {
     orpc.rating.createRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: orpc.beep.beeps.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beep.key({ input: beepId }) });
         queryClient.invalidateQueries({ queryKey: orpc.rating.ratings.key() });
         queryClient.invalidateQueries({
           queryKey: orpc.rider.getLastBeepToRate.queryKey(),

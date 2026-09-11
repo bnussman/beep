@@ -18,10 +18,10 @@ export function getNativeNavigationMenuItem(option: Option): NativeStackHeaderIt
     keepsMenuPresented: true,
     state: option.checked !== undefined ? option.checked ? 'on' : 'off' : undefined,
     icon: option.sfIcon
-    ? { name: option.sfIcon, type: "sfSymbol" }
-    : undefined,
+      ? { name: option.sfIcon, type: "sfSymbol" }
+      : undefined,
     destructive: option.destructive,
-    onPress: option.onClick ?? (() => {}),
+    onPress: option.onClick ?? (() => { }),
   };
 }
 
@@ -36,7 +36,7 @@ export function getNavigationMenuFromOptions(
       menu: {
         title: "",
         multiselectable: true,
-        items: options.map(getNativeNavigationMenuItem)
+        items: options.filter((option) => option.show === undefined || option.show).map(getNativeNavigationMenuItem)
       },
     },
   ];

@@ -3,6 +3,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
+import { printStars } from "@/components/Stars";
 import { Text } from "@/components/Text";
 import { decodePolyline, getMiles } from "@/utils/location";
 import { orpc } from "@/utils/orpc";
@@ -10,6 +11,7 @@ import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams } from "expo-router";
+import { Separator } from "heroui-native";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";
@@ -60,6 +62,12 @@ export default function BeepDetails() {
   }, [origin, destination]);
 
   const otherUser = beep?.rider_id === user?.id ? beep?.beeper : beep?.rider;
+
+  const myRating = beep?.ratings.find((r) => r.rater_id === user?.id);
+
+  const otherUsersRating = beep?.ratings.find(
+    (r) => r.rater_id === otherUser?.id,
+  );
 
   if (error) {
     return (
@@ -121,9 +129,7 @@ export default function BeepDetails() {
           >
             <Link.Trigger>
               <Pressable>
-                <Text weight="800">
-                  {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
-                </Text>
+                <Text weight="800">{user?.id === beep.rider_id ? "Beeper" : "Rider"}</Text>
                 <View
                   style={{
                     display: "flex",
@@ -144,16 +150,23 @@ export default function BeepDetails() {
             </Link.Trigger>
             <Link.Preview />
           </Link>
-          <View>
-            <Text weight="800">Origin</Text>
-            <Text>{beep?.origin}</Text>
-          </View>
-          <View>
-            <Text weight="800">Destination</Text>
-            <Text>{beep?.destination}</Text>
+          <View className="my-2 gap-2">
+            <View>
+              <Text weight="800">Origin</Text>
+              <Text>{beep?.origin}</Text>
+            </View>
+            <View>
+              <Text weight="800">Destination</Text>
+              <Text>{beep?.destination}</Text>
+            </View>
           </View>
           {route && (
-            <View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
               <Text weight="800">Distance</Text>
               <Text>
                 {getMiles(route.routes[0].distance, true)} miles (~
@@ -161,25 +174,73 @@ export default function BeepDetails() {
               </Text>
             </View>
           )}
-          <View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
             <Text weight="800">Group Size</Text>
             <Text>{beep?.groupSize}</Text>
           </View>
-          <View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
             <Text weight="800">Status</Text>
             <Text style={{ textTransform: "capitalize" }}>
               {beep?.status.replaceAll("_", " ")}
             </Text>
           </View>
-          <View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
             <Text weight="800">Started</Text>
             {beep && <Text>{new Date(beep.start).toLocaleString()}</Text>}
           </View>
           {beep?.end && (
-            <View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
               <Text weight="800">Ended</Text>
               <Text>{new Date(beep.end).toLocaleString()}</Text>
             </View>
+          )}
+          {beep.status === "complete" && (
+            <>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text weight="bold">Your Rating</Text>
+                <Text>
+                  {myRating ? printStars(myRating.stars) : "N/A"}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text weight="bold">{otherUser?.first}'s Rating</Text>
+                <Text>
+                  {otherUsersRating
+                    ? printStars(otherUsersRating.stars)
+                    : "N/A"}
+                </Text>
+              </View>
+            </>
           )}
         </BottomSheetView>
       </BottomSheet>

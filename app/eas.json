@@ -9,6 +9,7 @@
       "distribution": "internal"
     },
     "preview": {
+      "bun": "1.4.2",
       "distribution": "internal",
       "channel": "preview",
       "android": {
@@ -16,12 +17,14 @@
       }
     },
     "simulator": {
+      "bun": "1.4.2",
       "developmentClient": true,
       "ios": {
         "simulator": true
       }
     },
     "production": {
+      "bun": "1.4.2",
       "channel": "production"
     }
   },
