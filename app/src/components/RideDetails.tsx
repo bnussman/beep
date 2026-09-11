@@ -102,9 +102,9 @@ export function RideDetails(props: Props) {
                 {beep.position === 1 ? "person is" : "people are"} ahead of you.
               </Text>
             </Text>
-            {statusToDescription[beep.queue[0].status] && (
+            {statusToDescription[beep.queue[0].status] ? (
               <Text>{statusToDescription[beep.queue[0].status]}</Text>
-            )}
+            ) : null}
           </View>
         ) : (
           <Text>{getCurrentStatusMessage(beep)}</Text>
