@@ -4,6 +4,7 @@
   },
   "build": {
     "development": {
+      "bun": "1.4.2",
       "developmentClient": true,
       "distribution": "internal"
     },
