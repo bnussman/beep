@@ -77,7 +77,7 @@ export default function Feedback() {
               id="feeback-input"
               multiline
               numberOfLines={4}
-              style={{ minHeight: 150 }}
+              style={{ minHeight: 150, paddingVertical: 12 }}
               onBlur={onBlur}
               onChangeText={(val) => onChange(val)}
               value={value}

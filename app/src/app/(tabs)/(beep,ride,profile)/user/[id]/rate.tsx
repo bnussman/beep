@@ -84,7 +84,7 @@ export default function RateScreen() {
           multiline
           onChangeText={(text) => setMessage(text)}
           onSubmitEditing={onSubmit}
-          style={{ height: 100 }}
+          style={{ height: 100, paddingVertical: 12 }}
         />
       </View>
       <Button onPress={onSubmit} isDisabled={stars < 1} isLoading={isPending}>
