@@ -53,7 +53,8 @@ const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin({
       origin: "*",
-      allowHeaders: ["Content-Type", "Authorization", "Vary", "sentry-trace", "baggage"],
+      allowHeaders: ["Content-Type", "Authorization", "Vary", "sentry-trace", "baggage", 'Content-Disposition', 'Standard-Server'],
+      exposeHeaders: ['Content-Disposition', 'Standard-Server'],
     })
   ],
   interceptors: [

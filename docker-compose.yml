@@ -8,7 +8,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: beep
       POSTGRES_PASS: beep
@@ -16,32 +16,34 @@ services:
       POSTGRES_MULTIPLE_EXTENSIONS: postgis
       TZ: America/New_York
   s3:
-    image: minio/minio
+    image: rustfs/rustfs
     ports:
       - "9000:9000"
-    healthcheck:
-      test: mc ready local
-      interval: 2s
-      timeout: 10s
-      retries: 5
+      - "9001:9001"
+    volumes:
+      - s3-data:/data
     environment:
-      MINIO_ACCESS_KEY: beep
-      MINIO_SECRET_KEY: beepbeepbeep
-      MINIO_ROOT_USER: beep
-      MINIO_ROOT_PASSWORD: beepbeepbeep
-    command: server ./data
+      RUSTFS_ACCESS_KEY: beep
+      RUSTFS_SECRET_KEY: beepbeepbeep
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
   bucket:
-    image: minio/mc
+    image: rustfs/rc
     depends_on:
       s3:
         condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc alias set beep http://s3:9000 beep beepbeepbeep;
-      /usr/bin/mc mb beep/beep;
-      /usr/bin/mc anonymous set public beep/beep;
-      exit 0;
-      "
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        rc alias set local http://s3:9000 beep beepbeepbeep
+        rc mb local/beep
+        rc anonymous set public local/beep
 
 volumes:
-  data:
+  db-data:
+  s3-data:
+
