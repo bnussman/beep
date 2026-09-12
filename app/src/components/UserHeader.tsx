@@ -14,7 +14,7 @@ export function UserHeader({ picture, name }: Props) {
       <Text size="3xl" weight="800">
         {name}
       </Text>
-      <Avatar size="lg" src={picture ?? undefined} />
+      <Avatar size="md" src={picture ?? undefined} />
     </View>
   );
 }

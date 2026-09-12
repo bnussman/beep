@@ -58,7 +58,7 @@ export const ratingRouter = {
         results,
       };
     }),
-  rating: adminProcedure
+  rating: authedProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
       const rating = await db.query.ratings.findFirst({

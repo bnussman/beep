@@ -63,12 +63,13 @@ export function Rating(props: Props) {
         {
           title: "Report",
           sfIcon: "exclamationmark.bubble.fill",
+          show: user?.id === item.rated.id,
           onClick: () =>
             router.push({
               pathname: "/user/[id]/report",
               params: {
                 id: otherUser.id,
-                beepId: item.beep_id,
+                ratingId: item.id,
               },
             }),
         },
