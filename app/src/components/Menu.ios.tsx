@@ -72,8 +72,9 @@ export function Menu(props: MenuProps) {
   }
 
   return (
-    <Host matchContents>
+    <Host>
       <ExpoUIMenu
+        modifiers={props.disabled ? [disabled()] : []}
         label={
           <RNHostView matchContents>
             {props.trigger({ onPress, onLongPress })}

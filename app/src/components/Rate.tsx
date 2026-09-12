@@ -20,9 +20,9 @@ export const RateBar = (props: RateBarProps) => {
             key={value}
             variant="tertiary"
             onPress={() => props.onValueChange(value)}
-            style={{ padding: 4 }}
+            style={{ minWidth: 52 }}
           >
-            <Text>{isSelected ? "⭐" : "⚪"}</Text>
+            <Text>{isSelected ? "⭐" : " "}</Text>
           </Button>
         );
       })}

@@ -28,6 +28,7 @@ export default function RateScreen() {
     orpc.rating.createRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({ queryKey: orpc.beep.beeps.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beep.key({ input: beepId }) });
         queryClient.invalidateQueries({ queryKey: orpc.rating.ratings.key() });
         queryClient.invalidateQueries({
           queryKey: orpc.rider.getLastBeepToRate.queryKey(),
@@ -83,7 +84,7 @@ export default function RateScreen() {
           multiline
           onChangeText={(text) => setMessage(text)}
           onSubmitEditing={onSubmit}
-          style={{ height: 100 }}
+          style={{ height: 100, paddingVertical: 12 }}
         />
       </View>
       <Button onPress={onSubmit} isDisabled={stars < 1} isLoading={isPending}>

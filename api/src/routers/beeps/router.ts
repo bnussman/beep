@@ -101,6 +101,7 @@ export const beepRouter = {
           rider: {
             columns: condensedUserColumns,
           },
+          ratings: true,
         },
       });
 

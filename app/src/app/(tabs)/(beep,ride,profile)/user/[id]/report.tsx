@@ -63,7 +63,7 @@ export default function ReportScreen() {
             multiline
             numberOfLines={4}
             placeholder="Your reason for reporting here"
-            style={{ minHeight: 150 }}
+            style={{ minHeight: 150, paddingVertical: 12 }}
             onChangeText={(text) => setReason(text)}
           />
         </View>

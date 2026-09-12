@@ -34,6 +34,9 @@ export function Rating(props: Props) {
         queryClient.invalidateQueries({
           queryKey: orpc.rating.ratings.key()
         });
+        queryClient.invalidateQueries({
+          queryKey: orpc.beep.beeps.key()
+        });
         queryClient.invalidateQueries(
           orpc.rider.getLastBeepToRate.queryOptions(),
         );
@@ -83,8 +86,8 @@ export function Rating(props: Props) {
           onLongPress={onLongPress}
           onPress={() =>
             router.push({
-              pathname: "/user/[id]",
-              params: { id: otherUser.id, ratingId: item.id },
+              pathname: "/profile/beeps/[id]",
+              params: { id: item.beep_id, ratingId: item.id },
             })
           }
         >

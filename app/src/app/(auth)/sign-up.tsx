@@ -37,7 +37,7 @@ export default function SignUpScreen() {
     formState: { isSubmitting },
   } = useForm<Values>();
 
-  const { mutate: signup } = useMutation(
+  const { mutateAsync: signup } = useMutation(
     orpc.auth.signup.mutationOptions({
       async onSuccess(data, vars, context, client) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
@@ -63,11 +63,11 @@ export default function SignUpScreen() {
       pushToken = await getPushToken();
     }
 
-    signup({
+    await signup({
       ...variables,
       pushToken: pushToken ?? undefined,
       photo: getFile(variables.photo) as File
-    });
+    }).catch(() => {});
   });
 
   const chooseProfilePhoto = async () => {
