@@ -69,7 +69,10 @@ export default function ReportScreen() {
             </Text>
           )}
           {rating && (
-            <Text>You are reporting {user?.first} for their {rating.stars} star rating they gave you.</Text>
+            <Text>
+              You are reporting {user?.first} for their <Text weight="600">{rating.stars} star</Text> rating they gave you
+              on <Text weight="600">{rating.timestamp.toLocaleDateString()}</Text>.
+            </Text>
           )}
         </View>
         <View style={{ gap: 4 }}>
