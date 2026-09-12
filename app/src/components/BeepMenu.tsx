@@ -44,7 +44,24 @@ export function useBeepMenuOptions(props: Props): Option[] {
 
   const hasRated = myRating !== undefined;
 
-  const onReport = () => {
+  const onReportRating = () => {
+    if (!otherUser) {
+      return alert("User not found");
+    }
+
+    const otherUsersRating = beep?.ratings.find((rating) => rating.rater_id === otherUser?.id);
+
+    if (!otherUsersRating ) {
+      return alert(`${otherUser.first} has not left a rating for this Beep.`);
+    }
+
+    router.push({
+      pathname: "/user/[id]/report",
+      params: { id: otherUser.id, ratingId: otherUsersRating.id },
+    });
+  };
+
+  const onReportBeep = () => {
     if (!otherUser) {
       return alert("User not found");
     }
@@ -85,7 +102,18 @@ export function useBeepMenuOptions(props: Props): Option[] {
     {
       title: "Report",
       sfIcon: "exclamationmark.bubble.fill",
-      onClick: onReport
+      options: [
+        {
+          title: "Beep",
+          sfIcon: "map.fill",
+          onClick: onReportBeep,
+        },
+        {
+          title: "Rating",
+          sfIcon: "star.bubble.fill",
+          onClick: onReportRating,
+        }
+      ],
     },
     {
       title: "Delete Rating",
