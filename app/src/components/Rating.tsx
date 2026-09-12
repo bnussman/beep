@@ -56,7 +56,7 @@ export function Rating(props: Props) {
           onClick: () =>
             router.navigate({
               pathname: "/user/[id]",
-              params: { id: otherUser.id, ratingId: item.id },
+              params: { id: otherUser.id, ratingId: !isRater ? item.id : undefined },
             }),
           sfIcon: "person.crop.circle",
         },
