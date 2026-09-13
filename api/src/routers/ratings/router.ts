@@ -16,11 +16,10 @@ export const ratingRouter = {
     .input(listRatingsInputSchema)
     .input(paginationSchema)
     .handler(async ({ input }) => {
-      const where = input.userId
-        ? {
-          OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
-        }
-        : {};
+      const where = {
+        ...(input.userId ? { OR: [{ rated_id: input.userId }, { rater_id: input.userId }] } : {}),
+        ...(input.ratedId ? { rated_id: input.ratedId } : {})
+      };
 
       const [ratings, ratingsCount] = await Promise.all([
         db.query.ratings.findMany({
