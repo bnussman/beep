@@ -115,7 +115,13 @@ function Layout() {
 
   return (
     <GestureHandlerRootView>
-      <HeroUINativeProvider>
+      <HeroUINativeProvider
+        config={{
+          devInfo: {
+            stylingPrinciples: false,
+          },
+        }}
+      >
         <KeyboardProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider
@@ -123,12 +129,12 @@ function Layout() {
                 colorScheme === "dark"
                   ? DarkTheme
                   : {
-                      ...DefaultTheme,
-                      colors: {
-                        ...DefaultTheme.colors,
-                        background: "#fafafa",
-                      },
-                    }
+                    ...DefaultTheme,
+                    colors: {
+                      ...DefaultTheme.colors,
+                      background: "#fafafa",
+                    },
+                  }
               }
             >
               <App />

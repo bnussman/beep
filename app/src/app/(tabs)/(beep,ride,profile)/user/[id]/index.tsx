@@ -1,26 +1,49 @@
-import { ActivityIndicator, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, FlatList, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
-import { useQuery } from "@tanstack/react-query";
-import { getFormattedRatingString, printStars } from "@/components/Stars";
-import { Image } from "@/components/Image";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
-import { Avatar } from "@/components/Avatar";
 import { orpc } from "@/utils/orpc";
+import { useState } from "react";
+import { UserDetails } from "@/components/user/Details";
+import { UserHeader } from "@/components/user/Header";
+import { PAGE_SIZE } from "@/utils/constants";
+import { UserRating } from "@/components/user/Ratings";
 
 export default function User() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const {
     data: user,
-    isPending: userPending,
+    isLoading: userPending,
+    isRefetching: isUserRefetching,
     error: userError,
+    refetch: refetchUser,
   } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
 
-  const { data: userDetails } = useQuery(
-    orpc.user.getUserPrivateDetails.queryOptions({ input: id }),
+  const {
+    data,
+    fetchNextPage,
+    refetch: refetchRatings,
+    isFetchingNextPage,
+    isRefetching: isRefetchingRatings,
+  } = useInfiniteQuery(
+    orpc.rating.ratings.infiniteOptions({
+      input: (page) => ({
+        ratedId: id,
+        pageSize: PAGE_SIZE,
+        page
+      }),
+      initialPageParam: 1,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
+          return undefined;
+        }
+        return page.page + 1;
+      },
+      enabled: selectedIndex === 1
+    })
   );
-
-  const { data: car } = useQuery(orpc.user.getUsersDefaultCar.queryOptions({ input: id }));
 
   if (userPending) {
     return (
@@ -56,64 +79,64 @@ export default function User() {
   }
 
   return (
-    <SafeAreaView>
-      <View style={{ padding: 16, gap: 8 }}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'space-between', gap: 16 }}>
-          <Text
-            size="2xl"
-            weight="800"
-            style={{ letterSpacing: 0.2, maxWidth: "60%", marginBottom: 16 }}
-          >
-            {user.first} {user.last}
-          </Text>
-          <Avatar
-            src={user.photo ?? undefined}
-            size="lg"
-          />
-        </View>
-        <View style={{ gap: 24 }}>
-          <View>
-            <Text weight="800">Rating</Text>
-            <Text>
-              {user.rating
-                ? `${printStars(Number(user.rating))} (${getFormattedRatingString(user.rating)})`
-                : "N/A"}
-            </Text>
-          </View>
-          {userDetails?.phone ? (
-            <View>
-              <Text weight="800">Phone Number</Text>
-              <Text selectable>{userDetails.phone}</Text>
-            </View>
-          ) : null}
-          {user.venmo ? (
-            <View>
-              <Text weight="800">Venmo</Text>
-              <Text selectable>{user.venmo}</Text>
-            </View>
-          ) : null}
-          {user.cashapp ? (
-            <View>
-              <Text weight="800">Cash App</Text>
-              <Text selectable>{user.cashapp}</Text>
-            </View>
-          ) : null}
-          {car && (
-            <View>
-              <Text weight="800">Car</Text>
-              <View style={{ gap: 8 }}>
-                <Text>
-                  {car.year} {car.make} {car.model} {car.color}
-                </Text>
-                <Image
-                  src={car.photo}
-                  style={{ width: 300, height: 200, borderRadius: 12 }}
-                />
-              </View>
-            </View>
-          )}
-        </View>
-      </View>
-    </SafeAreaView>
+    <FlatList
+      contentInsetAdjustmentBehavior="automatic"
+      ListHeaderComponent={
+        <>
+          <UserHeader userId={id} index={selectedIndex} onTabChange={setSelectedIndex} />
+          {selectedIndex === 0 && <UserDetails userId={id} />}
+        </>
+      }
+      contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12 }}
+      ListHeaderComponentStyle={{ gap: 8, marginBottom: 8 }}
+      onRefresh={() => {
+        refetchUser();
+        if (selectedIndex === 1) {
+          refetchRatings();
+        }
+      }}
+      data={(() => {
+        if (selectedIndex === 0) {
+          return [];
+        }
+        if (selectedIndex === 1) {
+          return data?.pages.flatMap((ratings) => ratings.ratings);
+        }
+        return [];
+      })()}
+      renderItem={(() => {
+        if (selectedIndex === 0) {
+          return () => <></>;
+        }
+        if (selectedIndex === 1) {
+          return ({ item }) => <UserRating rating={item} />;
+        }
+        return () => <></>;
+      })()}
+      refreshing={(() => {
+        if (selectedIndex === 1) {
+          return isUserRefetching || isRefetchingRatings;
+        }
+        return isUserRefetching;
+      })()}
+      onEndReached={() => {
+        if (selectedIndex === 1) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.1}
+      ListFooterComponentStyle={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+      }}
+      ListFooterComponent={() => {
+        if (isFetchingNextPage) {
+          return <ActivityIndicator />;
+        }
+        return null;
+      }}
+    />
   );
 }

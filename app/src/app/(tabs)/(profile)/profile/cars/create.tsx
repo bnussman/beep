@@ -35,20 +35,15 @@ export default function AddCar() {
 
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
 
-  const { data: colors } = useQuery({
-    ...orpc.car.getColors.queryOptions(),
-    initialData: [],
-  });
+  const { data: colors } = useQuery(
+    orpc.car.getColors.queryOptions()
+  );
 
-  const { data: models } = useQuery({
-    ...orpc.car.getModels.queryOptions({ input: make ? make : skipToken }),
-    initialData: [],
-  });
+  const { data: models } = useQuery(
+    orpc.car.getModels.queryOptions({ input: make ? make : skipToken }),
+  );
 
-  const { data: makes } = useQuery({
-    ...orpc.car.getMakes.queryOptions(),
-    initialData: [],
-  });
+  const { data: makes } = useQuery(orpc.car.getMakes.queryOptions());
 
   const queryClient = useQueryClient();
 
@@ -118,10 +113,10 @@ export default function AddCar() {
                   />
                 </Pressable>
               )}
-              options={makes.map((make) => ({
+              options={makes?.map((make) => ({
                 title: make,
                 onClick: () => field.onChange(make),
-              }))}
+              })) ?? []}
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
@@ -147,10 +142,10 @@ export default function AddCar() {
                   />
                 </Pressable>
               )}
-              options={models!.map((model) => ({
+              options={models?.map((model) => ({
                 title: model,
                 onClick: () => field.onChange(model),
-              }))}
+              })) ?? []}
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
@@ -202,10 +197,10 @@ export default function AddCar() {
                   />
                 </Pressable>
               )}
-              options={colors.map((color) => ({
+              options={colors?.map((color) => ({
                 title: color,
                 onClick: () => field.onChange(color),
-              }))}
+              })) ?? []}
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>

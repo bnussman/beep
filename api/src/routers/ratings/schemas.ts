@@ -2,6 +2,7 @@ import z from "zod";
 
 export const listRatingsInputSchema = z.object({
   userId: z.uuid().optional(),
+  ratedId: z.uuid().optional()
 });
 
 export const deleteRatingInputSchema = z.object({
