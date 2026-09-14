@@ -82,13 +82,12 @@ export default function User() {
     <FlatList
       contentInsetAdjustmentBehavior="automatic"
       ListHeaderComponent={
-        <>
+        <View style={{ gap: 8 }}>
           <UserHeader userId={id} index={selectedIndex} onTabChange={setSelectedIndex} />
           {selectedIndex === 0 && <UserDetails userId={id} />}
-        </>
+        </View>
       }
-      contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12 }}
-      ListHeaderComponentStyle={{ gap: 8, marginBottom: 8 }}
+      contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12, gap: 8 }}
       onRefresh={() => {
         refetchUser();
         if (selectedIndex === 1) {
