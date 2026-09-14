@@ -79,29 +79,27 @@ export default function EditProfileScreen() {
         href={{ pathname: "/user/[id]", params: { id: user?.id ?? "" } }}
         asChild
       >
-        <Link.Trigger>
-          <Pressable>
-            <Surface
-              className="py-5 w-full"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 12,
-                justifyContent: "space-between",
-              }}
+        <Pressable
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8
+          }}
+        >
+          <View style={{ flexShrink: 1 }}>
+            <Text
+              size="2xl"
+              weight="800"
+              style={{ letterSpacing: 0.2, flexShrink: 1 }}
             >
-              <View style={{ flexShrink: 1 }}>
-                <Text size="xl" weight="bold">
-                  {user?.first} {user?.last}
-                </Text>
-                <Text color="subtle">{user?.email}</Text>
-              </View>
-              <Avatar src={user?.photo ?? undefined} size="md" />
-            </Surface>
-          </Pressable>
-        </Link.Trigger>
-        <Link.Preview />
+              {user?.first} {user?.last}
+            </Text>
+            <Text color="subtle">{user?.email}</Text>
+          </View>
+          <Avatar src={user?.photo ?? undefined} size="lg" />
+        </Pressable>
       </Link>
       {!user?.isEmailVerified && (
         <Card style={{ gap: 8 }}>
@@ -142,7 +140,7 @@ export default function EditProfileScreen() {
       )}
       <Surface>
         {links.map((link, index) => (
-          <React.Fragment>
+          <React.Fragment key={link.title}>
             {index > 0 && <Separator className="my-4" />}
             <Link href={link.href} asChild key={link.title}>
               <Link.Trigger>

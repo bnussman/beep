@@ -28,35 +28,38 @@ export function UserDetails(props: Props) {
   }
 
   return (
-    <Surface style={{ gap: 16 }}>
-      <View>
-        <Text weight="800">Rating</Text>
-        <Text>
-          {user.rating
-            ? `${printStars(Number(user.rating))} (${getFormattedRatingString(user.rating)})`
-            : "N/A"}
-        </Text>
-      </View>
-      {userDetails?.phone ? (
+    <View style={{ gap: 8 }}>
+      <Surface style={{ gap: 16 }}>
         <View>
-          <Text weight="800">Phone Number</Text>
-          <Text selectable>{userDetails.phone}</Text>
+          <Text weight="800">Rating</Text>
+          <Text>
+            {user.rating
+              ? `${printStars(Number(user.rating))} (${getFormattedRatingString(user.rating)})`
+              : "N/A"}
+          </Text>
         </View>
-      ) : null}
-      {user.venmo ? (
-        <View>
-          <Text weight="800">Venmo</Text>
-          <Text selectable>{user.venmo}</Text>
-        </View>
-      ) : null}
-      {user.cashapp ? (
-        <View>
-          <Text weight="800">Cash App</Text>
-          <Text selectable>{user.cashapp}</Text>
-        </View>
-      ) : null}
+        {userDetails?.phone ? (
+          <View>
+            <Text weight="800">Phone Number</Text>
+            <Text selectable>{userDetails.phone}</Text>
+          </View>
+        ) : null}
+        {user.venmo ? (
+          <View>
+            <Text weight="800">Venmo</Text>
+            <Text selectable>{user.venmo}</Text>
+          </View>
+        ) : null}
+        {user.cashapp ? (
+          <View>
+            <Text weight="800">Cash App</Text>
+            <Text selectable>{user.cashapp}</Text>
+          </View>
+        ) : null}
+      </Surface>
+
       {car && (
-        <View>
+        <Surface>
           <Text weight="800">Car</Text>
           <View style={{ gap: 8 }}>
             <Text>
@@ -67,8 +70,8 @@ export function UserDetails(props: Props) {
               style={{ width: 300, height: 200, borderRadius: 12 }}
             />
           </View>
-        </View>
+        </Surface>
       )}
-    </Surface>
+    </View>
   );
 }

@@ -1,13 +1,13 @@
-import { ActivityIndicator, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, FlatList, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
-import { Avatar } from "@/components/Avatar";
 import { orpc } from "@/utils/orpc";
 import { useState } from "react";
 import { UserDetails } from "@/components/user/Details";
-import SegmentedControl from '@expo/ui/community/segmented-control';
-import UserRatings from "@/components/user/Ratings";
+import { UserHeader } from "@/components/user/Header";
+import { PAGE_SIZE } from "@/utils/constants";
+import { UserRating } from "@/components/user/Ratings";
 
 export default function User() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -15,9 +15,35 @@ export default function User() {
 
   const {
     data: user,
-    isPending: userPending,
+    isLoading: userPending,
+    isRefetching: isUserRefetching,
     error: userError,
+    refetch: refetchUser,
   } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
+
+  const {
+    data,
+    fetchNextPage,
+    refetch: refetchRatings,
+    isFetchingNextPage,
+    isRefetching: isRefetchingRatings,
+  } = useInfiniteQuery(
+    orpc.rating.ratings.infiniteOptions({
+      input: (page) => ({
+        ratedId: id,
+        pageSize: PAGE_SIZE,
+        page
+      }),
+      initialPageParam: 1,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
+          return undefined;
+        }
+        return page.page + 1;
+      },
+      enabled: selectedIndex === 1
+    })
+  );
 
   if (userPending) {
     return (
@@ -53,31 +79,65 @@ export default function User() {
   }
 
   return (
-    <SafeAreaView>
-      <View style={{ paddingHorizontal: 16, gap: 8, display: "flex" }}>
-        <View style={{ alignItems: "center", marginBlock: 16 }}>
-          <Avatar
-            src={user.photo ?? undefined}
-            size="lg"
-          />
-          <Text
-            size="2xl"
-            weight="800"
-            style={{ letterSpacing: 0.2, flexShrink: 1 }}
-          >
-            {user.first} {user.last}
-          </Text>
-        </View>
-        <SegmentedControl
-          values={['Details', 'Beeps', 'Ratings']}
-          selectedIndex={selectedIndex}
-          onChange={event => {
-            setSelectedIndex(event.nativeEvent.selectedSegmentIndex);
+    <SafeAreaView style={{ height: "100%" }}>
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <UserHeader userId={id} index={selectedIndex} onTabChange={setSelectedIndex} />
+              {selectedIndex === 0 && <UserDetails userId={id} />}
+            </>
+          }
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12 }}
+          ListHeaderComponentStyle={{ gap: 8, marginBottom: 8 }}
+          onRefresh={() => {
+            refetchUser();
+            if (selectedIndex === 1) {
+              refetchRatings();
+            }
+          }}
+          data={(() => {
+            if (selectedIndex === 0) {
+              return [];
+            }
+            if (selectedIndex === 1) {
+              return data?.pages.flatMap((ratings) => ratings.ratings);
+            }
+            return [];
+          })()}
+          renderItem={(() => {
+            if (selectedIndex === 0) {
+              return () => <></>;
+            }
+            if (selectedIndex === 1) {
+              return ({ item }) => <UserRating rating={item} />;
+            }
+            return () => <></>;
+          })()}
+          refreshing={(() => {
+            if (selectedIndex === 1) {
+              return isUserRefetching || isRefetchingRatings;
+            }
+            return isUserRefetching;
+          })()}
+          onEndReached={() => {
+            if (selectedIndex === 1) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.1}
+          ListFooterComponentStyle={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+          }}
+          ListFooterComponent={() => {
+            if (isFetchingNextPage) {
+              return <ActivityIndicator />;
+            }
+            return null;
           }}
         />
-        {selectedIndex === 0 && <UserDetails userId={id} />}  
-        {selectedIndex === 2 && <UserRatings userId={id} />}  
-      </View>
     </SafeAreaView>
   );
 }
