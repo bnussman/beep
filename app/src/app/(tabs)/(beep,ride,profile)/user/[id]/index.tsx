@@ -79,65 +79,64 @@ export default function User() {
   }
 
   return (
-    <SafeAreaView style={{ height: "100%" }}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <UserHeader userId={id} index={selectedIndex} onTabChange={setSelectedIndex} />
-              {selectedIndex === 0 && <UserDetails userId={id} />}
-            </>
-          }
-          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12 }}
-          ListHeaderComponentStyle={{ gap: 8, marginBottom: 8 }}
-          onRefresh={() => {
-            refetchUser();
-            if (selectedIndex === 1) {
-              refetchRatings();
-            }
-          }}
-          data={(() => {
-            if (selectedIndex === 0) {
-              return [];
-            }
-            if (selectedIndex === 1) {
-              return data?.pages.flatMap((ratings) => ratings.ratings);
-            }
-            return [];
-          })()}
-          renderItem={(() => {
-            if (selectedIndex === 0) {
-              return () => <></>;
-            }
-            if (selectedIndex === 1) {
-              return ({ item }) => <UserRating rating={item} />;
-            }
-            return () => <></>;
-          })()}
-          refreshing={(() => {
-            if (selectedIndex === 1) {
-              return isUserRefetching || isRefetchingRatings;
-            }
-            return isUserRefetching;
-          })()}
-          onEndReached={() => {
-            if (selectedIndex === 1) {
-              fetchNextPage();
-            }
-          }}
-          onEndReachedThreshold={0.1}
-          ListFooterComponentStyle={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
-          ListFooterComponent={() => {
-            if (isFetchingNextPage) {
-              return <ActivityIndicator />;
-            }
-            return null;
-          }}
-        />
-    </SafeAreaView>
+    <FlatList
+      contentInsetAdjustmentBehavior="automatic"
+      ListHeaderComponent={
+        <>
+          <UserHeader userId={id} index={selectedIndex} onTabChange={setSelectedIndex} />
+          {selectedIndex === 0 && <UserDetails userId={id} />}
+        </>
+      }
+      contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12 }}
+      ListHeaderComponentStyle={{ gap: 8, marginBottom: 8 }}
+      onRefresh={() => {
+        refetchUser();
+        if (selectedIndex === 1) {
+          refetchRatings();
+        }
+      }}
+      data={(() => {
+        if (selectedIndex === 0) {
+          return [];
+        }
+        if (selectedIndex === 1) {
+          return data?.pages.flatMap((ratings) => ratings.ratings);
+        }
+        return [];
+      })()}
+      renderItem={(() => {
+        if (selectedIndex === 0) {
+          return () => <></>;
+        }
+        if (selectedIndex === 1) {
+          return ({ item }) => <UserRating rating={item} />;
+        }
+        return () => <></>;
+      })()}
+      refreshing={(() => {
+        if (selectedIndex === 1) {
+          return isUserRefetching || isRefetchingRatings;
+        }
+        return isUserRefetching;
+      })()}
+      onEndReached={() => {
+        if (selectedIndex === 1) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.1}
+      ListFooterComponentStyle={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+      }}
+      ListFooterComponent={() => {
+        if (isFetchingNextPage) {
+          return <ActivityIndicator />;
+        }
+        return null;
+      }}
+    />
   );
 }
