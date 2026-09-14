@@ -374,6 +374,7 @@ export const userRouter = {
           capacity: true,
           isBeeping: true,
           rating: true,
+          queueSize: true
         },
       });
 
