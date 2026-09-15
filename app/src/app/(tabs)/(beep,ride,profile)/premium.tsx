@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import PremiumImage from "../../../../assets/premium.png";
 import { orpc } from "@/utils/orpc";
 import { useEffect, useState } from "react";
@@ -247,7 +248,10 @@ export default function Premium() {
       renderItem={({ item }) => (
         <Offering item={item} disabled={numberOfActivePayments > 0} />
       )}
-      onRefresh={refetch}
+      onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        refetch();
+      }}
       refreshing={isRefetchingAppPackages || isRefetchingActivePayments}
     />
   );

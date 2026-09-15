@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useEffect } from "react";
 import { useNavigation } from "expo-router/react-navigation";
 import { Avatar } from "@/components/Avatar";
@@ -79,6 +80,8 @@ export default function PickBeepScreen() {
   }, [isPickBeeperLoading]);
 
   const chooseBeep = async (beeperId: string) => {
+    Haptics.selectionAsync().catch();
+
     if (isPickBeeperLoading) {
       // We don't want to make API requests if a request is inflight
       return;
@@ -187,7 +190,10 @@ export default function PickBeepScreen() {
       renderItem={renderItem}
       keyExtractor={(beeper) => beeper.id}
       refreshing={isRefetching}
-      onRefresh={refetch}
+      onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        refetch();
+      }}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ ...getContentContainerStyle(beepers?.length === 0), padding: 16 }}
       ListEmptyComponent={

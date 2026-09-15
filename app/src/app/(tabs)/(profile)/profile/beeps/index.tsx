@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useLayoutEffect, useState } from "react";
 import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
@@ -174,7 +175,10 @@ export default function BeepsScreen() {
         </View>
       }
       refreshing={isRefetching}
-      onRefresh={refetch}
+      onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        refetch();
+      }}
     />
   );
 }

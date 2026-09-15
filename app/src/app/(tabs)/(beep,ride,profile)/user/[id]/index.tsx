@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { ActivityIndicator, FlatList, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -83,12 +84,20 @@ export default function User() {
       contentInsetAdjustmentBehavior="automatic"
       ListHeaderComponent={
         <View style={{ gap: 8 }}>
-          <UserHeader userId={id} index={selectedIndex} onTabChange={setSelectedIndex} />
+          <UserHeader
+            userId={id}
+            index={selectedIndex}
+            onTabChange={(index) => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setSelectedIndex(index);
+            }}
+          />
           {selectedIndex === 0 && <UserDetails userId={id} />}
         </View>
       }
-      contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 12, gap: 8 }}
+      contentContainerStyle={{ paddingHorizontal: 12, gap: 8 }}
       onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetchUser();
         if (selectedIndex === 1) {
           refetchRatings();

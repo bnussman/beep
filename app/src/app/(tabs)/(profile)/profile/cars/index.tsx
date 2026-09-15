@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { ActivityIndicator, FlatList } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
@@ -202,7 +203,10 @@ export default function Cars() {
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       refreshing={isRefetching}
-      onRefresh={refetch}
+      onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        refetch();
+      }}
     />
   );
 }

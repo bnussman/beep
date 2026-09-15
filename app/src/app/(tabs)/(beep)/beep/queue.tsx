@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
@@ -22,7 +23,10 @@ export default function StartBeepingScreen() {
       data={queue}
       keyExtractor={(beep) => beep.id}
       renderItem={({ item, index }) => <QueueItem item={item} index={index} />}
-      onRefresh={refetch}
+      onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        refetch();
+      }}
       refreshing={isRefetching}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ ...getContentContainerStyle(queue.length === 0), ...paddedContainerStyle }}

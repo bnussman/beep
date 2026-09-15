@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { FlatList, View, ActivityIndicator } from "react-native";
 import { useUser } from "@/utils/useUser";
 import { Rating } from "@/components/Rating";
@@ -110,7 +111,10 @@ export default function RatingsScreen() {
         </View>
       }
       refreshing={isRefetching}
-      onRefresh={refetch}
+      onRefresh={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        refetch();
+      }}
     />
   );
 }

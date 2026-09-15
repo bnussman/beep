@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useEffect } from "react";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";

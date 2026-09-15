@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { orpc } from "@/utils/orpc";
@@ -14,6 +15,7 @@ export function RideToolbar() {
     orpc.rider.leaveQueue.mutationOptions({
       onSuccess() {
         queryClient.setQueryData(orpc.rider.currentRide.queryKey(), null);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch();
       },
       onError(error) {
         alert(error.message);

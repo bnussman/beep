@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useMutation } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
+import { FieldError, TextField } from "heroui-native";
 
 export default function Feedback() {
   const {
@@ -66,7 +67,7 @@ export default function Feedback() {
           rating.
         </Text>
       </Card>
-      <View style={{ gap: 4 }}>
+      <TextField isInvalid={Boolean(errors.message?.message)}>
         <Label htmlFor="feedback-input">Feedback</Label>
         <Controller
           name="message"
@@ -84,10 +85,10 @@ export default function Feedback() {
             />
           )}
         />
-        <Text color="error">
+        <FieldError>
           {errors.message?.message}
-        </Text>
-      </View>
+        </FieldError>
+      </TextField>
       <Button onPress={onSubmit} isLoading={isPending}>
         Submit
       </Button>
