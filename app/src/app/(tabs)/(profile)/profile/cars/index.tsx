@@ -204,8 +204,8 @@ export default function Cars() {
       ListFooterComponent={renderFooter()}
       refreshing={isRefetching}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetch();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
     />
   );

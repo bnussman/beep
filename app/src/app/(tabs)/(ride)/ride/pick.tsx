@@ -191,8 +191,8 @@ export default function PickBeepScreen() {
       keyExtractor={(beeper) => beeper.id}
       refreshing={isRefetching}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetch();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ ...getContentContainerStyle(beepers?.length === 0), padding: 16 }}

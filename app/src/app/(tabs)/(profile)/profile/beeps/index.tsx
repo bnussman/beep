@@ -176,8 +176,8 @@ export default function BeepsScreen() {
       }
       refreshing={isRefetching}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetch();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
     />
   );

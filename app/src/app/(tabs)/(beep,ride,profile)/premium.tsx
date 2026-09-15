@@ -249,8 +249,8 @@ export default function Premium() {
         <Offering item={item} disabled={numberOfActivePayments > 0} />
       )}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetch();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
       refreshing={isRefetchingAppPackages || isRefetchingActivePayments}
     />

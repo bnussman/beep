@@ -88,8 +88,8 @@ export default function User() {
             userId={id}
             index={selectedIndex}
             onTabChange={(index) => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setSelectedIndex(index);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
             }}
           />
           {selectedIndex === 0 && <UserDetails userId={id} />}
@@ -97,11 +97,11 @@ export default function User() {
       }
       contentContainerStyle={{ paddingHorizontal: 12, gap: 8 }}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetchUser();
         if (selectedIndex === 1) {
           refetchRatings();
         }
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
       data={(() => {
         if (selectedIndex === 0) {

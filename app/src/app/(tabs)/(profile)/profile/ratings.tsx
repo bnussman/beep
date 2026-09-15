@@ -112,8 +112,8 @@ export default function RatingsScreen() {
       }
       refreshing={isRefetching}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetch();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
     />
   );

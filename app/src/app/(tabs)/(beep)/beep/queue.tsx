@@ -24,8 +24,8 @@ export default function StartBeepingScreen() {
       keyExtractor={(beep) => beep.id}
       renderItem={({ item, index }) => <QueueItem item={item} index={index} />}
       onRefresh={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         refetch();
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();
       }}
       refreshing={isRefetching}
       contentInsetAdjustmentBehavior="automatic"
