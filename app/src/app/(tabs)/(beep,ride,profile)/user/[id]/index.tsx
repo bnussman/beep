@@ -133,6 +133,16 @@ export default function User() {
         }
       }}
       onEndReachedThreshold={0.1}
+      ListEmptyComponent={
+        selectedIndex === 1 ? (
+          <View style={{ display: "flex", alignItems: "center", minHeight: 300, justifyContent: 'center' }}>
+            <Text weight="800" size="3xl">
+              No Ratings
+            </Text>
+            <Text>This user has no ratings to display</Text>
+          </View>
+        ) : null
+      }
       ListFooterComponentStyle={{
         display: "flex",
         alignItems: "center",
