@@ -28,6 +28,7 @@ export default function User() {
     refetch: refetchRatings,
     isFetchingNextPage,
     isRefetching: isRefetchingRatings,
+    hasNextPage
   } = useInfiniteQuery(
     orpc.rating.ratings.infiniteOptions({
       input: (page) => ({
@@ -128,7 +129,7 @@ export default function User() {
         return isUserRefetching;
       })()}
       onEndReached={() => {
-        if (selectedIndex === 1) {
+        if (selectedIndex === 1 && hasNextPage) {
           fetchNextPage();
         }
       }}
