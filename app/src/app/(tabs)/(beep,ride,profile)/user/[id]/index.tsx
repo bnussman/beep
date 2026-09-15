@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { ActivityIndicator, FlatList, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
@@ -23,12 +23,13 @@ export default function User() {
   } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
 
   const {
-    data,
-    fetchNextPage,
+    data: ratingsData,
+    fetchNextPage: fetchNextPageOfRatings,
     refetch: refetchRatings,
-    isFetchingNextPage,
+    isFetchingNextPage: isFetchingNextPageOfRatings,
+    isLoading: isLoadingRatings,
     isRefetching: isRefetchingRatings,
-    hasNextPage
+    hasNextPage: hasNextPageOfRatings
   } = useInfiniteQuery(
     orpc.rating.ratings.infiniteOptions({
       input: (page) => ({
@@ -109,7 +110,7 @@ export default function User() {
           return [];
         }
         if (selectedIndex === 1) {
-          return data?.pages.flatMap((ratings) => ratings.ratings);
+          return ratingsData?.pages.flatMap((ratings) => ratings.ratings);
         }
         return [];
       })()}
@@ -129,13 +130,18 @@ export default function User() {
         return isUserRefetching;
       })()}
       onEndReached={() => {
-        if (selectedIndex === 1 && hasNextPage) {
-          fetchNextPage();
+        if (selectedIndex === 1 && hasNextPageOfRatings && !isFetchingNextPageOfRatings) {
+          fetchNextPageOfRatings();
         }
       }}
       onEndReachedThreshold={0.1}
       ListEmptyComponent={
-        selectedIndex === 1 ? (
+        selectedIndex === 1 ?
+        isLoadingRatings ? (
+          <View style={{ display: "flex", alignItems: "center", minHeight: 300, justifyContent: 'center' }}>
+            <ActivityIndicator />
+          </View>
+        ) : (
           <View style={{ display: "flex", alignItems: "center", minHeight: 300, justifyContent: 'center' }}>
             <Text weight="800" size="3xl">
               No Ratings
@@ -151,7 +157,7 @@ export default function User() {
         height: "100%",
       }}
       ListFooterComponent={() => {
-        if (isFetchingNextPage) {
+        if (selectedIndex === 1 && isFetchingNextPageOfRatings) {
           return <ActivityIndicator />;
         }
         return null;
