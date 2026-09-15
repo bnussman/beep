@@ -30,12 +30,12 @@ export function UserDetails(props: Props) {
 
   return (
     <View style={{ gap: 8 }}>
-      <Surface style={{ gap: 12 }}>
+      <Surface style={{ gap: 16, padding: 8 }} variant="transparent">
         <View className="flex flex-row justify-between">
           <Text weight="800">Rating</Text>
           {user.rating ? (
             <Text>
-              <Text color="subtle">({getFormattedRatingString(user.rating)})</Text>{" "}
+              {/* <Text color="subtle">({getFormattedRatingString(user.rating)})</Text>{" "} */}
               <Text>{printStars(Number(user.rating))}</Text>
             </Text>
           ) : (
@@ -45,43 +45,41 @@ export function UserDetails(props: Props) {
         <View className="flex flex-row justify-between">
           <Text weight="800">Beeping</Text>
           <View className="flex flex-row gap-2 items-center">
-            <Text>
-              {user.isBeeping && (
-                <Text color="subtle">
-                  ({user.queueSize} riders)
-                </Text>
-              )}
-            </Text>
-            <Indicator color={user.isBeeping ? "green" : "red"} />
+            <Text color="subtle">{user.isBeeping ? "Yes " : "No"}</Text>
+            {user.isBeeping && (
+              <Text color="subtle">
+                ({user.queueSize} riders)
+              </Text>
+            )}
+            {/* <Indicator color={user.isBeeping ? "green" : "red"} /> */}
           </View>
         </View>
         <View className="flex flex-row justify-between">
           <Text weight="800">Rates</Text>
-          <Text selectable>${user.singlesRate} singles / ${user.groupRate} groups</Text>
+          <Text selectable color="subtle">${user.singlesRate} singles / ${user.groupRate} groups</Text>
         </View>
         {userDetails?.phone ? (
           <View className="flex flex-row justify-between">
             <Text weight="800">Phone Number</Text>
-            <Text selectable>{userDetails.phone}</Text>
+            <Text selectable color="subtle">{userDetails.phone}</Text>
           </View>
         ) : null}
         {user.venmo ? (
           <View className="flex flex-row justify-between">
             <Text weight="800">Venmo</Text>
-            <Text selectable>{user.venmo}</Text>
+            <Text selectable color="subtle">{user.venmo}</Text>
           </View>
         ) : null}
         {user.cashapp ? (
           <View className="flex flex-row justify-between">
             <Text weight="800">Cash App</Text>
-            <Text selectable>{user.cashapp}</Text>
+            <Text selectable color="subtle">{user.cashapp}</Text>
           </View>
         ) : null}
-      </Surface>
-      {car && (
-        <Surface className="gap-4">
-          <View className="flex flex-row justify-between">
-            <Text weight="800">Car</Text>
+        {car && (
+          <>
+            <View className="flex flex-row justify-between">
+              <Text weight="800">Car</Text>
               <View
                 style={{
                   flexDirection: "row",
@@ -90,7 +88,7 @@ export function UserDetails(props: Props) {
                   gap: 8,
                 }}
               >
-                <Text>
+                <Text color="subtle">
                   {car.year} {car.make} {car.model}
                 </Text>
                 <Indicator color={car.color as Color} />
@@ -98,10 +96,11 @@ export function UserDetails(props: Props) {
             </View>
             <Image
               src={car.photo}
-              style={{ width: 300, height: 200, borderRadius: 12 }}
+              style={{ width: "100%", height: 200, borderRadius: 16 }}
             />
-        </Surface>
-      )}
+          </>
+        )}
+      </Surface>
     </View>
   );
 }

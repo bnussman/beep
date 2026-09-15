@@ -22,10 +22,11 @@ export function UserHeader(props: Props) {
 
   return (
     <>
-      <View style={{ alignItems: "center", marginBlock: 16 }}>
+      <View style={{ alignItems: "center", marginBottom: 12, gap: 8 }}>
         <Avatar
           src={user.photo ?? undefined}
-          size="lg" />
+          size="lg"
+        />
         <Text
           size="2xl"
           weight="800"
