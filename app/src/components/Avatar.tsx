@@ -1,42 +1,19 @@
-import { Image } from "react-native";
 import type { ImageProps } from "react-native";
 import AvatarImage from "../../assets/avatar.png";
+import { AvatarRootProps, Avatar as HeroAvatar } from "heroui-native";
 
-type Size = "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
-const SIZE_MAP: Record<Size, number> = {
-  xxs: 32,
-  xs: 48,
-  sm: 56,
-  md: 64,
-  lg: 80,
-  xl: 112,
-  "2xl": 192,
-};
-
-interface Props extends ImageProps {
-  size?: Size;
+interface Props extends AvatarRootProps {
+  src: string | undefined;
 }
 
 export function Avatar(props: Props) {
   const { src, size = "md", ...rest } = props;
 
-  const px = SIZE_MAP[size];
-
   return (
-    <Image
-      source={src ? { uri: src } : AvatarImage}
-      defaultSource={AvatarImage}
-      {...rest}
-      style={[
-        {
-          borderRadius: px / 2,
-          width: px,
-          height: px,
-          backgroundColor: "gray",
-        },
-        rest.style,
-      ]}
-    />
+    <HeroAvatar size={size} {...rest}>
+      <HeroAvatar.Image source={{ uri: src }} />
+      <HeroAvatar.Fallback />
+    </HeroAvatar>
   );
 }
