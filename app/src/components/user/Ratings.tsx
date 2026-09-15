@@ -30,7 +30,7 @@ export function UserRating({ rating }: Props) {
               flex: 1,
             }}
           >
-            <Avatar size="sm" src={rating.rater.photo ?? undefined} />
+            <Avatar size="xs" src={rating.rater.photo ?? undefined} />
             <View style={{ flexShrink: 1 }}>
               <Text weight="bold">
                 {rating.rater.first} {rating.rater.last}

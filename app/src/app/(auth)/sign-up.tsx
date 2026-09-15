@@ -150,7 +150,7 @@ export default function SignUpScreen() {
                 onPress={chooseProfilePhoto}
                 aria-label="profile photo"
               >
-                <Avatar src={field.value?.uri} size="lg" style={{ width: 100, height: 100, borderRadius: 100 / 2}} />
+                <Avatar src={field.value?.uri} size="xl" />
               </TouchableOpacity>
               <FieldError className="max-w-32 text-center">
                 {fieldState.error?.message}

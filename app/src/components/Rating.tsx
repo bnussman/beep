@@ -108,7 +108,7 @@ export function Rating(props: Props) {
                 flex: 1,
               }}
             >
-              <Avatar size="sm" src={otherUser.photo ?? undefined} />
+              <Avatar size="xs" src={otherUser.photo ?? undefined} />
               <View style={{ flexShrink: 1 }}>
                 <Text weight="bold">
                   {otherUser.first} {otherUser.last}

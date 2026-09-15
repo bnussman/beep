@@ -137,7 +137,7 @@ export default function EditProfileScreen() {
           </View>
         </View>
         <Pressable onPress={() => handleUpdatePhoto()}>
-          <Avatar size="lg" style={{ width: 100, height: 100, borderRadius: 100 / 2}} src={photo?.uri ?? user?.photo ?? undefined} />
+          <Avatar size="xl" src={photo?.uri ?? user?.photo ?? undefined} />
           {uploadLoading ? <ActivityIndicator /> : null}
         </Pressable>
       </View>

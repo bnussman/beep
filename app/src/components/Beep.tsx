@@ -183,7 +183,7 @@ export function Beep({ item }: Props) {
           <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >
-                <Avatar size="sm" src={otherUser.photo ?? undefined} />
+                <Avatar size="xs" src={otherUser.photo ?? undefined} />
                 <View style={{ flexShrink: 1 }}>
                   <Text weight="bold" size="lg">
                     {otherUser.first} {otherUser.last}
