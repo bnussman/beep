@@ -122,8 +122,8 @@ export async function sendBeepUpdateNotificationToRider(
       if (riderPushToken) {
         sendNotification({
           to: riderPushToken,
-          title: `${beeper.first} ${beeper.last} has canceled your beep`,
-          body: "Open your app to find a new beep",
+          title: `Beep Canceled`,
+          body: `${beeper.first} canceled your beep.`,
         });
       }
       break;
@@ -141,16 +141,16 @@ export async function sendBeepUpdateNotificationToRider(
       if (riderPushToken) {
         sendNotification({
           to: riderPushToken,
-          title: `${beeper.first} ${beeper.last} has denied your beep`,
-          body: "Open your app to find a different beeper",
+          title: "Beep Denied",
+          body: `${beeper.first} has denied your beep. Open your app to find a different beeper.`,
         });
       }
       break;
     }
     case "accepted": {
       const alert = {
-        title: `${beeper.first} ${beeper.last} has accepted your beep request`,
-        body: "You will receive another notification when they are on their way to pick you up",
+        title: "Beep Accepted",
+        body: `${beeper.first} has accepted your beep request.`,
       };
 
       if (beep.rider_live_activity_token) {
@@ -178,8 +178,8 @@ export async function sendBeepUpdateNotificationToRider(
     }
     case "on_the_way": {
       const alert = {
-        title: `${beeper.first} ${beeper.last} is on their way 🚕`,
-        body: "Your beeper is on their way.",
+        title: "Beeper is on their way",
+        body: `${beeper.first} is on their way to pick you up.`,
       };
 
       const car = await db.query.cars.findFirst({
@@ -187,7 +187,7 @@ export async function sendBeepUpdateNotificationToRider(
       });
 
       if (car) {
-        alert.body = `Your beeper is on their way in a ${car.color} ${car.make} ${car.model}`;
+        alert.body = `${beeper.first} is on their way in a ${car.color} ${car.make} ${car.model}`;
       }
 
       if (beep.rider_live_activity_token) {
@@ -217,15 +217,16 @@ export async function sendBeepUpdateNotificationToRider(
     }
     case "here": {
       const alert = {
-        title: `${beeper.first} ${beeper.last} is here`,
-        body: "Your beeper is here to pick you up.",
+        title: "Beeper Arrived",
+        body: `${beeper.first} is here to pick you up.`,
       };
+
       const car = await db.query.cars.findFirst({
         where: { user_id: beeper.id, default: true },
       });
 
       if (car) {
-        alert.body = `Look for a ${car.color} ${car.make} ${car.model}`;
+        alert.body = `${beeper.first} is here to pick you up in a ${car.color} ${car.make} ${car.model}.`;
       }
 
       if (beep.rider_live_activity_token) {
@@ -278,8 +279,8 @@ export async function sendBeepUpdateNotificationToRider(
       if (riderPushToken) {
         sendNotification({
           to: riderPushToken,
-          title: `Your beep with ${beeper.first} ${beeper.last} is complete 🎉`,
-          body: "Please rate your beeper in the app.",
+          title: "Beep Complete",
+          body: `Your beep with ${beeper.first} is complete. Please consider rating them in the app.`,
         });
       }
       break;
