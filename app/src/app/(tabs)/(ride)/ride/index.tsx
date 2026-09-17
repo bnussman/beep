@@ -19,8 +19,8 @@ import { Link, SplashScreen, useRouter } from "expo-router";
 import { endRiderLiveActivities } from "@/live-activities/utils";
 import { paddedContainerStyle } from "@/utils/styles";
 import { isIOS } from "@/utils/constants";
-import { orpc } from "@/utils/orpc";
-import { useSubscription } from "@/utils/subscriptions";
+import { orpc, orpcClient } from "@/utils/orpc";
+import { useSubscription, useSub } from "@/utils/subscriptions";
 
 export default function MainFindBeepScreen() {
   const queryClient = useQueryClient();
@@ -33,11 +33,9 @@ export default function MainFindBeepScreen() {
     beep?.status === "here" ||
     beep?.status === "on_the_way";
 
-  useSubscription({
-    ...orpc.rider.currentRideUpdates.liveOptions({
-      enabled: Boolean(beep),
-      context: { ws: true }
-    }),
+  useSub({
+    iterator: () => orpcClient.rider.currentRideUpdates(undefined, { context: { ws: true }}),
+    enabled: Boolean(beep),
     onData(data) {
       if (data === null) {
         queryClient.invalidateQueries(
@@ -53,8 +51,8 @@ export default function MainFindBeepScreen() {
         }
         return { ...prev, ...data };
       });
-    }
-  })
+    },
+  });
 
   const { data: beepersLocation } = useSubscription(
     orpc.rider.beeperLocationUpdates.liveOptions({
