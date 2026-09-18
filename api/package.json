@@ -27,7 +27,7 @@
     "@orpc/server": "2.0.0-beta.31",
     "@sentry/bun": "^10.74.0",
     "@sentry/node": "^10.74.0",
-    "car-info": "0.2.6",
+    "car-info": "0.2.7",
     "drizzle-orm": "1.0.0-rc.3",
     "jose": "^6.2.12",
     "nodemailer": "^10.0.3",
