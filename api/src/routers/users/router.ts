@@ -192,7 +192,7 @@ export const userRouter = {
       ) {
         sendNotification({
           to: existingUser.pushToken,
-          title: "Account Verified ✅",
+          title: "Account Verified",
           body: "An admin has approved your account.",
         });
       }
