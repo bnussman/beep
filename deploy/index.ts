@@ -82,13 +82,6 @@ const apiIngress = new k8s.networking.v1.Ingress(
         {
           host:
             isProduction
-              ? "orpc.ridebeep.app"
-              : "orpc.dev.ridebeep.app",
-          http: apiHttp,
-        },
-        {
-          host:
-            isProduction
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
           http: apiHttp,
