@@ -238,37 +238,6 @@ export const riderRouter = {
         yield ride;
       }
     }),
-  currentRideUpdatesAllowPartial: authedProcedure
-    .input(z.uuid().optional())
-    .output(
-      asyncIteratorObject(rideResponseSchema.partial().nullable())
-    )
-    .handler(async function* ({ context, signal, input }) {
-      const userId = input ?? context.user.id;
-
-      if (context.user.role === "user" && userId !== context.user.id) {
-        throw new ORPCError("FORBIDDEN", {
-          message:
-            "You must be an admin to view the current ride of another user",
-        });
-      }
-
-      console.log("➕ Rider subscribed", userId);
-
-      const iterator = pubSub.subscribe(`ride-${userId}`);
-
-      yield await getRidersCurrentRide(userId);
-
-      if (signal) {
-        signal.onabort = () => {
-          console.log("➖ Rider unsubscribed", userId);
-        };
-      }
-
-      for await (const { ride } of iterator) {
-        yield ride;
-      }
-    }),
   beeperLocationUpdates: authedProcedure
     .input(z.uuid())
     .use(mustBeInAcceptedBeep)
