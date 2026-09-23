@@ -47,7 +47,9 @@ Sentry.init({
     return true;
   },
   openTelemetryInstrumentations: [
-    new ORPCInstrumentation(),
+    new ORPCInstrumentation({
+      propagationEnabled: false,
+    }),
   ],
   integrations(integrations) {
     return [
