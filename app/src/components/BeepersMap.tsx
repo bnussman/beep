@@ -13,6 +13,8 @@ export function BeepersMap() {
   const queryClient = useQueryClient();
   const isFocused = useIsFocused();
 
+  const enabled = location !== undefined && isFocused;
+
   const input = {
     latitude: location?.coords.latitude ?? 0,
     longitude: location?.coords.longitude ?? 0,
@@ -21,7 +23,7 @@ export function BeepersMap() {
   const { data: beepers } = useQuery(
     orpc.rider.beepersNearMe.queryOptions({
       input,
-      enabled: location !== undefined,
+      enabled,
       refetchInterval: 15_000,
     }),
   );
@@ -29,7 +31,7 @@ export function BeepersMap() {
   useSubscription({
     ...orpc.rider.beepersLocations.liveOptions({
       input,
-      enabled: location !== undefined && isFocused,
+      enabled,
       context: { ws: true }
     }),
     onData(data) {
