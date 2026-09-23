@@ -2,14 +2,13 @@ import "@/utils/instrument";
 import "../global.css";
 import { useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
-import { SplashScreen, Stack, useNavigationContainerRef } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "react-native";
 import { useAutoUpdate } from "@/utils/updates";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
-import { navigationIntegration } from "@/utils/instrument";
 import { HeroUINativeProvider } from "heroui-native";
 import { setupLiveActivityListeners } from "@/live-activities/utils";
 import { orpc } from "@/utils/orpc";
@@ -104,14 +103,7 @@ function App() {
 }
 
 function Layout() {
-  const ref = useNavigationContainerRef();
   const colorScheme = useColorScheme();
-
-  useEffect(() => {
-    if (ref) {
-      navigationIntegration.registerNavigationContainer(ref);
-    }
-  }, [ref]);
 
   return (
     <GestureHandlerRootView>
