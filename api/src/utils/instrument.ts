@@ -1,60 +1,35 @@
 import * as Sentry from "@sentry/bun";
-import { ENVIRONMENT, SENTRY_DSN } from "./constants";
+import { BETTER_STACK_TOKEN, BETTER_STACK_URL, ENVIRONMENT, SENTRY_DSN } from "./constants";
 import { ORPCInstrumentation } from "@orpc/opentelemetry";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
+import {getNodeAutoInstrumentations} from "@opentelemetry/auto-instrumentations-node";
 
-const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
 
-globalThis.fetch = (async (...args: Parameters<typeof globalThis.fetch>) => {
-  const [input, init] = args;
-  const method = (init?.method ?? (input instanceof Request ? input.method : "GET")).toUpperCase();
-  const url =
-    typeof input === "string"
-      ? input
-      : input instanceof URL
-        ? input.toString()
-        : input.url;
+// For troubleshooting, set the log level to DiagLogLevel.DEBUG
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
-  return Sentry.startSpan(
-    { op: "http.client", name: `${method} ${url}` },
-    async (span) => {
-      const baseUrl = typeof globalThis.location?.origin === "string" ? globalThis.location.origin : "http://localhost";
-      const parsedUrl = new URL(url, baseUrl);
-
-      span.setAttribute("http.request.method", method);
-      span.setAttribute("server.address", parsedUrl.hostname);
-      if (parsedUrl.port) {
-        span.setAttribute("server.port", parsedUrl.port);
-      }
-
-      const response = await originalFetch(...args);
-      span.setAttribute("http.response.status_code", response.status);
-
-      const contentLength = response.headers.get("content-length");
-      if (contentLength) {
-        span.setAttribute("http.response_content_length", Number(contentLength));
-      }
-
-      return response;
+const sdk = new NodeSDK({
+  traceExporter: new OTLPTraceExporter({
+    url: BETTER_STACK_URL,
+    headers: {
+      Authorization: `Bearer ${BETTER_STACK_TOKEN}`
     },
-  );
-}) as typeof globalThis.fetch;
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: ENVIRONMENT,
-  debug: false,
-  tracesSampler(samplingContext) {
-    return true;
-  },
-  openTelemetryInstrumentations: [
+  }),
+  // instrumentations: [getNodeAutoInstrumentations()]
+  instrumentations: [
     new ORPCInstrumentation(),
+    new PgInstrumentation(),
+    new RedisInstrumentation(),
   ],
-  integrations(integrations) {
-    return [
-      Sentry.bunRuntimeMetricsIntegration(),
-      Sentry.bunServerIntegration(),
-      Sentry.postgresIntegration(),
-      Sentry.redisIntegration(),
-    ];
-  },
 });
+
+sdk.start();
+
+// Sentry.init({
+//   dsn: SENTRY_DSN,
+//   environment: ENVIRONMENT,
+// });

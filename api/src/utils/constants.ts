@@ -94,3 +94,7 @@ export const OSRM_BASE_URL = "http://192.168.0.104:5000";
 export const APPLE_APN_KEY_ID = process.env.APPLE_APN_KEY_ID;
 export const APPLE_APN_KEY = process.env.APPLE_APN_KEY;
 export const APPLE_TEAM_ID = process.env.APPLE_TEAM_ID;
+
+
+export const BETTER_STACK_URL = process.env.BETTER_STACK_URL;
+export const BETTER_STACK_TOKEN = process.env.BETTER_STACK_TOKEN;

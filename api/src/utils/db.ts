@@ -1,5 +1,5 @@
 import type { ClientConfig } from "pg";
-import { Client } from "pg";
+const { Client } = require("pg");
 import { drizzle } from "drizzle-orm/node-postgres";
 import { DB_URL } from "./constants";
 import { relations } from "../../drizzle/relations";
