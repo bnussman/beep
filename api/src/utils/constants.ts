@@ -88,7 +88,10 @@ export const CAR_COLOR_OPTIONS = [
   "yellow",
 ];
 
-export const PHOTON_BASE_URL = "http://192.168.0.110:2322";
+/*
+ * Set to http://photon.geo:2322 in k8s cluster
+ */
+export const PHOTON_BASE_URL = process.env.PHOTON_BASE_URL ?? "http://192.168.0.110:2322";
 export const OSRM_BASE_URL = "http://192.168.0.104:5000";
 
 export const APPLE_APN_KEY_ID = process.env.APPLE_APN_KEY_ID;
