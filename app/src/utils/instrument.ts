@@ -5,12 +5,9 @@ import { isWeb } from "./constants";
 Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
-  enableAutoSessionTracking: true,
-  enableAutoPerformanceTracing: true,
-  enableUserInteractionTracing: true,
-  sendDefaultPii: true,
   tracesSampleRate: 0.5,
   integrations: [
+    Sentry.reactNativeTracingIntegration(),
     Sentry.expoRouterIntegration(),
   ],
   tracePropagationTargets: isWeb
