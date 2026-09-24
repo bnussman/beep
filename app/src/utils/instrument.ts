@@ -9,7 +9,7 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
   enableUserInteractionTracing: true,
   sendDefaultPii: true,
-  tracesSampleRate: 0,
+  tracesSampleRate: 0.5,
   integrations: [
     Sentry.expoRouterIntegration(),
   ],
