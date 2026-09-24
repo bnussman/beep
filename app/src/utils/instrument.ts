@@ -7,7 +7,8 @@ Sentry.init({
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
   tracesSampleRate: 0.5,
   integrations: [
-    Sentry.reactNativeTracingIntegration(),
+    Sentry.reactNativeTracingIntegration({ traceFetch: true }),
+    Sentry.breadcrumbsIntegration({ fetch: true }),
     Sentry.expoRouterIntegration(),
   ],
   tracePropagationTargets: isWeb
