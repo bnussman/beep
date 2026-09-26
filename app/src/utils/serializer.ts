@@ -1,7 +1,7 @@
 import type { Segment } from '@orpc/shared'
-import type { StandardBody } from '@standardserver/core'
+import type { StandardBody } from '@standard-server/core'
 import { isAsyncIteratorObject, stringifyJSON } from '@orpc/shared'
-import { ErrorEvent } from '@standardserver/core'
+import { ErrorEvent } from '@standard-server/core'
 import { isPlainObject, NullProtoObj } from '@orpc/shared'
 import { createORPCErrorFromJson, isORPCErrorJson, toORPCError, wrapAsyncIteratorPreservingEventMeta } from '@orpc/client'
 
