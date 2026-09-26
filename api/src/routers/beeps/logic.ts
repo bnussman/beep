@@ -186,6 +186,10 @@ export async function sendBeepUpdateNotificationToRider(
         where: { user_id: beeper.id, default: true },
       });
 
+      const etaMinutes = beep.pick_up_eta
+        ? Math.max(0, Math.ceil((beep.pick_up_eta.getTime() - Date.now()) / 60_000))
+        : undefined;
+
       if (car) {
         alert.body = `${beeper.first} is on their way in a ${car.color} ${car.make} ${car.model}`;
       }
@@ -198,7 +202,7 @@ export async function sendBeepUpdateNotificationToRider(
           props: {
             car,
             positionInQueue: beep.position,
-            etaMinutes: undefined, // @todo
+            etaMinutes,
             name: beeper.first,
             status: beep.status,
           },

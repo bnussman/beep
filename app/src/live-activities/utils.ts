@@ -10,12 +10,10 @@ export function setupLiveActivityListeners() {
   for (const activity of riderLiveActivities) {
     const listener = activity.addPushTokenListener((event) => {
       orpcClient.rider.updateLiveActivityToken({
-          activityId: event.activityId,
-          token: event.pushToken,
-        })
-        .then(() => alert(`Sent token for activity id ${event.activityId}`));
+        activityId: event.activityId,
+        token: event.pushToken,
+      });
     });
-    alert("Listener has been setup");
     riderLiveActivityListeners.push(listener);
   }
 }
@@ -34,15 +32,10 @@ export function startBeepLiveActivity(
 
   const listener = riderActivity.addPushTokenListener((event) => {
     orpcClient.rider.setBeepLiveActivityToken({
-        activityId: event.activityId,
-        beepId: beep.id,
-        token: event.pushToken,
-      })
-      .then(() => {
-        alert(
-          `Beep live activity started. Activity ID ${event.activityId} | Beep ID ${beep.id}`,
-        );
-      });
+      activityId: event.activityId,
+      beepId: beep.id,
+      token: event.pushToken,
+    });
   });
 
   riderLiveActivityListeners.push(listener);
