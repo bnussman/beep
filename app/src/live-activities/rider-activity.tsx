@@ -126,7 +126,12 @@ const RiderActivity = (
           </VStack>
           {renderProgressBar()}
         </VStack>
-        {props.etaMinutes !== undefined && (
+        {props.status === "here" ? (
+          <React.Fragment>
+            <Spacer />
+            <Text modifiers={[font({ size: 24 })]}>👋🏼</Text>
+          </React.Fragment>
+        ) : props.etaMinutes !== undefined ? (
           <React.Fragment>
             <Spacer />
             <VStack modifiers={[padding({ all: 12 })]}>
@@ -136,7 +141,7 @@ const RiderActivity = (
               <Text modifiers={[font({ size: 12 })]}>minutes</Text>
             </VStack>
           </React.Fragment>
-        )}
+        ) : null}
       </HStack>
     ),
     compactLeading: <Text modifiers={[font({ size: 16 })]}>🚕</Text>,
