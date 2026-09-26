@@ -179,8 +179,8 @@ export const riderRouter = {
       if (beeper.pushToken) {
         sendNotification({
           to: beeper.pushToken,
-          title: `${context.user.first} ${context.user.last} has entered your queue 🚕`,
-          body: "Please accept or deny this rider.",
+          title: "New Rider",
+          body: `${context.user.first} has entered your queue. Please accept or deny them.`,
           categoryId: "newbeep",
           data: { id: newBeep.id },
         });
@@ -335,8 +335,8 @@ export const riderRouter = {
       if (beeper.pushToken) {
         sendNotification({
           to: beeper.pushToken,
-          title: `${context.user.first} ${context.user.last} left your queue 🥹`,
-          body: "They decided they did not want a beep from you!",
+          title: `Rider Left Your Queue`,
+          body: `${context.user.first} left your queue. They decided they did not want a beep from you.`,
         });
       }
 

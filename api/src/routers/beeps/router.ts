@@ -193,7 +193,7 @@ export const beepRouter = {
       if (beeper?.pushToken) {
         await sendNotification({
           to: beeper.pushToken,
-          title: "Rider updated their ride details",
+          title: "Ride Details Updated",
           body: `${context.user.first} updated their ${fieldNames}`,
         });
       }
@@ -270,8 +270,8 @@ export const beepRouter = {
       if (beeper.pushToken) {
         notifications.push({
           to: beeper.pushToken,
-          title: "Your queue has been cleared",
-          body: "An admin has cleared your queue probably because you were inactive!",
+          title: "Queue Cleared",
+          body: "An admin has cleared your queue (probably because you were inactive)",
         });
       }
 
