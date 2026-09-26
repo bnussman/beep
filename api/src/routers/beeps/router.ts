@@ -124,12 +124,10 @@ export const beepRouter = {
     }),
   beepUpdates: authedProcedure
     .input(z.uuid())
-    .output(
-      asyncIteratorObject(beepSchema.partial().nullable())
-    )
+    .output(asyncIteratorObject(beepSchema.partial()))
     .handler(async function* ({ context, signal, input }) {
       const beep = await db.query.beeps.findFirst({
-        where: {  id: input }
+        where: { id: input }
       });
 
       if (!beep) {
@@ -240,7 +238,7 @@ export const beepRouter = {
         });
       }
 
-      const values = { status: "canceled" as const };
+      const values = { status: "canceled" as const, end: new Date() };
 
       await db
         .update(beeps)
