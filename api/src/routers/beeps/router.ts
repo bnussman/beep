@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { db } from "../../utils/db";
-import { ORPCError } from "@orpc/server";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import { pubSub } from "../../utils/pubsub";
 import { count, eq, and } from "drizzle-orm";
 import { beeps, users } from "../../../drizzle/schema";
 import { updateLiveActivity } from "../../utils/live-activities";
-import { clearQueueInputSchema, editBeepInputSchema, getBeepsInputSchema } from "./schemas";
+import { beepSchema, clearQueueInputSchema, editBeepInputSchema, getBeepsInputSchema } from "./schemas";
 import { condensedUserColumns } from "../users/logic";
 import {
   adminProcedure,
@@ -122,6 +122,30 @@ export const beepRouter = {
 
       return beep;
     }),
+  beepUpdates: authedProcedure
+    .input(z.uuid())
+    .output(
+      asyncIteratorObject(beepSchema.partial().nullable())
+    )
+    .handler(async function* ({ context, signal, input }) {
+      const beep = await db.query.beeps.findFirst({
+        where: {  id: input }
+      });
+
+      if (!beep) {
+        throw new ORPCError("NOT_FOUND");
+      }
+
+      if (context.user.role !== "admin" && ![beep.rider_id, beep.beeper_id].includes(context.user.id)) {
+        throw new ORPCError("UNAUTHORIZED")
+      }
+
+      const eventSource = pubSub.subscribe(`beep-${input}`, { signal });
+
+      for await (const { beep } of eventSource) {
+        yield beep;
+      }
+    }),
   deleteBeep: adminProcedure
     .input(z.uuid())
     .handler(async ({ input }) => {
@@ -151,6 +175,8 @@ export const beepRouter = {
       }
 
       await db.update(beeps).set(input.data).where(eq(beeps.id, input.beepId));
+
+      pubSub.publish(`beep-${beep.id}`, { beep: input.data });
 
       const beeper = await db.query.users.findFirst({
         where: { id: beep.beeper_id },
@@ -214,15 +240,18 @@ export const beepRouter = {
         });
       }
 
+      const values = { status: "canceled" as const };
+
       await db
         .update(beeps)
-        .set({ status: "canceled" })
+        .set(values)
         .where(and(eq(beeps.beeper_id, beeper.id), inProgressBeep));
 
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
         pubSub.publish(`ride-${beep.rider.id}`, { ride: null });
+        pubSub.publish(`beep-${beep.id}`, { beep: values })
 
         if (beep.rider_live_activity_token) {
           updateLiveActivity(beep.rider_live_activity_token, {

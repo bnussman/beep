@@ -347,13 +347,16 @@ export const riderRouter = {
         });
       }
 
+      const values = { status: "canceled" as const, end: new Date() };
+
       await db
         .update(beeps)
-        .set({ status: "canceled", end: new Date() })
+        .set(values)
         .where(eq(beeps.id, entry.id));
 
       queue = queue.filter((beep) => beep.id !== entry.id);
 
+      pubSub.publish(`beep-${entry.id}`, { beep: values });
       pubSub.publish(`ride-${context.user.id}`, { ride: null });
       pubSub.publish(`queue-${beeper.id}`, { queue });
 
@@ -434,13 +437,17 @@ export const riderRouter = {
 
       console.log("Got new push token for activity", input.activityId);
 
+      const values = {
+        rider_live_activity_token: input.token,
+        rider_live_activity_id: input.activityId,
+      };
+
       await db
         .update(beeps)
-        .set({
-          rider_live_activity_token: input.token,
-          rider_live_activity_id: input.activityId,
-        })
+        .set(values)
         .where(eq(beeps.id, beep.id));
+
+      pubSub.publish(`beep-${beep.id}`, { beep: values });
 
       return {};
     }),
@@ -464,10 +471,14 @@ export const riderRouter = {
 
       console.log("Got updated push token for activity", input.activityId);
 
+      const values = { rider_live_activity_token: input.token };
+
       await db
         .update(beeps)
-        .set({ rider_live_activity_token: input.token })
+        .set(values)
         .where(eq(beeps.id, beep.id));
+
+      pubSub.publish(`beep-${beep.id}`, { beep: values });
 
       return {};
     }),

@@ -344,6 +344,8 @@ export async function updateEta(beeperId: string, location: Location) {
   pubSub.publish(`ride-${currentBeep.rider_id}`, { ride: values });
 
   await db.update(beeps).set(values).where(eq(beeps.id, currentBeep.id));
+
+  pubSub.publish(`beep-${currentBeep.id}`, { beep: values });
 }
 
 export async function getETA(locations: Location[]) {

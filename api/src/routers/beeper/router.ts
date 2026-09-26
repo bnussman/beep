@@ -113,6 +113,8 @@ export const beeperRouter = {
 
       await db.update(beeps).set(values).where(eq(beeps.id, queueEntry.id));
 
+      pubSub.publish(`beep-${queueEntry.id}`, { beep: values });
+
       Object.assign(queueEntry, values);
 
       if (isQueueSizeChanging) {

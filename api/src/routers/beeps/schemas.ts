@@ -1,5 +1,8 @@
 import z from "zod";
-import { beepStatuses } from "../../../drizzle/schema";
+import { beeps, beepStatuses } from "../../../drizzle/schema";
+import { createSelectSchema } from 'drizzle-orm/zod';
+
+export const beepSchema = createSelectSchema(beeps);
 
 export const editBeepInputSchema = z.object({
   beepId: z.uuid(),
