@@ -122,7 +122,7 @@ export async function sendBeepUpdateNotificationToRider(
       if (riderPushToken) {
         sendNotification({
           to: riderPushToken,
-          title: `Beep Canceled`,
+          title: "Beep Canceled",
           body: `${beeper.first} canceled your beep.`,
         });
       }
@@ -178,7 +178,7 @@ export async function sendBeepUpdateNotificationToRider(
     }
     case "on_the_way": {
       const alert = {
-        title: "Beeper is on their way",
+        title: "Beeper is On The Way",
         body: `${beeper.first} is on their way to pick you up.`,
       };
 

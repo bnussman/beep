@@ -169,7 +169,7 @@ export const ratingRouter = {
       if (user.pushToken) {
         sendNotification({
           to: user.pushToken,
-          title: `New Rating`,
+          title: "New Rating",
           body: `${context.user.first} rated you ${input.stars} ${input.stars === 1 ? "star" : "stars"}.`,
         });
       }
