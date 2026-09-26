@@ -135,7 +135,7 @@ export default function PickBeepScreen() {
                 shadowColor: "#f5db73",
                 shadowOpacity: 1,
                 opacity: 1,
-                marginRight: 16,
+                padding: 16
               }}
             >
               👑
