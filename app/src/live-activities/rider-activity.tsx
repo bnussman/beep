@@ -1,11 +1,21 @@
-import { HStack, Spacer, Text, VStack, Circle } from "@expo/ui/swift-ui";
+import {
+  HStack,
+  Spacer,
+  Text,
+  VStack,
+  Circle,
+  ProgressView,
+} from "@expo/ui/swift-ui";
 import {
   font,
   padding,
   foregroundStyle,
   frame,
+  progressViewStyle,
 } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
+import { carRouter } from "../../../api/src/routers/cars/router";
+import React from "react";
 
 export interface RiderActivityProps {
   name: string;
@@ -24,15 +34,15 @@ const RiderActivity = (
   const getHeading = () => {
     switch (props.status) {
       case "waiting":
-        return "Waiting for response";
+        return "Waiting on Beeper";
       case "accepted":
-        return "Accepted";
+        return "Ride Accepted";
       case "on_the_way":
-        return "On the way";
+        return "Beeper is on the way";
       case "here":
-        return "Here";
+        return "Beeper is here";
       case "in_progress":
-        return "In progress";
+        return "Beep In Progress";
       default:
         return "Unknown";
     }
@@ -49,9 +59,9 @@ const RiderActivity = (
         return `You are in ${props.name}'s rider queue`;
       }
       case "on_the_way":
-        return `${props.name} is on the way in a`;
+        return `${props.name} is on the way in a ${props.car?.color} ${props.car?.make} ${props.car?.model}`;
       case "here":
-        return `${props.name} is here in a`;
+        return `${props.name} is here in a ${props.car?.color} ${props.car?.make} ${props.car?.model}`;
       case "in_progress":
         return `Your ride with ${props.name} is in progress`;
       default:
@@ -79,46 +89,54 @@ const RiderActivity = (
     return `${s.charAt(0).toUpperCase()}${s.slice(1, s.length)}`;
   };
 
+  const getProgressValue = () => {
+    switch (props.status) {
+      case "waiting":
+        return 0.2;
+      case "accepted":
+        return 0.4;
+      case "on_the_way":
+        return 0.6;
+      case "here":
+        return 0.8;
+      case "in_progress":
+        return 0.9;
+      default:
+        return 0;
+    }
+  };
+
+  const renderProgressBar = () => (
+    <ProgressView
+      value={getProgressValue()}
+      modifiers={[progressViewStyle("linear")]}
+    />
+  );
+
   return {
     banner: (
-      <HStack modifiers={[padding({ all: 16 })]} spacing={16}>
-        <Text modifiers={[font({ size: 32 })]}>🚕</Text>
-        <VStack alignment="leading">
-          <Text modifiers={[font({ weight: "heavy" })]}>{getHeading()}</Text>
-          <Text modifiers={[font({ size: 12 })]}>{getSubHeading()}</Text>
-          {props.car && (
-            <HStack spacing={8}>
-              <Text modifiers={[font({ size: 12 })]}>
-                {capitalize(props.car.color)} {props.car.make} {props.car.model}
-              </Text>
-              <Circle
-                modifiers={[
-                  foregroundStyle(
-                    colorMap[props.car.color as keyof typeof colorMap] ??
-                      "#fffff",
-                  ),
-                  frame({ width: 12, height: 12 }),
-                ]}
-              />
+      <HStack modifiers={[padding({ all: 16 })]} spacing={8}>
+        <VStack  alignment="leading" spacing={16}>
+          <VStack spacing={8} alignment="leading">
+            <HStack spacing={8} >
+              <Text modifiers={[font({ size: 18 })]}>🚕</Text>
+              <Text modifiers={[font({ size: 18, weight: "heavy" })]}>{getHeading()}</Text>
             </HStack>
-          )}
+            <Text modifiers={[font({ size: 12 })]}>{getSubHeading()}</Text>
+          </VStack>
+          {renderProgressBar()}
         </VStack>
-        <Spacer />
-        {props.status === "accepted" && props.positionInQueue > 0 ? (
-          <VStack modifiers={[padding({ all: 12 })]}>
-            <Text modifiers={[font({ weight: "bold", size: 20 })]}>
-              {props.positionInQueue}
-            </Text>
-            <Text modifiers={[font({ size: 10 })]}>riders ahead</Text>
-          </VStack>
-        ) : props.etaMinutes !== undefined ? (
-          <VStack modifiers={[padding({ all: 12 })]}>
-            <Text modifiers={[font({ weight: "bold", size: 20 })]}>
-              {props.etaMinutes}
-            </Text>
-            <Text modifiers={[font({ size: 12 })]}>minutes</Text>
-          </VStack>
-        ) : null}
+        {props.etaMinutes !== undefined && (
+          <React.Fragment>
+            <Spacer />
+            <VStack modifiers={[padding({ all: 12 })]}>
+              <Text modifiers={[font({ weight: "bold", size: 20 })]}>
+                {props.etaMinutes}
+              </Text>
+              <Text modifiers={[font({ size: 12 })]}>minutes</Text>
+            </VStack>
+          </React.Fragment>
+        )}
       </HStack>
     ),
     compactLeading: <Text modifiers={[font({ size: 16 })]}>🚕</Text>,
@@ -151,33 +169,13 @@ const RiderActivity = (
         </VStack>
       ) : null,
     expandedBottom: (
-      <HStack
-        modifiers={[
-          padding({ leading: 16, bottom: 12, trailing: 16, vertical: 0 }),
-        ]}
-      >
+      <VStack alignment="leading" modifiers={[padding({ bottom: 16 })]} spacing={16}>
         <VStack alignment="leading">
-          <Text modifiers={[font({ weight: "heavy" })]}>{getHeading()}</Text>
+          <Text modifiers={[font({ size: 18, weight: "heavy" })]}>{getHeading()}</Text>
           <Text modifiers={[font({ size: 12 })]}>{getSubHeading()}</Text>
-          {props.car && (
-            <HStack spacing={8}>
-              <Text modifiers={[font({ size: 12 })]}>
-                {capitalize(props.car.color)} {props.car.make} {props.car.model}
-              </Text>
-              <Circle
-                modifiers={[
-                  foregroundStyle(
-                    colorMap[props.car.color as keyof typeof colorMap] ??
-                      "#fffff",
-                  ),
-                  frame({ width: 12, height: 12 }),
-                ]}
-              />
-            </HStack>
-          )}
         </VStack>
-        <Spacer />
-      </HStack>
+        {renderProgressBar()}
+      </VStack>
     ),
   };
 };

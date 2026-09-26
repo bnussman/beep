@@ -188,7 +188,7 @@ export async function sendBeepUpdateNotificationToRider(
 
       const etaMinutes = beep.pick_up_eta
         ? Math.max(0, Math.ceil((beep.pick_up_eta.getTime() - Date.now()) / 60_000))
-        : undefined;
+        : 5;
 
       if (car) {
         alert.body = `${beeper.first} is on their way in a ${car.color} ${car.make} ${car.model}`;
