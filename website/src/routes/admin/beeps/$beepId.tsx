@@ -8,7 +8,7 @@ import { Map } from "../../../components/Map";
 import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import { DateTime, Interval } from "luxon";
-import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import {
   createFileRoute,
@@ -24,6 +24,7 @@ import {
   Card,
   Grid,
 } from "@mui/material";
+import { useSubscription } from "../../../utils/subscriptions";
 
 export const Route = createFileRoute("/admin/beeps/$beepId")({
   component: Beep,
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/admin/beeps/$beepId")({
 function Beep() {
   const theme = useTheme();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { beepId } = Route.useParams();
 
@@ -40,6 +42,25 @@ function Beep() {
     isPending,
     error,
   } = useQuery(orpc.beep.beep.queryOptions({ input: beepId }));
+
+  useSubscription({
+    ...orpc.beep.beepUpdates.liveOptions({
+      input: beepId,
+      context: { ws: true }
+    }),
+    onData(data) {
+      queryClient.setQueryData(orpc.beep.beep.queryKey({ input: beepId }), (prev) => {
+        if (!prev) {
+          return undefined;
+        }
+
+        return {
+          ...prev,
+          ...data,
+        }
+      });
+    },
+  });
 
   const { data: beeper } = useQuery(
     orpc.user.updates.liveOptions({
