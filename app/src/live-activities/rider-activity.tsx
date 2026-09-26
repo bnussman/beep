@@ -12,6 +12,7 @@ import {
   foregroundStyle,
   frame,
   progressViewStyle,
+  background,
 } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
 import { carRouter } from "../../../api/src/routers/cars/router";
@@ -109,7 +110,7 @@ const RiderActivity = (
   const renderProgressBar = () => (
     <ProgressView
       value={getProgressValue()}
-      modifiers={[progressViewStyle("linear")]}
+      modifiers={[progressViewStyle("linear"), foregroundStyle('#4285ea'), background('#7e7e7e')]}
     />
   );
 
