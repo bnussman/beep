@@ -3,6 +3,8 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 type AdminNavigationContextValue = {
   expanded: boolean;
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+  drawerOpen: boolean;
+  setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AdminNavigationContext =
@@ -10,9 +12,12 @@ const AdminNavigationContext =
 
 export function AdminNavigationProvider({ children }: { children: ReactNode }) {
   const [expanded, setExpanded] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <AdminNavigationContext.Provider value={{ expanded, setExpanded }}>
+    <AdminNavigationContext.Provider
+      value={{ expanded, setExpanded, drawerOpen, setDrawerOpen }}
+    >
       {children}
     </AdminNavigationContext.Provider>
   );

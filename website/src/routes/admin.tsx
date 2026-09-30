@@ -2,6 +2,7 @@ import {
   Assessment,
   CalendarMonth,
   ChevronLeft,
+  Close,
   DirectionsCar,
   DriveFileMove,
   Email,
@@ -28,6 +29,7 @@ import {
   ListItemText,
   Tooltip,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useAdminNavigation } from "../components/AdminNavigationContext";
@@ -92,44 +94,82 @@ export const Route = createFileRoute('/admin')({
 })
 
 function RouteComponent() {
-  const { expanded } = useAdminNavigation();
-  const width = expanded ? 240 : 64;
+  const { expanded, drawerOpen, setDrawerOpen } = useAdminNavigation();
+  const isSmallViewport = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const drawerExpanded = isSmallViewport || expanded;
+  const width = drawerExpanded ? 240 : 64;
+  const closeOnSmallViewport = () => {
+    if (isSmallViewport) setDrawerOpen(false);
+  };
 
   return (
-    <Box sx={{ display: "flex", minWidth: 0, flexGrow: 1, gap: 2 }}>
+    <Box sx={{ display: "flex", minWidth: 0, flexGrow: 1, gap: { md: 2 } }}>
       <Drawer
-        variant="permanent"
+        variant={isSmallViewport ? "temporary" : "permanent"}
+        open={!isSmallViewport || drawerOpen}
+        onClose={() => setDrawerOpen(false)}
         sx={{
-          width,
+          width: isSmallViewport ? undefined : width,
           flexShrink: 0,
-          position: "sticky",
-          top: { xs: 56, sm: 64 },
-          height: { xs: "calc(100vh - 56px)", sm: "calc(100vh - 64px)" },
+          position: isSmallViewport ? "fixed" : "sticky",
+          top: isSmallViewport ? 0 : { xs: 56, sm: 64 },
+          height: isSmallViewport
+            ? "100dvh"
+            : { xs: "calc(100vh - 56px)", sm: "calc(100vh - 64px)" },
           alignSelf: "flex-start",
           transition: "width 180ms ease",
           "& .MuiDrawer-paper": {
-            position: "relative",
+            position: isSmallViewport ? "fixed" : "relative",
             boxSizing: "border-box",
-            width,
-            height: "100%",
+            width: isSmallViewport ? 280 : width,
+            height: isSmallViewport ? "100dvh" : "100%",
             overflowX: "hidden",
             overflowY: "auto",
+            top: isSmallViewport ? 0 : undefined,
             transition: "width 180ms ease",
           },
         }}
       >
+        {isSmallViewport && (
+          <>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                px: 2,
+                py: 1,
+              }}
+            >
+              <Typography sx={{ fontWeight: 700 }}>Admin</Typography>
+              <IconButton
+                aria-label="Close navigation"
+                onClick={() => setDrawerOpen(false)}
+                size="small"
+              >
+                <Close />
+              </IconButton>
+            </Box>
+            <Divider />
+          </>
+        )}
         <List dense>
           {adminLinks.map(({ label, to, icon }) => (
-            <Tooltip key={to} title={expanded ? "" : label} placement="right">
+            <Tooltip
+              key={to}
+              title={drawerExpanded ? "" : label}
+              placement="right"
+            >
               <ListItemButton
                 component={Link}
                 to={to}
-                sx={{ minHeight: 44, justifyContent: expanded ? "initial" : "center", px: 2 }}
+                onClick={closeOnSmallViewport}
+                sx={{ minHeight: 44, justifyContent: drawerExpanded ? "initial" : "center", px: 2 }}
               >
-                <ListItemIcon sx={{ minWidth: 0, mr: expanded ? 2 : 0 }}>
+                <ListItemIcon sx={{ minWidth: 0, mr: drawerExpanded ? 2 : 0 }}>
                   {icon}
                 </ListItemIcon>
-                {expanded && <ListItemText primary={label} />}
+                {drawerExpanded && <ListItemText primary={label} />}
               </ListItemButton>
             </Tooltip>
           ))}
@@ -137,24 +177,37 @@ function RouteComponent() {
         <Divider />
         <List dense>
           {externalLinks.map(({ label, href, icon }) => (
-            <Tooltip key={href} title={expanded ? "" : label} placement="right">
+            <Tooltip
+              key={href}
+              title={drawerExpanded ? "" : label}
+              placement="right"
+            >
               <ListItemButton
                 component="a"
                 href={href}
                 target="_blank"
                 rel="noreferrer"
-                sx={{ minHeight: 44, justifyContent: expanded ? "initial" : "center", px: 2 }}
+                onClick={closeOnSmallViewport}
+                sx={{ minHeight: 44, justifyContent: drawerExpanded ? "initial" : "center", px: 2 }}
               >
-                <ListItemIcon sx={{ minWidth: 0, mr: expanded ? 2 : 0 }}>
+                <ListItemIcon sx={{ minWidth: 0, mr: drawerExpanded ? 2 : 0 }}>
                   {icon}
                 </ListItemIcon>
-                {expanded && <ListItemText primary={label} />}
+                {drawerExpanded && <ListItemText primary={label} />}
               </ListItemButton>
             </Tooltip>
           ))}
         </List>
       </Drawer>
-      <Box component="section" sx={{ flexGrow: 1, minWidth: 0, paddingTop: 2, paddingRight: 4 }}>
+      <Box
+        component="section"
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          paddingY: 2,
+          paddingRight: { xs: 0, md: 4 },
+        }}
+      >
         <Outlet />
       </Box>
     </Box>

@@ -19,10 +19,12 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  useMediaQuery,
 } from "@mui/material";
 
 export function Header({ isAdminRoute = false }: { isAdminRoute?: boolean }) {
-  const { expanded, setExpanded } = useAdminNavigation();
+  const { expanded, setExpanded, setDrawerOpen } = useAdminNavigation();
+  const isSmallViewport = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery(
@@ -70,14 +72,38 @@ export function Header({ isAdminRoute = false }: { isAdminRoute?: boolean }) {
             sx={{ flexShrink: 0 }}
           >
             <Stack direction="row" spacing={2} sx={{ alignItems: "center", mr: 2 }}>
-              <Tooltip title={expanded ? "Collapse navigation" : "Expand navigation"}>
+              <Tooltip
+                title={
+                  isSmallViewport
+                    ? "Open navigation"
+                    : expanded
+                      ? "Collapse navigation"
+                      : "Expand navigation"
+                }
+              >
                 <IconButton
-                  aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
-                  onClick={() => setExpanded(!expanded)}
+                  aria-label={
+                    isSmallViewport
+                      ? "Open navigation"
+                      : expanded
+                        ? "Collapse navigation"
+                        : "Expand navigation"
+                  }
+                  onClick={() =>
+                    isSmallViewport
+                      ? setDrawerOpen(true)
+                      : setExpanded(!expanded)
+                  }
                   color="inherit"
                   size="small"
                 >
-                  {expanded ? <ChevronLeft /> : <MenuIcon />}
+                  {isSmallViewport ? (
+                    <MenuIcon />
+                  ) : expanded ? (
+                    <ChevronLeft />
+                  ) : (
+                    <MenuIcon />
+                  )}
                 </IconButton>
               </Tooltip>
               <Divider orientation="vertical" flexItem sx={{ height: 24, alignSelf: "center" }} />

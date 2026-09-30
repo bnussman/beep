@@ -93,7 +93,7 @@ function RootDocument({
       <head>
         <HeadContent />
       </head>
-      <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: 16 }}>
+      <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: isAdminRoute ? 0 : 16 }}>
         <Providers>
           <AdminNavigationProvider>
             <Header isAdminRoute={isAdminRoute} />
