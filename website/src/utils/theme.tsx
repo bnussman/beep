@@ -70,6 +70,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
+          borderRadius: 10
         },
       },
     },
@@ -88,6 +89,13 @@ export const theme = createTheme({
         root: {
           fontWeight: "bold",
         },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize'
+        }
       },
     },
     MuiLink: {

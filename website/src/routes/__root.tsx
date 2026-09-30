@@ -6,6 +6,7 @@ import fontUrlBold from "@fontsource/poppins/700.css?url";
 import { queryClient } from "../utils/tanstack-query";
 import { Container, ThemeProvider, CssBaseline } from "@mui/material";
 import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
 import { Banners } from "../components/Banners";
 import { CacheProvider } from "@emotion/react";
 import { theme } from "../utils/theme";
@@ -80,14 +81,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: 16 }}>
         <Providers>
           <Header />
-
-          <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column' }}>
+          <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column', flexGrow: 1 }}>
             <Banners />
             {children}
           </Container>
+          <Footer />
         </Providers>
         <Scripts />
       </body>

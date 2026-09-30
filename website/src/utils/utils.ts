@@ -22,11 +22,14 @@ export function getMobileOperatingSystem() {
   return "unknown";
 }
 
+export const ANDROID_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=app.ridebeep.App";
+export const IOS_DOWNLOAD_URL = "https://apps.apple.com/us/app/ride-beep-app/id1528601773";
+
 export function getDownloadLink() {
   if (getMobileOperatingSystem() === "Android") {
-    return "https://play.google.com/store/apps/details?id=app.ridebeep.App";
+    return ANDROID_DOWNLOAD_URL;
   }
-  return "https://apps.apple.com/us/app/ride-beep-app/id1528601773";
+  return IOS_DOWNLOAD_URL;
 }
 
 export function getFormattedRating(rating: string | number) {
