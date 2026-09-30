@@ -17,15 +17,14 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <Container>
+    <Container sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
       <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={3}
         sx={{
-          height: "calc(100vh - 150px)",
           width: "100%",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
         }}>
         <Stack spacing={2} sx={{
           alignItems: { xs: "center", md: "flex-start" }

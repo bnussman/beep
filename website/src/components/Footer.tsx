@@ -24,11 +24,9 @@ export function Footer() {
     <Stack
       sx={(theme) => ({
         padding: 4,
-        boxShadow: "none",
         borderTop: 1,
         borderColor: `light-dark(${theme.palette.divider}, rgba(131, 131, 131, 0.1))`,
         backgroundColor: "light-dark(transparent, rgba(44, 44, 44, 0.1))",
-        backdropFilter: "blur(5px)",
       })}
     >
       <Grid
