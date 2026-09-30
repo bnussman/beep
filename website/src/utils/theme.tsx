@@ -91,6 +91,13 @@ export const theme = createTheme({
         },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize'
+        }
+      },
+    },
     MuiLink: {
       defaultProps: {
         color: "inherit",
