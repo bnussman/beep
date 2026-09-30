@@ -31,7 +31,19 @@ export function Footer() {
 
   return (
     <Stack
+      component="footer"
       sx={(theme) => ({
+        display: "flex",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
+        [theme.breakpoints.down('sm')]: {
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+        },
+        rowGap: 2,
+        columnGap: 4,
         paddingX: 4,
         paddingY: 2,
         borderTop: 1,
@@ -39,19 +51,9 @@ export function Footer() {
         backgroundColor: "light-dark(transparent, rgba(44, 44, 44, 0.1))",
       })}
     >
-      <Grid
-        container
-        columnSpacing={4}
-        rowSpacing={2}
-        size={{ sm: 12 }}
-        sx={{ alignItems: 'center' }}
-      >
-        {items.map((item, index) => (
-          <Grid key={index}>
-            <FooterItem item={item} />
-          </Grid>
-        ))}
-      </Grid>
+      {items.map((item, index) => (
+        <FooterItem item={item} key={index} />
+      ))}
     </Stack>
   );
 }
