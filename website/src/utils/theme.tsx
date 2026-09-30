@@ -24,6 +24,15 @@ export const theme = createTheme({
     fontFamily: "Poppins",
   },
   components: {
+    MuiDialog: {
+      styleOverrides: {
+        paper: ({ theme }) =>
+          theme.applyStyles("dark", {
+            backgroundColor: "#090909",
+            backgroundImage: "none",
+          }),
+      },
+    },
     MuiTableRow: {
       styleOverrides: {
         root: {

@@ -1,10 +1,17 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from "react";
 
 type AdminNavigationContextValue = {
   expanded: boolean;
-  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+  setExpanded: Dispatch<SetStateAction<boolean>>;
   drawerOpen: boolean;
-  setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 const AdminNavigationContext =

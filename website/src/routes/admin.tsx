@@ -31,7 +31,12 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
 import { useAdminNavigation } from "../components/AdminNavigationContext";
 import React from "react";
 
@@ -89,6 +94,8 @@ const externalLinks = [
   },
 ];
 
+const navMotion = "170ms cubic-bezier(0.2, 0, 0, 1)";
+
 export const Route = createFileRoute('/admin')({
   component: RouteComponent,
 })
@@ -96,8 +103,19 @@ export const Route = createFileRoute('/admin')({
 function RouteComponent() {
   const { expanded, drawerOpen, setDrawerOpen } = useAdminNavigation();
   const isSmallViewport = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
   const drawerExpanded = isSmallViewport || expanded;
   const width = drawerExpanded ? 240 : 64;
+  const activeLink = adminLinks.reduce<string | undefined>(
+    (current, { to }) =>
+      (pathname === to || pathname.startsWith(`${to}/`)) &&
+      (!current || to.length > current.length)
+        ? to
+        : current,
+    undefined,
+  );
   const closeOnSmallViewport = () => {
     if (isSmallViewport) setDrawerOpen(false);
   };
@@ -108,7 +126,7 @@ function RouteComponent() {
         variant={isSmallViewport ? "temporary" : "permanent"}
         open={!isSmallViewport || drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        sx={{
+        sx={(theme) => ({
           width: isSmallViewport ? undefined : width,
           flexShrink: 0,
           position: isSmallViewport ? "fixed" : "sticky",
@@ -117,18 +135,24 @@ function RouteComponent() {
             ? "100dvh"
             : { xs: "calc(100vh - 56px)", sm: "calc(100vh - 64px)" },
           alignSelf: "flex-start",
-          transition: "width 180ms ease",
+          transition: isSmallViewport ? "none" : `width ${navMotion}`,
+          "@media (prefers-reduced-motion: reduce)": { transition: "none" },
           "& .MuiDrawer-paper": {
             position: isSmallViewport ? "fixed" : "relative",
             boxSizing: "border-box",
-            width: isSmallViewport ? 280 : width,
+            width: isSmallViewport ? 280 : "100%",
             height: isSmallViewport ? "100dvh" : "100%",
             overflowX: "hidden",
             overflowY: "auto",
             top: isSmallViewport ? 0 : undefined,
-            transition: "width 180ms ease",
+            ...(isSmallViewport
+              ? theme.applyStyles("dark", {
+                  backgroundColor: "#090909",
+                  backgroundImage: "none",
+                })
+              : {}),
           },
-        }}
+        })}
       >
         {isSmallViewport && (
           <>
@@ -164,12 +188,61 @@ function RouteComponent() {
                 component={Link}
                 to={to}
                 onClick={closeOnSmallViewport}
-                sx={{ minHeight: 44, justifyContent: drawerExpanded ? "initial" : "center", px: 2 }}
+                selected={activeLink === to}
+                sx={{
+                  minHeight: 44,
+                  justifyContent: "flex-start",
+                  px: 2,
+                  position: "relative",
+                  "&.Mui-selected": {
+                    color: "primary.main",
+                    bgcolor: "action.selected",
+                  },
+                  "&.Mui-selected:hover": { bgcolor: "action.selected" },
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    left: 0,
+                    top: 8,
+                    bottom: 8,
+                    width: 3,
+                    borderRadius: "0 3px 3px 0",
+                    bgcolor: "primary.main",
+                    opacity: 0,
+                    transition: `opacity ${navMotion}`,
+                    pointerEvents: "none",
+                  },
+                  "&.Mui-selected::before": { opacity: 1 },
+                  "@media (prefers-reduced-motion: reduce)": {
+                    "&::before": { transition: "none" },
+                  },
+                }}
               >
-                <ListItemIcon sx={{ minWidth: 0, mr: drawerExpanded ? 2 : 0 }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: drawerExpanded ? 2 : 0,
+                    transform: drawerExpanded ? "none" : "translateX(4px)",
+                    transition: isSmallViewport ? "none" : `margin-right ${navMotion}, transform ${navMotion}`,
+                    "@media (prefers-reduced-motion: reduce)": { transition: "none" },
+                  }}
+                >
                   {icon}
                 </ListItemIcon>
-                {drawerExpanded && <ListItemText primary={label} />}
+                <ListItemText
+                  primary={label}
+                  sx={{
+                    minWidth: 0,
+                    maxWidth: drawerExpanded ? 180 : 0,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    opacity: drawerExpanded ? 1 : 0,
+                    transition: isSmallViewport
+                      ? "none"
+                      : `max-width ${navMotion}, opacity 110ms ease-out`,
+                    "@media (prefers-reduced-motion: reduce)": { transition: "none" },
+                  }}
+                />
               </ListItemButton>
             </Tooltip>
           ))}
@@ -188,12 +261,33 @@ function RouteComponent() {
                 target="_blank"
                 rel="noreferrer"
                 onClick={closeOnSmallViewport}
-                sx={{ minHeight: 44, justifyContent: drawerExpanded ? "initial" : "center", px: 2 }}
+                sx={{ minHeight: 44, justifyContent: "flex-start", px: 2 }}
               >
-                <ListItemIcon sx={{ minWidth: 0, mr: drawerExpanded ? 2 : 0 }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: drawerExpanded ? 2 : 0,
+                    transform: drawerExpanded ? "none" : "translateX(4px)",
+                    transition: isSmallViewport ? "none" : `margin-right ${navMotion}, transform ${navMotion}`,
+                    "@media (prefers-reduced-motion: reduce)": { transition: "none" },
+                  }}
+                >
                   {icon}
                 </ListItemIcon>
-                {drawerExpanded && <ListItemText primary={label} />}
+                <ListItemText
+                  primary={label}
+                  sx={{
+                    minWidth: 0,
+                    maxWidth: drawerExpanded ? 180 : 0,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    opacity: drawerExpanded ? 1 : 0,
+                    transition: isSmallViewport
+                      ? "none"
+                      : `max-width ${navMotion}, opacity 110ms ease-out`,
+                    "@media (prefers-reduced-motion: reduce)": { transition: "none" },
+                  }}
+                />
               </ListItemButton>
             </Tooltip>
           ))}
@@ -205,7 +299,8 @@ function RouteComponent() {
           flexGrow: 1,
           minWidth: 0,
           paddingY: 2,
-          paddingRight: { xs: 0, md: 4 },
+          paddingLeft: { xs: 2, md: 0 },
+          paddingRight: { xs: 2, md: 4 },
         }}
       >
         <Outlet />
