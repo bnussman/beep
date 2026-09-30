@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "./Link";
 import type { FooterItemLink, FooterItem as FooterItemType } from "./FooterItem.types";
-import { UndoRounded } from "@mui/icons-material";
 
 interface Props {
   item: FooterItemType | FooterItemLink;
