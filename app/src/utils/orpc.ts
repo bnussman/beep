@@ -9,6 +9,7 @@ import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { isWeb } from "./constants";
 import { ClientRetryPlugin } from '@orpc/client/plugins'
 import { RPCSerializer } from "./serializer";
+import { AbortError } from "@orpc/shared";
 
 export async function getAuthToken() {
   const tokens = await AsyncStorage.getItem("auth");
@@ -91,6 +92,10 @@ const wsLink = new WSRPCLink({
           return Number.POSITIVE_INFINITY
         },
         shouldRetry: (ctx) => {
+          console.log("Should retry?", ctx.error)
+          // if (ctx.error instanceof AbortError) {
+          //   return false;
+          // }
           if (ctx.error instanceof ORPCError && ctx.error.code === "UNAUTHORIZED") {
             return false;
           }
