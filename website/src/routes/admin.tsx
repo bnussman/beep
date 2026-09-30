@@ -30,7 +30,7 @@ import {
   Typography,
 } from "@mui/material";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import React from "react";
+import { useAdminNavigation } from "../components/AdminNavigationContext";
 
 const adminLinks = [
   { label: "Users", to: "/admin/users", icon: <People /> },
@@ -91,7 +91,7 @@ export const Route = createFileRoute('/admin')({
 })
 
 function RouteComponent() {
-  const [expanded, setExpanded] = React.useState(true);
+  const { expanded } = useAdminNavigation();
   const width = expanded ? 240 : 64;
 
   return (
@@ -101,35 +101,22 @@ function RouteComponent() {
         sx={{
           width,
           flexShrink: 0,
+          position: "sticky",
+          top: 80,
+          height: "calc(100vh - 80px)",
+          alignSelf: "flex-start",
           transition: "width 180ms ease",
           "& .MuiDrawer-paper": {
             position: "relative",
             boxSizing: "border-box",
             width,
+            height: "100%",
             overflowX: "hidden",
+            overflowY: "auto",
             transition: "width 180ms ease",
           },
         }}
       >
-        <Box
-          sx={{
-            height: 56,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: expanded ? "space-between" : "center",
-            px: 1,
-          }}
-        >
-          {expanded && <Typography sx={{ fontWeight: 700 }}>Admin</Typography>}
-          <IconButton
-            aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
-            onClick={() => setExpanded(!expanded)}
-            size="small"
-          >
-            {expanded ? <ChevronLeft /> : <MenuIcon />}
-          </IconButton>
-        </Box>
-        <Divider />
         <List dense>
           {adminLinks.map(({ label, to, icon }) => (
             <Tooltip key={to} title={expanded ? "" : label} placement="right">

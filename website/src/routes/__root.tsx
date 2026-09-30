@@ -6,6 +6,7 @@ import fontUrlBold from "@fontsource/poppins/700.css?url";
 import { queryClient } from "../utils/tanstack-query";
 import { Container, ThemeProvider, CssBaseline } from "@mui/material";
 import { Header } from "../components/Header";
+import { AdminNavigationProvider } from "../components/AdminNavigationContext";
 import { Footer } from "../components/Footer";
 import { Banners } from "../components/Banners";
 import { CacheProvider } from "@emotion/react";
@@ -17,6 +18,7 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useRouterState,
 } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
@@ -49,8 +51,12 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  const isAdminRoute = useRouterState({
+    select: (state) => state.location.pathname.startsWith("/admin"),
+  });
+
   return (
-    <RootDocument>
+    <RootDocument isAdminRoute={isAdminRoute}>
       <Outlet />
     </RootDocument>
   );
@@ -75,7 +81,13 @@ function Providers({ children }: { children: React.ReactNode }) {
   );
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+  children,
+  isAdminRoute,
+}: {
+  children: React.ReactNode;
+  isAdminRoute: boolean;
+}) {
   return (
     <html lang="en">
       <head>
@@ -83,12 +95,26 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: 16 }}>
         <Providers>
-          <Header />
-          <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column', flexGrow: 1 }}>
-            <Banners />
-            {children}
-          </Container>
-          <Footer />
+          <AdminNavigationProvider>
+            <Header isAdminRoute={isAdminRoute} />
+            <Container
+              component="main"
+              maxWidth={isAdminRoute ? false : undefined}
+              disableGutters={isAdminRoute}
+              sx={{
+                display: "flex",
+                pt: 10,
+                px: isAdminRoute ? 0 : undefined,
+                gap: 2,
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <Banners />
+              {children}
+            </Container>
+            <Footer />
+          </AdminNavigationProvider>
         </Providers>
         <Scripts />
       </body>
