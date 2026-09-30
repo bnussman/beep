@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useAdminNavigation } from "../components/AdminNavigationContext";
+import React from "react";
 
 const adminLinks = [
   { label: "Users", to: "/admin/users", icon: <People /> },
@@ -102,8 +103,8 @@ function RouteComponent() {
           width,
           flexShrink: 0,
           position: "sticky",
-          top: 80,
-          height: "calc(100vh - 80px)",
+          top: { xs: 56, sm: 64 },
+          height: { xs: "calc(100vh - 56px)", sm: "calc(100vh - 64px)" },
           alignSelf: "flex-start",
           transition: "width 180ms ease",
           "& .MuiDrawer-paper": {
@@ -153,7 +154,7 @@ function RouteComponent() {
           ))}
         </List>
       </Drawer>
-      <Box component="section" sx={{ flexGrow: 1, minWidth: 0 }}>
+      <Box component="section" sx={{ flexGrow: 1, minWidth: 0, paddingTop: 2, paddingRight: 4 }}>
         <Outlet />
       </Box>
     </Box>

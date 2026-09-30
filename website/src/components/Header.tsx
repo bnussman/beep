@@ -15,6 +15,7 @@ import {
   Typography,
   Button,
   Link,
+  Collapse,
   Divider,
   IconButton,
   Tooltip,
@@ -58,11 +59,17 @@ export function Header({ isAdminRoute = false }: { isAdminRoute?: boolean }) {
       })}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Stack direction="row" spacing={4} sx={{
+        <Stack direction="row" spacing={0} sx={{
           alignItems: "center"
         }}>
-          {isAdminRoute && (
-            <>
+          <Collapse
+            in={isAdminRoute}
+            orientation="horizontal"
+            timeout={240}
+            unmountOnExit
+            sx={{ flexShrink: 0 }}
+          >
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center", mr: 2 }}>
               <Tooltip title={expanded ? "Collapse navigation" : "Expand navigation"}>
                 <IconButton
                   aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
@@ -74,8 +81,8 @@ export function Header({ isAdminRoute = false }: { isAdminRoute?: boolean }) {
                 </IconButton>
               </Tooltip>
               <Divider orientation="vertical" flexItem sx={{ height: 24, alignSelf: "center" }} />
-            </>
-          )}
+            </Stack>
+          </Collapse>
           <Link component={RouterLink} to="/">
             <Stack
               direction="row"

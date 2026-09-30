@@ -103,7 +103,7 @@ function RootDocument({
               disableGutters={isAdminRoute}
               sx={{
                 display: "flex",
-                pt: 10,
+                pt: isAdminRoute ? { xs: 7, sm: 8 } : 10,
                 px: isAdminRoute ? 0 : undefined,
                 gap: 2,
                 flexDirection: "column",
