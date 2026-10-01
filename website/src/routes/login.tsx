@@ -4,16 +4,9 @@ import { Controller, useForm } from "react-hook-form";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  Alert,
-  Button,
-  Card,
-  Container,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Alert, Button, FieldError, Input, Label, TextField, Typography } from "@heroui/react";
+import { LinkButton } from "../components/LinkButton";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -46,67 +39,50 @@ function Login() {
   );
 
   return (
-    <Container maxWidth="sm">
-      <Card sx={{ p: 3 }}>
-        <form onSubmit={form.handleSubmit((values) => login(values))}>
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
-              Login
-            </Typography>
-            {form.formState.errors.root?.message && (
-              <Alert severity="error">
+    <div className="flex flex-grow items-center justify-center">
+      <form className="flex flex-col gap-5 flex-grow max-w-md" onSubmit={form.handleSubmit((values) => login(values))}>
+        <Typography type="h1">Login</Typography>
+        {form.formState.errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>
                 {form.formState.errors.root.message}
-              </Alert>
-            )}
-            <Controller
-              control={form.control}
-              name="username"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Username or Email"
-                  type="text"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                  required
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="password"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Password"
-                  type="password"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                  required
-                />
-              )}
-            />
-            <Stack direction="row" sx={{
-              justifyContent: "space-between"
-            }}>
-              <Button LinkComponent={Link} href="/password/forgot">
-                Forgot Password
-              </Button>
-              <Button
-                type="submit"
-                loading={form.formState.isSubmitting}
-                variant="contained"
-              >
-                Sign in
-              </Button>
-            </Stack>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+              </Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        <Controller
+          control={form.control}
+          name="username"
+          render={({ field, fieldState }) => (
+            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+              <Label>Username or Email</Label>
+              <Input type="text" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={form.control}
+          name="password"
+          render={({ field, fieldState }) => (
+            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+              <Label>Password</Label>
+              <Input type="password" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <div className="flex items-center justify-between gap-4">
+          <LinkButton to="/password/forgot" variant="ghost">
+            Forgot Password
+          </LinkButton>
+          <Button type="submit" isPending={form.formState.isSubmitting}>
+            Sign in
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

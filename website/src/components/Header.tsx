@@ -35,16 +35,10 @@ export function Header() {
   }, [user]);
 
   return (
-    <header
-      className="fixed top-0 z-50 w-full border-b backdrop-blur-[5px]"
-      style={{
-        borderColor: "light-dark(rgba(0, 0, 0, 0.12), rgba(131, 131, 131, 0.1))",
-        backgroundColor: "light-dark(transparent, rgba(44, 44, 44, 0.1))",
-      }}
-    >
+    <header className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/10 backdrop-blur-sm">
       <nav className="flex h-14 items-center justify-between px-4 md:h-16 md:px-6">
         <RouterLink to="/" className="flex items-center gap-2 no-underline">
-          <span className="hidden text-2xl font-bold md:block">
+          <span className="hidden text-2xl font-bold sm:block">
             Ride Beep App
           </span>
           <span className="text-2xl" aria-label="Taxi">
