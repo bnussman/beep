@@ -10,7 +10,7 @@ import {
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import { Alert, Avatar, Button, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
+import { Alert, Avatar, Button, Description, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
@@ -93,8 +93,8 @@ function SignUp() {
   );
 
   return (
-    <div className="flex flex-grow justify-center px-4 py-8">
-      <Form validationBehavior="native" className="flex w-full max-w-xl flex-col gap-5" onSubmit={onSubmit}>
+    <div className="flex flex-grow justify-center">
+      <Form className="flex w-full max-w-xl flex-col gap-5" onSubmit={onSubmit}>
         <Typography type="h1">Sign Up</Typography>
         <Alert status="accent">
           <Alert.Indicator />
@@ -111,9 +111,6 @@ function SignUp() {
               </RouterLink>
               .
             </Alert.Description>
-            <Button className="mt-2 sm:hidden" size="sm" variant="primary">
-              Refresh
-            </Button>
           </Alert.Content>
         </Alert>
         {errors.root?.message && (
@@ -174,11 +171,14 @@ function SignUp() {
           control={control}
           name="email"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField validationBehavior="native" {...field} type="email" isRequired isInvalid={Boolean(fieldState.error?.message)}>
               <Label>Email</Label>
-              <Input type="email" />
+              <Input />
+              <Description>
+                You must use a .edu to be eligible to use the Beep App
+              </Description>
               <FieldError>
-                {fieldState.error?.message ?? "You must use a .edu to be eligible to use the Beep App"}
+                {fieldState.error?.message}
               </FieldError>
             </TextField>
           )}
