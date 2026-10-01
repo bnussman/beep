@@ -1,11 +1,11 @@
-import { Box, useColorScheme } from "@mui/material";
+import { useColorScheme } from "@mui/material";
 import React from "react";
 
 export function BetterStackStatus()  {
   const { colorScheme } = useColorScheme();
 
   return (
-    <Box sx={{ paddingTop: 0.5 }}>
+    <div className="pt-0.5">
       <iframe
         src={`https://status.ridebeep.app/badge?theme=${colorScheme}`}
         width="250"
@@ -14,6 +14,6 @@ export function BetterStackStatus()  {
         scrolling="no"
         style={{ colorScheme: "normal" }}
       />
-    </Box>
+    </div>
   )
 }
