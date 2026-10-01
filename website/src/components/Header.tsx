@@ -4,13 +4,14 @@ import { useSubscription } from "../utils/subscriptions";
 import { orpc } from "../utils/orpc";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
-import { Link as RouterLink, useNavigate } from "@tanstack/react-router";
+import { createLink, Link as RouterLink, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@heroui/react";
 
+const LinkButton = createLink(Button);
+
 export function Header() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const { data: user } = useQuery(
     orpc.user.me.queryOptions({
@@ -55,18 +56,18 @@ export function Header() {
           {user && <UserMenu />}
           {!user && (
             <>
-              <Button
+              <LinkButton
+                to="/login"
                 variant="tertiary"
-                onPress={() => navigate({ to: "/login" })}
               >
                 Login
-              </Button>
-              <Button
+              </LinkButton>
+              <LinkButton
                 variant="primary"
-                onPress={() => navigate({ to: "/signup" })}
+                to="/signup"
               >
                 Sign Up
-              </Button>
+              </LinkButton>
             </>
           )}
         </div>

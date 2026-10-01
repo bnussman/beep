@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "@beep/monorepo",
+      "dependencies": {
+        "tanstack-theme-kit": "^0.2.1",
+      },
     },
     "api": {
       "name": "@beep/api",
@@ -2213,6 +2216,8 @@
     "tailwind-variants": ["tailwind-variants@3.2.2", "", { "peerDependencies": { "tailwind-merge": ">=3.0.0", "tailwindcss": "*" }, "optionalPeers": ["tailwind-merge"] }, "sha512-Mi4kHeMTLvKlM98XPnK+7HoBPmf4gygdFmqQPaDivc3DpYS6aIY6KiG/PgThrGvii5YZJqRsPz0aPyhoFzmZgg=="],
 
     "tailwindcss": ["tailwindcss@4.2.4", "", {}, "sha512-HhKppgO81FQof5m6TEnuBWCZGgfRAWbaeOaGT00KOy/Pf/j6oUihdvBpA7ltCeAvZpFhW3j0PTclkxsd4IXYDA=="],
+
+    "tanstack-theme-kit": ["tanstack-theme-kit@0.2.1", "", { "peerDependencies": { "react": "^18 || ^19" } }, "sha512-mZIH8l4w7FAGgXQkBZNueOqao6h+4lb6kixuSxbv8IxkHBrannaq2ZcRE6ZPYsS6SiLshPoUrQa6XsBByL93nA=="],
 
     "tapable": ["tapable@2.3.3", "", {}, "sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A=="],
 

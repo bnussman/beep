@@ -4,6 +4,7 @@ import stylesUrl from '../styles.css?url'
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
+import { ThemeProvider as TanstackThemeProvider } from 'tanstack-theme-kit'
 import { queryClient } from "../utils/tanstack-query";
 import { Container, ThemeProvider, CssBaseline } from "@mui/material";
 import { Header } from "../components/Header";
@@ -62,18 +63,20 @@ function Providers({ children }: { children: React.ReactNode }) {
   const emotionCache = createCache({ key: "css" });
 
   return (
-    <CacheProvider value={emotionCache}>
+    <TanstackThemeProvider>
+      <CacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>
-        <NotificationsProvider
-          slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
-        >
-          <QueryClientProvider client={queryClient}>
-            <CssBaseline enableColorScheme />
-            {children}
-          </QueryClientProvider>
-        </NotificationsProvider>
-      </ThemeProvider>
-    </CacheProvider>
+          <NotificationsProvider
+            slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
+          >
+            <QueryClientProvider client={queryClient}>
+              <CssBaseline enableColorScheme />
+              {children}
+            </QueryClientProvider>
+          </NotificationsProvider>
+        </ThemeProvider>
+      </CacheProvider>
+    </TanstackThemeProvider>
   );
 }
 
