@@ -4,16 +4,7 @@ import { orpc } from "../../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Card,
-  Stack,
-  Button,
-  TextField,
-  Alert,
-  Typography,
-  Box,
-  Container,
-} from "@mui/material";
+import { Alert, Button, Description, FieldError, Input, Label, TextField, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/password/forgot")({
   component: ForgotPassword,
@@ -50,66 +41,55 @@ function ForgotPassword() {
   );
 
   return (
-    <Container maxWidth="sm">
-      <Card sx={{ p: 3 }}>
-        <form
-          onSubmit={form.handleSubmit((values) =>
-            sendForgotPasswordEmail(values),
+    <div className="flex flex-grow items-center justify-center">
+      <form
+        className="flex flex-col gap-5 flex-grow max-w-md"
+        onSubmit={form.handleSubmit((values) => sendForgotPasswordEmail(values))}
+      >
+        <Typography type="h1">Forgot Password</Typography>
+        {form.formState.errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{form.formState.errors.root.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        {data && (
+          <Alert status="success">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>Success</Alert.Title>
+              <Alert.Description>
+                If an account with the email &quot;{data}&quot; exists, you will receive an email with a link to reset your password.
+              </Alert.Description>
+            </Alert.Content>
+          </Alert>
+        )}
+        <Controller
+          control={form.control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              type="email"
+              isRequired
+              isDisabled={!!data}
+              isInvalid={fieldState.error ? true : undefined}
+            >
+              <Label>Email</Label>
+              <Input />
+              <Description>We'll send you an email with a link to reset your password.</Description>
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
           )}
-        >
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
-              Forgot Password
-            </Typography>
-            {form.formState.errors.root?.message && (
-              <Alert severity="error">
-                {form.formState.errors.root?.message}
-              </Alert>
-            )}
-            {data && (
-              <Alert severity="success">
-                Done! If an account with the email "{data}" exists, you will
-                recieve an email with a link to reset your password.
-              </Alert>
-            )}
-            <Controller
-              control={form.control}
-              name="email"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Email"
-                  type="email"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={
-                    fieldState.error?.message ??
-                    "We'll send you an email with a link to reset your password."
-                  }
-                  disabled={!!data}
-                  required
-                />
-              )}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end"
-              }}>
-              <Button
-                type="submit"
-                loading={isPending}
-                disabled={!!data}
-                variant="contained"
-              >
-                Send Reset Password Email
-              </Button>
-            </Box>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+        />
+        <div className="flex justify-end">
+          <Button type="submit" isPending={isPending} isDisabled={!!data}>
+            Send Reset Password Email
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

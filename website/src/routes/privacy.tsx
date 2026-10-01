@@ -1,6 +1,7 @@
 import React from 'react';
-import { Stack, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import { createFileRoute } from '@tanstack/react-router';
+import { Accordion, Typography } from '@heroui/react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 
 export const Route = createFileRoute('/privacy')({
   component: Privacy,
@@ -8,12 +9,8 @@ export const Route = createFileRoute('/privacy')({
 
 const Introduction = () => {
   return (
-    <Box>
-      <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+    <div>
+      <Typography>
         Thank you for choosing to be part of our community at Ride Beep (“Company”, “we”, “us”, or “our”). We
         are committed to protecting your personal information and your right to privacy. If you have any
         questions or concerns about this privacy notice, or our practices with regards to your personal
@@ -28,22 +25,17 @@ const Introduction = () => {
         Thisprivacy notice applies to all information collected through our Services (which, as described
         above, includes our Website and App), as well as any related services, sales, marketing or events.
       </Typography>
-      <Typography
-        sx={{
-          fontSize: 'sm',
-          fontWeight: 'bold',
-          margin: 2
-        }}>
+      <Typography className="font-bold">
         Please read this privacy notice carefully as it will help you understand what we do with the
         information that we collect.
       </Typography>
-    </Box>
+    </div>
   );
 }
 
 const InformationCollected = () => {
   return (
-    <Box>
+    <div>
       <Typography
         sx={{
           fontSize: 'md',
@@ -57,9 +49,8 @@ const InformationCollected = () => {
           fontSize: 'sm',
           margin: 2
         }}>
-        <Box sx={{
-          marginBottom: 2
-        }}><i><b>In short:</b> We collect information that you provide to us. </i><br /></Box>
+        <div sx={{ marginBottom: 2 }}>
+          <i><b>In short:</b> We collect information that you provide to us. </i><br /></div>
         We collect personal information that you voluntarily provide to us when you register on the Services,
         express an interest in obtaining information about us or our products and Services, when you
         participate in activities on the Services (such as by posting messages in our online forums or
@@ -91,11 +82,11 @@ const InformationCollected = () => {
           fontSize: 'sm',
           margin: 2
         }}>
-        <Box sx={{
+        <div sx={{
           marginBottom: 2
         }}><i><b>In short:</b> Some information — such as your Internet Protocol (IP)
           address and/or browser and device characteristics — is collected automatically when you visit our
-          Services. </i><br /></Box>We automatically collect certain information when you visit, use or
+          Services. </i><br /></div>We automatically collect certain information when you visit, use or
         navigate the Services. This information does not reveal your specific identity (like your name
         or contact information) but may include device and usage information, such as your IP address,
         browser and device characteristics, operating system, language preferences, referring URLs, device
@@ -104,7 +95,7 @@ const InformationCollected = () => {
         Services, and for our internal analytics and reporting purposes.<br />
         Like many businesses, we also collect information through cookies and similar technologies. The
         information we collect includes:
-        <Box sx={{
+        <div sx={{
           margin: 3
         }}>
           <ul>
@@ -112,7 +103,7 @@ const InformationCollected = () => {
             <li>Device Data. We collect device data such as information about your computer, phone, tablet or other device you use to access the Services. Depending on the device used, this device data may include information such as your IP address (or proxy server), device application identification numbers, location, browser type, hardware model Internet service provider and/or mobile carrier, operating system configuration information.</li>
             <li>Location Data. We collect information data such as information about your device's location, which can be either precise or imprecise. How much information we collect depends on the type of settings of the device you use to access the Services. For example, we may use GPS and other technologies to collect geolocation data that tells us your current location (based on your IP address). You can opt out of allowing us to collect this information either by refusing access to the information or by disabling your Locations settings on your device. Note however, if you choose to opt out, you may not be able to use certain aspects of the Services.</li>
           </ul>
-        </Box>
+        </div>
       </Typography>
       <Typography
         sx={{
@@ -127,12 +118,12 @@ const InformationCollected = () => {
           fontSize: 'sm',
           margin: 2
         }}>
-        <Box sx={{
+        <div sx={{
           marginBottom: 2
         }}><i><b>In short:</b> We collect information regarding your geo-location,
-          push notifications, when you use our App.</i><br /></Box>
+          push notifications, when you use our App.</i><br /></div>
         If you use our App, we also collect the following information: <br />
-        <Box sx={{
+        <div sx={{
           margin: 3
         }}>
           <ul>
@@ -146,15 +137,15 @@ const InformationCollected = () => {
             The information is primarily needed to maintain the security and operation of our App,
             for troubleshooting and for our internal analytics and reporting purposes.
           </Typography>
-        </Box>
+        </div>
       </Typography>
-    </Box>
+    </div>
   );
 }
 
 const HowWeUseInfo = () => {
   return (
-    <Box>
+    <div>
       <Typography
         sx={{
           fontSize: 'md',
@@ -168,11 +159,11 @@ const HowWeUseInfo = () => {
           fontSize: 'sm',
           margin: 2
         }}>
-        <Box sx={{
+        <div sx={{
           marginBottom: 2
         }}><i><b>In short:</b> We process your information for purposes
           based on legitimate business interests, the fulfillment of our contract with you,
-          compliance with our legal obligations, and/or your consent. </i><br /></Box>
+          compliance with our legal obligations, and/or your consent. </i><br /></div>
       </Typography>
       <Typography
         sx={{
@@ -203,7 +194,7 @@ const HowWeUseInfo = () => {
           fontSize: 'sm',
           margin: 2
         }}>
-        <Box sx={{
+        <div sx={{
           margin: 3
         }}>
           <ul>
@@ -223,25 +214,21 @@ const HowWeUseInfo = () => {
             <li><b>To send you marketing and promotional communications.</b> We and/or our third-party marketing partners may use the personal information you send to us for our marketing purposes, if this is in accordance with your marketing preferences. For example, when expressing an interest in obtaining information about us or our Services, subscribing to marketing or otherwise contacting us, we will collect personal information from you. You can opt-out of our marketing emails at any time (see the "What Are Your Privacy Rights" below).</li>
             <li><b>Deliver targeted advertising to you.</b> We may use your information to develop and display personalized content and advertising (and work with third parties who do so) tailored to your interests and/or location and to measure its effectiveness.</li>
           </ul>
-        </Box>
+        </div>
       </Typography>
-    </Box>
+    </div>
   );
 }
 
 const SharedInfo = () => {
   return (
-    <Box>
-      <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <Box sx={{
-          marginBottom: 2
-        }}><i><b>In short:</b> We only share information with your consent,
-          to comply with laws, to provide you with services, to protect your rights, or to fulfill
-          business obligations.</i></Box>
+    <div>
+      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
+        <div sx={{ marginBottom: 2 }}>
+          <i><b>In short:</b> We only share information with your consent,
+            to comply with laws, to provide you with services, to protect your rights, or to fulfill
+            business obligations.</i>
+        </div>
       </Typography>
       <Typography
         sx={{
@@ -250,14 +237,8 @@ const SharedInfo = () => {
         }}>
         We may process or share your data that we hold based on the following legal basis:
       </Typography>
-      <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <Box sx={{
-          margin: 3
-        }}>
+      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
+        <div sx={{ margin: 3 }}>
           <ul>
             <li><b>Consent:</b> We may process your data if you have given us specific consent to
               use your personal information in a specific purpose.</li>
@@ -276,23 +257,13 @@ const SharedInfo = () => {
               of any person and illegal activities, or as evidence in litigation in which we are
               involved.</li>
           </ul>
-        </Box>
+        </div>
       </Typography>
-      <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
         More specifically, we may need to process your data or share your personal information in the following situations:
       </Typography>
-      <Box sx={{
-        margin: 3
-      }}>
-        <Typography
-          sx={{
-            fontSize: 'sm',
-            margin: 2
-          }}>
+      <div sx={{ margin: 3 }}>
+        <Typography sx={{ fontSize: 'sm', margin: 2 }}>
           <ul>
             <li><b>Business Transfers:</b> We may share or transfer your information
               in connection with, or during negotiations of, any merger, sale of company assets,
@@ -306,89 +277,122 @@ const SharedInfo = () => {
               your activity, communicate with you within our Services, and view your profile.</li>
           </ul>
         </Typography>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
 const Cookies = () => {
   return (
-    <Box>
+    <div>
       <Typography
         sx={{
           fontSize: 'sm',
           margin: 2
         }}>
-        <Box sx={{
-          marginBottom: 2
-        }}><i><b>In short:</b> Yes, we use Google Maps for the purpose
-          of providing better service.</i></Box>
+        <div sx={{ marginBottom: 2 }}>
+          <i><b>In short:</b> Yes, we use Google Maps for the purpose
+            of providing better service.</i>
+        </div>
       </Typography>
-      <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
         This Website or App uses Google Maps APIs which is subject to Google's Terms of
         Service. You may find the Google Maps APIs Terms of Service here. To find out
         more about Google’s Privacy Policy, please refer to this link.
       </Typography>
-    </Box>
+    </div>
   );
 }
 
 function Privacy() {
   return (
-    <Stack spacing={2}>
-      <Typography variant='h4' sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type='h1'>
         Privacy Policy
       </Typography>
-      <Typography variant="subtitle1">
+      <Typography type="body">
         Modified and Effective as of January 2, 2021
       </Typography>
 
-      <Box>
-        <Accordion>
-          <AccordionSummary>
-            Introduction
-          </AccordionSummary>
-          <AccordionDetails>
-            <Introduction />
-          </AccordionDetails>
+      <div>
+        <Accordion allowsMultipleExpanded>
+          <Accordion.Item>
+            <Accordion.Heading>
+              <Accordion.Trigger>
+                Introduction
+                <Accordion.Indicator>
+                  <CaretDownIcon />
+                </Accordion.Indicator>
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body>
+                <Introduction />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item>
+            <Accordion.Heading>
+              <Accordion.Trigger>
+                What Information Do We Collect?
+                <Accordion.Indicator>
+                  <CaretDownIcon />
+                </Accordion.Indicator>
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body>
+                <InformationCollected />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item>
+            <Accordion.Heading>
+              <Accordion.Trigger>
+                How Do We Use Your Information?
+                <Accordion.Indicator>
+                  <CaretDownIcon />
+                </Accordion.Indicator>
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body>
+                <HowWeUseInfo />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item>
+            <Accordion.Heading>
+              <Accordion.Trigger>
+                Will Your Information Be Shared With Anyone?
+                <Accordion.Indicator>
+                  <CaretDownIcon />
+                </Accordion.Indicator>
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body>
+                <SharedInfo />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item>
+            <Accordion.Heading>
+              <Accordion.Trigger>
+                Do We Use Cookies and Other Tracking Technologies?
+                <Accordion.Indicator>
+                  <CaretDownIcon />
+                </Accordion.Indicator>
+              </Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel>
+              <Accordion.Body>
+                <Cookies />
+              </Accordion.Body>
+            </Accordion.Panel>
+          </Accordion.Item>
         </Accordion>
-
-        <Accordion>
-          <AccordionSummary> What Information Do We Collect?</AccordionSummary>
-          <AccordionDetails>
-            <InformationCollected />
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion>
-          <AccordionSummary>How Do We Use Your Information?</AccordionSummary>
-          <AccordionDetails>
-            <HowWeUseInfo />
-          </AccordionDetails>
-        </Accordion>
-
-
-        <Accordion>
-          <AccordionSummary>Will Your Information Be Shared With Anyone?</AccordionSummary>
-          <AccordionDetails>
-            <SharedInfo />
-          </AccordionDetails>
-        </Accordion>
-
-
-        <Accordion>
-          <AccordionSummary>Do We Use Cookies and Other Tracking Technologies?</AccordionSummary>
-          <AccordionDetails>
-            <Cookies />
-          </AccordionDetails>
-        </Accordion>
-      </Box>
-    </Stack>
+      </div>
+    </div>
   );
 }

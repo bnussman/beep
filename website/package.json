@@ -22,6 +22,7 @@
     "@mui/material": "^9.4.0",
     "@orpc/client": "2.0.0-beta.40",
     "@orpc/tanstack-query": "2.0.0-beta.40",
+    "@phosphor-icons/react": "^2.1.10",
     "@sentry/react": "^10.74.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "^5.102.8",

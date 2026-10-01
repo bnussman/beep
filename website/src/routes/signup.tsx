@@ -3,29 +3,21 @@ import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
-import { Person } from "@gravity-ui/icons";
 import { ORPCError } from "@orpc/client";
+import { UserIcon } from "@phosphor-icons/react";
 import {
   Link as RouterLink,
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router";
 import { Alert, Avatar, Button, Description, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
+import { RouterInputs } from "../../../api/src";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
 });
 
-interface SignUpFormValues {
-  first: string;
-  last: string;
-  username: string;
-  password: string;
-  email: string;
-  venmo: string;
-  phone: string;
-  photo: File;
-}
+type Values = RouterInputs['auth']['signup'];
 
 function SignUp() {
   const navigate = useNavigate();
@@ -36,17 +28,7 @@ function SignUp() {
     watch,
     setError,
     formState: { errors },
-  } = useForm<SignUpFormValues>({
-    mode: "onChange",
-    defaultValues: {
-      first: "",
-      last: "",
-      username: "",
-      password: "",
-      email: "",
-      phone: "",
-    },
-  });
+  } = useForm<Values>();
 
   const { mutate, isPending } = useMutation(
     orpc.auth.signup.mutationOptions({
@@ -85,7 +67,7 @@ function SignUp() {
       <Avatar size="lg" variant="soft" className="w-32 h-32 cursor-pointer rounded-full">
         <Avatar.Image src={photo ? URL.createObjectURL(photo) : undefined} />
         <Avatar.Fallback>
-          <Person width={32} height={32} />
+          <UserIcon size={32} />
         </Avatar.Fallback>
       </Avatar>
     ),
@@ -150,11 +132,12 @@ function SignUp() {
             control={control}
             name="photo"
             render={({ field, fieldState }) => (
-              <div className="flex flex-col items-center gap-2">
+              <TextField className="flex flex-col items-center gap-2" isRequired isInvalid={fieldState.error ? true : undefined}>
                 <input
                   accept="image/*"
                   className="sr-only"
                   id="photo"
+                  required
                   name={field.name}
                   onBlur={field.onBlur}
                   onChange={(event) => field.onChange(event.target.files?.item(0))}
@@ -162,8 +145,8 @@ function SignUp() {
                   type="file"
                 />
                 <label htmlFor="photo">{Image}</label>
-                <FieldError>{fieldState.error?.message}</FieldError>
-              </div>
+                <FieldError >{fieldState.error?.message}</FieldError>
+              </TextField>
             )}
           />
         </div>
@@ -171,7 +154,7 @@ function SignUp() {
           control={control}
           name="email"
           render={({ field, fieldState }) => (
-            <TextField type="email" isRequired isInvalid={fieldState.error ? true : undefined}>
+            <TextField {...field} type="email" isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Email</Label>
               <Input />
               <Description>

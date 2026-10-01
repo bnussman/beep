@@ -141,6 +141,7 @@
         "@mui/material": "^9.4.0",
         "@orpc/client": "2.0.0-beta.40",
         "@orpc/tanstack-query": "2.0.0-beta.40",
+        "@phosphor-icons/react": "^2.1.10",
         "@sentry/react": "^10.74.0",
         "@tailwindcss/vite": "^4.3.3",
         "@tanstack/react-query": "^5.102.8",
@@ -693,6 +694,8 @@
     "@orpc/tanstack-query": ["@orpc/tanstack-query@2.0.0-beta.40", "", { "dependencies": { "@orpc/client": "2.0.0-beta.40", "@orpc/contract": "2.0.0-beta.40", "@orpc/openapi": "2.0.0-beta.40", "@orpc/shared": "2.0.0-beta.40" }, "peerDependencies": { "@tanstack/query-core": ">=5.80.2" } }, "sha512-qphS351VNrsRETYusd0IfxnkUUFBMNCXUyq2cZvLz2Rh5+dd0vqAhVAOJXEMGDTAOYZvbQH07D+NOiRF8fnhuA=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.148.0", "", {}, "sha512-Nm4s/jB+4FpFsPhWGEC4h7rzksesmtnMXomo6rCMcg/b8zLQuOziRgkCS1fxDCXOlJB/6Q8oABOZ/OP6RIPj9A=="],
+
+    "@phosphor-icons/react": ["@phosphor-icons/react@2.1.10", "", { "peerDependencies": { "react": ">= 16.8", "react-dom": ">= 16.8" } }, "sha512-vt8Tvq8GLjheAZZYa+YG/pW7HDbov8El/MANW8pOAz4eGxrwhnbfrQZq0Cp4q8zBEu8NIhHdnr+r8thnfRSNYA=="],
 
     "@playwright/test": ["@playwright/test@1.63.0", "", { "dependencies": { "playwright": "1.63.0" }, "bin": { "playwright": "cli.js" } }, "sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ=="],
 
