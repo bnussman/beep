@@ -93,7 +93,7 @@ function SignUp() {
   );
 
   return (
-    <div className="flex flex-grow justify-center">
+    <div className="flex flex-grow items-center justify-center">
       <Form className="flex w-full max-w-xl flex-col gap-5" onSubmit={onSubmit}>
         <Typography type="h1">Sign Up</Typography>
         <Alert status="accent">
@@ -127,7 +127,7 @@ function SignUp() {
               control={control}
               name="first"
               render={({ field, fieldState }) => (
-                <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+                <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
                   <Label>First Name</Label>
                   <Input type="text" />
                   <FieldError>{fieldState.error?.message}</FieldError>
@@ -138,7 +138,7 @@ function SignUp() {
               control={control}
               name="last"
               render={({ field, fieldState }) => (
-                <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+                <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
                   <Label>Last Name</Label>
                   <Input type="text" />
                   <FieldError>{fieldState.error?.message}</FieldError>
@@ -171,7 +171,7 @@ function SignUp() {
           control={control}
           name="email"
           render={({ field, fieldState }) => (
-            <TextField validationBehavior="native" {...field} type="email" isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField type="email" isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Email</Label>
               <Input />
               <Description>
@@ -187,7 +187,7 @@ function SignUp() {
           control={control}
           name="phone"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Phone Number</Label>
               <Input type="tel" />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -198,7 +198,7 @@ function SignUp() {
           control={control}
           name="username"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Username</Label>
               <Input type="text" />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -209,7 +209,7 @@ function SignUp() {
           control={control}
           name="password"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField {...field} minLength={6} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Password</Label>
               <Input type="password" />
               <FieldError>{fieldState.error?.message}</FieldError>

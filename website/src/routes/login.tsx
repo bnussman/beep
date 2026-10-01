@@ -56,7 +56,7 @@ function Login() {
           control={form.control}
           name="username"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Username or Email</Label>
               <Input type="text" />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -67,7 +67,7 @@ function Login() {
           control={form.control}
           name="password"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={Boolean(fieldState.error?.message)}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Password</Label>
               <Input type="password" />
               <FieldError>{fieldState.error?.message}</FieldError>
