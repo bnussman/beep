@@ -1,5 +1,6 @@
 import React from "react";
 import createCache from "@emotion/cache";
+import stylesUrl from '../styles.css?url'
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
@@ -25,6 +26,7 @@ export const Route = createRootRoute({
       { rel: "icon", href: faviconUrl },
       { rel: "preload", href: fontUrl, as: "style" },
       { rel: "preload", href: fontUrlBold, as: "style" },
+      { rel: 'stylesheet', href: stylesUrl },
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
     ],
