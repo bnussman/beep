@@ -37,19 +37,12 @@ const InformationCollected = () => {
   return (
     <div>
       <Typography
-        sx={{
-          fontSize: 'md',
-          fontWeight: 'bold',
-          margin: 2
-        }}>
+        className="m-2 text-base font-bold">
         Personal information you disclose to us
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <div sx={{ marginBottom: 2 }}>
+        className="m-2 text-sm">
+        <div className="mb-2">
           <i><b>In short:</b> We collect information that you provide to us. </i><br /></div>
         We collect personal information that you voluntarily provide to us when you register on the Services,
         express an interest in obtaining information about us or our products and Services, when you
@@ -60,31 +53,19 @@ const InformationCollected = () => {
         collect may include the following:
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+        className="m-2 text-sm">
         <b>Personal information provided by you.</b> We collect names; phone numbers; email addresses; usernames;
         passwords; venmo username; and other similar information.
         All personal information that you provide to us must be true, complete and accurate, and you must
         notify us of any changes to such personal information.
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'md',
-          fontWeight: 'bold',
-          margin: 2
-        }}>
+        className="m-2 text-base font-bold">
         Information automatically collected
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <div sx={{
-          marginBottom: 2
-        }}><i><b>In short:</b> Some information — such as your Internet Protocol (IP)
+        className="m-2 text-sm">
+        <div className="mb-2"><i><b>In short:</b> Some information — such as your Internet Protocol (IP)
           address and/or browser and device characteristics — is collected automatically when you visit our
           Services. </i><br /></div>We automatically collect certain information when you visit, use or
         navigate the Services. This information does not reveal your specific identity (like your name
@@ -95,9 +76,7 @@ const InformationCollected = () => {
         Services, and for our internal analytics and reporting purposes.<br />
         Like many businesses, we also collect information through cookies and similar technologies. The
         information we collect includes:
-        <div sx={{
-          margin: 3
-        }}>
+        <div className="m-3">
           <ul>
             <li>Log and Usage Data. Log and usage data is service-related, diagnostic usage and performance information our servers automatically collect when you access or use our Services and which we record in log files. Depending on how you interact with us, this log data may include your IP address, device information, browser type and settings and information about your activity in the Services (such as the date/time stamps associated with your usage, pages and files viewed, searches and other actions you take such as which features you use), device event information (such as system activity, error reports (sometimes called 'crash dumps') and hardware settings).</li>
             <li>Device Data. We collect device data such as information about your computer, phone, tablet or other device you use to access the Services. Depending on the device used, this device data may include information such as your IP address (or proxy server), device application identification numbers, location, browser type, hardware model Internet service provider and/or mobile carrier, operating system configuration information.</li>
@@ -106,34 +85,21 @@ const InformationCollected = () => {
         </div>
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'md',
-          fontWeight: 'bold',
-          margin: 2
-        }}>
+        className="m-2 text-base font-bold">
         Information collected through our app
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <div sx={{
-          marginBottom: 2
-        }}><i><b>In short:</b> We collect information regarding your geo-location,
+        className="m-2 text-sm">
+        <div className="mb-2"><i><b>In short:</b> We collect information regarding your geo-location,
           push notifications, when you use our App.</i><br /></div>
         If you use our App, we also collect the following information: <br />
-        <div sx={{
-          margin: 3
-        }}>
+        <div className="m-3">
           <ul>
             <li>Geo-Location Information. We may request access or permission to and track location-based information from your mobile device, either continuously or while you are using our App, to provide certain location-based services. If you wish to change our access or permissions, you may do so in your device's settings.</li>
             <li>Push Notifications. We may request to send you push notifications regarding your account or certain features of the App. If you wish to opt-out from receiving these types of communications, you may turn them off in your device's settings.</li>
           </ul>
           <br />
-          <Typography sx={{
-            fontSize: 'sm'
-          }}>
+          <Typography className="text-sm">
             The information is primarily needed to maintain the security and operation of our App,
             for troubleshooting and for our internal analytics and reporting purposes.
           </Typography>
@@ -147,29 +113,17 @@ const HowWeUseInfo = () => {
   return (
     <div>
       <Typography
-        sx={{
-          fontSize: 'md',
-          fontWeight: 'bold',
-          margin: 2
-        }}>
+        className="m-2 text-base font-bold">
         Personal information you disclose to us
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <div sx={{
-          marginBottom: 2
-        }}><i><b>In short:</b> We process your information for purposes
+        className="m-2 text-sm">
+        <div className="mb-2"><i><b>In short:</b> We process your information for purposes
           based on legitimate business interests, the fulfillment of our contract with you,
           compliance with our legal obligations, and/or your consent. </i><br /></div>
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+        className="m-2 text-sm">
         We use personal information collected via our Services for a variety of business
         purposes described below. We process your personal information for these purposes
         in reliance on our legitimate business interests, in order to enter into or
@@ -183,20 +137,12 @@ const HowWeUseInfo = () => {
         grounds we rely on next to each purpose listed below.
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+        className="m-2 text-sm">
         We use the information we collect or receive:<br />
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <div sx={{
-          margin: 3
-        }}>
+        className="m-2 text-sm">
+        <div className="m-3">
           <ul>
             <li><b>To facilitate account creation and logon process.</b> If you choose to link your account with us to a third-party account (such as your Google or Facebook account), we use the information you allowed us to collect from those third parties to facilitate account creation and logon process for the performance of the contract.</li>
             <li><b>To post testimonials.</b> We post testimonials on our Services that may contain personal information. Prior to posting a testimonial, we will obtain your consent to use your name and the consent of the testimonial. If you wish to update, or delete your testimonial, please contact us at banks@ridebeep.app and be sure to include your name, testimonial location, and contact information.</li>
@@ -223,22 +169,19 @@ const HowWeUseInfo = () => {
 const SharedInfo = () => {
   return (
     <div>
-      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
-        <div sx={{ marginBottom: 2 }}>
+      <Typography className="m-2 text-sm">
+        <div className="mb-2">
           <i><b>In short:</b> We only share information with your consent,
             to comply with laws, to provide you with services, to protect your rights, or to fulfill
             business obligations.</i>
         </div>
       </Typography>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
+        className="m-2 text-sm">
         We may process or share your data that we hold based on the following legal basis:
       </Typography>
-      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
-        <div sx={{ margin: 3 }}>
+      <Typography className="m-2 text-sm">
+        <div className="m-3">
           <ul>
             <li><b>Consent:</b> We may process your data if you have given us specific consent to
               use your personal information in a specific purpose.</li>
@@ -259,11 +202,11 @@ const SharedInfo = () => {
           </ul>
         </div>
       </Typography>
-      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
+      <Typography className="m-2 text-sm">
         More specifically, we may need to process your data or share your personal information in the following situations:
       </Typography>
-      <div sx={{ margin: 3 }}>
-        <Typography sx={{ fontSize: 'sm', margin: 2 }}>
+      <div className="m-3">
+        <Typography className="m-2 text-sm">
           <ul>
             <li><b>Business Transfers:</b> We may share or transfer your information
               in connection with, or during negotiations of, any merger, sale of company assets,
@@ -286,16 +229,13 @@ const Cookies = () => {
   return (
     <div>
       <Typography
-        sx={{
-          fontSize: 'sm',
-          margin: 2
-        }}>
-        <div sx={{ marginBottom: 2 }}>
+        className="m-2 text-sm">
+        <div className="mb-2">
           <i><b>In short:</b> Yes, we use Google Maps for the purpose
             of providing better service.</i>
         </div>
       </Typography>
-      <Typography sx={{ fontSize: 'sm', margin: 2 }}>
+      <Typography className="m-2 text-sm">
         This Website or App uses Google Maps APIs which is subject to Google's Terms of
         Service. You may find the Google Maps APIs Terms of Service here. To find out
         more about Google’s Privacy Policy, please refer to this link.
@@ -306,14 +246,15 @@ const Cookies = () => {
 
 function Privacy() {
   return (
-    <div className="flex flex-col gap-2">
-      <Typography type='h1'>
-        Privacy Policy
-      </Typography>
-      <Typography type="body">
-        Modified and Effective as of January 2, 2021
-      </Typography>
-
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <Typography type='h1'>
+          Privacy Policy
+        </Typography>
+        <Typography type="body">
+          Modified and Effective as of January 2, 2021
+        </Typography>
+      </div>
       <div>
         <Accordion allowsMultipleExpanded>
           <Accordion.Item>
