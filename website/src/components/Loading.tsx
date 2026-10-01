@@ -1,16 +1,10 @@
 import React from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Spinner } from '@heroui/react';
 
 export function Loading() {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100px"
-      }}>
-      <CircularProgress size="xl" />
-    </Box>
+    <div className="flex items-center justify-center h-25">
+      <Spinner size="xl" />
+    </div>
   );
 }
