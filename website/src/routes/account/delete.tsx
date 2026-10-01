@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { orpc } from "../../utils/orpc";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { useNotifications } from "@toolpad/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loading } from "../../components/Loading";
-import { Alert, AlertDialog, Button, Typography, useOverlayState } from "@heroui/react";
+import { toast, Alert, AlertDialog, Button, Typography, useOverlayState } from "@heroui/react";
 import { Link } from "../../components/Link";
 
 export const Route = createFileRoute('/account/delete')({
@@ -14,7 +13,6 @@ export const Route = createFileRoute('/account/delete')({
 
 function DeleteAccount() {
   const queryClient = useQueryClient();
-  const notifications = useNotifications();
   const navigate = useNavigate();
   const dialog = useOverlayState();
 
@@ -30,7 +28,7 @@ function DeleteAccount() {
   } = useMutation(
     orpc.user.deleteMyAccount.mutationOptions({
       onSuccess() {
-        notifications.show("Account deleted.", { severity: "success" });
+        toast.success("Account deleted successfully.");
         localStorage.removeItem("user");
         queryClient.resetQueries();
         navigate({ to: "/" });

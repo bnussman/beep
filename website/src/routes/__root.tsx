@@ -20,6 +20,7 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import { Toast } from "@heroui/react";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -89,6 +90,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: 16 }}>
         <Providers>
           <Header />
+          <Toast.Provider />
           <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column', flexGrow: 1 }}>
             <Banners />
             {children}
