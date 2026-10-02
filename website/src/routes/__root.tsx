@@ -69,11 +69,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="flex min-h-screen flex-col gap-4">
+      <body className="flex min-h-screen flex-col gap-4 bg-background">
         <Providers>
           <Header />
           <Toast.Provider />
-          <main className="mx-auto flex w-full max-w-300 flex-1 flex-col gap-4 px-6 pt-20">
+          <main className="mx-auto flex w-full max-w-320 flex-1 flex-col gap-4 px-6 pt-20">
             <Banners />
             {children}
           </main>

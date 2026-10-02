@@ -223,7 +223,7 @@ function Beep() {
           ))}
         </div>
       </Card>
-      <Card className="h-[500px] overflow-hidden rounded-2xl">
+      <div className="h-[550px] rounded-2xl">
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
@@ -281,7 +281,7 @@ function Beep() {
             />
           </Source>
         </Map>
-      </Card>
+      </div>
       <DeleteBeepDialog
         id={beep.id}
         isOpen={isOpen}

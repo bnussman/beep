@@ -70,7 +70,7 @@ export function SendNotificationDialog(props: Props) {
             </AlertDialog.Header>
             <AlertDialog.Body className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
-              <Alert status="danger">
+              <Alert status="danger" className="bg-surface-secondary">
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Title>{form.formState.errors.root.message}</Alert.Title>
@@ -81,7 +81,7 @@ export function SendNotificationDialog(props: Props) {
               control={form.control}
               name="title"
               render={({ field, fieldState }) => (
-                <TextField {...field} isInvalid={Boolean(fieldState.error)}>
+                <TextField {...field} isInvalid={Boolean(fieldState.error)} variant="secondary">
                   <Label>Title</Label>
                   <Input />
                   <FieldError>{fieldState.error?.message}</FieldError>
@@ -92,7 +92,7 @@ export function SendNotificationDialog(props: Props) {
               control={form.control}
               name="body"
               render={({ field, fieldState }) => (
-                <TextField {...field} isInvalid={Boolean(fieldState.error)}>
+                <TextField {...field} isInvalid={Boolean(fieldState.error)} variant="secondary">
                   <Label>Body</Label>
                   <TextArea rows={2} />
                   <FieldError>{fieldState.error?.message}</FieldError>

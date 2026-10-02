@@ -188,7 +188,7 @@ function Report() {
               control={form.control}
               name="notes"
               render={({ field, fieldState }) => (
-                <TextField {...field} value={field.value ?? ""}>
+                <TextField {...field} value={field.value ?? ""} variant="secondary">
                   <Label>Notes</Label>
                   <TextArea rows={4} />
                   <FieldError>{fieldState.error?.message}</FieldError>
@@ -203,6 +203,7 @@ function Report() {
                   <Checkbox
                     isSelected={field.value ?? false}
                     onChange={field.onChange}
+                    variant="secondary"
                   >
                     <Checkbox.Content>
                       <Checkbox.Control>

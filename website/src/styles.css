@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @import "@heroui/styles"; 
+
+@theme {
+  --default-font-family: 'Poppins';
+}

@@ -161,14 +161,14 @@ function User() {
               </Avatar.Fallback>
             </Avatar>
           </button>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <Typography type="h1">
               {user.first} {user.last}
             </Typography>
-            <Typography type="body">{user.username}</Typography>
-            <Typography type="body" className="text-xs">{user.id}</Typography>
+            <Typography type="body" className="leading-none">{user.username}</Typography>
+            <Typography type="body" className="text-xs leading-none">{user.id}</Typography>
             {user.created && (
-              <Typography type="body" className="text-xs">
+              <Typography type="body" className="text-xs leading-none">
                 Joined {DateTime.fromJSDate(user.created).toRelative()}
               </Typography>
             )}
@@ -178,8 +178,8 @@ function User() {
           <LinkButton
             to="/admin/users/$userId/edit"
             params={{ userId: user.id }}
-            variant="secondary"
             size="sm"
+            variant="tertiary"
           >
             Edit
           </LinkButton>
@@ -195,6 +195,7 @@ function User() {
           <Button
             size="sm"
             onPress={() => setIsSendNotificationOpen(true)}
+            variant="tertiary"
           >
             Send Notification
           </Button>
@@ -202,12 +203,14 @@ function User() {
             size="sm"
             onPress={onSyncPayments}
             isPending={isSyncingPayments}
+            variant="tertiary"
           >
             Sync Payments
           </Button>
           <Button
             size="sm"
             onPress={() => setIsClearOpen(true)}
+            variant="tertiary"
           >
             Clear Queue
           </Button>
@@ -216,6 +219,7 @@ function User() {
               size="sm"
               onPress={() => sendTestEmail({ userId })}
               isPending={isSendingTestEmail}
+              variant="tertiary"
             >
               Send Test Email
             </Button>
