@@ -60,59 +60,57 @@ function ChangePassword() {
 
   return (
     <div className="mx-auto w-full max-w-xl">
-      <div className="rounded-lg border border-separator bg-surface p-6">
-        <Form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-            <Typography type="h1">
-              Change Password
-            </Typography>
-            {data && (
-              <Alert status="success">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>Successfully changed your password</Alert.Title>
-                </Alert.Content>
-              </Alert>
-            )}
-            {form.formState.errors.root?.message && (
-              <Alert status="danger">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>{form.formState.errors.root.message}</Alert.Title>
-                </Alert.Content>
-              </Alert>
-            )}
-            <Controller
-              name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
-                  <Label>Password</Label>
-                  <Input type="password" autoComplete="new-password" />
-                  <FieldError>{fieldState.error?.message}</FieldError>
-                </TextField>
-              )}
-            />
-            <Controller
-              name="confirmPassword"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
-                  <Label>Confirm Password</Label>
-                  <Input type="password" autoComplete="new-password" />
-                  <FieldError>{fieldState.error?.message}</FieldError>
-                </TextField>
-              )}
-            />
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                isPending={form.formState.isSubmitting}
-              >
-                Update password
-              </Button>
-            </div>
-        </Form>
-      </div>
+      <Form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <Typography type="h1">
+          Change Password
+        </Typography>
+        {data && (
+          <Alert status="success">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>Successfully changed your password</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        {form.formState.errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{form.formState.errors.root.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        <Controller
+          name="password"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Password</Label>
+              <Input type="password" autoComplete="new-password" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          name="confirmPassword"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Confirm Password</Label>
+              <Input type="password" autoComplete="new-password" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            isPending={form.formState.isSubmitting}
+          >
+            Update password
+          </Button>
+        </div>
+      </Form>
     </div>
   );
 }

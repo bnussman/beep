@@ -14,6 +14,7 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useLocation,
 } from "@tanstack/react-router";
 import { Toast } from "@heroui/react";
 
@@ -48,8 +49,13 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
+  const showFooter = pathname !== "/admin" && !pathname.startsWith("/admin/");
+
   return (
-    <RootDocument>
+    <RootDocument showFooter={showFooter}>
       <Outlet />
     </RootDocument>
   );
@@ -63,7 +69,13 @@ function Providers({ children }: { children: React.ReactNode }) {
   );
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+  children,
+  showFooter,
+}: {
+  children: React.ReactNode;
+  showFooter: boolean;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -71,13 +83,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex min-h-screen flex-col gap-4 bg-background">
         <Providers>
-          <Header />
-          <Toast.Provider />
-          <main className="mx-auto flex w-full max-w-320 flex-1 flex-col gap-4 px-6 pt-20">
-            <Banners />
-            {children}
-          </main>
-          <Footer />
+          <div className="flex min-h-lvh pb-4">
+            <Header />
+            <Toast.Provider />
+            <main className="mx-auto flex flex-grow w-full max-w-320 flex-1 flex-col gap-4 px-6 pt-20">
+              <Banners />
+              {children}
+            </main>
+          </div>
+          {showFooter && <Footer />}
         </Providers>
         <Scripts />
       </body>
