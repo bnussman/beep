@@ -5,8 +5,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, Avatar, EmptyState, Label, SearchField, Spinner, Table, Typography } from "@heroui/react";
-import { EmptyIcon, XIcon } from "@phosphor-icons/react";
+import { Avatar, Label, SearchField, Spinner, Table, Typography } from "@heroui/react";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
 
 interface PaginationSearchParams {
   page: number;
@@ -39,7 +41,7 @@ function Users() {
     }),
   );
 
-  const setCurrentPage = (_event: unknown, page: number) => {
+  const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
   };
 
@@ -93,87 +95,56 @@ function Users() {
               <Table.Column>Email verified</Table.Column>
               <Table.Column>Beeping</Table.Column>
             </Table.Header>
-            <Table.Body
-              // renderEmptyState={() => (
-              //   <EmptyState className="flex h-full w-full flex-col items-center justify-center gap-4 text-center py-16">
-              //     <EmptyIcon size={32} />
-              //     <span className="text-sm text-muted">No results found</span>
-              //   </EmptyState>
-              // )} 
-            >
-              {error ? (
-                <Table.Row id="error">
-                  <Table.Cell colSpan={5}>
-                    <Alert status="danger" role="alert">
-                      <Alert.Indicator />
-                      <Alert.Content>
-                        <Alert.Title>{error.message}</Alert.Title>
-                      </Alert.Content>
-                    </Alert>
+            <Table.Body>
+              {error && <TableError error={error.message} colSpan={5} />}
+              {isLoading && <TableLoading colSpan={5} />}
+              {data?.users.length === 0 && <TableEmpty colSpan={5} />}
+              {data?.users.map((user) => (
+                <Table.Row key={user.id} id={user.id}>
+                  <Table.Cell>
+                    <Link
+                      to="/admin/users/$userId"
+                      params={{ userId: user.id }}
+                      className="flex items-center gap-3"
+                    >
+                      <Avatar>
+                        <Avatar.Image
+                          alt={`${user.first} ${user.last}`}
+                          src={user.photo ?? undefined}
+                        />
+                        <Avatar.Fallback>
+                          {user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}
+                        </Avatar.Fallback>
+                      </Avatar>
+                      <Typography type="body">
+                        {user.first} {user.last}
+                      </Typography>
+                    </Link>
+                  </Table.Cell>
+                  <Table.Cell>{user.email}</Table.Cell>
+                  <Table.Cell>
+                    <span
+                      role="img"
+                      aria-label={user.isStudent ? "Student" : "Not a student"}
+                      className={`inline-block size-4 rounded-full ${user.isStudent ? "bg-success" : "bg-danger"}`}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span
+                      role="img"
+                      aria-label={user.isEmailVerified ? "Email verified" : "Email not verified"}
+                      className={`inline-block size-4 rounded-full ${user.isEmailVerified ? "bg-success" : "bg-danger"}`}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span
+                      role="img"
+                      aria-label={user.isBeeping ? "Beeping" : "Not beeping"}
+                      className={`inline-block size-4 rounded-full ${user.isBeeping ? "bg-success" : "bg-danger"}`}
+                    />
                   </Table.Cell>
                 </Table.Row>
-              ) : isLoading ? (
-                <Table.Row id="loading">
-                  <Table.Cell colSpan={5}>
-                    <div className="flex justify-center py-10">
-                      <Spinner />
-                    </div>
-                  </Table.Cell>
-                </Table.Row>
-              ) : data?.results === 0 ? (
-                <Table.Row id="empty">
-                  <Table.Cell colSpan={5} className="py-10 text-center">
-                    No results
-                  </Table.Cell>
-                </Table.Row>
-              ) : (
-                data?.users.map((user) => (
-                  <Table.Row key={user.id} id={user.id}>
-                    <Table.Cell>
-                      <Link
-                        to="/admin/users/$userId"
-                        params={{ userId: user.id }}
-                        className="flex items-center gap-3"
-                      >
-                        <Avatar>
-                          <Avatar.Image
-                            alt={`${user.first} ${user.last}`}
-                            src={user.photo ?? undefined}
-                          />
-                          <Avatar.Fallback>
-                            {user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}
-                          </Avatar.Fallback>
-                        </Avatar>
-                        <Typography type="body">
-                          {user.first} {user.last}
-                        </Typography>
-                      </Link>
-                    </Table.Cell>
-                    <Table.Cell>{user.email}</Table.Cell>
-                    <Table.Cell>
-                      <span
-                        role="img"
-                        aria-label={user.isStudent ? "Student" : "Not a student"}
-                        className={`inline-block size-4 rounded-full ${user.isStudent ? "bg-success" : "bg-danger"}`}
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span
-                        role="img"
-                        aria-label={user.isEmailVerified ? "Email verified" : "Email not verified"}
-                        className={`inline-block size-4 rounded-full ${user.isEmailVerified ? "bg-success" : "bg-danger"}`}
-                      />
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span
-                        role="img"
-                        aria-label={user.isBeeping ? "Beeping" : "Not beeping"}
-                        className={`inline-block size-4 rounded-full ${user.isBeeping ? "bg-success" : "bg-danger"}`}
-                      />
-                    </Table.Cell>
-                  </Table.Row>
-                ))
-              )}
+              ))}
             </Table.Body>
           </Table.Content>
         </Table.ScrollContainer>

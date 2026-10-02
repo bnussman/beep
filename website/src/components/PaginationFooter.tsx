@@ -7,7 +7,7 @@ interface Props {
   page?: number;
   pages?: number;
   pageSize: number;
-  onChange?: (e: unknown, page: number) => void;
+  onChange?: (e: React.ChangeEvent<unknown>, page: number) => void;
 }
 
 export function PaginationFooter(props: Props) {
@@ -30,7 +30,7 @@ export function PaginationFooter(props: Props) {
         <Pagination.Item>
           <Pagination.Previous
             isDisabled={page === 1}
-            onPress={(e) => props.onChange?.(e, page - 1)}
+            onClick={(e) => props.onChange?.(e, page - 1)}
           >
             <Pagination.PreviousIcon />
             Prev
@@ -38,7 +38,7 @@ export function PaginationFooter(props: Props) {
         </Pagination.Item>
         {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
           <Pagination.Item key={p}>
-            <Pagination.Link isActive={p === page} onPress={(e) => props.onChange?.(e, p)}>
+            <Pagination.Link isActive={p === page} onClick={(e) => props.onChange?.(e, p)}>
               {p}
             </Pagination.Link>
           </Pagination.Item>
@@ -46,7 +46,7 @@ export function PaginationFooter(props: Props) {
         <Pagination.Item>
           <Pagination.Next
             isDisabled={page === pages}
-            onPress={(e) => props.onChange?.(e, page + 1)}
+            onClick={(e) => props.onChange?.(e, page + 1)}
           >
             Next
             <Pagination.NextIcon />
