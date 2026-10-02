@@ -4,13 +4,7 @@ import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import {
-  Alert,
-  Card,
-  TextField,
-  Button,
-} from "@mui/material";
+import { Alert, Button, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
 
 export const Route = createFileRoute('/password/reset/$id')({
   component: ResetPassword,
@@ -52,40 +46,44 @@ function ResetPassword() {
   };
 
   return (
-    <Card sx={{ p: 3 }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
+    <div className="mx-auto w-full max-w-xl rounded-lg border border-separator bg-surface p-6">
+      <Form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <Typography type="h1">
             Reset Password
           </Typography>
           {errors.root?.message && (
-            <Alert severity="error">{errors.root.message}</Alert>
+            <Alert status="danger">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Title>{errors.root.message}</Alert.Title>
+              </Alert.Content>
+            </Alert>
           )}
           {data && (
-            <Alert severity="success">Successfully changed password</Alert>
+            <Alert status="success">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Title>Successfully changed password</Alert.Title>
+              </Alert.Content>
+            </Alert>
           )}
           <Controller
             name="password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextField
-                label="Password"
-                type="new-password"
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                helperText={fieldState.error?.message}
-                error={Boolean(fieldState.error?.message)}
-              />
+              <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+                <Label>Password</Label>
+                <Input type="password" autoComplete="new-password" />
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </TextField>
             )}
           />
-          <div className="flex flex-row justify-end">
-            <Button type="submit" loading={isSubmitting} variant="contained">
+          <div className="flex justify-end">
+            <Button type="submit" isPending={isSubmitting}>
               Reset Password
             </Button>
           </div>
-        </div>
-      </form>
-    </Card>
+      </Form>
+    </div>
   );
 }

@@ -13,7 +13,7 @@ function Download() {
   }, []);
 
   return (
-    <div className="flex h-[200px] flex-col items-center justify-center gap-4">
+    <div className="flex h-50 flex-col items-center justify-center gap-4">
       <Typography type="h2">
         Redirecting you to download
       </Typography>

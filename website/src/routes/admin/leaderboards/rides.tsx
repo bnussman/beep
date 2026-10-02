@@ -2,14 +2,11 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link as RouterLink, useNavigate, createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
+import { Link } from "../../../components/Link";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { keepPreviousData } from "@tanstack/react-query";
-import { Table, Typography } from "@heroui/react";
-import {
-  Avatar,
-  Link,
-} from "@mui/material";
+import { Avatar, Table, Typography } from "@heroui/react";
 import { orpc } from "../../../utils/orpc";
 
 export const Route = createFileRoute('/admin/leaderboards/rides')({
@@ -56,9 +53,12 @@ function Rides() {
             {data?.users?.map(({ user, rides }) => (
               <Table.Row key={user.id}>
                 <Table.Cell>
-                  <Link component={RouterLink} to={`/admin/users/${user.id}`}>
+                  <Link to="/admin/users/$userId" params={{ userId: user.id }}>
                     <div className="flex items-center gap-2">
-                      <Avatar src={user.photo ?? undefined} />
+                      <Avatar>
+                        <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
+                        <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                      </Avatar>
                       <Typography type="body">
                         {user.first} {user.last}
                       </Typography>

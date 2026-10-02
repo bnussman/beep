@@ -14,14 +14,7 @@ import {
   createFileRoute,
   useRouter,
 } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import {
-  Button,
-  Alert,
-  useTheme,
-  Tooltip,
-  Card,
-} from "@mui/material";
+import { Alert, Button, Card, Tooltip, Typography } from "@heroui/react";
 import { useSubscription } from "../../../utils/subscriptions";
 
 export const Route = createFileRoute("/admin/beeps/$beepId")({
@@ -29,7 +22,6 @@ export const Route = createFileRoute("/admin/beeps/$beepId")({
 });
 
 function Beep() {
-  const theme = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -111,7 +103,14 @@ function Beep() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   const items = [
@@ -208,15 +207,11 @@ function Beep() {
         <Typography type="h1">
           Beep
         </Typography>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => setIsOpen(true)}
-        >
+        <Button variant="danger" onPress={() => setIsOpen(true)}>
           Delete
         </Button>
       </div>
-      <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
+      <Card className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
             <div key={item.title}>
@@ -228,19 +223,25 @@ function Beep() {
           ))}
         </div>
       </Card>
-      <Card sx={{ height: "500px", borderRadius: '16px' }}>
+      <Card className="h-[500px] overflow-hidden rounded-2xl">
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
-              <Tooltip title={beep.origin} arrow>
-                <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{beep.origin}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
           {destination && (
             <Marker latitude={destination.lat} longitude={destination.lng}>
-              <Tooltip title={beep.destination} arrow>
-                <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{beep.destination}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
@@ -274,7 +275,7 @@ function Beep() {
             <Layer
               type="line"
               paint={{
-                "line-color": theme.palette.info.main,
+                "line-color": "#0288d1",
                 "line-width": 5,
               }}
             />

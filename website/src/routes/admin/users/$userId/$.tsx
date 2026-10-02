@@ -1,8 +1,7 @@
 import React from "react";
 import { Indicator } from "../../../../components/Indicator";
 import { useParams, createFileRoute } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import { Alert, Box, Link } from "@mui/material";
+import { Alert, Typography } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../../utils/utils";
 import { orpc } from "../../../../utils/orpc";
@@ -29,33 +28,42 @@ function Details() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <Box>
+      <div>
         <strong>Email</strong>
         <div className="flex items-center gap-2">
           <Indicator color={user.isEmailVerified ? "green" : "red"} />
-          <Link href={`mailto:${user.email}`}>{user.email}</Link>
+          <a href={`mailto:${user.email}`} className="underline underline-offset-2">
+            {user.email}
+          </a>
         </div>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Student</strong>
         <div className="flex items-center gap-2">
           <Indicator color={user.isStudent ? "green" : "red"} />
           <Typography type="body">{user.isStudent ? "Yes" : "No"}</Typography>
         </div>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Beeping</strong>
         <div className="flex items-center gap-2">
           <Indicator color={user.isBeeping ? "green" : "red"} />
           <Typography type="body">{user.isBeeping ? "Yes" : "No"}</Typography>
         </div>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Rating</strong>
         {user.rating ? (
           <Typography type="body">
@@ -65,33 +73,33 @@ function Details() {
         ) : (
           <Typography type="body">N/A</Typography>
         )}
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Phone</strong>
         <Typography type="body">{user.phone}</Typography>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Queue Size</strong>
         <Typography type="body">{user.queueSize}</Typography>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Capacity</strong>
         <Typography type="body">{user.capacity}</Typography>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Rate</strong>
         <Typography type="body">
           ${user.singlesRate} / ${user.groupRate}
         </Typography>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Venmo usename</strong>
         <Typography type="body">{user.venmo || "N/A"}</Typography>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>CashApp usename</strong>
         <Typography type="body">{user.cashapp || "N/A"}</Typography>
-      </Box>
+      </div>
     </div>
   );
 }

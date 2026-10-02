@@ -3,19 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "../../../components/DeleteRatingDialog";
+import { Link } from "../../../components/Link";
 import { DateTime } from "luxon";
 import {
-  Link as RouterLink,
   useRouter,
   createFileRoute,
 } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import {
-  Alert,
-  Button,
-  Link,
-  Card,
-} from "@mui/material";
+import { Alert, Button, Typography } from "@heroui/react";
 import { orpc } from "../../../utils/orpc";
 import { printStars } from "../../../utils/utils";
 
@@ -42,7 +36,14 @@ function Rating() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   const items = [
@@ -62,7 +63,7 @@ function Rating() {
     {
       title: "Beep",
       content: (
-        <Link component={RouterLink} to={`/admin/beeps/${rating.beep_id}`}>
+        <Link to="/admin/beeps/$beepId" params={{ beepId: rating.beep_id }}>
           {rating.beep_id}
         </Link>
       ),
@@ -87,15 +88,11 @@ function Rating() {
         <Typography type="h1">
           Rating
         </Typography>
-        <Button
-          color="error"
-          onClick={() => setIsOpen(true)}
-          variant="contained"
-        >
+        <Button variant="danger" onPress={() => setIsOpen(true)}>
           Delete
         </Button>
       </div>
-      <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
+      <div className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
             <div key={item.title}>
@@ -106,7 +103,7 @@ function Rating() {
             </div>
           ))}
         </div>
-      </Card>
+      </div>
       <DeleteRatingDialog
         id={ratingId}
         isOpen={isOpen}

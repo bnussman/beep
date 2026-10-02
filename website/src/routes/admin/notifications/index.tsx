@@ -6,14 +6,17 @@ import { useMutation } from "@tanstack/react-query";
 import { SendNotificationConfirmationDialog } from "../../../components/SendNotificationConfirmationDialog";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { toast, Typography } from "@heroui/react";
 import {
   Alert,
-  TextField,
   Button,
-  Box,
-  Card,
-} from "@mui/material";
+  FieldError,
+  Input,
+  Label,
+  TextArea,
+  TextField,
+  toast,
+  Typography,
+} from "@heroui/react";
 
 type SendNotifictionVariables = RouterInputs["notification"]["sendNotification"];
 
@@ -53,80 +56,78 @@ function Notifications() {
   });
 
   return (
-    <Card sx={{ p: 3 }}>
+    <div className="rounded-lg border border-separator bg-surface p-6">
       <div className="flex flex-col gap-4">
         <Typography type="h1">
           Notifications
         </Typography>
-        <Typography>Use this tool to send mass notifications.</Typography>
-        <Alert severity="warning">
-          Please thoroughly review notifications before sending them. If no match
-          is specified, the notification will be sent to all users.
+        <Typography type="body">Use this tool to send mass notifications.</Typography>
+        <Alert status="warning">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>
+              Please thoroughly review notifications before sending them.
+            </Alert.Title>
+            <Alert.Description>
+              If no match is specified, the notification will be sent to all users.
+            </Alert.Description>
+          </Alert.Content>
         </Alert>
         {errors.root?.message && (
-          <Alert severity="error">{errors.root.message}</Alert>
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{errors.root.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
         )}
         <Controller
           control={control}
           name="title"
           render={({ field, fieldState }) => (
-            <TextField
-              label="Title"
-              error={Boolean(fieldState.error?.message)}
-              helperText={fieldState.error?.message}
-              value={field.value}
-              onChange={field.onChange}
-            />
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Title</Label>
+              <Input />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
           )}
         />
         <Controller
           control={control}
           name="emailMatch"
           render={({ field, fieldState }) => (
-            <TextField
-              label="Match"
-              error={Boolean(fieldState.error?.message)}
-              helperText={fieldState.error?.message}
-              value={field.value}
-              onChange={field.onChange}
-              placeholder="%@appstate.edu"
-            />
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Match</Label>
+              <Input placeholder="%@appstate.edu" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
           )}
         />
         <Controller
           control={control}
           name="body"
           render={({ field, fieldState }) => (
-            <TextField
-              label="Body"
-              error={Boolean(fieldState.error?.message)}
-              helperText={fieldState.error?.message}
-              value={field.value}
-              onChange={field.onChange}
-              multiline
-              rows={2}
-            />
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Body</Label>
+              <TextArea rows={2} />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
           )}
         />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end"
-          }}>
+        <div className="flex justify-end">
           <Button
-            onClick={() => setIsConfirmOpen(true)}
-            variant="contained"
-            loading={isSubmitting}
+            onPress={() => setIsConfirmOpen(true)}
+            isPending={isSubmitting}
           >
             Send
           </Button>
-        </Box>
+        </div>
         <SendNotificationConfirmationDialog
           open={isConfirmOpen}
           onClose={() => setIsConfirmOpen(false)}
           onConfirm={onConfirm}
         />
       </div>
-    </Card>
+    </div>
   );
 }

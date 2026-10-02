@@ -113,7 +113,7 @@ function EditLocation() {
           Save
         </Button>
       </div>
-      <div className="h-[450px] w-full">
+      <div className="h-112.5 w-full">
         <Map
           onClick={onMapClick}
           initialViewState={{

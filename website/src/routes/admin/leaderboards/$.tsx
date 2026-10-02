@@ -1,8 +1,8 @@
 import React from 'react'
 import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Avatar, Link } from '@mui/material';
-import { Table, Typography } from '@heroui/react';
+import { Link } from '../../../components/Link';
+import { Avatar, Table, Typography } from '@heroui/react';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -53,9 +53,12 @@ function Beeps() {
             {data?.users?.map(({ user, beeps }) => (
               <Table.Row key={user.id}>
                 <Table.Cell>
-                  <Link component={RouterLink} to={`/admin/users/${user.id}`}>
+                  <Link to="/admin/users/$userId" params={{ userId: user.id }}>
                     <div className="flex items-center gap-2">
-                      <Avatar src={user.photo ?? undefined} />
+                      <Avatar>
+                        <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
+                        <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                      </Avatar>
                       <Typography type="body">{user.first} {user.last}</Typography>
                     </div>
                   </Link>

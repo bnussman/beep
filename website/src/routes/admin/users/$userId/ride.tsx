@@ -11,20 +11,13 @@ import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { BasicUser } from "../../../../components/BasicUser";
 import { DateTime } from "luxon";
 import { Indicator } from "../../../../components/Indicator";
-import { Typography } from "@heroui/react";
-import {
-  Alert,
-  Box,
-  Tooltip,
-  useTheme,
-} from "@mui/material";
+import { Alert, Tooltip, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/ride")({
   component: Ride,
 });
 
 function Ride() {
-  const theme = useTheme();
   const queryClient = useQueryClient();
 
   const { userId } = useParams({ from: Route.id });
@@ -102,30 +95,32 @@ function Ride() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   if (!ride) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 2
-        }}>User is not in a beep!
-              </Box>
+      <div className="flex items-center justify-center py-4">
+        User is not in a beep!
+      </div>
     );
   }
 
   return (
     <div className="flex flex-row gap-4">
       <div className="flex flex-col gap-2">
-        <Box>
+        <div>
           <Typography type="body" className="font-bold">Beeper</Typography>
           <BasicUser user={ride.beeper} />
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Typography type="body" className="font-bold">Status</Typography>
           <div className="flex flex-row items-center gap-2">
             <Typography type="body" className="capitalize">
@@ -133,42 +128,46 @@ function Ride() {
             </Typography>
             <Indicator color={beepStatusMap[ride.status]} />
           </div>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Typography type="body" className="font-bold">Origin</Typography>
           <Typography type="body">{ride.origin}</Typography>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Typography type="body" className="font-bold">Destination</Typography>
           <Typography type="body">{ride.destination}</Typography>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Typography type="body" className="font-bold">Group Size</Typography>
           <Typography type="body">{ride.groupSize}</Typography>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Typography type="body" className="font-bold">Started</Typography>
           <Typography type="body" className="whitespace-nowrap">
             {new Date(ride.start).toLocaleString()}
           </Typography>
           <Typography type="body">{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
-        </Box>
+        </div>
       </div>
-      <Box sx={{
-        width: "100%"
-      }}>
+      <div className="w-full">
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
-              <Tooltip title={ride.origin} arrow>
-                <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{ride.origin}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
           {destination && (
             <Marker latitude={destination.lat} longitude={destination.lng}>
-              <Tooltip title={ride.destination} arrow>
-                <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{ride.destination}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
@@ -202,13 +201,13 @@ function Ride() {
             <Layer
               type="line"
               paint={{
-                "line-color": theme.palette.info.main,
+                "line-color": "#0288d1",
                 "line-width": 5,
               }}
             />
           </Source>
         </Map>
-      </Box>
+      </div>
     </div>
   );
 }

@@ -1,17 +1,13 @@
 import React from "react";
-import createCache from "@emotion/cache";
 import stylesUrl from '../styles.css?url'
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
 import { ThemeProvider as TanstackThemeProvider } from 'tanstack-theme-kit'
 import { queryClient } from "../utils/tanstack-query";
-import { Container, ThemeProvider, CssBaseline } from "@mui/material";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Banners } from "../components/Banners";
-import { CacheProvider } from "@emotion/react";
-import { theme } from "../utils/theme";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
   HeadContent,
@@ -60,18 +56,9 @@ function RootComponent() {
 }
 
 function Providers({ children }: { children: React.ReactNode }) {
-  const emotionCache = createCache({ key: "css" });
-
   return (
     <TanstackThemeProvider>
-      <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={theme}>
-          <QueryClientProvider client={queryClient}>
-            <CssBaseline enableColorScheme />
-            {children}
-          </QueryClientProvider>
-        </ThemeProvider>
-      </CacheProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </TanstackThemeProvider>
   );
 }
@@ -82,14 +69,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: 16 }}>
+      <body className="flex min-h-screen flex-col gap-4">
         <Providers>
           <Header />
           <Toast.Provider />
-          <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column', flexGrow: 1 }}>
+          <main className="mx-auto flex w-full max-w-300 flex-1 flex-col gap-4 px-6 pt-20">
             <Banners />
             {children}
-          </Container>
+          </main>
           <Footer />
         </Providers>
         <Scripts />
