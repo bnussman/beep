@@ -11,15 +11,9 @@ import { Indicator } from "../../../../components/Indicator";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { Table } from "@heroui/react";
 import {
   Typography,
-  Table,
-  TableContainer,
-  Paper,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
   Stack,
 } from "@mui/material";
 
@@ -47,30 +41,29 @@ function QueueTable() {
   });
 
   return (
-    <TableContainer component={Paper} variant="outlined">
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Rider</TableCell>
-            <TableCell>Origin</TableCell>
-            <TableCell>Destination</TableCell>
-            <TableCell>Group Size</TableCell>
-            <TableCell>Start Time</TableCell>
-            <TableCell>Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <Table>
+      <Table.ScrollContainer>
+        <Table.Content aria-label="User queue" className="min-w-225">
+          <Table.Header>
+            <Table.Column>Rider</Table.Column>
+            <Table.Column>Origin</Table.Column>
+            <Table.Column>Destination</Table.Column>
+            <Table.Column>Group Size</Table.Column>
+            <Table.Column>Start Time</Table.Column>
+            <Table.Column>Status</Table.Column>
+          </Table.Header>
+          <Table.Body>
           {isLoading && <TableLoading colSpan={6} />}
           {error && <TableError colSpan={6} error={error.message} />}
           {data?.length === 0 && <TableEmpty colSpan={6} />}
           {data?.map((beep) => (
-            <TableRow key={beep.id}>
+            <Table.Row key={beep.id}>
               <TableCellUser user={beep.rider} />
-              <TableCell>{beep.origin}</TableCell>
-              <TableCell>{beep.destination}</TableCell>
-              <TableCell>{beep.groupSize}</TableCell>
-              <TableCell>{DateTime.fromJSDate(beep.start).toRelative()}</TableCell>
-              <TableCell>
+              <Table.Cell>{beep.origin}</Table.Cell>
+              <Table.Cell>{beep.destination}</Table.Cell>
+              <Table.Cell>{beep.groupSize}</Table.Cell>
+              <Table.Cell>{DateTime.fromJSDate(beep.start).toRelative()}</Table.Cell>
+              <Table.Cell>
                 <Stack direction="row" spacing={1} sx={{
                   alignItems: "center"
                 }}>
@@ -79,11 +72,12 @@ function QueueTable() {
                     {beep.status.replaceAll("_", " ")}
                   </Typography>
                 </Stack>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </Table.Body>
+        </Table.Content>
+      </Table.ScrollContainer>
+    </Table>
   );
 }

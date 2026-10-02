@@ -13,16 +13,10 @@ import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
+import { Table } from "@heroui/react";
 import {
   Box,
-  Paper,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 
@@ -79,41 +73,40 @@ function Cars() {
         page={page}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Make</TableCell>
-              <TableCell>Model</TableCell>
-              <TableCell>Year</TableCell>
-              <TableCell>Color</TableCell>
-              <TableCell>Default</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Photo</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Cars" className="min-w-250">
+            <Table.Header>
+              <Table.Column>User</Table.Column>
+              <Table.Column>Make</Table.Column>
+              <Table.Column>Model</Table.Column>
+              <Table.Column>Year</Table.Column>
+              <Table.Column>Color</Table.Column>
+              <Table.Column>Default</Table.Column>
+              <Table.Column>Created</Table.Column>
+              <Table.Column>Photo</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {isLoading && <TableLoading colSpan={9} />}
             {error && <TableError colSpan={9} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={9} />}
             {data?.cars.map((car) => (
-              <TableRow key={car.id}>
+              <Table.Row key={car.id}>
                 <TableCellUser user={car.user} />
-                <TableCell>{car.make}</TableCell>
-                <TableCell>{car.model}</TableCell>
-                <TableCell>{car.year}</TableCell>
-                <TableCell>
+                <Table.Cell>{car.make}</Table.Cell>
+                <Table.Cell>{car.model}</Table.Cell>
+                <Table.Cell>{car.year}</Table.Cell>
+                <Table.Cell>
                   <Indicator color={car.color} tooltip={car.color} />
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <Indicator color={car.default ? "green" : "red"} />
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(car.created).toRelative()}
-                </TableCell>
-                <TableCell onClick={() => onPhotoClick(car.id)}>
+                </Table.Cell>
+                <Table.Cell onClick={() => onPhotoClick(car.id)}>
                   <Box
                     component="img"
                     src={car.photo}
@@ -129,15 +122,16 @@ function Cars() {
                       },
                     }}
                   />
-                </TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
+                </Table.Cell>
+                <Table.Cell className="text-right">
                   <CarMenu carId={car.id} onDelete={() => onDelete(car.id)} />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
         count={data?.pages}

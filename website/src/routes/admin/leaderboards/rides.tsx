@@ -5,16 +5,10 @@ import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { keepPreviousData } from "@tanstack/react-query";
+import { Table } from "@heroui/react";
 import {
-  Table,
   Stack,
   Avatar,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TableBody,
   Typography,
   Link,
 } from "@mui/material";
@@ -53,18 +47,17 @@ function Rides() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Beeps</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Users by ride count">
+            <Table.Header>
+              <Table.Column isRowHeader>User</Table.Column>
+              <Table.Column>Rides</Table.Column>
+            </Table.Header>
+            <Table.Body>
             {data?.users?.map(({ user, rides }) => (
-              <TableRow key={user.id}>
-                <TableCell>
+              <Table.Row key={user.id}>
+                <Table.Cell>
                   <Link component={RouterLink} to={`/admin/users/${user.id}`}>
                     <Stack direction="row" spacing={1} sx={{
                       alignItems: "center"
@@ -75,15 +68,16 @@ function Rides() {
                       </Typography>
                     </Stack>
                   </Link>
-                </TableCell>
-                <TableCell>{rides}</TableCell>
-              </TableRow>
+                </Table.Cell>
+                <Table.Cell>{rides}</Table.Cell>
+              </Table.Row>
             ))}
             {isLoading && <TableLoading colSpan={2} />}
             {error && <TableError colSpan={2} error={error.message} />}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         count={data?.pages}
         page={page}

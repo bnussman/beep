@@ -1,6 +1,7 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { TableContainer, Stack, TableHead, Paper, Typography, Table, TableCell, TableRow, TableBody } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
+import { Table } from "@heroui/react";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { useQuery } from "@tanstack/react-query";
@@ -18,26 +19,26 @@ function UsersByDomain() {
       <Typography variant="h4" sx={{
         fontWeight: "bold"
       }}>Users by Domain</Typography>
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Domain</TableCell>
-              <TableCell>Count</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Users by domain">
+            <Table.Header>
+              <Table.Column isRowHeader>Domain</Table.Column>
+              <Table.Column>Count</Table.Column>
+            </Table.Header>
+            <Table.Body>
             {isLoading && <TableLoading colSpan={2} />}
             {error && <TableError colSpan={2} error={error.message} />}
             {data?.map(({ domain, count }) => (
-              <TableRow key={domain}>
-                <TableCell>{domain}</TableCell>
-                <TableCell>{count}</TableCell>
-              </TableRow>
+              <Table.Row key={domain}>
+                <Table.Cell>{domain}</Table.Cell>
+                <Table.Cell>{count}</Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
     </Stack>
   );
 }

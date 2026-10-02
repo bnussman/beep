@@ -1,7 +1,8 @@
 import React from 'react'
 import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Avatar, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Avatar, Link, Stack, Typography } from '@mui/material';
+import { Table } from '@heroui/react';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -41,18 +42,17 @@ function Beeps() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Beeps</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Users by beep count">
+            <Table.Header>
+              <Table.Column isRowHeader>User</Table.Column>
+              <Table.Column>Beeps</Table.Column>
+            </Table.Header>
+            <Table.Body>
             {data?.users?.map(({ user, beeps }) => (
-              <TableRow key={user.id}>
-                <TableCell>
+              <Table.Row key={user.id}>
+                <Table.Cell>
                   <Link component={RouterLink} to={`/admin/users/${user.id}`}>
                     <Stack direction="row" spacing={1} sx={{
                       alignItems: "center"
@@ -61,15 +61,16 @@ function Beeps() {
                       <Typography>{user.first} {user.last}</Typography>
                     </Stack>
                   </Link>
-                </TableCell>
-                <TableCell>{beeps}</TableCell>
-              </TableRow>
+                </Table.Cell>
+                <Table.Cell>{beeps}</Table.Cell>
+              </Table.Row>
             ))}
             {isLoading && <TableLoading colSpan={2} />}
             {error && <TableError colSpan={2} error={error.message} />}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         count={data?.pages}
         page={page}

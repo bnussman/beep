@@ -12,16 +12,10 @@ import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { DeleteFeedbackDialog } from "../../../components/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
+import { Table } from "@heroui/react";
 import {
   IconButton,
-  Paper,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 
@@ -69,28 +63,27 @@ function Feedback() {
         page={page}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Message</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Feedback" className="min-w-175">
+            <Table.Header>
+              <Table.Column>User</Table.Column>
+              <Table.Column>Message</Table.Column>
+              <Table.Column>Created</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {data?.results === 0 && <TableEmpty colSpan={4} />}
             {isLoading && <TableLoading colSpan={4} />}
             {error && <TableError colSpan={4} error={error.message} />}
             {data?.feedback.map((feedback) => (
-              <TableRow key={feedback.id}>
+              <Table.Row key={feedback.id}>
                 <TableCellUser user={feedback.user} />
-                <TableCell>{feedback.message}</TableCell>
-                <TableCell>
+                <Table.Cell>{feedback.message}</Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(feedback.created).toRelative()}
-                </TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
+                </Table.Cell>
+                <Table.Cell className="text-right">
                   <IconButton
                     color="error"
                     aria-label={`Delete feeback ${feedback.id}`}
@@ -98,12 +91,13 @@ function Feedback() {
                   >
                     <Delete />
                   </IconButton>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
         count={data?.pages}
