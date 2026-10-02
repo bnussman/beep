@@ -13,11 +13,9 @@ import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
-import { Table } from "@heroui/react";
+import { Table, Typography } from "@heroui/react";
 import {
   Box,
-  Stack,
-  Typography,
 } from "@mui/material";
 
 export const Route = createFileRoute("/admin/cars/")({
@@ -60,10 +58,8 @@ function Cars() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Cars
       </Typography>
       <PaginationFooter
@@ -149,6 +145,6 @@ function Cars() {
         onClose={() => setIsDeleteOpen(false)}
         isOpen={isDeleteOpen}
       />
-    </Stack>
+    </div>
   );
 }

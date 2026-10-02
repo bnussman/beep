@@ -4,15 +4,14 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { orpc } from "../../utils/orpc";
 import { ORPCError } from "@orpc/client";
+import { Typography } from "@heroui/react";
 import {
   Alert,
   Box,
   Button,
   Card,
   Container,
-  Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 
 export const Route = createFileRoute('/password/change')({
@@ -71,10 +70,8 @@ function ChangePassword() {
     <Container maxWidth="sm">
       <Card sx={{ p: 3 }}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
+          <div className="flex flex-col gap-4">
+            <Typography type="h1">
               Change Password
             </Typography>
             {data && (
@@ -124,7 +121,7 @@ function ChangePassword() {
                 Update password
               </Button>
             </Box>
-          </Stack>
+          </div>
         </form>
       </Card>
     </Container>

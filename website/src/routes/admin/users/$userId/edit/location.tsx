@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Alert, Button, Stack, TextField } from "@mui/material";
+import { Alert, Button, TextField } from "@mui/material";
 import { Marker } from "../../../../../components/Marker";
 import { Loading } from "../../../../../components/Loading";
 import { Map } from "../../../../../components/Map";
@@ -64,9 +64,9 @@ function EditLocation() {
   }
 
   return (
-    <Stack spacing={2}>
+    <div className="flex flex-col gap-4">
       {mutateError && <Alert severity="error">{mutateError.message}</Alert>}
-      <Stack direction="row" spacing={1}>
+      <div className="flex flex-row gap-2">
         <TextField
           fullWidth
           label="Longitude"
@@ -93,7 +93,7 @@ function EditLocation() {
         >
           Save
         </Button>
-      </Stack>
+      </div>
       <div style={{ height: 450, width: "100%" }}>
         <Map
           onClick={onMapClick}
@@ -115,6 +115,6 @@ function EditLocation() {
           )}
         </Map>
       </div>
-    </Stack>
+    </div>
   );
 }

@@ -17,15 +17,14 @@ import {
   useLocation,
   createFileRoute,
 } from "@tanstack/react-router";
+import { Typography } from "@heroui/react";
 import {
   Alert,
   Avatar,
   Box,
   Button,
-  Stack,
   Tab,
   Tabs,
-  Typography,
 } from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId")({
@@ -145,18 +144,9 @@ function User() {
   }
 
   return (
-    <Stack spacing={2}>
-      <Stack
-        direction="row"
-        sx={{
-          gap: 2,
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap"
-        }}>
-        <Stack direction="row" spacing={2} sx={{
-          alignItems: "center"
-        }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-row items-center gap-4">
           <Avatar
             src={user.photo ?? ""}
             onClick={user.photo ? () => setIsPhotoOpen(true) : undefined}
@@ -166,32 +156,20 @@ function User() {
               height: 120,
             }}
           />
-          <Stack>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
+          <div className="flex flex-col">
+            <Typography type="h1">
               {user.first} {user.last}
             </Typography>
-            <Typography>{user.username}</Typography>
-            <Typography sx={{
-              fontSize: "12px"
-            }}>{user.id}</Typography>
+            <Typography type="body">{user.username}</Typography>
+            <Typography type="body" className="text-xs">{user.id}</Typography>
             {user.created && (
-              <Typography sx={{
-                fontSize: "12px"
-              }}>
+              <Typography type="body" className="text-xs">
                 Joined {DateTime.fromJSDate(user.created).toRelative()}
               </Typography>
             )}
-          </Stack>
-        </Stack>
-        <Stack
-          direction="row"
-          sx={{
-            gap: 1,
-            flexWrap: "wrap",
-            justifyContent: "flex-end"
-          }}>
+          </div>
+        </div>
+        <div className="flex flex-row flex-wrap justify-end gap-2">
           <Button
             LinkComponent={Link}
             href={`/admin/users/${user.id}/edit`}
@@ -250,8 +228,8 @@ function User() {
           >
             Delete
           </Button>
-        </Stack>
-      </Stack>
+        </div>
+      </div>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={currentTabIndex}>
           {tabs.map((tab) => (
@@ -287,6 +265,6 @@ function User() {
         isOpen={isPhotoOpen}
         onClose={() => setIsPhotoOpen(false)}
       />
-    </Stack>
+    </div>
   );
 }

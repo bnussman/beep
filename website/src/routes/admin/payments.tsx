@@ -7,11 +7,7 @@ import { TableCellUser } from "../../components/TableCellUser";
 import { TableEmpty } from "../../components/TableEmpty";
 import { TableLoading } from "../../components/TableLoading";
 import { TableError } from "../../components/TableError";
-import { Table } from "@heroui/react";
-import {
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Table, Typography } from "@heroui/react";
 import { orpc } from "../../utils/orpc";
 
 export const Route = createFileRoute("/admin/payments")({
@@ -38,10 +34,8 @@ function Payments() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Payments
       </Typography>
       <PaginationFooter
@@ -91,6 +85,6 @@ function Payments() {
         page={page}
         onChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }

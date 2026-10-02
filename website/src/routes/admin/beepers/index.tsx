@@ -9,12 +9,10 @@ import { TableLoading } from "../../../components/TableLoading";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../utils/utils";
-import { Table } from "@heroui/react";
+import { Table, Typography } from "@heroui/react";
 import {
   Box,
   Link,
-  Typography,
-  Stack,
   Avatar,
   Chip,
   Tooltip,
@@ -65,12 +63,8 @@ function Beepers() {
 
   return (
     <Box>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+      <div className="flex items-center gap-4">
+        <Typography type="h1">
           Beepers
         </Typography>
         <Chip
@@ -78,7 +72,7 @@ function Beepers() {
           label={`${data?.length ?? 0} beepers`}
           size="small"
         />
-      </Stack>
+      </div>
       <BeepersMap beepers={data ?? []} />
       <Table>
         <Table.ScrollContainer>
@@ -98,11 +92,9 @@ function Beepers() {
               <Table.Row key={beeper.id}>
                 <Table.Cell>
                   <Link component={RouterLink} to={`/admin/users/${beeper.id}`}>
-                    <Stack direction="row" spacing={1} sx={{
-                      alignItems: "center"
-                    }}>
+                    <div className="flex items-center gap-2">
                       <Avatar src={beeper.photo ?? undefined} />
-                      <Typography>
+                      <Typography type="body">
                         {beeper.first} {beeper.last}
                       </Typography>
                       <Box sx={{
@@ -111,7 +103,7 @@ function Beepers() {
                       {beeper.isPremium && (
                         <Chip label="Premium 👑" size="small" />
                       )}
-                    </Stack>
+                    </div>
                   </Link>
                 </Table.Cell>
                 <Table.Cell>{beeper.queueSize} riders</Table.Cell>
@@ -124,7 +116,7 @@ function Beepers() {
                     <Tooltip
                       title={`User rating of ${getFormattedRating(beeper.rating)}`}
                     >
-                      <Typography>
+                      <Typography type="body">
                         {printStars(Number(beeper.rating))}
                       </Typography>
                     </Tooltip>

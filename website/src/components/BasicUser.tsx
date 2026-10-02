@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, Avatar, Typography, Link } from "@mui/material";
+import { Typography } from "@heroui/react";
+import { Avatar, Link } from "@mui/material";
 import { Link as RouterLink } from "@tanstack/react-router";
 
 interface Props {
@@ -16,14 +17,12 @@ export function BasicUser(props: Props) {
 
   return (
     <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-      <Stack direction="row" spacing={1.5} sx={{
-        alignItems: "center"
-      }}>
+      <div className="flex items-center gap-3">
         <Typography>
           {user.first} {user.last}
         </Typography>
         <Avatar src={user.photo ?? undefined} sx={{ width: 32, height: 32 }} />
-      </Stack>
+      </div>
     </Link>
   );
 }

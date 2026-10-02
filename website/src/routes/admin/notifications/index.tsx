@@ -7,12 +7,11 @@ import { SendNotificationConfirmationDialog } from "../../../components/SendNoti
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
+import { Typography } from "@heroui/react";
 import {
   Alert,
   TextField,
-  Typography,
   Button,
-  Stack,
   Box,
   Card,
 } from "@mui/material";
@@ -60,10 +59,8 @@ function Notifications() {
 
   return (
     <Card sx={{ p: 3 }}>
-      <Stack spacing={2}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+      <div className="flex flex-col gap-4">
+        <Typography type="h1">
           Notifications
         </Typography>
         <Typography>Use this tool to send mass notifications.</Typography>
@@ -134,7 +131,7 @@ function Notifications() {
           onClose={() => setIsConfirmOpen(false)}
           onConfirm={onConfirm}
         />
-      </Stack>
+      </div>
     </Card>
   );
 }

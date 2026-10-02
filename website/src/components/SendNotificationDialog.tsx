@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Stack,
 } from "@mui/material";
 
 interface Props {
@@ -64,9 +63,7 @@ export function SendNotificationDialog(props: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTitle>Send Notification</DialogTitle>
         <DialogContent>
-          <Stack spacing={2} sx={{
-            mt: 1
-          }}>
+          <div className="mt-2 flex flex-col gap-4">
             {form.formState.errors.root?.message && (
               <Alert severity="error">{form.formState.errors.root.message}</Alert>
             )}
@@ -98,7 +95,7 @@ export function SendNotificationDialog(props: Props) {
                 />
               )}
             />
-          </Stack>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Close</Button>

@@ -4,13 +4,12 @@ import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
+import { Typography } from "@heroui/react";
 import {
-  Typography,
   Alert,
   Card,
   TextField,
   Button,
-  Stack,
 } from "@mui/material";
 
 export const Route = createFileRoute('/password/reset/$id')({
@@ -55,10 +54,8 @@ function ResetPassword() {
   return (
     <Card sx={{ p: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <Typography variant="h4" sx={{
-            fontWeight: "bold"
-          }}>
+        <div className="flex flex-col gap-4">
+          <Typography type="h1">
             Reset Password
           </Typography>
           {errors.root?.message && (
@@ -82,14 +79,12 @@ function ResetPassword() {
               />
             )}
           />
-          <Stack direction="row" sx={{
-            justifyContent: "flex-end"
-          }}>
+          <div className="flex flex-row justify-end">
             <Button type="submit" loading={isSubmitting} variant="contained">
               Reset Password
             </Button>
-          </Stack>
-        </Stack>
+          </div>
+        </div>
       </form>
     </Card>
   );

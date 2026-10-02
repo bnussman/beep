@@ -12,9 +12,6 @@ import { DeleteRatingDialog } from "../../../../components/DeleteRatingDialog";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { Table } from "@heroui/react";
-import {
-  Stack,
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/ratings")({
   component: RatingsTable,
@@ -37,7 +34,7 @@ function RatingsTable() {
   );
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -93,6 +90,6 @@ function RatingsTable() {
         onClose={() => setSelectedRatingId(undefined)}
         isOpen={selectedRatingId !== undefined}
       />
-    </Stack>
+    </div>
   );
 }

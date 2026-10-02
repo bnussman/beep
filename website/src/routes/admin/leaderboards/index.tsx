@@ -1,10 +1,9 @@
 import React from 'react'
 import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
+import { Typography } from '@heroui/react';
 import { Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/admin/leaderboards/')({
@@ -30,18 +29,16 @@ function Leaderboards() {
   const index = tabs.findIndex(t => t.href === pathname)
 
   return (
-    <Stack>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>Leaderboards</Typography>
-      <Stack spacing={1}>
+    <div className="flex flex-col">
+      <Typography type="h1">Leaderboards</Typography>
+      <div className="flex flex-col gap-2">
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={index === -1 ? 0 : index}>
             {tabs.map((tab) => <Tab LinkComponent={Link} {...tab} />)}
           </Tabs>
         </Box>
         <Outlet />
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 }

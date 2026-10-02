@@ -7,9 +7,6 @@ import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
 import { Table } from "@heroui/react";
-import {
-  Stack,
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/payments")({
   component: PaymentsTable,
@@ -31,7 +28,7 @@ function PaymentsTable() {
   );
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -77,6 +74,6 @@ function PaymentsTable() {
         page={currentPage}
         onChange={(_e, page) => setCurrentPage(page)}
       />
-    </Stack>
+    </div>
   );
 }

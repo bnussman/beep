@@ -12,9 +12,6 @@ import { TableEmpty } from "../../../../components/TableEmpty";
 import { ReportMenu } from "../../../../components/ReportMenu";
 import { DeleteReportDialog } from "../../../../components/DeleteReportDialog";
 import { Table } from "@heroui/react";
-import {
-  Stack,
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/reports")({
   component: ReportsTable,
@@ -37,7 +34,7 @@ function ReportsTable() {
   );
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -95,6 +92,6 @@ function ReportsTable() {
         isOpen={selectedReportId !== undefined}
         onClose={() => setSelectedReportId(undefined)}
       />
-    </Stack>
+    </div>
   );
 }

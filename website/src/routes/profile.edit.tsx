@@ -7,13 +7,12 @@ import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { useNotifications } from "@toolpad/core";
+import { Typography } from "@heroui/react";
 import {
   Alert,
   Card,
-  Typography,
   TextField,
   Avatar,
-  Stack,
   Button,
   Box,
   Container,
@@ -109,10 +108,8 @@ function EditProfile() {
     <Container maxWidth="sm">
       <Card sx={{ p: 3 }}>
         <form onSubmit={onSubmit}>
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
+          <div className="flex flex-col gap-4">
+            <Typography type="h1">
               Edit Profile
             </Typography>
             {errors.root?.message && (
@@ -122,10 +119,8 @@ function EditProfile() {
               <LinearProgress variant="indeterminate" sx={{ mb: '16px !important' }} />
             )}
             {uploadError && <Alert severity="error">{uploadError.message}</Alert>}
-            <Stack direction="row" spacing={2}>
-              <Stack spacing={2} sx={{
-                flexGrow: 1
-              }}>
+            <div className="flex flex-row gap-4">
+              <div className="flex grow flex-col gap-4">
                 <Controller
                   control={control}
                   name="first"
@@ -152,7 +147,7 @@ function EditProfile() {
                     />
                   )}
                 />
-              </Stack>
+              </div>
               <label style={{ cursor: "pointer" }} htmlFor="photo">
                 <Avatar
                   sx={{ width: 128, height: 128 }}
@@ -165,7 +160,7 @@ function EditProfile() {
                 onChange={(e) => uploadPhoto(e.target.files?.[0])}
                 hidden
               />
-            </Stack>
+            </div>
             <Controller
               control={control}
               name="email"
@@ -242,7 +237,7 @@ function EditProfile() {
                 Save Profile
               </Button>
             </Box>
-          </Stack>
+          </div>
         </form>
       </Card>
     </Container>

@@ -12,7 +12,6 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
-  Stack,
 } from "@mui/material";
 
 interface Props {

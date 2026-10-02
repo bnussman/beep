@@ -6,13 +6,12 @@ import { Link as RouterLink } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { beepStatusMap } from "../utils/utils";
+import { Typography } from "@heroui/react";
 import {
   Link,
   Avatar,
   Box,
   CircularProgress,
-  Stack,
-  Typography,
 } from "@mui/material";
 
 interface Props {
@@ -78,16 +77,14 @@ export function QueuePreview({ userId }: Props) {
   }
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       {data?.map((beep) => (
         <Link
           component={RouterLink}
           to={`/admin/users/${beep.rider.id}`}
           key={beep.id}
         >
-          <Stack key={beep.id} direction="row" spacing={1} sx={{
-            alignItems: "center"
-          }}>
+          <div key={beep.id} className="flex items-center gap-2">
             <Avatar
               src={beep.rider.photo || ""}
               sx={{ width: 24, height: 24 }}
@@ -101,9 +98,9 @@ export function QueuePreview({ userId }: Props) {
             </Box>
             <Typography>{beep.status.replaceAll("_", " ")}</Typography>
             <Indicator color={beepStatusMap[beep.status]} />
-          </Stack>
+          </div>
         </Link>
       ))}
-    </Stack>
+    </div>
   );
 }

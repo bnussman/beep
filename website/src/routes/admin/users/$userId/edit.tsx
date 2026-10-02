@@ -2,14 +2,13 @@ import React from "react";
 import { orpc } from "../../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Typography } from "@heroui/react";
 import {
   Alert,
   Box,
   CircularProgress,
-  Stack,
   Tab,
   Tabs,
-  Typography,
 } from "@mui/material";
 
 export const Route = createFileRoute('/admin/users/$userId/edit')({
@@ -36,13 +35,11 @@ function Edit() {
   }
 
   return (
-    <Stack>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col">
+      <Typography type="h1">
         Edit
       </Typography>
-      <Stack spacing={3}>
+      <div className="flex flex-col gap-6">
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={pathname.endsWith('location') ? 1 : 0}>
             <Tab
@@ -60,7 +57,7 @@ function Edit() {
         <Box>
           <Outlet />
         </Box>
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 }

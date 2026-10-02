@@ -12,11 +12,9 @@ import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { DeleteFeedbackDialog } from "../../../components/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
-import { Table } from "@heroui/react";
+import { Table, Typography } from "@heroui/react";
 import {
   IconButton,
-  Stack,
-  Typography,
 } from "@mui/material";
 
 export const Route = createFileRoute("/admin/feedback/")({
@@ -50,10 +48,8 @@ function Feedback() {
   );
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Feedback
       </Typography>
       <PaginationFooter
@@ -110,6 +106,6 @@ function Feedback() {
         onClose={() => setSelectedFeedbackId(undefined)}
         feedback={selectedFeedback}
       />
-    </Stack>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Stack, Typography } from "@mui/material";
+import { Typography } from "@heroui/react";
 import { Table } from "@heroui/react";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
@@ -15,10 +15,8 @@ function UsersByDomain() {
   const { data, isLoading, error } = useQuery(orpc.user.usersByDomain.queryOptions());
 
   return (
-    <Stack spacing={2}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>Users by Domain</Typography>
+    <div className="flex flex-col gap-4">
+      <Typography type="h1">Users by Domain</Typography>
       <Table>
         <Table.ScrollContainer>
           <Table.Content aria-label="Users by domain">
@@ -39,6 +37,6 @@ function UsersByDomain() {
           </Table.Content>
         </Table.ScrollContainer>
       </Table>
-    </Stack>
+    </div>
   );
 }

@@ -13,11 +13,7 @@ import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { DateTime, Interval } from "luxon";
-import { Table } from "@heroui/react";
-import {
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
@@ -49,10 +45,8 @@ function Beeps() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Beeps
       </Typography>
       <PaginationFooter
@@ -95,14 +89,12 @@ function Beeps() {
                 <Table.Cell>{beep.destination}</Table.Cell>
                 <Table.Cell>{beep.groupSize}</Table.Cell>
                 <Table.Cell>
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
+                  <div className="flex items-center gap-2">
                     <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography sx={{ textTransform: "capitalize" }}>
+                    <Typography type="body" className="capitalize">
                       {beep.status.replaceAll("_", " ")}
                     </Typography>
-                  </Stack>
+                  </div>
                 </Table.Cell>
                 <Table.Cell>
                   {DateTime.fromJSDate(beep.start).toRelative()}
@@ -150,6 +142,6 @@ function Beeps() {
         onClose={() => setIsDeleteOpen(false)}
         id={selectedBeepId ?? ""}
       />
-    </Stack>
+    </div>
   );
 }

@@ -5,11 +5,9 @@ import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { keepPreviousData } from "@tanstack/react-query";
-import { Table } from "@heroui/react";
+import { Table, Typography } from "@heroui/react";
 import {
-  Stack,
   Avatar,
-  Typography,
   Link,
 } from "@mui/material";
 import { orpc } from "../../../utils/orpc";
@@ -39,7 +37,7 @@ function Rides() {
   };
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         count={data?.pages}
         page={page}
@@ -59,14 +57,12 @@ function Rides() {
               <Table.Row key={user.id}>
                 <Table.Cell>
                   <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-                    <Stack direction="row" spacing={1} sx={{
-                      alignItems: "center"
-                    }}>
+                    <div className="flex items-center gap-2">
                       <Avatar src={user.photo ?? undefined} />
-                      <Typography>
+                      <Typography type="body">
                         {user.first} {user.last}
                       </Typography>
-                    </Stack>
+                    </div>
                   </Link>
                 </Table.Cell>
                 <Table.Cell>{rides}</Table.Cell>
@@ -85,6 +81,6 @@ function Rides() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }

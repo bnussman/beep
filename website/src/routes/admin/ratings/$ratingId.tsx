@@ -9,12 +9,10 @@ import {
   useRouter,
   createFileRoute,
 } from "@tanstack/react-router";
+import { Typography } from "@heroui/react";
 import {
   Alert,
-  Typography,
   Button,
-  Stack,
-  Grid,
   Link,
   Card,
 } from "@mui/material";
@@ -72,7 +70,7 @@ function Rating() {
     {
       title: "Stars",
       content: (
-        <Typography>
+        <Typography type="body">
           {printStars(rating.stars)} {rating.stars}
         </Typography>
       ),
@@ -84,16 +82,9 @@ function Rating() {
   ];
 
   return (
-    <Stack spacing={2}>
-      <Stack
-        direction="row"
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row items-center justify-between">
+        <Typography type="h1">
           Rating
         </Typography>
         <Button
@@ -103,22 +94,18 @@ function Rating() {
         >
           Delete
         </Button>
-      </Stack>
+      </div>
       <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
-        <Grid container rowSpacing={2} columnSpacing={2}>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
-            <Grid size={{ xs: 12, md: 6 }} key={item.title}>
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "0.95rem"
-                }}>
+            <div key={item.title}>
+              <Typography type="body" className="text-[0.95rem] font-bold">
                 {item.title}
               </Typography>
               {item.content}
-            </Grid>
+            </div>
           ))}
-        </Grid>
+        </div>
       </Card>
       <DeleteRatingDialog
         id={ratingId}
@@ -126,6 +113,6 @@ function Rating() {
         onClose={() => setIsOpen(false)}
         onSuccess={() => router.history.back()}
       />
-    </Stack>
+    </div>
   );
 }

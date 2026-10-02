@@ -11,7 +11,6 @@ import {
   Alert,
   FormControlLabel,
   Checkbox,
-  Stack,
   Button,
   TextField,
 } from "@mui/material";
@@ -81,7 +80,7 @@ function EditDetails() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={2}>
+      <div className="flex flex-col gap-4">
         {errors.root?.message && (
           <Alert severity="error">{errors.root.message}</Alert>
         )}
@@ -126,7 +125,7 @@ function EditDetails() {
         >
           Update User
         </Button>
-      </Stack>
+      </div>
     </form>
   );
 }

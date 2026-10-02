@@ -1,7 +1,8 @@
 import React from "react";
 import { Loading } from "../../components/Loading";
 import { createFileRoute, createRoute } from "@tanstack/react-router";
-import { Stack, Alert, Typography } from "@mui/material";
+import { Typography } from "@heroui/react";
+import { Alert } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "../../utils/orpc";
 
@@ -25,10 +26,8 @@ function Redis() {
   }
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Redis Channels
       </Typography>
       <ul style={{ paddingLeft: 20 }}>
@@ -36,6 +35,6 @@ function Redis() {
           <li key={channel}>{channel}</li>
         ))}
       </ul>
-    </Stack>
+    </div>
   );
 }

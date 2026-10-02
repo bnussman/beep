@@ -2,11 +2,10 @@ import React from "react";
 import { Marker as _Marker } from "react-map-gl/maplibre";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { QueuePreview } from "./QueuePreview";
+import { Typography } from "@heroui/react";
 import {
   Link,
   Avatar,
-  Typography,
-  Stack,
   Tooltip,
   Popover,
   Button,
@@ -43,12 +42,10 @@ export function Marker(props: Props) {
     return (
       <div>
         <_Marker longitude={longitude} latitude={latitude}>
-          <Stack onClick={handleClick} sx={{
-            alignItems: "center"
-          }}>
+          <div onClick={handleClick} className="flex flex-col items-center">
             <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
             <Typography>{name}</Typography>
-          </Stack>
+          </div>
         </_Marker>
         <Popover
           id={id}
@@ -59,22 +56,20 @@ export function Marker(props: Props) {
             paper: { sx: { p: 1 } },
           }}
         >
-          <Stack spacing={1} divider={<Divider />}>
+          <div className="flex flex-col gap-2">
             <Link component={RouterLink} to={`/admin/users/${userId}/queue`}>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <div className="flex items-center gap-2">
                 <Avatar src={photo || ""} />
-                <Typography sx={{
-                  fontWeight: "bold"
-                }}>{name}</Typography>
-              </Stack>
+                <Typography type="body" className="font-bold">{name}</Typography>
+              </div>
             </Link>
+            <Divider />
             <QueuePreview userId={userId} />
+            <Divider />
             <Typography>
               {latitude.toFixed(3)} {longitude.toFixed(3)}
             </Typography>
-          </Stack>
+          </div>
         </Popover>
       </div>
     );
@@ -83,12 +78,10 @@ export function Marker(props: Props) {
   return (
     <_Marker latitude={latitude} longitude={longitude}>
       <Tooltip title={`${latitude}, ${longitude}`} arrow>
-        <Stack sx={{
-          alignItems: "center"
-        }}>
+        <div className="flex flex-col items-center">
           <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
           <Typography>{name}</Typography>
-        </Stack>
+        </div>
       </Tooltip>
     </_Marker>
   );

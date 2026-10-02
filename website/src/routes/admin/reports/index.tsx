@@ -12,9 +12,8 @@ import { DeleteReportDialog } from "../../../components/DeleteReportDialog";
 import { keepPreviousData } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { Table } from "@heroui/react";
+import { Typography } from "@heroui/react";
 import {
-  Stack,
-  Typography,
 } from "@mui/material";
 import { orpc } from "../../../utils/orpc";
 
@@ -49,10 +48,8 @@ function Reports() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Reports
       </Typography>
       <PaginationFooter
@@ -114,6 +111,6 @@ function Reports() {
         onClose={() => setSelectedReportId(null)}
         id={selectedReportId ?? ""}
       />
-    </Stack>
+    </div>
   );
 }

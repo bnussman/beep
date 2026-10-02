@@ -11,12 +11,11 @@ import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { BasicUser } from "../../../../components/BasicUser";
 import { DateTime } from "luxon";
 import { Indicator } from "../../../../components/Indicator";
+import { Typography } from "@heroui/react";
 import {
   Alert,
   Box,
-  Stack,
   Tooltip,
-  Typography,
   useTheme,
 } from "@mui/material";
 
@@ -120,62 +119,41 @@ function Ride() {
   }
 
   return (
-    <Stack direction="row" sx={{
-      gap: 2
-    }}>
-      <Stack spacing={1}>
+    <div className="flex flex-row gap-4">
+      <div className="flex flex-col gap-2">
         <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Beeper</Typography>
+          <Typography type="body" className="font-bold">Beeper</Typography>
           <BasicUser user={ride.beeper} />
         </Box>
         <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Status</Typography>
-          <Stack
-            direction="row"
-            sx={{
-              alignItems: "center",
-              gap: 1
-            }}>
-            <Typography sx={{
-              textTransform: "capitalize"
-            }}>
+          <Typography type="body" className="font-bold">Status</Typography>
+          <div className="flex flex-row items-center gap-2">
+            <Typography type="body" className="capitalize">
               {ride.status.replaceAll("_", " ")}
             </Typography>
             <Indicator color={beepStatusMap[ride.status]} />
-          </Stack>
+          </div>
         </Box>
         <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Origin</Typography>
-          <Typography>{ride.origin}</Typography>
+          <Typography type="body" className="font-bold">Origin</Typography>
+          <Typography type="body">{ride.origin}</Typography>
         </Box>
         <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Destination</Typography>
-          <Typography>{ride.destination}</Typography>
+          <Typography type="body" className="font-bold">Destination</Typography>
+          <Typography type="body">{ride.destination}</Typography>
         </Box>
         <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Group Size</Typography>
-          <Typography>{ride.groupSize}</Typography>
+          <Typography type="body" className="font-bold">Group Size</Typography>
+          <Typography type="body">{ride.groupSize}</Typography>
         </Box>
         <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Started</Typography>
-          <Typography style={{ textWrap: "nowrap" }}>
+          <Typography type="body" className="font-bold">Started</Typography>
+          <Typography type="body" className="whitespace-nowrap">
             {new Date(ride.start).toLocaleString()}
           </Typography>
-          <Typography>{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
+          <Typography type="body">{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
         </Box>
-      </Stack>
+      </div>
       <Box sx={{
         width: "100%"
       }}>
@@ -183,14 +161,14 @@ function Ride() {
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
               <Tooltip title={ride.origin} arrow>
-                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+                <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
               </Tooltip>
             </Marker>
           )}
           {destination && (
             <Marker latitude={destination.lat} longitude={destination.lng}>
               <Tooltip title={ride.destination} arrow>
-                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+                <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
               </Tooltip>
             </Marker>
           )}
@@ -231,6 +209,6 @@ function Ride() {
           </Source>
         </Map>
       </Box>
-    </Stack>
+    </div>
   );
 }

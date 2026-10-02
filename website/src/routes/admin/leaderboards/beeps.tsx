@@ -1,8 +1,8 @@
 import React from 'react'
 import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Avatar, Link, Stack, Typography } from '@mui/material';
-import { Table } from '@heroui/react';
+import { Avatar, Link } from '@mui/material';
+import { Table, Typography } from '@heroui/react';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -34,7 +34,7 @@ function Beeps() {
   };
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         count={data?.pages}
         page={page}
@@ -54,12 +54,10 @@ function Beeps() {
               <Table.Row key={user.id}>
                 <Table.Cell>
                   <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-                    <Stack direction="row" spacing={1} sx={{
-                      alignItems: "center"
-                    }}>
+                    <div className="flex items-center gap-2">
                       <Avatar src={user.photo ?? undefined} />
-                      <Typography>{user.first} {user.last}</Typography>
-                    </Stack>
+                      <Typography type="body">{user.first} {user.last}</Typography>
+                    </div>
                   </Link>
                 </Table.Cell>
                 <Table.Cell>{beeps}</Table.Cell>
@@ -78,6 +76,6 @@ function Beeps() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }

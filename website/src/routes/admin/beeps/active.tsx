@@ -12,12 +12,8 @@ import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Table } from "@heroui/react";
-import {
-  Chip,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Table, Typography } from "@heroui/react";
+import { Chip } from "@mui/material";
 
 export const Route = createFileRoute("/admin/beeps/active")({
   component: ActiveBeeps,
@@ -50,13 +46,9 @@ function ActiveBeeps() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-4">
+        <Typography type="h1">
           Beeps
         </Typography>
         <Chip
@@ -65,7 +57,7 @@ function ActiveBeeps() {
           size="small"
           label="in progress"
         />
-      </Stack>
+      </div>
       <PaginationFooter
         count={data?.pages}
         pageSize={data?.pageSize ?? 0}
@@ -107,14 +99,12 @@ function ActiveBeeps() {
                   {DateTime.fromJSDate(beep.start).toRelative()}
                 </Table.Cell>
                 <Table.Cell>
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
+                  <div className="flex items-center gap-2">
                     <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography sx={{ textTransform: "capitalize" }}>
+                    <Typography type="body" className="capitalize">
                       {beep.status.replaceAll("_", " ")}
                     </Typography>
-                  </Stack>
+                  </div>
                 </Table.Cell>
                 <Table.Cell>
                   <BeepMenu beepId={beep.id} />
@@ -132,6 +122,6 @@ function ActiveBeeps() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }

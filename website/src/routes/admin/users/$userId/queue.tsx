@@ -12,9 +12,8 @@ import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Table } from "@heroui/react";
+import { Typography } from "@heroui/react";
 import {
-  Typography,
-  Stack,
 } from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/queue")({
@@ -64,14 +63,12 @@ function QueueTable() {
               <Table.Cell>{beep.groupSize}</Table.Cell>
               <Table.Cell>{DateTime.fromJSDate(beep.start).toRelative()}</Table.Cell>
               <Table.Cell>
-                <Stack direction="row" spacing={1} sx={{
-                  alignItems: "center"
-                }}>
+                <div className="flex items-center gap-2">
                   <Indicator color={beepStatusMap[beep.status]} />
-                  <Typography sx={{ textTransform: "capitalize" }}>
+                  <Typography type="body" className="capitalize">
                     {beep.status.replaceAll("_", " ")}
                   </Typography>
-                </Stack>
+                </div>
               </Table.Cell>
             </Table.Row>
           ))}

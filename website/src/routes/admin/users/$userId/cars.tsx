@@ -12,9 +12,6 @@ import { TableEmpty } from "../../../../components/TableEmpty";
 import { TableError } from "../../../../components/TableError";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Table } from "@heroui/react";
-import {
-  Stack,
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/cars")({
   component: CarsTable,
@@ -46,7 +43,7 @@ function CarsTable() {
   };
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -113,6 +110,6 @@ function CarsTable() {
         onClose={() => setIsDeleteOpen(false)}
         isOpen={isDeleteOpen}
       />
-    </Stack>
+    </div>
   );
 }
