@@ -10,7 +10,6 @@ export const Route = createFileRoute('/admin/users/$userId/edit')({
 
 function Edit() {
   const { userId } = Route.useParams();
-  const navigate = useNavigate({ from: Route.id });
 
   const pathname = useLocation({
     select: (location) => location.pathname,
@@ -43,9 +42,7 @@ function Edit() {
         Edit
       </Typography>
       <div className="flex flex-col gap-6">
-        <Tabs
-          selectedKey={selectedTab}
-        >
+        <Tabs selectedKey={selectedTab}>
           <Tabs.ListContainer className="border-b border-separator">
             <Tabs.List aria-label="Edit user">
               <Tabs.Tab id="details" render={(props: any) => <Link to="/admin/users/$userId/edit/$" params={{ userId }} {...props} />}>

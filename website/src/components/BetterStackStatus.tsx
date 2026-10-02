@@ -12,6 +12,7 @@ export function BetterStackStatus() {
         height="30"
         frameBorder="0"
         scrolling="no"
+        title="Beep Status"
         style={{ colorScheme: "normal" }}
       />
     </div>

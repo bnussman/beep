@@ -28,7 +28,7 @@ function Leaderboards() {
   const selectedTab = tabs.find((tab) => tab.to === pathname) ?? tabs[0];
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
       <Typography type="h1">Leaderboards</Typography>
       <div className="flex flex-col gap-2">
         <Tabs

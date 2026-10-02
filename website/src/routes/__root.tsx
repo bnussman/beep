@@ -81,17 +81,17 @@ function RootDocument({
       <head>
         <HeadContent />
       </head>
-      <body className="flex min-h-screen flex-col gap-4 bg-background">
+      <body className="flex min-h-screen flex-col bg-background">
         <Providers>
-          <div className="flex min-h-lvh pb-4">
+          <div className="flex grow min-h-lvh pb-4">
             <Header />
             <Toast.Provider />
-            <main className="mx-auto flex flex-grow w-full max-w-320 flex-1 flex-col gap-4 px-6 pt-20">
+            <main className="mx-auto flex grow w-full max-w-7xl flex-1 flex-col gap-4 px-6 pt-20">
               <Banners />
               {children}
             </main>
           </div>
-          {showFooter && <Footer />}
+          <Footer />
         </Providers>
         <Scripts />
       </body>

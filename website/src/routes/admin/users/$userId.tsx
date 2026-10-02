@@ -15,6 +15,7 @@ import {
   useLocation,
   useNavigate,
   createFileRoute,
+  Link,
 } from "@tanstack/react-router";
 import { Alert, Avatar, Button, Tabs, toast, Typography } from "@heroui/react";
 import { LinkButton } from "../../../components/LinkButton";
@@ -233,16 +234,16 @@ function User() {
           </Button>
         </div>
       </div>
-      <Tabs
-        selectedKey={tabs[currentTabIndex]}
-        onSelectionChange={(key) => {
-          navigate({ to: `/admin/users/${user.id}/${String(key)}` });
-        }}
-      >
+      <Tabs selectedKey={tabs[currentTabIndex]}>
         <Tabs.ListContainer>
           <Tabs.List aria-label="User sections">
             {tabs.map((tab) => (
-              <Tabs.Tab id={tab} key={tab} className="capitalize">
+              <Tabs.Tab
+                id={tab}
+                key={tab}
+                className="capitalize"
+                render={(props: any) => <Link to={`/admin/users/$userId/${tab}`} params={{ userId }} {...props} />}
+              >
                 {tab}
                 <Tabs.Indicator />
               </Tabs.Tab>
