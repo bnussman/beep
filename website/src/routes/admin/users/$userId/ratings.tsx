@@ -46,7 +46,7 @@ function RatingsTable() {
         <Table.ScrollContainer>
           <Table.Content aria-label="User ratings" className="min-w-250">
             <Table.Header>
-              <Table.Column>Rater</Table.Column>
+              <Table.Column isRowHeader>Rater</Table.Column>
               <Table.Column>Rated</Table.Column>
               <Table.Column>Message</Table.Column>
               <Table.Column>Stars</Table.Column>

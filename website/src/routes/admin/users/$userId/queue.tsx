@@ -42,7 +42,7 @@ function QueueTable() {
       <Table.ScrollContainer>
         <Table.Content aria-label="User queue" className="min-w-225">
           <Table.Header>
-            <Table.Column>Rider</Table.Column>
+            <Table.Column isRowHeader>Rider</Table.Column>
             <Table.Column>Origin</Table.Column>
             <Table.Column>Destination</Table.Column>
             <Table.Column>Group Size</Table.Column>

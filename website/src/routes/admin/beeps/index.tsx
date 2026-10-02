@@ -58,10 +58,10 @@ function Beeps() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Beeps" className="min-w-300">
+          <Table.Content aria-label="Beeps">
             <Table.Header>
               <Table.Column>Beeper</Table.Column>
-              <Table.Column>Rider</Table.Column>
+              <Table.Column isRowHeader>Rider</Table.Column>
               <Table.Column>Origin</Table.Column>
               <Table.Column>Destination</Table.Column>
               <Table.Column>Group</Table.Column>

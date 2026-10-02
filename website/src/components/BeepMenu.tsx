@@ -1,5 +1,5 @@
 import React from "react";
-import { DotsThreeVertical } from "@phosphor-icons/react";
+import { DotsThreeVertical, DotsThreeVerticalIcon } from "@phosphor-icons/react";
 import { Button, Dropdown, Label } from "@heroui/react";
 import { createLink } from "@tanstack/react-router";
 
@@ -15,11 +15,9 @@ export function BeepMenu(props: Props) {
 
   return (
     <Dropdown>
-      <Dropdown.Trigger>
-        <Button isIconOnly variant="tertiary" aria-label="Beep actions">
-          <DotsThreeVertical size={20} />
-        </Button>
-      </Dropdown.Trigger>
+      <Button isIconOnly variant="tertiary" aria-label="Beep actions">
+        <DotsThreeVerticalIcon size={20} />
+      </Button>
       <Dropdown.Popover>
         <Dropdown.Menu>
           <RouterMenuItem

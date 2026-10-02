@@ -27,9 +27,7 @@ export const Route = createFileRoute("/admin/users/$userId")({
 
 function User() {
   const { userId } = Route.useParams();
-
   const queryClient = useQueryClient();
-  const navigate = useNavigate({ from: Route.id });
 
   const {
     data: user,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { createFileRoute, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import { Tabs, Typography } from '@heroui/react';
 
 export const Route = createFileRoute('/admin/leaderboards')({
@@ -7,7 +7,6 @@ export const Route = createFileRoute('/admin/leaderboards')({
 });
 
 function Leaderboards() {
-  const navigate = useNavigate({ from: Route.id });
   const pathname = useLocation({
     select: (location) => location.pathname,
   })
@@ -31,23 +30,12 @@ function Leaderboards() {
     <div className="flex flex-col gap-4">
       <Typography type="h1">Leaderboards</Typography>
       <div className="flex flex-col gap-2">
-        <Tabs
-          selectedKey={selectedTab.id}
-          onSelectionChange={(key) => {
-            const nextTab = tabs.find((tab) => tab.id === key);
-            if (nextTab) {
-              navigate({
-                to: "/admin/leaderboards/$",
-                params: { _splat: nextTab.id },
-                search: { page: 1 },
-              });
-            }
-          }}
-        >
+        <Tabs selectedKey={selectedTab.id}>
           <Tabs.ListContainer className="border-b border-separator">
             <Tabs.List aria-label="Leaderboards">
               {tabs.map((tab) => (
-                <Tabs.Tab id={tab.id} key={tab.id}>
+                <Tabs.Tab id={tab.id} key={tab.id}
+                render={(props: any) => <Link to={`/admin/leaderboards/${tab.id}`} {...props} />}>
                   {tab.label}
                   <Tabs.Indicator />
                 </Tabs.Tab>

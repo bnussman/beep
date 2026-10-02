@@ -103,7 +103,7 @@ function Users() {
                 <Table.Row key={user.id} id={user.id}>
                   <Table.Cell>
                     <Link
-                      to="/admin/users/$userId"
+                      to="/admin/users/$userId/$"
                       params={{ userId: user.id }}
                       className="flex items-center gap-3"
                     >
