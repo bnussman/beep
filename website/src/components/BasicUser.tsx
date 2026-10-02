@@ -1,7 +1,6 @@
 import React from "react";
-import { Typography } from "@heroui/react";
-import { Avatar, Link } from "@mui/material";
-import { Link as RouterLink } from "@tanstack/react-router";
+import { Avatar, Typography } from "@heroui/react";
+import { Link } from "./Link";
 
 interface Props {
   user: {
@@ -16,12 +15,15 @@ export function BasicUser(props: Props) {
   const { user } = props;
 
   return (
-    <Link component={RouterLink} to={`/admin/users/${user.id}`}>
+    <Link to="/admin/users/$userId" params={{ userId: user.id }}>
       <div className="flex items-center gap-3">
-        <Typography>
+        <Typography type="body">
           {user.first} {user.last}
         </Typography>
-        <Avatar src={user.photo ?? undefined} sx={{ width: 32, height: 32 }} />
+        <Avatar className="size-8">
+          <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
+          <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+        </Avatar>
       </div>
     </Link>
   );

@@ -14,9 +14,6 @@ import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Table, Typography } from "@heroui/react";
-import {
-  Box,
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/cars/")({
   component: Cars,
@@ -103,19 +100,13 @@ function Cars() {
                   {DateTime.fromJSDate(car.created).toRelative()}
                 </Table.Cell>
                 <Table.Cell onClick={() => onPhotoClick(car.id)}>
-                  <Box
-                    component="img"
+                  <img
                     src={car.photo}
-                    sx={{
+                    style={{
                       width: 64,
                       height: 64,
-                      borderRadius: 2,
+                      borderRadius: 8,
                       objectFit: "cover",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease-in-out",
-                      ":hover": {
-                        scale: "1.15",
-                      },
                     }}
                   />
                 </Table.Cell>

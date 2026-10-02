@@ -13,8 +13,6 @@ import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
 import { Table } from "@heroui/react";
 import { Typography } from "@heroui/react";
-import {
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/beeps")({
   component: BeepsTable,

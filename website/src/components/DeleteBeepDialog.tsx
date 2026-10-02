@@ -1,14 +1,7 @@
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
-import {
-  Alert,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Alert, AlertDialog, Button } from "@heroui/react";
 
 interface Props {
   isOpen: boolean;
@@ -37,23 +30,38 @@ export function DeleteBeepDialog({ isOpen, onClose, id, onSuccess }: Props) {
   );
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Delete Beep?</DialogTitle>
-      <DialogContent>
-        {error && <Alert severity="error">{error.message}</Alert>}
-        Are you sure you want to delete this beep?
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
-          loading={isPending}
-          onClick={() => deleteBeep(id)}
-          color="error"
-          variant="contained"
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <AlertDialog.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+    >
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <AlertDialog.Header>
+            <AlertDialog.Heading>Delete Beep?</AlertDialog.Heading>
+          </AlertDialog.Header>
+          <AlertDialog.Body className="flex flex-col gap-4">
+            {error && (
+              <Alert status="danger">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>{error.message}</Alert.Title>
+                </Alert.Content>
+              </Alert>
+            )}
+            Are you sure you want to delete this beep?
+          </AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" onPress={onClose}>Cancel</Button>
+            <Button
+              isPending={isPending}
+              variant="danger"
+              onPress={() => deleteBeep(id)}
+            >
+              Delete
+            </Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
   );
 }

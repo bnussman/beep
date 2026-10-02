@@ -2,21 +2,15 @@ import React from "react";
 import { useSubscription } from "../../../utils/subscriptions";
 import { orpc } from "../../../utils/orpc";
 import { BeepersMap } from "../../../components/BeepersMap";
-import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../utils/utils";
-import { Table, Typography } from "@heroui/react";
-import {
-  Box,
-  Link,
-  Avatar,
-  Chip,
-  Tooltip,
-} from "@mui/material";
+import { Table, Typography, Chip, Avatar, Tooltip } from "@heroui/react";
+import { Link } from "../../../components/Link";
 
 export const Route = createFileRoute("/admin/beepers/")({
   component: Beepers,
@@ -62,16 +56,16 @@ function Beepers() {
   })
 
   return (
-    <Box>
+    <div>
       <div className="flex items-center gap-4">
         <Typography type="h1">
           Beepers
         </Typography>
         <Chip
-          variant="outlined"
-          label={`${data?.length ?? 0} beepers`}
-          size="small"
-        />
+          variant="soft"
+        >
+          {data?.length ?? 0} beepers
+        </Chip>
       </div>
       <BeepersMap beepers={data ?? []} />
       <Table>
@@ -91,17 +85,20 @@ function Beepers() {
             {data?.map((beeper) => (
               <Table.Row key={beeper.id}>
                 <Table.Cell>
-                  <Link component={RouterLink} to={`/admin/users/${beeper.id}`}>
+                  <Link to="/admin/users/$userId" params={{ userId: beeper.id }}>
                     <div className="flex items-center gap-2">
-                      <Avatar src={beeper.photo ?? undefined} />
+                      <Avatar>
+                        <Avatar.Image alt={`${beeper.first} ${beeper.last}`} src={beeper.photo || undefined} />
+                        <Avatar.Fallback>{beeper.first.at(0)?.toUpperCase()}{beeper.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                      </Avatar>
                       <Typography type="body">
                         {beeper.first} {beeper.last}
                       </Typography>
-                      <Box sx={{
-                        flexGrow: 1
-                      }} />
+                      <div className="grow" />
                       {beeper.isPremium && (
-                        <Chip label="Premium 👑" size="small" />
+                        <Chip variant="soft">
+                          Premium 👑
+                        </Chip>
                       )}
                     </div>
                   </Link>
@@ -113,12 +110,13 @@ function Beepers() {
                 </Table.Cell>
                 <Table.Cell>
                   {beeper.rating ? (
-                    <Tooltip
-                      title={`User rating of ${getFormattedRating(beeper.rating)}`}
-                    >
+                    <Tooltip>
                       <Typography type="body">
                         {printStars(Number(beeper.rating))}
                       </Typography>
+                      <Tooltip.Content>
+                        User rating of {getFormattedRating(beeper.rating)}
+                      </Tooltip.Content>
                     </Tooltip>
                   ) : (
                     <Typography>N/A</Typography>
@@ -130,6 +128,6 @@ function Beepers() {
           </Table.Content>
         </Table.ScrollContainer>
       </Table>
-    </Box>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from '../../../utils/orpc';
 
-export const Route = createFileRoute('/admin/leaderboards/beeps')({
+export const Route = createFileRoute('/admin/leaderboards/$')({
   component: Beeps,
   validateSearch: (search: Record<string, string>) => {
     return {

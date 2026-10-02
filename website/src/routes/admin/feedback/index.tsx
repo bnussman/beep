@@ -6,16 +6,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
-import { Delete } from "@mui/icons-material";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { DeleteFeedbackDialog } from "../../../components/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
-import { Table, Typography } from "@heroui/react";
-import {
-  IconButton,
-} from "@mui/material";
+import { Button, Table, Typography } from "@heroui/react";
+import { TrashIcon } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/admin/feedback/")({
   component: Feedback,
@@ -80,13 +77,14 @@ function Feedback() {
                   {DateTime.fromJSDate(feedback.created).toRelative()}
                 </Table.Cell>
                 <Table.Cell className="text-right">
-                  <IconButton
-                    color="error"
+                  <Button
+                    isIconOnly
+                    variant="danger"
                     aria-label={`Delete feeback ${feedback.id}`}
                     onClick={() => setSelectedFeedbackId(feedback.id)}
                   >
-                    <Delete />
-                  </IconButton>
+                    <TrashIcon />
+                  </Button>
                 </Table.Cell>
               </Table.Row>
             ))}

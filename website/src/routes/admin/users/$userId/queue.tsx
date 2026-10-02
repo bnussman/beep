@@ -13,8 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Table } from "@heroui/react";
 import { Typography } from "@heroui/react";
-import {
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/users/$userId/queue")({
   component: QueueTable,

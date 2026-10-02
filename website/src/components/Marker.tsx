@@ -1,16 +1,8 @@
 import React from "react";
 import { Marker as _Marker } from "react-map-gl/maplibre";
-import { Link as RouterLink } from "@tanstack/react-router";
 import { QueuePreview } from "./QueuePreview";
-import { Typography } from "@heroui/react";
-import {
-  Link,
-  Avatar,
-  Tooltip,
-  Popover,
-  Button,
-  Divider,
-} from "@mui/material";
+import { Avatar, Popover, Separator, Tooltip, Typography } from "@heroui/react";
+import { Link } from "./Link";
 
 interface Props {
   latitude: number;
@@ -25,63 +17,54 @@ interface Props {
 export function Marker(props: Props) {
   const { latitude, longitude, variant, userId, username, photo, name } = props;
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-
   if (variant === "queue") {
     return (
-      <div>
+      <Popover>
         <_Marker longitude={longitude} latitude={latitude}>
-          <div onClick={handleClick} className="flex flex-col items-center">
-            <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
-            <Typography>{name}</Typography>
-          </div>
+          <Popover.Trigger className="flex flex-col items-center">
+            <Avatar className="size-8">
+              <Avatar.Image alt={name} src={photo ?? undefined} />
+              <Avatar.Fallback>{name.split(" ").map((part) => part.at(0)?.toUpperCase())}</Avatar.Fallback>
+            </Avatar>
+            <Typography type="body">{name}</Typography>
+          </Popover.Trigger>
         </_Marker>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          slotProps={{
-            paper: { sx: { p: 1 } },
-          }}
-        >
-          <div className="flex flex-col gap-2">
-            <Link component={RouterLink} to={`/admin/users/${userId}/queue`}>
+        <Popover.Content placement="right" className="max-w-sm">
+          <Popover.Dialog className="flex flex-col gap-2 p-3">
+            <Link to="/admin/users/$userId/queue" params={{ userId }}>
               <div className="flex items-center gap-2">
-                <Avatar src={photo || ""} />
+                <Avatar>
+                  <Avatar.Image alt={name} src={photo ?? undefined} />
+                  <Avatar.Fallback>{name.split(" ").map((part) => part.at(0)?.toUpperCase())}</Avatar.Fallback>
+                </Avatar>
                 <Typography type="body" className="font-bold">{name}</Typography>
               </div>
             </Link>
-            <Divider />
+            <Separator />
             <QueuePreview userId={userId} />
-            <Divider />
-            <Typography>
+            <Separator />
+            <Typography type="body">
               {latitude.toFixed(3)} {longitude.toFixed(3)}
             </Typography>
-          </div>
-        </Popover>
-      </div>
+          </Popover.Dialog>
+        </Popover.Content>
+      </Popover>
     );
   }
 
   return (
     <_Marker latitude={latitude} longitude={longitude}>
-      <Tooltip title={`${latitude}, ${longitude}`} arrow>
-        <div className="flex flex-col items-center">
-          <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
-          <Typography>{name}</Typography>
-        </div>
+      <Tooltip>
+        <Tooltip.Trigger className="flex flex-col items-center">
+          <Avatar className="size-8">
+            <Avatar.Image alt={name} src={photo ?? undefined} />
+            <Avatar.Fallback>{name.split(" ").map((part) => part.at(0)?.toUpperCase())}</Avatar.Fallback>
+          </Avatar>
+          <Typography type="body">{name}</Typography>
+        </Tooltip.Trigger>
+        <Tooltip.Content showArrow>
+          {latitude}, {longitude}
+        </Tooltip.Content>
       </Tooltip>
     </_Marker>
   );

@@ -1,8 +1,7 @@
 import React from "react";
 import { Loading } from "../../components/Loading";
-import { createFileRoute, createRoute } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import { Alert } from "@mui/material";
+import { createFileRoute } from "@tanstack/react-router";
+import { Alert, Typography } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "../../utils/orpc";
 
@@ -22,7 +21,17 @@ function Redis() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>Error</Alert.Title>
+          <Alert.Description>
+            {error.message}
+          </Alert.Description>
+        </Alert.Content>
+      </Alert>
+    )
   }
 
   return (

@@ -12,8 +12,7 @@ import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Table, Typography } from "@heroui/react";
-import { Chip } from "@mui/material";
+import { Chip, Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/beeps/active")({
   component: ActiveBeeps,
@@ -51,12 +50,9 @@ function ActiveBeeps() {
         <Typography type="h1">
           Beeps
         </Typography>
-        <Chip
-          color="success"
-          variant="outlined"
-          size="small"
-          label="in progress"
-        />
+        <Chip color="success" variant="soft">
+          in progress
+        </Chip>
       </div>
       <PaginationFooter
         count={data?.pages}

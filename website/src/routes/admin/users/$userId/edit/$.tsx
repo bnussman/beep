@@ -5,8 +5,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { useNotifications } from "@toolpad/core";
 import { RouterInputs } from "../../../../../../../api/src";
+import { toast } from "@heroui/react";
 import {
   Alert,
   FormControlLabel,
@@ -22,8 +22,6 @@ export const Route = createFileRoute("/admin/users/$userId/edit/$")({
 });
 
 function EditDetails() {
-  const notifications = useNotifications();
-
   const { userId } = Route.useParams();
 
   const { data: user } = useQuery(
@@ -56,9 +54,7 @@ function EditDetails() {
   const { mutateAsync: editUser } = useMutation(
     orpc.user.editAdmin.mutationOptions({
       onSuccess(user) {
-        notifications.show(`Successfully edited ${user.first}'s profile`, {
-          severity: "success",
-        });
+        toast.success(`Successfully edited ${user.first}'s profile`, { timeout: 5_000 });
       },
       onError(error) {
         if (error instanceof ORPCError && error.data?.issues) {

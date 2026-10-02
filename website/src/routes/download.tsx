@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import { CircularProgress } from "@mui/material";
+import { Typography, Spinner } from "@heroui/react";
 
 export const Route = createFileRoute('/download')({
   component: Download,
@@ -18,7 +17,7 @@ function Download() {
       <Typography type="h2">
         Redirecting you to download
       </Typography>
-      <CircularProgress />
+      <Spinner size="xl" />
     </div>
   );
 }

@@ -13,8 +13,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { Table, Typography } from "@heroui/react";
-import {
-} from "@mui/material";
 
 export const Route = createFileRoute("/admin/ratings/")({
   component: Ratings,

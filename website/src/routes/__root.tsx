@@ -12,7 +12,6 @@ import { Footer } from "../components/Footer";
 import { Banners } from "../components/Banners";
 import { CacheProvider } from "@emotion/react";
 import { theme } from "../utils/theme";
-import { NotificationsProvider } from "@toolpad/core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
   HeadContent,
@@ -67,14 +66,10 @@ function Providers({ children }: { children: React.ReactNode }) {
     <TanstackThemeProvider>
       <CacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>
-          <NotificationsProvider
-            slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
-          >
-            <QueryClientProvider client={queryClient}>
-              <CssBaseline enableColorScheme />
-              {children}
-            </QueryClientProvider>
-          </NotificationsProvider>
+          <QueryClientProvider client={queryClient}>
+            <CssBaseline enableColorScheme />
+            {children}
+          </QueryClientProvider>
         </ThemeProvider>
       </CacheProvider>
     </TanstackThemeProvider>

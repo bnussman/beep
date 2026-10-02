@@ -4,10 +4,9 @@ import { orpc } from "../../../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { SendNotificationConfirmationDialog } from "../../../components/SendNotificationConfirmationDialog";
-import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
+import { toast, Typography } from "@heroui/react";
 import {
   Alert,
   TextField,
@@ -23,8 +22,6 @@ export const Route = createFileRoute('/admin/notifications/')({
 });
 
 function Notifications() {
-  const notifications = useNotifications();
-
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const {
@@ -46,9 +43,7 @@ function Notifications() {
         }
       },
       onSuccess(sent) {
-        notifications.show(`Sent notification to ${sent} users.`, {
-          severity: 'success',
-        });
+        toast.success(`Sent notification to ${sent} users.`, { timeout: 5_000 });
       },
     }));
 
