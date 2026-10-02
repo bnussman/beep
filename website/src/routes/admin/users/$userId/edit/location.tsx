@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Alert, Button, TextField } from "@mui/material";
+import { Alert, Button, FieldError, Input, Label, TextField } from "@heroui/react";
 import { Marker } from "../../../../../components/Marker";
 import { Loading } from "../../../../../components/Loading";
 import { Map } from "../../../../../components/Map";
@@ -60,33 +60,52 @@ function EditLocation() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      {mutateError && <Alert severity="error">{mutateError.message}</Alert>}
+      {mutateError && (
+        <Alert status="danger">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{mutateError.message}</Alert.Title>
+          </Alert.Content>
+        </Alert>
+      )}
       <div className="flex flex-row gap-2">
         <TextField
-          fullWidth
-          label="Longitude"
+          className="min-w-0 flex-1"
           type="number"
-          value={longitude}
-          onChange={(value) => setLongitude(Number(value.target.value))}
-        />
+          value={longitude?.toString() ?? ""}
+          onChange={(value) => setLongitude(Number(value))}
+        >
+          <Label>Longitude</Label>
+          <Input />
+          <FieldError />
+        </TextField>
         <TextField
-          fullWidth
-          label="Latitude"
+          className="min-w-0 flex-1"
           type="number"
-          value={latitude}
-          onChange={(value) => setLatitude(Number(value.target.value))}
-        />
+          value={latitude?.toString() ?? ""}
+          onChange={(value) => setLatitude(Number(value))}
+        >
+          <Label>Latitude</Label>
+          <Input />
+          <FieldError />
+        </TextField>
         <Button
-          onClick={onUpdate}
-          loading={mutateLoading}
-          variant="contained"
-          sx={{ minWidth: "100px" }}
-          disabled={
+          className="min-w-25 self-end"
+          onPress={onUpdate}
+          isPending={mutateLoading}
+          isDisabled={
             latitude === user.location?.latitude &&
             longitude === user.location?.longitude
           }
@@ -94,7 +113,7 @@ function EditLocation() {
           Save
         </Button>
       </div>
-      <div style={{ height: 450, width: "100%" }}>
+      <div className="h-[450px] w-full">
         <Map
           onClick={onMapClick}
           initialViewState={{

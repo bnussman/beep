@@ -6,14 +6,17 @@ import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { RouterInputs } from "../../../../../../../api/src";
-import { toast } from "@heroui/react";
 import {
   Alert,
-  FormControlLabel,
-  Checkbox,
   Button,
+  Checkbox,
+  FieldError,
+  Form,
+  Input,
+  Label,
   TextField,
-} from "@mui/material";
+  toast,
+} from "@heroui/react";
 
 type Values = RouterInputs["user"]["editAdmin"]["data"];
 
@@ -75,53 +78,59 @@ function EditDetails() {
   const keys = values ? Object.keys(values) : [];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col gap-4">
-        {errors.root?.message && (
-          <Alert severity="error">{errors.root.message}</Alert>
-        )}
-        {keys.map((_key) => {
-          const key = _key as keyof Values;
-          const type = typeof user?.[key];
+    <Form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      {errors.root?.message && (
+        <Alert status="danger">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{errors.root.message}</Alert.Title>
+          </Alert.Content>
+        </Alert>
+      )}
+      {keys.map((_key) => {
+        const key = _key as keyof Values;
+        const type = typeof user?.[key];
 
-          return (
-            <Controller
-              control={control}
-              name={key}
-              key={key}
-              render={({ field, fieldState }) => {
-                if (type === "boolean") {
-                  return (
-                    <FormControlLabel
-                      label={key}
-                      control={<Checkbox />}
-                      checked={Boolean(field.value)}
-                      onChange={field.onChange}
-                    />
-                  );
-                }
+        return (
+          <Controller
+            control={control}
+            name={key}
+            key={key}
+            render={({ field, fieldState }) => {
+              if (type === "boolean") {
                 return (
-                  <TextField
-                    label={key}
-                    value={field.value}
+                  <Checkbox
+                    isSelected={Boolean(field.value)}
                     onChange={field.onChange}
-                    error={Boolean(fieldState.error?.message)}
-                    helperText={fieldState.error?.message}
-                  />
+                  >
+                    <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      {key}
+                    </Checkbox.Content>
+                    <FieldError>{fieldState.error?.message}</FieldError>
+                  </Checkbox>
                 );
-              }}
-            />
-          );
-        })}
-        <Button
-          type="submit"
-          variant="contained"
-          loading={isSubmitting}
-          disabled={!isDirty}
-        >
-          Update User
-        </Button>
-      </div>
-    </form>
+              }
+              return (
+                <TextField
+                  {...field}
+                  value={String(field.value ?? "")}
+                  isInvalid={fieldState.error ? true : undefined}
+                >
+                  <Label>{key}</Label>
+                  <Input />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
+              );
+            }}
+          />
+        );
+      })}
+      <Button className="self-end" type="submit" isPending={isSubmitting} isDisabled={!isDirty}>
+        Update User
+      </Button>
+    </Form>
   );
 }

@@ -1,15 +1,8 @@
 import React from "react";
 import { orpc } from "../../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { Typography } from "@heroui/react";
-import {
-  Alert,
-  Box,
-  CircularProgress,
-  Tab,
-  Tabs,
-} from "@mui/material";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { Alert, Spinner, Tabs, Typography } from "@heroui/react";
 
 export const Route = createFileRoute('/admin/users/$userId/edit')({
   component: Edit,
@@ -17,6 +10,7 @@ export const Route = createFileRoute('/admin/users/$userId/edit')({
 
 function Edit() {
   const { userId } = Route.useParams();
+  const navigate = useNavigate({ from: Route.id });
 
   const pathname = useLocation({
     select: (location) => location.pathname,
@@ -27,36 +21,47 @@ function Edit() {
   );
 
   if (isLoading) {
-    return <CircularProgress />;
+    return <Spinner size="xl" />;
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
+  const selectedTab = pathname.endsWith("location") ? "location" : "details";
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
       <Typography type="h1">
         Edit
       </Typography>
       <div className="flex flex-col gap-6">
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs value={pathname.endsWith('location') ? 1 : 0}>
-            <Tab
-              label="Details"
-              LinkComponent={Link}
-              href={`/admin/users/${userId}/edit/details`}
-             />
-            <Tab
-              label="Location"
-              LinkComponent={Link}
-              href={`/admin/users/${userId}/edit/location`}
-            />
-          </Tabs>
-        </Box>
-        <Box>
+        <Tabs
+          selectedKey={selectedTab}
+        >
+          <Tabs.ListContainer className="border-b border-separator">
+            <Tabs.List aria-label="Edit user">
+              <Tabs.Tab id="details" render={(props: any) => <Link to="/admin/users/$userId/edit/$" params={{ userId }} {...props} />}>
+                Details
+                <Tabs.Indicator />
+              </Tabs.Tab>
+              <Tabs.Tab id="location" render={(props: any) => <Link to="/admin/users/$userId/edit/location" params={{ userId }} {...props} />}>
+                Location
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            </Tabs.List>
+          </Tabs.ListContainer>
+        </Tabs>
+        <div>
           <Outlet />
-        </Box>
+        </div>
       </div>
     </div>
   );
