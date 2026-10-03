@@ -39,7 +39,7 @@ function Redis() {
       <Typography type="h1">
         Redis Channels
       </Typography>
-      <ul style={{ paddingLeft: 20 }}>
+      <ul>
         {data?.map((channel) => (
           <li key={channel}>{channel}</li>
         ))}

@@ -40,7 +40,7 @@ function Cars() {
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page: page } });
   };
 
@@ -61,10 +61,10 @@ function Cars() {
       </Typography>
       <PaginationFooter
         results={data?.results}
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -121,10 +121,10 @@ function Cars() {
       </Table>
       <PaginationFooter
         results={data?.results}
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <PhotoDialog
         src={selectedCar?.photo}

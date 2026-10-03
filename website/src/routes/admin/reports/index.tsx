@@ -41,7 +41,7 @@ function Reports() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
@@ -52,10 +52,10 @@ function Reports() {
       </Typography>
       <PaginationFooter
         results={data?.results}
-        count={data?.pages}
+        pages={data?.pages}
         page={page}
-        pageSize={data?.pageSize ?? 0}
-        onChange={setCurrentPage}
+        pageSize={data?.pageSize}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -99,10 +99,10 @@ function Reports() {
       </Table>
       <PaginationFooter
         results={data?.results}
-        count={data?.pages}
+        pages={data?.pages}
         page={page}
-        pageSize={data?.pageSize ?? 0}
-        onChange={setCurrentPage}
+        pageSize={data?.pageSize}
+        onPageChange={setCurrentPage}
       />
       <DeleteReportDialog
         isOpen={selectedReportId !== null}

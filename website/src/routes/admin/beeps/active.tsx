@@ -37,7 +37,7 @@ function ActiveBeeps() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
@@ -52,11 +52,11 @@ function ActiveBeeps() {
         </Chip>
       </div>
       <PaginationFooter
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         page={page}
         results={data?.results}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -109,11 +109,11 @@ function ActiveBeeps() {
         </Table.ScrollContainer>
       </Table>
       <PaginationFooter
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
         page={page}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         results={data?.results}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

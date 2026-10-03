@@ -40,7 +40,7 @@ function Beeps() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
@@ -50,11 +50,11 @@ function Beeps() {
         Beeps
       </Typography>
       <PaginationFooter
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
         page={page}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         results={data?.results}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -131,11 +131,11 @@ function Beeps() {
         </Table.ScrollContainer>
       </Table>
       <PaginationFooter
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
         page={page}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         results={data?.results}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <DeleteBeepDialog
         isOpen={isDeleteOpen}

@@ -36,11 +36,11 @@ function ReportsTable() {
   return (
     <div className="flex flex-col gap-2">
       <PaginationFooter
-        results={data?.results}
-        pageSize={data?.pageSize ?? 0}
         page={currentPage}
-        count={data?.pages}
-        onChange={(e, page) => setCurrentPage(page)}
+        pages={data?.pages}
+        results={data?.results}
+        pageSize={data?.pageSize}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -81,11 +81,11 @@ function ReportsTable() {
         </Table.ScrollContainer>
       </Table>
       <PaginationFooter
-        results={data?.results}
-        pageSize={data?.pageSize ?? 0}
         page={currentPage}
-        count={data?.pages}
-        onChange={(e, page) => setCurrentPage(page)}
+        pages={data?.pages}
+        results={data?.results}
+        pageSize={data?.pageSize}
+        onPageChange={setCurrentPage}
       />
       <DeleteReportDialog
         id={selectedReportId ?? ""}

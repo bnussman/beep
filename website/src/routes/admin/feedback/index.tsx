@@ -36,7 +36,7 @@ function Feedback() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
@@ -51,10 +51,10 @@ function Feedback() {
       </Typography>
       <PaginationFooter
         results={data?.results}
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -94,10 +94,10 @@ function Feedback() {
       </Table>
       <PaginationFooter
         results={data?.results}
-        count={data?.pages}
-        pageSize={data?.pageSize ?? 0}
+        pages={data?.pages}
+        pageSize={data?.pageSize}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <DeleteFeedbackDialog
         isOpen={selectedFeedback !== undefined}

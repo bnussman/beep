@@ -46,10 +46,10 @@ function CarsTable() {
     <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={currentPage}
-        onChange={(e, page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -100,10 +100,10 @@ function CarsTable() {
       </Table>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={currentPage}
-        onChange={(e, page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
       />
       <DeleteCarDialog
         car={selectedCar}

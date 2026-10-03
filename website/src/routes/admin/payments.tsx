@@ -29,7 +29,7 @@ function Payments() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
@@ -40,10 +40,10 @@ function Payments() {
       </Typography>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -80,10 +80,10 @@ function Payments() {
       </Table>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

@@ -26,7 +26,7 @@ export const Route = createFileRoute('/admin/users/')({
 });
 
 function Users() {
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 25;
   const { page, query } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
@@ -41,7 +41,7 @@ function Users() {
     }),
   );
 
-  const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
   };
 
@@ -79,9 +79,9 @@ function Users() {
       <PaginationFooter
         pageSize={PAGE_SIZE}
         results={data?.results}
-        count={data?.pages}
+        pages={data?.pages}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -150,9 +150,9 @@ function Users() {
       <PaginationFooter
         pageSize={PAGE_SIZE}
         results={data?.results}
-        count={data?.pages}
+        pages={data?.pages}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

@@ -29,18 +29,18 @@ function Beeps() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
   return (
     <div className="flex flex-col gap-2">
       <PaginationFooter
-        count={data?.pages}
+        pages={data?.pages}
         page={page}
-        pageSize={data?.pageSize ?? 0}
+        pageSize={data?.pageSize}
         results={data?.results}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -73,11 +73,11 @@ function Beeps() {
         </Table.ScrollContainer>
       </Table>
       <PaginationFooter
-        count={data?.pages}
+        pages={data?.pages}
         page={page}
-        pageSize={data?.pageSize ?? 0}
+        pageSize={data?.pageSize}
         results={data?.results}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

@@ -35,7 +35,7 @@ function Ratings() {
 
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
@@ -46,10 +46,10 @@ function Ratings() {
       </Typography>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
+        pageSize={data?.pageSize}
         page={page}
-        count={data?.pages}
-        onChange={setCurrentPage}
+        pages={data?.pages}
+        onPageChange={setCurrentPage}
       />
       <Table>
         <Table.ScrollContainer>
@@ -89,10 +89,10 @@ function Ratings() {
       </Table>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
+        pageSize={data?.pageSize}
         page={page}
-        count={data?.pages}
-        onChange={setCurrentPage}
+        pages={data?.pages}
+        onPageChange={setCurrentPage}
       />
       <DeleteRatingDialog
         id={selectedRatingId}
