@@ -20,6 +20,13 @@ import { Toast } from "@heroui/react";
 
 export const Route = createRootRoute({
   head: () => ({
+    // Inline so the dark background paints before the external stylesheet loads.
+    styles: [
+      {
+        children:
+          "@media (prefers-color-scheme: dark){html:not(.light):not([data-theme=light]){background:oklch(12% 0.005 285.823);color-scheme:dark}}",
+      },
+    ],
     links: [
       { rel: "icon", href: faviconUrl },
       { rel: "preload", href: fontUrl, as: "style" },
