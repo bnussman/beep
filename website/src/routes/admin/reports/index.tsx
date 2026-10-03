@@ -59,9 +59,9 @@ function Reports() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Reports" className="min-w-275">
+          <Table.Content aria-label="Reports">
             <Table.Header>
-              <Table.Column>Reporter</Table.Column>
+              <Table.Column isRowHeader>Reporter</Table.Column>
               <Table.Column>Reported</Table.Column>
               <Table.Column>Type</Table.Column>
               <Table.Column>Reason</Table.Column>

@@ -58,9 +58,9 @@ function Feedback() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Feedback" className="min-w-175">
+          <Table.Content aria-label="Feedback">
             <Table.Header>
-              <Table.Column>User</Table.Column>
+              <Table.Column isRowHeader>User</Table.Column>
               <Table.Column>Message</Table.Column>
               <Table.Column>Created</Table.Column>
               <Table.Column />

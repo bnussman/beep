@@ -68,9 +68,9 @@ function Cars() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Cars" className="min-w-250">
+          <Table.Content aria-label="Cars">
             <Table.Header>
-              <Table.Column>User</Table.Column>
+              <Table.Column isRowHeader>User</Table.Column>
               <Table.Column>Make</Table.Column>
               <Table.Column>Model</Table.Column>
               <Table.Column>Year</Table.Column>

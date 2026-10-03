@@ -11,7 +11,6 @@ import { TableError } from "../../../components/TableError";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Chip, Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/beeps/active")({
@@ -26,8 +25,6 @@ export const Route = createFileRoute("/admin/beeps/active")({
 function ActiveBeeps() {
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
-
-  const [parent] = useAutoAnimate();
 
   const { data, isLoading, error } = useQuery(
     orpc.beep.beeps.queryOptions({
@@ -63,10 +60,10 @@ function ActiveBeeps() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Active beeps" className="min-w-250">
+          <Table.Content aria-label="Active beeps">
             <Table.Header>
               <Table.Column>Beeper</Table.Column>
-              <Table.Column>Rider</Table.Column>
+              <Table.Column isRowHeader>Rider</Table.Column>
               <Table.Column>Origin</Table.Column>
               <Table.Column>Destination</Table.Column>
               <Table.Column>Group Size</Table.Column>
@@ -74,7 +71,7 @@ function ActiveBeeps() {
               <Table.Column>Status</Table.Column>
               <Table.Column />
             </Table.Header>
-            <Table.Body ref={data !== undefined ? parent : undefined}>
+            <Table.Body >
             {isLoading && <TableLoading colSpan={8} />}
             {error && <TableError colSpan={8} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={8} />}

@@ -38,7 +38,7 @@ function PaymentsTable() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="User payments" className="min-w-200">
+          <Table.Content aria-label="User payments">
             <Table.Header>
               <Table.Column isRowHeader>RevenuCat ID</Table.Column>
               <Table.Column>Product ID</Table.Column>

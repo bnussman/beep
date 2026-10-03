@@ -49,7 +49,7 @@ function Payments() {
         <Table.ScrollContainer>
           <Table.Content aria-label="Payments" className="min-w-225">
             <Table.Header>
-              <Table.Column>User</Table.Column>
+              <Table.Column isRowHeader>User</Table.Column>
               <Table.Column>Product</Table.Column>
               <Table.Column>Price</Table.Column>
               <Table.Column>Store</Table.Column>

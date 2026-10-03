@@ -44,7 +44,7 @@ function BeepsTable() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="User beeps" className="min-w-300">
+          <Table.Content aria-label="User beeps">
             <Table.Header>
               <Table.Column isRowHeader>Beeper</Table.Column>
               <Table.Column>Rider</Table.Column>

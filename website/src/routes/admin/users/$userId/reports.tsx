@@ -44,10 +44,10 @@ function ReportsTable() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="User reports" className="min-w-250">
+          <Table.Content aria-label="User reports">
             <Table.Header>
-              <Table.Column>Reporter</Table.Column>
-              <Table.Column>Reported User</Table.Column>
+              <Table.Column isRowHeader>Reporter</Table.Column>
+              <Table.Column>Reported</Table.Column>
               <Table.Column>Reason</Table.Column>
               <Table.Column>Date</Table.Column>
               <Table.Column>Resolved</Table.Column>

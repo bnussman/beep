@@ -85,7 +85,7 @@ function Users() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Users" className="min-w-160">
+          <Table.Content aria-label="Users">
             <Table.Header>
               <Table.Column isRowHeader>User</Table.Column>
               <Table.Column>Email</Table.Column>

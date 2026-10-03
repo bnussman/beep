@@ -53,10 +53,10 @@ function CarsTable() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="User cars" className="min-w-250">
+          <Table.Content aria-label="User cars">
             <Table.Header>
               <Table.Column>Make</Table.Column>
-              <Table.Column>Model</Table.Column>
+              <Table.Column isRowHeader>Model</Table.Column>
               <Table.Column>Year</Table.Column>
               <Table.Column>Color</Table.Column>
               <Table.Column>Created</Table.Column>
