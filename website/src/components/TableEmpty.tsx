@@ -1,7 +1,5 @@
+import { Table, TableCellProps } from '@heroui/react';
 import React from 'react';
-import Alert from '@mui/material/Alert';
-import TableCell, { TableCellProps } from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
 
 interface Props extends TableCellProps {
   /**
@@ -13,12 +11,10 @@ interface Props extends TableCellProps {
 
 export function TableEmpty({ message, ...props }: Props) {
   return (
-    <TableRow>
-      <TableCell {...props} sx={{ p: 0 }}>
-        <Alert severity="info" sx={{ py: 10, justifyContent: "center"}}>
-          {message ?? "No results"}
-        </Alert>
-      </TableCell>
-    </TableRow>
-  );
+    <Table.Row>
+      <Table.Cell className="py-10 text-center" {...props}>
+        {message ?? "No results"}
+      </Table.Cell>
+    </Table.Row>
+  )
 }

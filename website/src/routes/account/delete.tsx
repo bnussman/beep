@@ -1,25 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { orpc } from "../../utils/orpc";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { useNotifications } from "@toolpad/core";
-import {
-  Link as RouterLink,
-  createFileRoute,
-  useNavigate,
-} from "@tanstack/react-router";
-import {
-  Link,
-  Alert,
-  Typography,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-} from "@mui/material";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Loading } from "../../components/Loading";
+import { toast, Alert, AlertDialog, Button, Typography, useOverlayState } from "@heroui/react";
+import { Link } from "../../components/Link";
 
 export const Route = createFileRoute('/account/delete')({
   component: DeleteAccount,
@@ -27,74 +13,107 @@ export const Route = createFileRoute('/account/delete')({
 
 function DeleteAccount() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const dialog = useOverlayState();
 
-  const { data: user } = useQuery(
-    orpc.user.me.queryOptions({ enabled: false })
+  const { data: user, isPending } = useQuery(
+    orpc.user.me.queryOptions({ retry: false })
   );
 
   const {
-    mutateAsync: deleteAccount,
-    isPending,
-    error,
-  } = useMutation(orpc.user.deleteMyAccount.mutationOptions());
+    mutate: deleteAccount,
+    isPending: isDeletePending,
+    error: deleteError,
+    reset,
+  } = useMutation(
+    orpc.user.deleteMyAccount.mutationOptions({
+      onSuccess() {
+        toast.success("Account deleted successfully.");
+        localStorage.removeItem("user");
+        queryClient.resetQueries();
+        navigate({ to: "/" });
+      },
+    })
+  );
 
-  const notifications = useNotifications();
-  const navigate = useNavigate();
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onDelete = async () => {
-    await deleteAccount();
-    notifications.show("Account deleted.", { severity: "success" });
-    localStorage.removeItem("user");
-    queryClient.resetQueries();
-    navigate({ to: "/" });
+  const onDelete = () => {
+    deleteAccount();
   };
 
+  const onCancel = () => {
+    dialog.close();
+    reset();
+  };
+
+  if (isPending) {
+    return <Loading />;
+  }
+
   return (
-    <Stack spacing={2}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>Delete Account</Typography>
-      <Alert severity="info">
-        When your account is deleted, we try not retain any of your data.
-        It may exist in our database backups for some amount of time.
+    <div className="flex flex-col gap-4">
+      <Typography type="h1">Delete Account</Typography>
+      <Alert status="accent">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>Notice</Alert.Title>
+          <Alert.Description>
+            When your account is deleted, we try not retain any of your data.
+            It may exist in our database backups for some amount of time.
+          </Alert.Description>
+        </Alert.Content>
       </Alert>
       {user ? (
-        <Box>
-          <Button color="error" onClick={() => setIsOpen(true)} variant="contained">
+        <div>
+          <Button variant="danger" onClick={() => dialog.open()}>
             Delete Account
           </Button>
-        </Box>
+        </div>
       ) : (
-        <>
+        <div className="flex flex-col gap-4">
           <Typography>
-            <Link component={RouterLink} to="/login" sx={{ textDecoration: 'underline' }}>
-              Login
-            </Link>{" "}
-            to delete your account.
+            <Link to="/login">Login</Link> to delete your account.
           </Typography>
           <Typography>
             If you are unable to login to your account and still want your
             account/data deleted, please contact{" "}
-            <Link href="mailto:banks@ridebeep.app">banks@ridebeep.app</Link>.
+            <Link to={"mailto:banks@ridebeep.app" as string}>banks@ridebeep.app</Link>.
           </Typography>
-        </>
+        </div>
       )}
-      <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
-        <DialogTitle>Delete Account?</DialogTitle>
-        <DialogContent>
-          {error && <Alert severity="error">{error.message}</Alert>}
-          Are you sure you want to delete your account and all of your Beep
-          data?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsOpen(false)}>Cancel</Button>
-          <Button color="error" variant="contained" loading={isPending} onClick={onDelete}>
-            Delete Account
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Stack>
+      <AlertDialog.Backdrop isKeyboardDismissDisabled={false} isOpen={dialog.isOpen} onOpenChange={dialog.setOpen}>
+        <AlertDialog.Container>
+          <AlertDialog.Dialog>
+            <AlertDialog.Header>
+              <AlertDialog.Heading>Delete Account?</AlertDialog.Heading>
+            </AlertDialog.Header>
+            <AlertDialog.Body className="flex flex-col gap-4">
+              {deleteError && (
+                <Alert status="danger">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Title>Error</Alert.Title>
+                    <Alert.Description>
+                      {deleteError.message}
+                    </Alert.Description>
+                  </Alert.Content>
+                </Alert>
+              )}
+              <p>
+                Are you sure you want to delete your account and all of your Beep
+                data?
+              </p>
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button variant="tertiary" onClick={onCancel}>
+                Nevermind
+              </Button>
+              <Button variant="danger" isPending={isDeletePending} onClick={onDelete}>
+                Delete Account
+              </Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Dialog>
+        </AlertDialog.Container>
+      </AlertDialog.Backdrop>
+    </div>
   );
 }

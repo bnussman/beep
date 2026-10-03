@@ -21,5 +21,8 @@
     "api",
     "test",
     "deploy"
-  ]
+  ],
+  "dependencies": {
+    "tanstack-theme-kit": "^0.2.1"
+  }
 }

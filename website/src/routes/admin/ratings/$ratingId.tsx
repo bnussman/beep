@@ -3,21 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "../../../components/DeleteRatingDialog";
+import { Link } from "../../../components/Link";
 import { DateTime } from "luxon";
 import {
-  Link as RouterLink,
   useRouter,
   createFileRoute,
 } from "@tanstack/react-router";
-import {
-  Alert,
-  Typography,
-  Button,
-  Stack,
-  Grid,
-  Link,
-  Card,
-} from "@mui/material";
+import { Alert, Button, Typography } from "@heroui/react";
 import { orpc } from "../../../utils/orpc";
 import { printStars } from "../../../utils/utils";
 
@@ -44,7 +36,14 @@ function Rating() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   const items = [
@@ -64,7 +63,7 @@ function Rating() {
     {
       title: "Beep",
       content: (
-        <Link component={RouterLink} to={`/admin/beeps/${rating.beep_id}`}>
+        <Link to="/admin/beeps/$beepId" params={{ beepId: rating.beep_id }}>
           {rating.beep_id}
         </Link>
       ),
@@ -72,7 +71,7 @@ function Rating() {
     {
       title: "Stars",
       content: (
-        <Typography>
+        <Typography type="body">
           {printStars(rating.stars)} {rating.stars}
         </Typography>
       ),
@@ -84,48 +83,33 @@ function Rating() {
   ];
 
   return (
-    <Stack spacing={2}>
-      <Stack
-        direction="row"
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row items-center justify-between">
+        <Typography type="h1">
           Rating
         </Typography>
-        <Button
-          color="error"
-          onClick={() => setIsOpen(true)}
-          variant="contained"
-        >
+        <Button variant="danger" onPress={() => setIsOpen(true)}>
           Delete
         </Button>
-      </Stack>
-      <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
-        <Grid container rowSpacing={2} columnSpacing={2}>
+      </div>
+      <div className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
-            <Grid size={{ xs: 12, md: 6 }} key={item.title}>
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "0.95rem"
-                }}>
+            <div key={item.title}>
+              <Typography type="body" className="text-[0.95rem] font-bold">
                 {item.title}
               </Typography>
               {item.content}
-            </Grid>
+            </div>
           ))}
-        </Grid>
-      </Card>
+        </div>
+      </div>
       <DeleteRatingDialog
         id={ratingId}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onSuccess={() => router.history.back()}
       />
-    </Stack>
+    </div>
   );
 }

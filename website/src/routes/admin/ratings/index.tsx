@@ -12,17 +12,7 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import {
-  TableContainer,
-  Table,
-  TableRow,
-  TableCell,
-  TableHead,
-  Stack,
-  Typography,
-  Paper,
-  TableBody,
-} from "@mui/material";
+import { Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/ratings/")({
   component: Ratings,
@@ -50,10 +40,8 @@ function Ratings() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Ratings
       </Typography>
       <PaginationFooter
@@ -63,42 +51,42 @@ function Ratings() {
         count={data?.pages}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Rater</TableCell>
-              <TableCell>Rated</TableCell>
-              <TableCell>Message</TableCell>
-              <TableCell>Stars</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Ratings" className="min-w-250">
+            <Table.Header>
+              <Table.Column>Rater</Table.Column>
+              <Table.Column>Rated</Table.Column>
+              <Table.Column>Message</Table.Column>
+              <Table.Column>Stars</Table.Column>
+              <Table.Column>Date</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {data?.results === 0 && <TableEmpty colSpan={6} />}
             {isLoading && <TableLoading colSpan={6} />}
             {error && <TableError colSpan={6} error={error.message} />}
             {data?.ratings.map((rating) => (
-              <TableRow key={rating.id}>
+              <Table.Row key={rating.id}>
                 <TableCellUser user={rating.rater} />
                 <TableCellUser user={rating.rated} />
-                <TableCell>{rating.message ?? "N/A"}</TableCell>
-                <TableCell>{printStars(rating.stars)}</TableCell>
-                <TableCell>
+                <Table.Cell>{rating.message ?? "N/A"}</Table.Cell>
+                <Table.Cell>{printStars(rating.stars)}</Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(rating.timestamp).toRelative()}
-                </TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
+                </Table.Cell>
+                <Table.Cell className="text-right">
                   <RatingMenu
                     ratingId={rating.id}
                     onDelete={() => setSelectedRatingId(rating.id)}
                   />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -111,6 +99,6 @@ function Ratings() {
         isOpen={selectedRatingId !== undefined}
         onClose={() => setSelectedRatingId(undefined)}
       />
-    </Stack>
+    </div>
   );
 }

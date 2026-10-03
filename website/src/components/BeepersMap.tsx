@@ -1,5 +1,4 @@
 import React from "react";
-import { Box } from "@mui/material";
 import { Marker } from "./Marker";
 import { Map } from "./Map";
 import { RouterOutputs } from "../../../api/src";
@@ -11,13 +10,7 @@ interface Props {
 
 export function BeepersMap({ beepers }: Props) {
   return (
-    <Box
-      sx={{
-        mb: 4,
-        mt: 4,
-        height: "575px",
-        width: "100%"
-      }}>
+    <div className="my-8 h-[575px] w-full">
       <Map
         initialViewState={{
           latitude: 36.215735,
@@ -38,6 +31,6 @@ export function BeepersMap({ beepers }: Props) {
           />
         ))}
       </Map>
-    </Box>
+    </div>
   );
 }

@@ -4,38 +4,20 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
 import { ORPCError } from "@orpc/client";
+import { UserIcon } from "@phosphor-icons/react";
 import {
   Link as RouterLink,
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import {
-  Alert,
-  Avatar,
-  Card,
-  TextField,
-  Link,
-  Typography,
-  Button,
-  Stack,
-  Box,
-  Container,
-} from "@mui/material";
+import { Alert, Avatar, Button, Description, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
+import { RouterInputs } from "../../../api/src";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
 });
 
-interface SignUpFormValues {
-  first: string;
-  last: string;
-  username: string;
-  password: string;
-  email: string;
-  venmo: string;
-  phone: string;
-  photo: File;
-}
+type Values = RouterInputs['auth']['signup'];
 
 function SignUp() {
   const navigate = useNavigate();
@@ -46,7 +28,7 @@ function SignUp() {
     watch,
     setError,
     formState: { errors },
-  } = useForm<SignUpFormValues>({ mode: "onChange" });
+  } = useForm<Values>();
 
   const { mutate, isPending } = useMutation(
     orpc.auth.signup.mutationOptions({
@@ -80,171 +62,149 @@ function SignUp() {
   });
 
   const Image = useMemo(
-    () => (
-      <Avatar
-        src={photo ? URL.createObjectURL(photo) : undefined}
-        sx={{ cursor: "pointer", width: 128, height: 128 }}
-      />
+    () =>
+       (
+      <Avatar size="lg" variant="soft" className="w-32 h-32 cursor-pointer rounded-full">
+        <Avatar.Image src={photo ? URL.createObjectURL(photo) : undefined} />
+        <Avatar.Fallback>
+          <UserIcon size={32} />
+        </Avatar.Fallback>
+      </Avatar>
     ),
     [photo],
   );
 
   return (
-    <Container maxWidth="sm">
-      <Card sx={{ p: 3 }}>
-        <form onSubmit={onSubmit}>
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
-              Sign Up
-            </Typography>
-            <Stack spacing={1}>
-              <Alert severity="info">
-                By signing up, you agree to our{" "}
-                <Link
-                  component={RouterLink}
-                  preload="intent"
-                  to="/terms"
-                  sx={{ textDecoration: "underline" }}
-                >
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link
-                  component={RouterLink}
-                  to="/privacy"
-                  sx={{ textDecoration: "underline" }}
-                >
-                  Privacy Policy
-                </Link>
-              </Alert>
-              {errors.root?.message && (
-                <Alert severity="error">{errors.root.message}</Alert>
+    <div className="flex flex-grow items-center justify-center">
+      <Form className="flex w-full max-w-xl flex-col gap-5" onSubmit={onSubmit}>
+        <Typography type="h1">Sign Up</Typography>
+        <Alert status="accent">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>Agreements and Policies</Alert.Title>
+            <Alert.Description>
+              By signing up, you agree to our{" "}
+              <RouterLink className="underline underline-offset-2" preload="intent" to="/terms">
+                Terms of Service
+              </RouterLink>{" "}
+              and{" "}
+              <RouterLink className="underline underline-offset-2" to="/privacy">
+                Privacy Policy
+              </RouterLink>
+              .
+            </Alert.Description>
+          </Alert.Content>
+        </Alert>
+        {errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{errors.root.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        <div className="flex flex-row gap-6 items-center">
+          <div className="flex flex-col gap-4 flex-grow">
+            <Controller
+              control={control}
+              name="first"
+              render={({ field, fieldState }) => (
+                <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+                  <Label>First Name</Label>
+                  <Input type="text" />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
               )}
-              {errors.photo?.message && (
-                <Alert severity="error">{errors.photo.message}</Alert>
+            />
+            <Controller
+              control={control}
+              name="last"
+              render={({ field, fieldState }) => (
+                <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+                  <Label>Last Name</Label>
+                  <Input type="text" />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
               )}
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <Stack spacing={2} sx={{
-                flexGrow: 1
-              }}>
-                <Controller
-                  control={control}
-                  name="first"
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      label="First Name"
-                      onChange={field.onChange}
-                      helperText={fieldState.error?.message}
-                      error={Boolean(fieldState.error?.message)}
-                      value={field.value}
-                      required
-                    />
-                  )}
+            />
+          </div>
+          <Controller
+            control={control}
+            name="photo"
+            render={({ field, fieldState }) => (
+              <TextField className="flex flex-col items-center gap-2" isRequired isInvalid={fieldState.error ? true : undefined}>
+                <input
+                  accept="image/*"
+                  className="sr-only"
+                  id="photo"
+                  required
+                  name={field.name}
+                  onBlur={field.onBlur}
+                  onChange={(event) => field.onChange(event.target.files?.item(0))}
+                  ref={field.ref}
+                  type="file"
                 />
-                <Controller
-                  control={control}
-                  name="last"
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      label="Last Name"
-                      onChange={field.onChange}
-                      helperText={fieldState.error?.message}
-                      error={Boolean(fieldState.error?.message)}
-                      value={field.value}
-                      required
-                    />
-                  )}
-                />
-              </Stack>
-              <Stack>
                 <label htmlFor="photo">{Image}</label>
-                <Controller
-                  control={control}
-                  name="photo"
-                  render={({ field }) =>
-                    <input hidden id="photo" type="file" onChange={e => field.onChange(e.target.files?.item(0))} />
-                  }
-                />
-              </Stack>
-            </Stack>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Email"
-                  type="email"
-                  onChange={field.onChange}
-                  helperText={
-                    fieldState.error?.message ??
-                    "You must use a .edu to be eligible to use the Beep App"
-                  }
-                  error={Boolean(fieldState.error?.message)}
-                  value={field.value}
-                  required
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="phone"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Phone Number"
-                  type="tel"
-                  onChange={field.onChange}
-                  helperText={fieldState.error?.message}
-                  error={Boolean(fieldState.error?.message)}
-                  value={field.value}
-                  required
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="username"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Username"
-                  type="text"
-                  onChange={field.onChange}
-                  helperText={fieldState.error?.message}
-                  error={Boolean(fieldState.error?.message)}
-                  value={field.value}
-                  required
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="password"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Password"
-                  type="password"
-                  onChange={field.onChange}
-                  helperText={fieldState.error?.message}
-                  error={Boolean(fieldState.error?.message)}
-                  value={field.value}
-                  required
-                />
-              )}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end"
-              }}>
-              <Button type="submit" loading={isPending} variant="contained">
-                Sign Up
-              </Button>
-            </Box>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+                <FieldError >{fieldState.error?.message}</FieldError>
+              </TextField>
+            )}
+          />
+        </div>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <TextField {...field} type="email" isRequired isInvalid={fieldState.error ? true : undefined}>
+              <Label>Email</Label>
+              <Input />
+              <Description>
+                You must use a .edu to be eligible to use the Beep App
+              </Description>
+              <FieldError>
+                {fieldState.error?.message}
+              </FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field, fieldState }) => (
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+              <Label>Phone Number</Label>
+              <Input type="tel" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={control}
+          name="username"
+          render={({ field, fieldState }) => (
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+              <Label>Username</Label>
+              <Input type="text" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={control}
+          name="password"
+          render={({ field, fieldState }) => (
+            <TextField {...field} minLength={6} isRequired isInvalid={fieldState.error ? true : undefined}>
+              <Label>Password</Label>
+              <Input type="password" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button type="submit" isPending={isPending}>
+            Sign Up
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 }

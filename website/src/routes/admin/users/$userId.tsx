@@ -6,27 +6,19 @@ import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteUserDialog } from "../../../components/DeleteUserDialog";
-import { useNotifications } from "@toolpad/core";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  Link,
   Outlet,
   useLocation,
+  useNavigate,
   createFileRoute,
+  Link,
 } from "@tanstack/react-router";
-import {
-  Alert,
-  Avatar,
-  Box,
-  Button,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+import { Alert, Avatar, Button, Tabs, toast, Typography } from "@heroui/react";
+import { LinkButton } from "../../../components/LinkButton";
 
 export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
@@ -35,9 +27,7 @@ export const Route = createFileRoute("/admin/users/$userId")({
 
 function User() {
   const { userId } = Route.useParams();
-
   const queryClient = useQueryClient();
-  const notifications = useNotifications();
 
   const {
     data: user,
@@ -58,15 +48,13 @@ function User() {
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
     orpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
-        notifications.show(
+        toast.success(
           `Payments synced. The user has ${activePayments.length} active payments.`,
-          {
-            severity: "success",
-          },
+          { timeout: 5_000 },
         );
       },
       onError(error) {
-        notifications.show(error.message, { severity: "error" });
+        toast.danger(error.message, { timeout: 5_000 });
       },
     }),
   );
@@ -74,10 +62,10 @@ function User() {
   const { mutate: updateUser, isPending: isVerifyLoading } = useMutation(
     orpc.user.editAdmin.mutationOptions({
       onSuccess() {
-        notifications.show("User verified", { severity: "success" });
+        toast.success("User verified", { timeout: 5_000 });
       },
       onError(error) {
-        notifications.show(error.message, { severity: "error" });
+        toast.danger(error.message, { timeout: 5_000 });
       },
     }),
   );
@@ -85,10 +73,10 @@ function User() {
   const { mutate: sendTestEmail, isPending: isSendingTestEmail } = useMutation(
     orpc.user.sendTestEmail.mutationOptions({
       onSuccess() {
-        notifications.show("Email sent", { severity: "success" });
+        toast.success("Email sent", { timeout: 5_000 });
       },
       onError(error) {
-        notifications.show(error.message, { severity: "error" });
+        toast.danger(error.message, { timeout: 5_000 });
       },
     }),
   );
@@ -137,7 +125,14 @@ function User() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   if (isPending) {
@@ -145,128 +140,118 @@ function User() {
   }
 
   return (
-    <Stack spacing={2}>
-      <Stack
-        direction="row"
-        sx={{
-          gap: 2,
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap"
-        }}>
-        <Stack direction="row" spacing={2} sx={{
-          alignItems: "center"
-        }}>
-          <Avatar
-            src={user.photo ?? ""}
-            onClick={user.photo ? () => setIsPhotoOpen(true) : undefined}
-            sx={{
-              ...(user.photo ? { cursor: "pointer" } : {}),
-              width: 120,
-              height: 120,
-            }}
-          />
-          <Stack>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-row items-center gap-4">
+          <button
+            type="button"
+            aria-label={user.photo ? `View ${user.first} ${user.last}'s photo` : undefined}
+            disabled={!user.photo}
+            onClick={() => setIsPhotoOpen(true)}
+            className="rounded-full disabled:cursor-default"
+          >
+            <Avatar className="size-30 rounded-full">
+              <Avatar.Image
+                alt={`${user.first} ${user.last}`}
+                src={user.photo ?? undefined}
+              />
+              <Avatar.Fallback>
+                {user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}
+              </Avatar.Fallback>
+            </Avatar>
+          </button>
+          <div className="flex flex-col gap-2">
+            <Typography type="h1">
               {user.first} {user.last}
             </Typography>
-            <Typography>{user.username}</Typography>
-            <Typography sx={{
-              fontSize: "12px"
-            }}>{user.id}</Typography>
+            <Typography type="body" className="leading-none">{user.username}</Typography>
+            <Typography type="body" className="text-xs leading-none">{user.id}</Typography>
             {user.created && (
-              <Typography sx={{
-                fontSize: "12px"
-              }}>
+              <Typography type="body" className="text-xs leading-none">
                 Joined {DateTime.fromJSDate(user.created).toRelative()}
               </Typography>
             )}
-          </Stack>
-        </Stack>
-        <Stack
-          direction="row"
-          sx={{
-            gap: 1,
-            flexWrap: "wrap",
-            justifyContent: "flex-end"
-          }}>
-          <Button
-            LinkComponent={Link}
-            href={`/admin/users/${user.id}/edit`}
-            variant="contained"
-            size="small"
+          </div>
+        </div>
+        <div className="flex flex-row flex-wrap justify-end gap-2">
+          <LinkButton
+            to="/admin/users/$userId/edit"
+            params={{ userId: user.id }}
+            size="sm"
+            variant="tertiary"
           >
             Edit
-          </Button>
+          </LinkButton>
           {!user.isEmailVerified && (
             <Button
-              variant="contained"
-              size="small"
-              onClick={onVerify}
-              loading={isVerifyLoading}
+              size="sm"
+              onPress={onVerify}
+              isPending={isVerifyLoading}
             >
               Verify
             </Button>
           )}
           <Button
-            variant="contained"
-            size="small"
-            onClick={() => setIsSendNotificationOpen(true)}
+            size="sm"
+            onPress={() => setIsSendNotificationOpen(true)}
+            variant="tertiary"
           >
             Send Notification
           </Button>
           <Button
-            variant="contained"
-            size="small"
-            onClick={onSyncPayments}
-            loading={isSyncingPayments}
+            size="sm"
+            onPress={onSyncPayments}
+            isPending={isSyncingPayments}
+            variant="tertiary"
           >
             Sync Payments
           </Button>
           <Button
-            variant="contained"
-            size="small"
-            onClick={() => setIsClearOpen(true)}
+            size="sm"
+            onPress={() => setIsClearOpen(true)}
+            variant="tertiary"
           >
             Clear Queue
           </Button>
           {user.role === "admin" && (
             <Button
-              variant="contained"
-              size="small"
-              onClick={() => sendTestEmail({ userId })}
-              loading={isSendingTestEmail}
+              size="sm"
+              onPress={() => sendTestEmail({ userId })}
+              isPending={isSendingTestEmail}
+              variant="tertiary"
             >
               Send Test Email
             </Button>
           )}
           <Button
-            color="error"
-            size="small"
-            variant="contained"
-            onClick={() => setIsDeleteOpen(true)}
+            variant="danger"
+            size="sm"
+            onPress={() => setIsDeleteOpen(true)}
           >
             Delete
           </Button>
-        </Stack>
-      </Stack>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={currentTabIndex}>
-          {tabs.map((tab) => (
-            <Tab
-              label={tab}
-              key={tab}
-              LinkComponent={Link}
-              href={`/admin/users/${user.id}/${tab}`}
-            />
-          ))}
-        </Tabs>
-      </Box>
-      <Box>
+        </div>
+      </div>
+      <Tabs selectedKey={tabs[currentTabIndex]}>
+        <Tabs.ListContainer>
+          <Tabs.List aria-label="User sections">
+            {tabs.map((tab) => (
+              <Tabs.Tab
+                id={tab}
+                key={tab}
+                className="capitalize"
+                render={(props: any) => <Link to={`/admin/users/$userId/${tab}`} params={{ userId }} {...props} />}
+              >
+                {tab}
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+        </Tabs.ListContainer>
+      </Tabs>
+      <div>
         <Outlet />
-      </Box>
+      </div>
       <DeleteUserDialog
         userId={user.id}
         onClose={() => setIsDeleteOpen(false)}
@@ -287,6 +272,6 @@ function User() {
         isOpen={isPhotoOpen}
         onClose={() => setIsPhotoOpen(false)}
       />
-    </Stack>
+    </div>
   );
 }

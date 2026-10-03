@@ -1,9 +1,9 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loading } from "../../components/Loading";
-import { Alert } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "../../utils/orpc";
+import { Alert } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/health")({
   component: Health,
@@ -21,7 +21,17 @@ function Health() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>Error</Alert.Title>
+          <Alert.Description>
+            {error.message}
+          </Alert.Description>
+        </Alert.Content>
+      </Alert>
+    )
   }
 
   return <pre>{JSON.stringify(data, null, 2)}</pre>;

@@ -4,17 +4,17 @@ import { useMutation } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { useForm, Controller } from "react-hook-form";
-import { useNotifications } from "@toolpad/core";
 import {
   Alert,
+  AlertDialog,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  FieldError,
+  Input,
+  Label,
+  TextArea,
   TextField,
-  Stack,
-} from "@mui/material";
+  toast,
+} from "@heroui/react";
 
 interface Props {
   isOpen: boolean;
@@ -26,8 +26,6 @@ type Values = RouterInputs["notification"]["sendNotificationToUser"];
 
 export function SendNotificationDialog(props: Props) {
   const { isOpen, onClose, id } = props;
-  const notifications = useNotifications();
-
   const form = useForm<Values>({
     defaultValues: {
       userId: id,
@@ -39,7 +37,7 @@ export function SendNotificationDialog(props: Props) {
   const { mutateAsync: sendNotification } = useMutation(
     orpc.notification.sendNotificationToUser.mutationOptions({
       onSuccess() {
-        notifications.show("Successfully sent notification!", { severity: "success" });
+        toast.success("Successfully sent notification!", { timeout: 5_000 });
         form.reset();
         onClose();
       },
@@ -60,57 +58,62 @@ export function SendNotificationDialog(props: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogTitle>Send Notification</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{
-            mt: 1
-          }}>
+    <AlertDialog.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+    >
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <AlertDialog.Header>
+              <AlertDialog.Heading>Send Notification</AlertDialog.Heading>
+            </AlertDialog.Header>
+            <AlertDialog.Body className="flex flex-col gap-4">
             {form.formState.errors.root?.message && (
-              <Alert severity="error">{form.formState.errors.root.message}</Alert>
+              <Alert status="danger" className="bg-surface-secondary">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>{form.formState.errors.root.message}</Alert.Title>
+                </Alert.Content>
+              </Alert>
             )}
             <Controller
               control={form.control}
               name="title"
               render={({ field, fieldState }) => (
-                <TextField
-                  label="Title"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                />
+                <TextField {...field} isInvalid={Boolean(fieldState.error)} variant="secondary">
+                  <Label>Title</Label>
+                  <Input />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
               )}
             />
             <Controller
               control={form.control}
               name="body"
               render={({ field, fieldState }) => (
-                <TextField
-                  label="Body"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                  multiline
-                  rows={2}
-                />
+                <TextField {...field} isInvalid={Boolean(fieldState.error)} variant="secondary">
+                  <Label>Body</Label>
+                  <TextArea rows={2} />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
               )}
             />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Close</Button>
-          <Button
-            variant="contained"
-            loading={form.formState.isSubmitting}
-            type="submit"
-          >
-            Send Notification
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button type="button" variant="tertiary" onPress={onClose}>
+                Close
+              </Button>
+              <Button
+                type="submit"
+                isPending={form.formState.isSubmitting}
+              >
+                Send Notification
+              </Button>
+            </AlertDialog.Footer>
+          </form>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
   );
 }

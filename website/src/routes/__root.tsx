@@ -1,23 +1,22 @@
 import React from "react";
-import createCache from "@emotion/cache";
+import stylesUrl from '../styles.css?url'
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
+import { ThemeProvider as TanstackThemeProvider } from 'tanstack-theme-kit'
 import { queryClient } from "../utils/tanstack-query";
-import { Container, ThemeProvider, CssBaseline } from "@mui/material";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Banners } from "../components/Banners";
-import { CacheProvider } from "@emotion/react";
-import { theme } from "../utils/theme";
-import { NotificationsProvider } from "@toolpad/core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
+  useLocation,
 } from "@tanstack/react-router";
+import { Toast } from "@heroui/react";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -25,6 +24,7 @@ export const Route = createRootRoute({
       { rel: "icon", href: faviconUrl },
       { rel: "preload", href: fontUrl, as: "style" },
       { rel: "preload", href: fontUrlBold, as: "style" },
+      { rel: 'stylesheet', href: stylesUrl },
       { rel: "stylesheet", href: fontUrl },
       { rel: "stylesheet", href: fontUrlBold },
     ],
@@ -49,45 +49,48 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
+  const showFooter = pathname !== "/admin" && !pathname.startsWith("/admin/");
+
   return (
-    <RootDocument>
+    <RootDocument showFooter={showFooter}>
       <Outlet />
     </RootDocument>
   );
 }
 
 function Providers({ children }: { children: React.ReactNode }) {
-  const emotionCache = createCache({ key: "css" });
-
   return (
-    <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={theme}>
-        <NotificationsProvider
-          slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
-        >
-          <QueryClientProvider client={queryClient}>
-            <CssBaseline enableColorScheme />
-            {children}
-          </QueryClientProvider>
-        </NotificationsProvider>
-      </ThemeProvider>
-    </CacheProvider>
+    <TanstackThemeProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </TanstackThemeProvider>
   );
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+  children,
+  showFooter,
+}: {
+  children: React.ReactNode;
+  showFooter: boolean;
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body style={{ display: 'flex', flexDirection: 'column', minHeight: "100vh", gap: 16 }}>
+      <body className="flex min-h-screen flex-col bg-background">
         <Providers>
-          <Header />
-          <Container component="main" sx={{ display: 'flex', pt: 10, gap: 2, flexDirection: 'column', flexGrow: 1 }}>
-            <Banners />
-            {children}
-          </Container>
+          <div className="flex grow min-h-lvh pb-4">
+            <Header />
+            <Toast.Provider />
+            <main className="mx-auto flex grow w-full max-w-7xl flex-1 flex-col gap-4 px-6 pt-20">
+              <Banners />
+              {children}
+            </main>
+          </div>
           <Footer />
         </Providers>
         <Scripts />

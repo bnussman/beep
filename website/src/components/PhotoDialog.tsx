@@ -1,6 +1,5 @@
 import React from "react";
-import { Box, Dialog, DialogContent, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Modal } from "@heroui/react";
 
 interface Props {
   isOpen: boolean;
@@ -16,22 +15,27 @@ export function PhotoDialog(props: Props) {
   }
 
   return (
-    <Dialog open={isOpen} onClose={onClose} slotProps={{ paper: { sx: { backgroundColor: 'transparent', borderRadius: '2.5%' } } }}>
-      <IconButton
-        aria-label="close"
-        onClick={onClose}
-        sx={(theme) => ({
-          position: "absolute",
-          right: 8,
-          top: 8,
-          color: theme.palette.grey[200],
-        })}
-      >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent sx={{ p: 0, overflow: 'hidden', backgroundColor: 'transparent' }}>
-        <Box component="img" src={src} sx={{ objectFit: 'cover', width: '100%', height: '100%' }} />
-      </DialogContent>
-    </Dialog>
+    <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Backdrop className="bg-black/80">
+        <Modal.Container className="w-auto max-w-[90vw] bg-transparent p-0 shadow-none">
+          <Modal.Dialog
+            aria-label="User photo"
+            className="relative border-0 bg-transparent p-0 shadow-none"
+          >
+            <Modal.CloseTrigger
+              aria-label="Close photo"
+              className="absolute right-2 top-2 z-10 text-white"
+            />
+            <Modal.Body className="p-0">
+              <img
+                src={src}
+                alt="User photo"
+                className="block max-h-[90vh] max-w-[90vw] rounded object-contain"
+              />
+            </Modal.Body>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

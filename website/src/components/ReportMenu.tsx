@@ -1,7 +1,9 @@
 import React from "react";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "@tanstack/react-router";
+import { DotsThreeVertical } from "@phosphor-icons/react";
+import { Button, Dropdown, Label } from "@heroui/react";
+import { createLink } from "@tanstack/react-router";
+
+const RouterMenuItem = createLink(Dropdown.Item);
 
 interface Props {
   reportId: string;
@@ -9,50 +11,28 @@ interface Props {
 }
 
 export function ReportMenu(props: Props) {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
-    <>
-      <IconButton
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-      >
-        <MenuIcon />
-      </IconButton>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        slotProps={{
-          list: {
-            "aria-labelledby": "basic-button",
-          },
-        }}
-      >
-        <MenuItem component={Link} to={`/admin/reports/${props.reportId}`}>
-          Details
-        </MenuItem>
-        <MenuItem
-          sx={(theme) => ({ color: theme.palette.error.light })}
-          onClick={props.onDelete}
-        >
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
+    <Dropdown>
+      <Dropdown.Trigger>
+        <Button isIconOnly variant="tertiary" aria-label="Report actions">
+          <DotsThreeVertical size={20} />
+        </Button>
+      </Dropdown.Trigger>
+      <Dropdown.Popover>
+        <Dropdown.Menu>
+          <RouterMenuItem
+            id="details"
+            textValue="Details"
+            to="/admin/reports/$reportId"
+            params={{ reportId: props.reportId }}
+          >
+            <Label>Details</Label>
+          </RouterMenuItem>
+          <Dropdown.Item id="delete" textValue="Delete" variant="danger" onAction={props.onDelete}>
+            <Label>Delete</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
   );
 }

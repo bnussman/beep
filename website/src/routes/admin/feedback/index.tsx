@@ -6,24 +6,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
-import { Delete } from "@mui/icons-material";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { DeleteFeedbackDialog } from "../../../components/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
-import {
-  IconButton,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Button, Table, Typography } from "@heroui/react";
+import { TrashIcon } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/admin/feedback/")({
   component: Feedback,
@@ -56,10 +45,8 @@ function Feedback() {
   );
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Feedback
       </Typography>
       <PaginationFooter
@@ -69,41 +56,42 @@ function Feedback() {
         page={page}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Message</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Feedback" className="min-w-175">
+            <Table.Header>
+              <Table.Column>User</Table.Column>
+              <Table.Column>Message</Table.Column>
+              <Table.Column>Created</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {data?.results === 0 && <TableEmpty colSpan={4} />}
             {isLoading && <TableLoading colSpan={4} />}
             {error && <TableError colSpan={4} error={error.message} />}
             {data?.feedback.map((feedback) => (
-              <TableRow key={feedback.id}>
+              <Table.Row key={feedback.id}>
                 <TableCellUser user={feedback.user} />
-                <TableCell>{feedback.message}</TableCell>
-                <TableCell>
+                <Table.Cell>{feedback.message}</Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(feedback.created).toRelative()}
-                </TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
-                  <IconButton
-                    color="error"
+                </Table.Cell>
+                <Table.Cell className="text-right">
+                  <Button
+                    isIconOnly
+                    variant="danger"
                     aria-label={`Delete feeback ${feedback.id}`}
                     onClick={() => setSelectedFeedbackId(feedback.id)}
                   >
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+                    <TrashIcon />
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
         count={data?.pages}
@@ -116,6 +104,6 @@ function Feedback() {
         onClose={() => setSelectedFeedbackId(undefined)}
         feedback={selectedFeedback}
       />
-    </Stack>
+    </div>
   );
 }

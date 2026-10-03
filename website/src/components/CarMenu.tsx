@@ -1,7 +1,6 @@
 import React from "react";
-import MenuIcon from "@mui/icons-material/Menu";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { useNotifications } from "@toolpad/core";
+import { DotsThreeVertical } from "@phosphor-icons/react";
+import { Button, Dropdown, Label, toast } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
@@ -14,17 +13,7 @@ interface Props {
 export function CarMenu(props: Props) {
   const { carId, onDelete } = props;
 
-  const notifications = useNotifications();
   const queryClient = useQueryClient();
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const { mutateAsync: updateCar } = useMutation(
     orpc.car.updateCar.mutationOptions({
@@ -32,49 +21,35 @@ export function CarMenu(props: Props) {
         queryClient.invalidateQueries({
           queryKey: orpc.car.cars.key()
         });
-        notifications.show("Sucessfully made car default for user", {
-          severity: "success",
-        });
-        handleClose();
+        toast.success("Sucessfully made car default for user", { timeout: 5_000 });
       },
       onError(error) {
-        notifications.show(error.message, { severity: "error" });
+        toast.danger(error.message, { timeout: 5_000 });
       },
     }),
   );
 
   return (
-    <>
-      <IconButton
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-      >
-        <MenuIcon />
-      </IconButton>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        slotProps={{
-          list: {
-            "aria-labelledby": "basic-button",
-          },
-        }}
-      >
-        <MenuItem onClick={() => updateCar({ carId, data: { default: true } })}>
-          Make Default
-        </MenuItem>
-        <MenuItem
-          sx={(theme) => ({ color: theme.palette.error.light })}
-          onClick={onDelete}
-        >
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
+    <Dropdown>
+      <Dropdown.Trigger>
+        <Button isIconOnly variant="tertiary" aria-label="Car actions">
+          <DotsThreeVertical size={20} />
+        </Button>
+      </Dropdown.Trigger>
+      <Dropdown.Popover>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            id="make-default"
+            textValue="Make Default"
+            onAction={() => { void updateCar({ carId, data: { default: true } }); }}
+          >
+            <Label>Make Default</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="delete" textValue="Delete" variant="danger" onAction={onDelete}>
+            <Label>Delete</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
   );
 }
