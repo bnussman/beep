@@ -76,16 +76,14 @@ function Users() {
           <SearchField.ClearButton />
         </SearchField.Group>
       </SearchField>
+      <PaginationFooter
+        pageSize={PAGE_SIZE}
+        results={data?.results}
+        count={data?.pages}
+        page={page}
+        onChange={setCurrentPage}
+      />
       <Table>
-        <Table.Footer>
-          <PaginationFooter
-            pageSize={PAGE_SIZE}
-            results={data?.results}
-            count={data?.pages}
-            page={page}
-            onChange={setCurrentPage}
-          />
-        </Table.Footer>
         <Table.ScrollContainer>
           <Table.Content aria-label="Users" className="min-w-160">
             <Table.Header>
@@ -148,16 +146,14 @@ function Users() {
             </Table.Body>
           </Table.Content>
         </Table.ScrollContainer>
-        <Table.Footer>
-          <PaginationFooter
-            pageSize={PAGE_SIZE}
-            results={data?.results}
-            count={data?.pages}
-            page={page}
-            onChange={setCurrentPage}
-          />
-        </Table.Footer>
       </Table>
+      <PaginationFooter
+        pageSize={PAGE_SIZE}
+        results={data?.results}
+        count={data?.pages}
+        page={page}
+        onChange={setCurrentPage}
+      />
     </div>
   );
 }
