@@ -3,7 +3,7 @@ import stylesUrl from '../styles.css?url'
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
-import { ThemeProvider as TanstackThemeProvider } from 'tanstack-theme-kit'
+import { script, ThemeProvider as TanstackThemeProvider } from 'tanstack-theme-kit'
 import { queryClient } from "../utils/tanstack-query";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -12,11 +12,22 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
+  ScriptOnce,
   Scripts,
   createRootRoute,
   useLocation,
 } from "@tanstack/react-router";
 import { Toast } from "@heroui/react";
+
+const themeScript = `(function() {
+  try {
+    const theme = localStorage.getItem('theme') || 'auto';
+    const resolved = theme === 'auto'
+      ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : theme;
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();`
 
 export const Route = createRootRoute({
   head: () => ({
@@ -64,6 +75,7 @@ function RootComponent() {
 function Providers({ children }: { children: React.ReactNode }) {
   return (
     <TanstackThemeProvider>
+      <ScriptOnce children={themeScript} />
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </TanstackThemeProvider>
   );
