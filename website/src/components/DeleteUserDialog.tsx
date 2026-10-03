@@ -2,7 +2,7 @@ import React from "react";
 import { orpc } from "../utils/orpc";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Alert, AlertDialog, Button } from "@heroui/react";
+import { Alert, AlertDialog, Button, toast } from "@heroui/react";
 
 interface Props {
   userId: string;
@@ -25,6 +25,7 @@ export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
     orpc.user.deleteUser.mutationOptions({
       onSuccess() {
         router.history.back();
+        toast.success("User has been successfully deleted."); 
         onClose();
       },
     }),

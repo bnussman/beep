@@ -59,8 +59,8 @@ function ChangePassword() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-xl">
-      <Form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+    <div className="flex grow items-center justify-center">
+      <Form className="flex flex-col gap-4 grow max-w-md" onSubmit={form.handleSubmit(onSubmit)}>
         <Typography type="h1">
           Change Password
         </Typography>
@@ -84,7 +84,7 @@ function ChangePassword() {
           name="password"
           control={form.control}
           render={({ field, fieldState }) => (
-            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+            <TextField {...field} isRequired minLength={6} isInvalid={fieldState.error ? true : undefined}>
               <Label>Password</Label>
               <Input type="password" autoComplete="new-password" />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -95,7 +95,7 @@ function ChangePassword() {
           name="confirmPassword"
           control={form.control}
           render={({ field, fieldState }) => (
-            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+            <TextField {...field} isRequired minLength={6} isInvalid={fieldState.error ? true : undefined}>
               <Label>Confirm Password</Label>
               <Input type="password" autoComplete="new-password" />
               <FieldError>{fieldState.error?.message}</FieldError>

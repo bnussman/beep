@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Alert, Button, FieldError, Input, Label, TextField, Typography } from "@heroui/react";
 import { LinkButton } from "../components/LinkButton";
+import { Link } from "../components/Link";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -75,9 +76,9 @@ function Login() {
           )}
         />
         <div className="flex items-center justify-between gap-4">
-          <LinkButton to="/password/forgot" variant="ghost">
+          <Link to="/password/forgot" className="text-sm">
             Forgot Password
-          </LinkButton>
+          </Link>
           <Button type="submit" isPending={form.formState.isSubmitting}>
             Sign in
           </Button>

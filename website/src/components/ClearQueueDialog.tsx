@@ -46,7 +46,7 @@ export function ClearQueueDialog(props: Props) {
           </AlertDialog.Header>
           <AlertDialog.Body className="flex flex-col gap-4">
             {error && (
-              <Alert status="danger">
+              <Alert status="danger" className="bg-surface-secondary">
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Title>{error.message}</Alert.Title>
