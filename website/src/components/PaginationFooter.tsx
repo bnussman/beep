@@ -25,7 +25,6 @@ export function PaginationFooter(props: Props) {
     if (pages === 1) {
       return [1];
     }
-
     const pageItems: (number | "ellipsis")[] = [];
     pageItems.push(1);
     if (page > 3) {

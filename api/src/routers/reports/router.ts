@@ -6,7 +6,7 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../users/logic";
 import { createReportInputSchema, listReportsInputSchema, updateReportInputSchema } from "./schemas";
-import { getOffsetFromPage, paginationSchema } from "../../utils/pagination";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../../utils/pagination";
 
 export const reportRouter = {
   reports: adminProcedure
@@ -54,7 +54,7 @@ export const reportRouter = {
       return {
         reports,
         page: input.page,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         pageSize: input.pageSize,
         results,
       };

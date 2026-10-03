@@ -2,7 +2,7 @@ import z from "zod";
 import { DEFAULT_PAGE_SIZE } from "./constants";
 
 export function getPagesFromCount(count: number, pageSize: number): number {
-  return Math.ceil(count / pageSize);
+  return Math.max(1, Math.ceil(count / pageSize));
 }
 
 export function getOffsetFromPage(page: number, pageSize: number): number {
