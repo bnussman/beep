@@ -58,7 +58,7 @@ function Users() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <Typography type="h1">
         Users
       </Typography>
