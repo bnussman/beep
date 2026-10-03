@@ -1,5 +1,5 @@
 import React from "react";
-import { DotsThreeVertical } from "@phosphor-icons/react";
+import { DotsThreeVerticalIcon } from "@phosphor-icons/react";
 import { Button, Dropdown, Label, toast } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -31,11 +31,9 @@ export function CarMenu(props: Props) {
 
   return (
     <Dropdown>
-      <Dropdown.Trigger>
-        <Button isIconOnly variant="tertiary" aria-label="Car actions">
-          <DotsThreeVertical size={20} />
-        </Button>
-      </Dropdown.Trigger>
+      <Button isIconOnly variant="tertiary" aria-label="Car actions">
+        <DotsThreeVerticalIcon size={20} />
+      </Button>
       <Dropdown.Popover>
         <Dropdown.Menu>
           <Dropdown.Item

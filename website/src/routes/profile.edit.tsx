@@ -100,125 +100,127 @@ function EditProfile() {
   }
 
   return (
-    <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
-      <Typography type="h1">Edit Profile</Typography>
-      {errors.root?.message && (
-        <Alert status="danger">
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>{errors.root.message}</Alert.Title>
-          </Alert.Content>
-        </Alert>
-      )}
-      {isUploadPending && (
-        <div className="flex items-center gap-2 text-sm" role="status">
-          <Spinner size="sm" />
-          Uploading profile picture
-        </div>
-      )}
-      {uploadError && (
-        <Alert status="danger">
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>{uploadError.message}</Alert.Title>
-          </Alert.Content>
-        </Alert>
-      )}
-      <div className="flex flex-row items-center gap-4">
-        <div className="flex grow flex-col gap-4">
-          <Controller
-            control={control}
-            name="first"
-            render={({ field, fieldState }) => (
-              <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
-                <Label>First Name</Label>
-                <Input />
-                <FieldError>{fieldState.error?.message}</FieldError>
-              </TextField>
-            )}
+    <div className="flex grow items-center justify-center">
+      <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
+        <Typography type="h1">Edit Profile</Typography>
+        {errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{errors.root.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        {isUploadPending && (
+          <div className="flex items-center gap-2 text-sm" role="status">
+            <Spinner size="sm" />
+            Uploading profile picture
+          </div>
+        )}
+        {uploadError && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{uploadError.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        <div className="flex flex-row items-center gap-4">
+          <div className="flex grow flex-col gap-4">
+            <Controller
+              control={control}
+              name="first"
+              render={({ field, fieldState }) => (
+                <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+                  <Label>First Name</Label>
+                  <Input />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
+              )}
+            />
+            <Controller
+              control={control}
+              name="last"
+              render={({ field, fieldState }) => (
+                <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+                  <Label>Last Name</Label>
+                  <Input />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
+              )}
+            />
+          </div>
+          <input
+            accept="image/*"
+            className="sr-only"
+            id="photo"
+            onChange={(event) => uploadPhoto(event.target.files?.[0])}
+            type="file"
           />
-          <Controller
-            control={control}
-            name="last"
-            render={({ field, fieldState }) => (
-              <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
-                <Label>Last Name</Label>
-                <Input />
-                <FieldError>{fieldState.error?.message}</FieldError>
-              </TextField>
-            )}
-          />
+          <label htmlFor="photo" className="cursor-pointer">
+            <Avatar size="lg" variant="soft" className="size-32 rounded-full">
+              <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} className="object-contain" />
+              <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+            </Avatar>
+          </label>
         </div>
-        <input
-          accept="image/*"
-          className="sr-only"
-          id="photo"
-          onChange={(event) => uploadPhoto(event.target.files?.[0])}
-          type="file"
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <TextField {...field} type="email" isInvalid={fieldState.error ? true : undefined}>
+              <Label>Email</Label>
+              <Input />
+              <Description>
+                {(fieldState.error?.message ?? user.isEmailVerified)
+                  ? user.isStudent
+                    ? "Your email is verified and you are a student"
+                    : "Your email is verified"
+                  : "Your email is not verified"}
+              </Description>
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
         />
-        <label htmlFor="photo" className="cursor-pointer">
-          <Avatar size="lg" variant="soft" className="size-32 rounded-full">
-            <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
-            <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
-          </Avatar>
-        </label>
-      </div>
-      <Controller
-        control={control}
-        name="email"
-        render={({ field, fieldState }) => (
-          <TextField {...field} type="email" isInvalid={fieldState.error ? true : undefined}>
-            <Label>Email</Label>
-            <Input />
-            <Description>
-              {(fieldState.error?.message ?? user.isEmailVerified)
-                ? user.isStudent
-                  ? "Your email is verified and you are a student"
-                  : "Your email is verified"
-                : "Your email is not verified"}
-            </Description>
-            <FieldError>{fieldState.error?.message}</FieldError>
-          </TextField>
-        )}
-      />
-      <Controller
-        control={control}
-        name="phone"
-        render={({ field, fieldState }) => (
-          <TextField {...field} type="tel" isInvalid={fieldState.error ? true : undefined}>
-            <Label>Phone</Label>
-            <Input />
-            <FieldError>{fieldState.error?.message}</FieldError>
-          </TextField>
-        )}
-      />
-      <Controller
-        control={control}
-        name="venmo"
-        render={({ field, fieldState }) => (
-          <TextField {...field} value={field.value ?? ""} isInvalid={fieldState.error ? true : undefined}>
-            <Label>Venmo</Label>
-            <Input />
-            <FieldError>{fieldState.error?.message}</FieldError>
-          </TextField>
-        )}
-      />
-      <Controller
-        control={control}
-        name="cashapp"
-        render={({ field, fieldState }) => (
-          <TextField {...field} value={field.value ?? ""} isInvalid={fieldState.error ? true : undefined}>
-            <Label>Cash App</Label>
-            <Input />
-            <FieldError>{fieldState.error?.message}</FieldError>
-          </TextField>
-        )}
-      />
-      <div className="flex justify-end">
-        <Button type="submit" isPending={isSubmitting} isDisabled={!isDirty}>
-          Save Profile
-        </Button>
-      </div>
-    </Form>
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field, fieldState }) => (
+            <TextField {...field} type="tel" isInvalid={fieldState.error ? true : undefined}>
+              <Label>Phone</Label>
+              <Input />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={control}
+          name="venmo"
+          render={({ field, fieldState }) => (
+            <TextField {...field} value={field.value ?? ""} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Venmo</Label>
+              <Input />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={control}
+          name="cashapp"
+          render={({ field, fieldState }) => (
+            <TextField {...field} value={field.value ?? ""} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Cash App</Label>
+              <Input />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button type="submit" isPending={isSubmitting} isDisabled={!isDirty}>
+            Save Profile
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 }

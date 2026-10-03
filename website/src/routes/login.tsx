@@ -39,8 +39,8 @@ function Login() {
   );
 
   return (
-    <div className="flex flex-grow items-center justify-center">
-      <form className="flex flex-col gap-5 flex-grow max-w-md" onSubmit={form.handleSubmit((values) => login(values))}>
+    <div className="flex grow items-center justify-center">
+      <form className="flex flex-col gap-5 grow max-w-md" onSubmit={form.handleSubmit((values) => login(values))}>
         <Typography type="h1">Login</Typography>
         {form.formState.errors.root?.message && (
           <Alert status="danger">
