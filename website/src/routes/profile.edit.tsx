@@ -159,8 +159,8 @@ function EditProfile() {
               type="file"
             />
             <label htmlFor="photo" className="cursor-pointer">
-              <Avatar size="lg" variant="soft" className="size-32 rounded-full">
-                <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} className="object-contain" />
+              <Avatar size="lg" variant="soft" className="w-32 h-32 rounded-full">
+                <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} className="object-cover" />
                 <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
               </Avatar>
             </label>

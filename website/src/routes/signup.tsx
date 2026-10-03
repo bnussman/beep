@@ -65,7 +65,7 @@ function SignUp() {
     () =>
        (
       <Avatar size="lg" variant="soft" className="w-32 h-32 cursor-pointer rounded-full">
-        <Avatar.Image src={photo ? URL.createObjectURL(photo) : undefined} className="object-contain" />
+        <Avatar.Image src={photo ? URL.createObjectURL(photo) : undefined} className="object-cover" />
         <Avatar.Fallback>
           <UserIcon size={32} />
         </Avatar.Fallback>
