@@ -21,10 +21,7 @@ import { Toast } from "@heroui/react";
 
 const themeScript = `(function() {
   try {
-    const theme = localStorage.getItem('theme') || 'auto';
-    const resolved = theme === 'auto'
-      ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-      : theme;
+    const theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme);
   } catch (e) {}
 })();`
