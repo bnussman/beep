@@ -3,21 +3,14 @@ import stylesUrl from '../styles.css?url'
 import faviconUrl from "../assets/favicon.png?url";
 import fontUrl from "@fontsource/poppins/400.css?url";
 import fontUrlBold from "@fontsource/poppins/700.css?url";
-import { script, ThemeProvider as TanstackThemeProvider } from 'tanstack-theme-kit'
+import { ThemeProvider } from 'tanstack-theme-kit'
 import { queryClient } from "../utils/tanstack-query";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Banners } from "../components/Banners";
-import { QueryClientProvider } from "@tanstack/react-query";
-import {
-  HeadContent,
-  Outlet,
-  ScriptOnce,
-  Scripts,
-  createRootRoute,
-  useLocation,
-} from "@tanstack/react-router";
 import { Toast } from "@heroui/react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 
 const themeScript = `(function() {
   try {
@@ -56,57 +49,29 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  component: RootComponent,
+  component: RootDocument,
 });
 
-function RootComponent() {
-  const pathname = useLocation({
-    select: (location) => location.pathname,
-  });
-  const showFooter = pathname !== "/admin" && !pathname.startsWith("/admin/");
-
-  return (
-    <RootDocument showFooter={showFooter}>
-      <Outlet />
-    </RootDocument>
-  );
-}
-
-function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <TanstackThemeProvider>
-      <ScriptOnce children={themeScript} />
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </TanstackThemeProvider>
-  );
-}
-
-function RootDocument({
-  children,
-  showFooter,
-}: {
-  children: React.ReactNode;
-  showFooter: boolean;
-}) {
+function RootDocument() {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body className="flex min-h-screen flex-col bg-background">
-        <Providers>
-          <div className="flex grow min-h-lvh pb-4">
+      <body className="bg-background">
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
             <Header />
             <Toast.Provider />
-            <main className="mx-auto flex grow w-full max-w-7xl flex-1 flex-col gap-4 px-6 pt-20">
+            <main className="flex flex-col gap-4 min-h-screen max-w-7xl mx-auto pb-4 pt-20 px-4">
               <Banners />
-              {children}
+              <Outlet />
             </main>
-          </div>
-          <Footer />
-        </Providers>
+            <Footer />
+          </QueryClientProvider>
+        </ThemeProvider>
         <Scripts />
       </body>
-    </html>
+    </html >
   );
 }

@@ -65,7 +65,7 @@ function SignUp() {
     () =>
        (
       <Avatar size="lg" variant="soft" className="w-32 h-32 cursor-pointer rounded-full">
-        <Avatar.Image src={photo ? URL.createObjectURL(photo) : undefined} />
+        <Avatar.Image src={photo ? URL.createObjectURL(photo) : undefined} className="object-contain" />
         <Avatar.Fallback>
           <UserIcon size={32} />
         </Avatar.Fallback>
@@ -75,7 +75,7 @@ function SignUp() {
   );
 
   return (
-    <div className="flex flex-grow items-center justify-center">
+    <div className="flex grow items-center justify-center">
       <Form className="flex w-full max-w-xl flex-col gap-5" onSubmit={onSubmit}>
         <Typography type="h1">Sign Up</Typography>
         <Alert status="accent">
@@ -103,8 +103,8 @@ function SignUp() {
             </Alert.Content>
           </Alert>
         )}
-        <div className="flex flex-row gap-6 items-center">
-          <div className="flex flex-col gap-4 flex-grow">
+        <div className="flex flex-row items-center gap-3 sm:gap-6">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
             <Controller
               control={control}
               name="first"
@@ -132,7 +132,7 @@ function SignUp() {
             control={control}
             name="photo"
             render={({ field, fieldState }) => (
-              <TextField className="flex flex-col items-center gap-2" isRequired isInvalid={fieldState.error ? true : undefined}>
+              <TextField className="flex shrink-0 flex-col items-center gap-2" isRequired isInvalid={fieldState.error ? true : undefined}>
                 <input
                   accept="image/*"
                   className="sr-only"
@@ -145,7 +145,7 @@ function SignUp() {
                   type="file"
                 />
                 <label htmlFor="photo">{Image}</label>
-                <FieldError >{fieldState.error?.message}</FieldError>
+                <FieldError>{fieldState.error?.message}</FieldError>
               </TextField>
             )}
           />

@@ -101,7 +101,7 @@ function EditProfile() {
 
   return (
     <div className="flex grow items-center justify-center">
-      <Form className="flex flex-col gap-4" onSubmit={onSubmit}>
+      <Form className="flex w-full min-w-0 max-w-xl flex-col gap-4" onSubmit={onSubmit}>
         <Typography type="h1">Edit Profile</Typography>
         {errors.root?.message && (
           <Alert status="danger">
@@ -125,8 +125,8 @@ function EditProfile() {
             </Alert.Content>
           </Alert>
         )}
-        <div className="flex flex-row items-center gap-4">
-          <div className="flex grow flex-col gap-4">
+        <div className="flex min-w-0 flex-row items-center gap-4">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
             <Controller
               control={control}
               name="first"
@@ -150,19 +150,21 @@ function EditProfile() {
               )}
             />
           </div>
-          <input
-            accept="image/*"
-            className="sr-only"
-            id="photo"
-            onChange={(event) => uploadPhoto(event.target.files?.[0])}
-            type="file"
-          />
-          <label htmlFor="photo" className="cursor-pointer">
-            <Avatar size="lg" variant="soft" className="size-32 rounded-full">
-              <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} className="object-contain" />
-              <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
-            </Avatar>
-          </label>
+          <div className="shrink-0">
+            <input
+              accept="image/*"
+              className="sr-only"
+              id="photo"
+              onChange={(event) => uploadPhoto(event.target.files?.[0])}
+              type="file"
+            />
+            <label htmlFor="photo" className="cursor-pointer">
+              <Avatar size="lg" variant="soft" className="size-32 rounded-full">
+                <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} className="object-contain" />
+                <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+              </Avatar>
+            </label>
+          </div>
         </div>
         <Controller
           control={control}
