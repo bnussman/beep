@@ -29,22 +29,23 @@ function Leaderboards() {
   return (
     <div className="flex flex-col gap-4">
       <Typography type="h1">Leaderboards</Typography>
-      <div className="flex flex-col gap-2">
-        <Tabs selectedKey={selectedTab.id}>
-          <Tabs.ListContainer className="border-b border-separator">
-            <Tabs.List aria-label="Leaderboards">
-              {tabs.map((tab) => (
-                <Tabs.Tab id={tab.id} key={tab.id}
-                render={(props: any) => <Link to={`/admin/leaderboards/${tab.id}`} {...props} />}>
-                  {tab.label}
-                  <Tabs.Indicator />
-                </Tabs.Tab>
-              ))}
-            </Tabs.List>
-          </Tabs.ListContainer>
-        </Tabs>
-        <Outlet />
-      </div>
+      <Tabs selectedKey={selectedTab.id}>
+        <Tabs.ListContainer>
+          <Tabs.List aria-label="Leaderboards">
+            {tabs.map((tab) => (
+              <Tabs.Tab
+                id={tab.id}
+                key={tab.id}
+                render={(props: any) => <Link to={tab.to} {...props} />}
+              >
+                {tab.label}
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+        </Tabs.ListContainer>
+      </Tabs>
+      <Outlet />
     </div>
   );
 }

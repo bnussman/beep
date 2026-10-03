@@ -30,7 +30,7 @@ export function AdminMenu() {
           <RouterMenuItem
             id="leaderboards"
             textValue="Leaderboards"
-            to="/admin/leaderboards"
+            to="/admin/leaderboards/$"
             search={{ page: 1 }}
           >
             <Label>Leaderboards</Label>

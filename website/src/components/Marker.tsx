@@ -29,8 +29,8 @@ export function Marker(props: Props) {
             <Typography type="body">{name}</Typography>
           </Popover.Trigger>
         </_Marker>
-        <Popover.Content placement="right" className="max-w-sm">
-          <Popover.Dialog className="flex flex-col gap-2 p-3">
+        <Popover.Content placement="right">
+          <Popover.Dialog className="flex flex-col gap-2 p-3 min-w-64">
             <Link to="/admin/users/$userId/queue" params={{ userId }}>
               <div className="flex items-center gap-2">
                 <Avatar>

@@ -56,7 +56,6 @@ function Notifications() {
   });
 
   return (
-    <div className="rounded-lg border border-separator bg-surface p-6">
       <div className="flex flex-col gap-4">
         <Typography type="h1">
           Notifications
@@ -85,7 +84,7 @@ function Notifications() {
           control={control}
           name="title"
           render={({ field, fieldState }) => (
-            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Title</Label>
               <Input />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -107,7 +106,7 @@ function Notifications() {
           control={control}
           name="body"
           render={({ field, fieldState }) => (
-            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Body</Label>
               <TextArea rows={2} />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -128,6 +127,5 @@ function Notifications() {
           onConfirm={onConfirm}
         />
       </div>
-    </div>
   );
 }

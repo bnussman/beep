@@ -10,6 +10,8 @@ import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { Alert, Avatar, Button, Tabs, toast, Typography } from "@heroui/react";
+import { LinkButton } from "../../../components/LinkButton";
 import {
   Outlet,
   useLocation,
@@ -17,8 +19,6 @@ import {
   createFileRoute,
   Link,
 } from "@tanstack/react-router";
-import { Alert, Avatar, Button, Tabs, toast, Typography } from "@heroui/react";
-import { LinkButton } from "../../../components/LinkButton";
 
 export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
@@ -49,8 +49,8 @@ function User() {
     orpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
         toast.success(
-          `Payments synced. The user has ${activePayments.length} active payments.`,
-          { timeout: 5_000 },
+          `Payments synced successfully`,
+          { description: `The user has ${activePayments.length} active payments.` },
         );
       },
       onError(error) {
