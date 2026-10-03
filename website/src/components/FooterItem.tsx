@@ -11,7 +11,11 @@ export function FooterItem({ item }: Props) {
     const isExternal = item.href.startsWith('http');
 
     return (
-      <Link to={item.href} target={isExternal ? "_blank" : undefined}>
+      <Link
+        to={item.href}
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noopener noreferrer" : undefined}
+      >
         {item.content}
       </Link>
     );

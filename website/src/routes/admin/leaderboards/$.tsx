@@ -1,29 +1,29 @@
-import React from "react";
+import React from 'react'
+import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
+import { PaginationFooter } from '../../../components/PaginationFooter';
+import { Link } from '../../../components/Link';
+import { Avatar, Table, Typography } from '@heroui/react';
+import { TableLoading } from '../../../components/TableLoading';
+import { TableError } from '../../../components/TableError';
+import { keepPreviousData } from '@tanstack/react-query';
 import { useQuery } from "@tanstack/react-query";
-import { Link as RouterLink, useNavigate, createFileRoute } from "@tanstack/react-router";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { Link } from "../../../components/Link";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableError } from "../../../components/TableError";
-import { keepPreviousData } from "@tanstack/react-query";
-import { Avatar, Table, Typography } from "@heroui/react";
-import { orpc } from "../../../utils/orpc";
+import { orpc } from '../../../utils/orpc';
 
-export const Route = createFileRoute('/admin/leaderboards/rides')({
-  component: Rides,
+export const Route = createFileRoute('/admin/leaderboards/$')({
+  component: Beeps,
   validateSearch: (search: Record<string, string>) => {
     return {
       page: Number(search?.page ?? 1),
-    };
+    }
   },
 });
 
-function Rides() {
+function Beeps() {
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
   const { isLoading, error, data } = useQuery(
-    orpc.user.usersWithRides.queryOptions({
+    orpc.user.usersWithBeeps.queryOptions({
       input: { page },
       placeholderData: keepPreviousData,
     }),
@@ -44,15 +44,15 @@ function Rides() {
       />
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Users by ride count">
+          <Table.Content aria-label="Users by beep count">
             <Table.Header>
               <Table.Column isRowHeader>User</Table.Column>
-              <Table.Column>Rides</Table.Column>
+              <Table.Column>Beeps</Table.Column>
             </Table.Header>
             <Table.Body>
               {isLoading && <TableLoading colSpan={2} />}
               {error && <TableError colSpan={2} error={error.message} />}
-              {data?.users?.map(({ user, rides }) => (
+              {data?.users?.map(({ user, beeps }) => (
                 <Table.Row key={user.id}>
                   <Table.Cell>
                     <Link to="/admin/users/$userId/$" params={{ userId: user.id }}>
@@ -61,13 +61,11 @@ function Rides() {
                           <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
                           <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
                         </Avatar>
-                        <Typography type="body">
-                          {user.first} {user.last}
-                        </Typography>
+                        <Typography type="body">{user.first} {user.last}</Typography>
                       </div>
                     </Link>
                   </Table.Cell>
-                  <Table.Cell>{rides}</Table.Cell>
+                  <Table.Cell>{beeps}</Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>

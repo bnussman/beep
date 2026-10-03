@@ -6,16 +6,7 @@ import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
-import {
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Table } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/payments")({
   component: PaymentsTable,
@@ -37,7 +28,7 @@ function PaymentsTable() {
   );
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -45,37 +36,37 @@ function PaymentsTable() {
         page={currentPage}
         onChange={(_e, page) => setCurrentPage(page)}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>RevenuCat ID</TableCell>
-              <TableCell>Product ID</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Purchased</TableCell>
-              <TableCell>Expires</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="User payments">
+            <Table.Header>
+              <Table.Column isRowHeader>RevenuCat ID</Table.Column>
+              <Table.Column>Product ID</Table.Column>
+              <Table.Column>Price</Table.Column>
+              <Table.Column>Purchased</Table.Column>
+              <Table.Column>Expires</Table.Column>
+            </Table.Header>
+            <Table.Body>
             {isLoading && <TableLoading colSpan={5} />}
             {error && <TableError colSpan={5} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={5} />}
             {data?.payments.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell>{payment.id}</TableCell>
-                <TableCell>{payment.productId}</TableCell>
-                <TableCell>{payment.price}</TableCell>
-                <TableCell>
+              <Table.Row key={payment.id}>
+                <Table.Cell>{payment.id}</Table.Cell>
+                <Table.Cell>{payment.productId}</Table.Cell>
+                <Table.Cell>{payment.price}</Table.Cell>
+                <Table.Cell>
                   {new Date(payment.created).toLocaleString()}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {new Date(payment.expires).toLocaleString()}
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -83,6 +74,6 @@ function PaymentsTable() {
         page={currentPage}
         onChange={(_e, page) => setCurrentPage(page)}
       />
-    </Stack>
+    </div>
   );
 }

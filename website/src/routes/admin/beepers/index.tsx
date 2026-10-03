@@ -2,29 +2,15 @@ import React from "react";
 import { useSubscription } from "../../../utils/subscriptions";
 import { orpc } from "../../../utils/orpc";
 import { BeepersMap } from "../../../components/BeepersMap";
-import { Link as RouterLink, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../utils/utils";
-import {
-  Paper,
-  Box,
-  Link,
-  Typography,
-  Stack,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableContainer,
-  Avatar,
-  Chip,
-  Tooltip,
-} from "@mui/material";
+import { Table, Typography, Chip, Avatar, Tooltip } from "@heroui/react";
+import { Link } from "../../../components/Link";
 
 export const Route = createFileRoute("/admin/beepers/")({
   component: Beepers,
@@ -70,80 +56,78 @@ function Beepers() {
   })
 
   return (
-    <Box>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div>
+      <div className="flex items-center gap-4">
+        <Typography type="h1">
           Beepers
         </Typography>
         <Chip
-          variant="outlined"
-          label={`${data?.length ?? 0} beepers`}
-          size="small"
-        />
-      </Stack>
+          variant="soft"
+        >
+          {data?.length ?? 0} beepers
+        </Chip>
+      </div>
       <BeepersMap beepers={data ?? []} />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Beeper</TableCell>
-              <TableCell>Queue size</TableCell>
-              <TableCell>Ride capacity</TableCell>
-              <TableCell>Rates</TableCell>
-              <TableCell>Rating</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Beepers" className="min-w-175">
+            <Table.Header>
+              <Table.Column isRowHeader>Beeper</Table.Column>
+              <Table.Column>Queue size</Table.Column>
+              <Table.Column>Ride capacity</Table.Column>
+              <Table.Column>Rates</Table.Column>
+              <Table.Column>Rating</Table.Column>
+            </Table.Header>
+            <Table.Body>
             {data?.length === 0 && <TableEmpty colSpan={5} />}
             {error && <TableError colSpan={5} error={error.message} />}
             {isLoading && <TableLoading colSpan={5} />}
             {data?.map((beeper) => (
-              <TableRow key={beeper.id}>
-                <TableCell>
-                  <Link component={RouterLink} to={`/admin/users/${beeper.id}`}>
-                    <Stack direction="row" spacing={1} sx={{
-                      alignItems: "center"
-                    }}>
-                      <Avatar src={beeper.photo ?? undefined} />
-                      <Typography>
+              <Table.Row key={beeper.id}>
+                <Table.Cell>
+                  <Link to="/admin/users/$userId" params={{ userId: beeper.id }}>
+                    <div className="flex items-center gap-2">
+                      <Avatar>
+                        <Avatar.Image alt={`${beeper.first} ${beeper.last}`} src={beeper.photo || undefined} />
+                        <Avatar.Fallback>{beeper.first.at(0)?.toUpperCase()}{beeper.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                      </Avatar>
+                      <Typography type="body">
                         {beeper.first} {beeper.last}
                       </Typography>
-                      <Box sx={{
-                        flexGrow: 1
-                      }} />
+                      <div className="grow" />
                       {beeper.isPremium && (
-                        <Chip label="Premium 👑" size="small" />
+                        <Chip variant="soft">
+                          Premium 👑
+                        </Chip>
                       )}
-                    </Stack>
+                    </div>
                   </Link>
-                </TableCell>
-                <TableCell>{beeper.queueSize} riders</TableCell>
-                <TableCell>{beeper.capacity} riders</TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>{beeper.queueSize} riders</Table.Cell>
+                <Table.Cell>{beeper.capacity} riders</Table.Cell>
+                <Table.Cell>
                   ${beeper.singlesRate} / ${beeper.groupRate}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {beeper.rating ? (
-                    <Tooltip
-                      title={`User rating of ${getFormattedRating(beeper.rating)}`}
-                    >
-                      <Typography>
+                    <Tooltip>
+                      <Typography type="body">
                         {printStars(Number(beeper.rating))}
                       </Typography>
+                      <Tooltip.Content>
+                        User rating of {getFormattedRating(beeper.rating)}
+                      </Tooltip.Content>
                     </Tooltip>
                   ) : (
                     <Typography>N/A</Typography>
                   )}
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+    </div>
   );
 }

@@ -2,15 +2,7 @@ import React from "react";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  Alert,
-  Dialog,
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Alert, AlertDialog, Button } from "@heroui/react";
 
 interface Props {
   isOpen: boolean;
@@ -43,20 +35,34 @@ export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
   );
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Delete report?</DialogTitle>
-      <DialogContent>
-        {error && <Alert severity="error">{error.message}</Alert>}
-        <DialogContentText>
-          Are you sure you want to delete this report?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button loading={isPending} onClick={() => mutate(id)} color="error">
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <AlertDialog.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+    >
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <AlertDialog.Header>
+            <AlertDialog.Heading>Delete report?</AlertDialog.Heading>
+          </AlertDialog.Header>
+          <AlertDialog.Body className="flex flex-col gap-4">
+            {error && (
+              <Alert status="danger">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>{error.message}</Alert.Title>
+                </Alert.Content>
+              </Alert>
+            )}
+            Are you sure you want to delete this report?
+          </AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" onPress={onClose}>Cancel</Button>
+            <Button isPending={isPending} variant="danger" onPress={() => mutate(id)}>
+              Delete
+            </Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
   );
 }

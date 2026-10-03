@@ -11,16 +11,7 @@ import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
 import { ReportMenu } from "../../../../components/ReportMenu";
 import { DeleteReportDialog } from "../../../../components/DeleteReportDialog";
-import {
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Table } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/reports")({
   component: ReportsTable,
@@ -43,7 +34,7 @@ function ReportsTable() {
   );
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -51,44 +42,44 @@ function ReportsTable() {
         count={data?.pages}
         onChange={(e, page) => setCurrentPage(page)}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Reporter</TableCell>
-              <TableCell>Reported User</TableCell>
-              <TableCell>Reason</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Resolved</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="User reports">
+            <Table.Header>
+              <Table.Column isRowHeader>Reporter</Table.Column>
+              <Table.Column>Reported</Table.Column>
+              <Table.Column>Reason</Table.Column>
+              <Table.Column>Date</Table.Column>
+              <Table.Column>Resolved</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {isLoading && <TableLoading colSpan={6} />}
             {error && <TableError colSpan={6} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={6} />}
             {data?.reports.map((report) => (
-              <TableRow key={report.id}>
+              <Table.Row key={report.id}>
                 <TableCellUser user={report.reporter} />
                 <TableCellUser user={report.reported} />
-                <TableCell>{report.reason}</TableCell>
-                <TableCell>
+                <Table.Cell>{report.reason}</Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(report.timestamp).toRelative()}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <Indicator color={report.handled ? "green" : "red"} />
-                </TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
+                </Table.Cell>
+                <Table.Cell className="text-right">
                   <ReportMenu
                     reportId={report.id}
                     onDelete={() => setSelectedReportId(report.id)}
                   />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
         pageSize={data?.pageSize ?? 0}
@@ -101,6 +92,6 @@ function ReportsTable() {
         isOpen={selectedReportId !== undefined}
         onClose={() => setSelectedReportId(undefined)}
       />
-    </Stack>
+    </div>
   );
 }

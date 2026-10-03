@@ -4,16 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { orpc } from "../../utils/orpc";
 import { ORPCError } from "@orpc/client";
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  Container,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Alert, Button, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
 
 export const Route = createFileRoute('/password/change')({
   component: ChangePassword,
@@ -68,65 +59,58 @@ function ChangePassword() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Card sx={{ p: 3 }}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
-              Change Password
-            </Typography>
-            {data && (
-              <Alert severity="success">Successfully changed your password</Alert>
-            )}
-            {form.formState.errors.root?.message && (
-              <Alert severity="error">{form.formState.errors.root.message}</Alert>
-            )}
-            <Controller
-              name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Password"
-                  type="new-password"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="confirmPassword"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Confirm Password"
-                  type="new-password"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                />
-              )}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end"
-              }}>
-              <Button
-                loading={form.formState.isSubmitting}
-                type="submit"
-                variant="contained"
-              >
-                Update password
-              </Button>
-            </Box>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+    <div className="mx-auto w-full max-w-xl">
+      <Form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <Typography type="h1">
+          Change Password
+        </Typography>
+        {data && (
+          <Alert status="success">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>Successfully changed your password</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        {form.formState.errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{form.formState.errors.root.message}</Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        <Controller
+          name="password"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Password</Label>
+              <Input type="password" autoComplete="new-password" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          name="confirmPassword"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <Label>Confirm Password</Label>
+              <Input type="password" autoComplete="new-password" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            isPending={form.formState.isSubmitting}
+          >
+            Update password
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 }

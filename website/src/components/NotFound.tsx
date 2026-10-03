@@ -1,6 +1,13 @@
 import React from "react";
-import { Alert } from "@mui/material";
+import { Alert } from "@heroui/react";
 
 export function NotFound() {
-  return <Alert severity="info">Not found!</Alert>;
+  return (
+    <Alert status="accent">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>Not found!</Alert.Title>
+      </Alert.Content>
+    </Alert>
+  );
 }

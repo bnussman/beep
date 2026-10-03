@@ -1,7 +1,5 @@
+import { Alert, Table, TableCellProps } from '@heroui/react';
 import React from 'react';
-import Alert from '@mui/material/Alert';
-import TableCell, { TableCellProps } from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
 
 interface Props extends TableCellProps {
   error: string;
@@ -9,12 +7,15 @@ interface Props extends TableCellProps {
 
 export function TableError({ error, ...props }: Props) {
   return (
-    <TableRow>
-      <TableCell {...props} sx={{ p: 0 }}>
-        <Alert severity="error" sx={{ py: 10, justifyContent: "center"}}>
-          {error}
+    <Table.Row id="error">
+      <Table.Cell {...props}>
+        <Alert status="danger" role="alert">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{error}</Alert.Title>
+          </Alert.Content>
         </Alert>
-      </TableCell>
-    </TableRow>
+      </Table.Cell>
+    </Table.Row>
   );
 }

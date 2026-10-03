@@ -13,17 +13,7 @@ import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { DateTime, Interval } from "luxon";
-import {
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
@@ -55,10 +45,8 @@ function Beeps() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Beeps
       </Typography>
       <PaginationFooter
@@ -68,28 +56,27 @@ function Beeps() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Beeper</TableCell>
-              <TableCell>Rider</TableCell>
-              <TableCell>Origin</TableCell>
-              <TableCell>Destination</TableCell>
-              <TableCell>Group</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Start</TableCell>
-              <TableCell>End</TableCell>
-              <TableCell>Duration</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Beeps">
+            <Table.Header>
+              <Table.Column>Beeper</Table.Column>
+              <Table.Column isRowHeader>Rider</Table.Column>
+              <Table.Column>Origin</Table.Column>
+              <Table.Column>Destination</Table.Column>
+              <Table.Column>Group</Table.Column>
+              <Table.Column>Status</Table.Column>
+              <Table.Column>Start</Table.Column>
+              <Table.Column>End</Table.Column>
+              <Table.Column>Duration</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {error && <TableError colSpan={10} error="Unable to fetch beeps" />}
             {isLoading && <TableLoading colSpan={10} />}
             {data?.results === 0 && <TableEmpty colSpan={10} />}
             {data?.beeps.map((beep) => (
-              <TableRow key={beep.id}>
+              <Table.Row key={beep.id}>
                 <TableCellUser
                   user={beep.beeper}
                   linkProps={{ to: "/admin/users/$userId/queue" }}
@@ -98,26 +85,24 @@ function Beeps() {
                   user={beep.rider}
                   linkProps={{ to: "/admin/users/$userId/ride" }}
                 />
-                <TableCell>{beep.origin}</TableCell>
-                <TableCell>{beep.destination}</TableCell>
-                <TableCell>{beep.groupSize}</TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
+                <Table.Cell>{beep.origin}</Table.Cell>
+                <Table.Cell>{beep.destination}</Table.Cell>
+                <Table.Cell>{beep.groupSize}</Table.Cell>
+                <Table.Cell>
+                  <div className="flex items-center gap-2">
                     <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography sx={{ textTransform: "capitalize" }}>
+                    <Typography type="body" className="capitalize">
                       {beep.status.replaceAll("_", " ")}
                     </Typography>
-                  </Stack>
-                </TableCell>
-                <TableCell>
+                  </div>
+                </Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(beep.start).toRelative()}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {beep.end ? DateTime.fromJSDate(beep.end).toRelative() : "N/A"}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {beep.end
                     ? Interval.fromDateTimes(
                         DateTime.fromJSDate(beep.start),
@@ -129,8 +114,8 @@ function Beeps() {
                         .rescale()
                         .toHuman()
                     : "N/A"}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <BeepMenu
                     beepId={beep.id}
                     onDelete={() => {
@@ -138,12 +123,13 @@ function Beeps() {
                       setSelectedBeepId(beep.id);
                     }}
                   />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         count={data?.pages}
         pageSize={data?.pageSize ?? 0}
@@ -156,6 +142,6 @@ function Beeps() {
         onClose={() => setIsDeleteOpen(false)}
         id={selectedBeepId ?? ""}
       />
-    </Stack>
+    </div>
   );
 }

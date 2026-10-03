@@ -14,16 +14,7 @@ import {
   createFileRoute,
   useRouter,
 } from "@tanstack/react-router";
-import {
-  Typography,
-  Button,
-  Stack,
-  Alert,
-  useTheme,
-  Tooltip,
-  Card,
-  Grid,
-} from "@mui/material";
+import { Alert, Button, Card, Tooltip, Typography } from "@heroui/react";
 import { useSubscription } from "../../../utils/subscriptions";
 
 export const Route = createFileRoute("/admin/beeps/$beepId")({
@@ -31,7 +22,6 @@ export const Route = createFileRoute("/admin/beeps/$beepId")({
 });
 
 function Beep() {
-  const theme = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -113,7 +103,14 @@ function Beep() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   const items = [
@@ -128,14 +125,12 @@ function Beep() {
     {
       title: "Status",
       content: (
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
-          <Typography sx={{ textTransform: "capitalize" }}>
+        <div className="flex items-center gap-2">
+          <Typography type="body" className="capitalize">
             {beep.status.replaceAll("_", " ")}
           </Typography>
           <Indicator color={beepStatusMap[beep.status]} />
-        </Stack>
+        </div>
       ),
     },
     {
@@ -153,7 +148,7 @@ function Beep() {
     {
       title: "Started",
       content: (
-        <Typography>
+        <Typography type="body">
           {new Date(beep.start).toLocaleString()} -{" "}
           {DateTime.fromJSDate(beep.start).toRelative()}
         </Typography>
@@ -162,12 +157,12 @@ function Beep() {
     {
       title: "Ended",
       content: beep.end ? (
-        <Typography>
+        <Typography type="body">
           {new Date(beep.end).toLocaleString()} -{" "}
           {DateTime.fromJSDate(beep.end).toRelative()}
         </Typography>
       ) : (
-        <Typography>Beep is still in progress</Typography>
+        <Typography type="body">Beep is still in progress</Typography>
       ),
     },
     {
@@ -191,73 +186,62 @@ function Beep() {
         const isInThePast = date < DateTime.now();
 
         return (
-          <Stack>
-            <Typography>
+          <div className="flex flex-col">
+            <Typography type="body">
               {isInThePast ? date.toLocaleString({ timeStyle: "short" }) : date.toRelative()}
             </Typography>
-            <Typography variant="caption">
+            <Typography type="body-sm">
               updated {DateTime.fromJSDate(beep.pick_up_eta_updated_at!).toRelative()}
             </Typography>
-          </Stack>
+          </div>
         );
       })() : (
-        <Typography>N/A</Typography>
+        <Typography type="body">N/A</Typography>
       )
     },
   ];
 
   return (
-    <Stack spacing={2} sx={{
-      pb: 4
-    }}>
-      <Stack
-        direction="row"
-        sx={{
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div className="flex flex-col gap-4 pb-8">
+      <div className="flex flex-row items-center justify-between">
+        <Typography type="h1">
           Beep
         </Typography>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => setIsOpen(true)}
-        >
+        <Button variant="danger" onPress={() => setIsOpen(true)}>
           Delete
         </Button>
-      </Stack>
-      <Card sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
-        <Grid container rowSpacing={2} columnSpacing={2}>
+      </div>
+      <Card className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
-            <Grid size={{ xs: 12, md: 6 }} key={item.title}>
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "0.95rem"
-                }}>
+            <div key={item.title}>
+              <Typography type="body" className="text-[0.95rem] font-bold">
                 {item.title}
               </Typography>
               {item.content}
-            </Grid>
+            </div>
           ))}
-        </Grid>
+        </div>
       </Card>
-      <Card sx={{ height: "500px", borderRadius: '16px' }}>
+      <div className="h-[550px] rounded-2xl">
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
-              <Tooltip title={beep.origin} arrow>
-                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{beep.origin}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
           {destination && (
             <Marker latitude={destination.lat} longitude={destination.lng}>
-              <Tooltip title={beep.destination} arrow>
-                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{beep.destination}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
@@ -291,19 +275,19 @@ function Beep() {
             <Layer
               type="line"
               paint={{
-                "line-color": theme.palette.info.main,
+                "line-color": "#0288d1",
                 "line-width": 5,
               }}
             />
           </Source>
         </Map>
-      </Card>
+      </div>
       <DeleteBeepDialog
         id={beep.id}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onSuccess={() => router.history.back()}
       />
-    </Stack>
+    </div>
   );
 }

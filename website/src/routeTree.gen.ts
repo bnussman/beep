@@ -17,6 +17,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AccountDeleteRouteImport } from './routes/account/delete'
 import { Route as AdminHealthRouteImport } from './routes/admin/health'
+import { Route as AdminLeaderboardsRouteImport } from './routes/admin/leaderboards'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminRedisRouteImport } from './routes/admin/redis'
 import { Route as PasswordChangeRouteImport } from './routes/password/change'
@@ -29,8 +30,7 @@ import { Route as AdminBeepsBeepIdRouteImport } from './routes/admin/beeps/$beep
 import { Route as AdminBeepsActiveRouteImport } from './routes/admin/beeps/active'
 import { Route as AdminCarsIndexRouteImport } from './routes/admin/cars/index'
 import { Route as AdminFeedbackIndexRouteImport } from './routes/admin/feedback/index'
-import { Route as AdminLeaderboardsIndexRouteImport } from './routes/admin/leaderboards/index'
-import { Route as AdminLeaderboardsBeepsRouteImport } from './routes/admin/leaderboards/beeps'
+import { Route as AdminLeaderboardsSplatRouteImport } from './routes/admin/leaderboards/$'
 import { Route as AdminLeaderboardsRidesRouteImport } from './routes/admin/leaderboards/rides'
 import { Route as AdminNotificationsIndexRouteImport } from './routes/admin/notifications/index'
 import { Route as AdminRatingsIndexRouteImport } from './routes/admin/ratings/index'
@@ -94,6 +94,11 @@ const AdminHealthRoute = AdminHealthRouteImport.update({
   path: '/admin/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeaderboardsRoute = AdminLeaderboardsRouteImport.update({
+  id: '/admin/leaderboards',
+  path: '/admin/leaderboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
   id: '/admin/payments',
   path: '/admin/payments',
@@ -154,20 +159,15 @@ const AdminFeedbackIndexRoute = AdminFeedbackIndexRouteImport.update({
   path: '/admin/feedback/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminLeaderboardsIndexRoute = AdminLeaderboardsIndexRouteImport.update({
-  id: '/admin/leaderboards/',
-  path: '/admin/leaderboards/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLeaderboardsBeepsRoute = AdminLeaderboardsBeepsRouteImport.update({
-  id: '/admin/leaderboards/beeps',
-  path: '/admin/leaderboards/beeps',
-  getParentRoute: () => rootRouteImport,
+const AdminLeaderboardsSplatRoute = AdminLeaderboardsSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => AdminLeaderboardsRoute,
 } as any)
 const AdminLeaderboardsRidesRoute = AdminLeaderboardsRidesRouteImport.update({
-  id: '/admin/leaderboards/rides',
-  path: '/admin/leaderboards/rides',
-  getParentRoute: () => rootRouteImport,
+  id: '/rides',
+  path: '/rides',
+  getParentRoute: () => AdminLeaderboardsRoute,
 } as any)
 const AdminNotificationsIndexRoute = AdminNotificationsIndexRouteImport.update({
   id: '/admin/notifications/',
@@ -288,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/account/delete': typeof AccountDeleteRoute
   '/admin/health': typeof AdminHealthRoute
+  '/admin/leaderboards': typeof AdminLeaderboardsRouteWithChildren
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
@@ -296,7 +297,7 @@ export interface FileRoutesByFullPath {
   '/account/verify/$id': typeof AccountVerifyIdRoute
   '/admin/beeps/$beepId': typeof AdminBeepsBeepIdRoute
   '/admin/beeps/active': typeof AdminBeepsActiveRoute
-  '/admin/leaderboards/beeps': typeof AdminLeaderboardsBeepsRoute
+  '/admin/leaderboards/$': typeof AdminLeaderboardsSplatRoute
   '/admin/leaderboards/rides': typeof AdminLeaderboardsRidesRoute
   '/admin/ratings/$ratingId': typeof AdminRatingsRatingIdRoute
   '/admin/reports/$reportId': typeof AdminReportsReportIdRoute
@@ -307,7 +308,6 @@ export interface FileRoutesByFullPath {
   '/admin/beeps/': typeof AdminBeepsIndexRoute
   '/admin/cars/': typeof AdminCarsIndexRoute
   '/admin/feedback/': typeof AdminFeedbackIndexRoute
-  '/admin/leaderboards/': typeof AdminLeaderboardsIndexRoute
   '/admin/notifications/': typeof AdminNotificationsIndexRoute
   '/admin/ratings/': typeof AdminRatingsIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
@@ -334,6 +334,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/account/delete': typeof AccountDeleteRoute
   '/admin/health': typeof AdminHealthRoute
+  '/admin/leaderboards': typeof AdminLeaderboardsRouteWithChildren
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
@@ -342,7 +343,7 @@ export interface FileRoutesByTo {
   '/account/verify/$id': typeof AccountVerifyIdRoute
   '/admin/beeps/$beepId': typeof AdminBeepsBeepIdRoute
   '/admin/beeps/active': typeof AdminBeepsActiveRoute
-  '/admin/leaderboards/beeps': typeof AdminLeaderboardsBeepsRoute
+  '/admin/leaderboards/$': typeof AdminLeaderboardsSplatRoute
   '/admin/leaderboards/rides': typeof AdminLeaderboardsRidesRoute
   '/admin/ratings/$ratingId': typeof AdminRatingsRatingIdRoute
   '/admin/reports/$reportId': typeof AdminReportsReportIdRoute
@@ -353,7 +354,6 @@ export interface FileRoutesByTo {
   '/admin/beeps': typeof AdminBeepsIndexRoute
   '/admin/cars': typeof AdminCarsIndexRoute
   '/admin/feedback': typeof AdminFeedbackIndexRoute
-  '/admin/leaderboards': typeof AdminLeaderboardsIndexRoute
   '/admin/notifications': typeof AdminNotificationsIndexRoute
   '/admin/ratings': typeof AdminRatingsIndexRoute
   '/admin/reports': typeof AdminReportsIndexRoute
@@ -381,6 +381,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/account/delete': typeof AccountDeleteRoute
   '/admin/health': typeof AdminHealthRoute
+  '/admin/leaderboards': typeof AdminLeaderboardsRouteWithChildren
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
@@ -389,7 +390,7 @@ export interface FileRoutesById {
   '/account/verify/$id': typeof AccountVerifyIdRoute
   '/admin/beeps/$beepId': typeof AdminBeepsBeepIdRoute
   '/admin/beeps/active': typeof AdminBeepsActiveRoute
-  '/admin/leaderboards/beeps': typeof AdminLeaderboardsBeepsRoute
+  '/admin/leaderboards/$': typeof AdminLeaderboardsSplatRoute
   '/admin/leaderboards/rides': typeof AdminLeaderboardsRidesRoute
   '/admin/ratings/$ratingId': typeof AdminRatingsRatingIdRoute
   '/admin/reports/$reportId': typeof AdminReportsReportIdRoute
@@ -400,7 +401,6 @@ export interface FileRoutesById {
   '/admin/beeps/': typeof AdminBeepsIndexRoute
   '/admin/cars/': typeof AdminCarsIndexRoute
   '/admin/feedback/': typeof AdminFeedbackIndexRoute
-  '/admin/leaderboards/': typeof AdminLeaderboardsIndexRoute
   '/admin/notifications/': typeof AdminNotificationsIndexRoute
   '/admin/ratings/': typeof AdminRatingsIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
@@ -429,6 +429,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/account/delete'
     | '/admin/health'
+    | '/admin/leaderboards'
     | '/admin/payments'
     | '/admin/redis'
     | '/password/change'
@@ -437,7 +438,7 @@ export interface FileRouteTypes {
     | '/account/verify/$id'
     | '/admin/beeps/$beepId'
     | '/admin/beeps/active'
-    | '/admin/leaderboards/beeps'
+    | '/admin/leaderboards/$'
     | '/admin/leaderboards/rides'
     | '/admin/ratings/$ratingId'
     | '/admin/reports/$reportId'
@@ -448,7 +449,6 @@ export interface FileRouteTypes {
     | '/admin/beeps/'
     | '/admin/cars/'
     | '/admin/feedback/'
-    | '/admin/leaderboards/'
     | '/admin/notifications/'
     | '/admin/ratings/'
     | '/admin/reports/'
@@ -475,6 +475,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/account/delete'
     | '/admin/health'
+    | '/admin/leaderboards'
     | '/admin/payments'
     | '/admin/redis'
     | '/password/change'
@@ -483,7 +484,7 @@ export interface FileRouteTypes {
     | '/account/verify/$id'
     | '/admin/beeps/$beepId'
     | '/admin/beeps/active'
-    | '/admin/leaderboards/beeps'
+    | '/admin/leaderboards/$'
     | '/admin/leaderboards/rides'
     | '/admin/ratings/$ratingId'
     | '/admin/reports/$reportId'
@@ -494,7 +495,6 @@ export interface FileRouteTypes {
     | '/admin/beeps'
     | '/admin/cars'
     | '/admin/feedback'
-    | '/admin/leaderboards'
     | '/admin/notifications'
     | '/admin/ratings'
     | '/admin/reports'
@@ -521,6 +521,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/account/delete'
     | '/admin/health'
+    | '/admin/leaderboards'
     | '/admin/payments'
     | '/admin/redis'
     | '/password/change'
@@ -529,7 +530,7 @@ export interface FileRouteTypes {
     | '/account/verify/$id'
     | '/admin/beeps/$beepId'
     | '/admin/beeps/active'
-    | '/admin/leaderboards/beeps'
+    | '/admin/leaderboards/$'
     | '/admin/leaderboards/rides'
     | '/admin/ratings/$ratingId'
     | '/admin/reports/$reportId'
@@ -540,7 +541,6 @@ export interface FileRouteTypes {
     | '/admin/beeps/'
     | '/admin/cars/'
     | '/admin/feedback/'
-    | '/admin/leaderboards/'
     | '/admin/notifications/'
     | '/admin/ratings/'
     | '/admin/reports/'
@@ -568,6 +568,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AccountDeleteRoute: typeof AccountDeleteRoute
   AdminHealthRoute: typeof AdminHealthRoute
+  AdminLeaderboardsRoute: typeof AdminLeaderboardsRouteWithChildren
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRedisRoute: typeof AdminRedisRoute
   PasswordChangeRoute: typeof PasswordChangeRoute
@@ -576,8 +577,6 @@ export interface RootRouteChildren {
   AccountVerifyIdRoute: typeof AccountVerifyIdRoute
   AdminBeepsBeepIdRoute: typeof AdminBeepsBeepIdRoute
   AdminBeepsActiveRoute: typeof AdminBeepsActiveRoute
-  AdminLeaderboardsBeepsRoute: typeof AdminLeaderboardsBeepsRoute
-  AdminLeaderboardsRidesRoute: typeof AdminLeaderboardsRidesRoute
   AdminRatingsRatingIdRoute: typeof AdminRatingsRatingIdRoute
   AdminReportsReportIdRoute: typeof AdminReportsReportIdRoute
   AdminUsersUserIdRoute: typeof AdminUsersUserIdRouteWithChildren
@@ -587,7 +586,6 @@ export interface RootRouteChildren {
   AdminBeepsIndexRoute: typeof AdminBeepsIndexRoute
   AdminCarsIndexRoute: typeof AdminCarsIndexRoute
   AdminFeedbackIndexRoute: typeof AdminFeedbackIndexRoute
-  AdminLeaderboardsIndexRoute: typeof AdminLeaderboardsIndexRoute
   AdminNotificationsIndexRoute: typeof AdminNotificationsIndexRoute
   AdminRatingsIndexRoute: typeof AdminRatingsIndexRoute
   AdminReportsIndexRoute: typeof AdminReportsIndexRoute
@@ -650,6 +648,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/health'
       fullPath: '/admin/health'
       preLoaderRoute: typeof AdminHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/leaderboards': {
+      id: '/admin/leaderboards'
+      path: '/admin/leaderboards'
+      fullPath: '/admin/leaderboards'
+      preLoaderRoute: typeof AdminLeaderboardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/payments': {
@@ -736,26 +741,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFeedbackIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/leaderboards/': {
-      id: '/admin/leaderboards/'
-      path: '/admin/leaderboards'
-      fullPath: '/admin/leaderboards/'
-      preLoaderRoute: typeof AdminLeaderboardsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/leaderboards/beeps': {
-      id: '/admin/leaderboards/beeps'
-      path: '/admin/leaderboards/beeps'
-      fullPath: '/admin/leaderboards/beeps'
-      preLoaderRoute: typeof AdminLeaderboardsBeepsRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/leaderboards/$': {
+      id: '/admin/leaderboards/$'
+      path: '/$'
+      fullPath: '/admin/leaderboards/$'
+      preLoaderRoute: typeof AdminLeaderboardsSplatRouteImport
+      parentRoute: typeof AdminLeaderboardsRoute
     }
     '/admin/leaderboards/rides': {
       id: '/admin/leaderboards/rides'
-      path: '/admin/leaderboards/rides'
+      path: '/rides'
       fullPath: '/admin/leaderboards/rides'
       preLoaderRoute: typeof AdminLeaderboardsRidesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminLeaderboardsRoute
     }
     '/admin/notifications/': {
       id: '/admin/notifications/'
@@ -907,6 +905,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminLeaderboardsRouteChildren {
+  AdminLeaderboardsSplatRoute: typeof AdminLeaderboardsSplatRoute
+  AdminLeaderboardsRidesRoute: typeof AdminLeaderboardsRidesRoute
+}
+
+const AdminLeaderboardsRouteChildren: AdminLeaderboardsRouteChildren = {
+  AdminLeaderboardsSplatRoute: AdminLeaderboardsSplatRoute,
+  AdminLeaderboardsRidesRoute: AdminLeaderboardsRidesRoute,
+}
+
+const AdminLeaderboardsRouteWithChildren =
+  AdminLeaderboardsRoute._addFileChildren(AdminLeaderboardsRouteChildren)
+
 interface AdminUsersUserIdEditRouteChildren {
   AdminUsersUserIdEditSplatRoute: typeof AdminUsersUserIdEditSplatRoute
   AdminUsersUserIdEditLocationRoute: typeof AdminUsersUserIdEditLocationRoute
@@ -958,6 +969,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AccountDeleteRoute: AccountDeleteRoute,
   AdminHealthRoute: AdminHealthRoute,
+  AdminLeaderboardsRoute: AdminLeaderboardsRouteWithChildren,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRedisRoute: AdminRedisRoute,
   PasswordChangeRoute: PasswordChangeRoute,
@@ -966,8 +978,6 @@ const rootRouteChildren: RootRouteChildren = {
   AccountVerifyIdRoute: AccountVerifyIdRoute,
   AdminBeepsBeepIdRoute: AdminBeepsBeepIdRoute,
   AdminBeepsActiveRoute: AdminBeepsActiveRoute,
-  AdminLeaderboardsBeepsRoute: AdminLeaderboardsBeepsRoute,
-  AdminLeaderboardsRidesRoute: AdminLeaderboardsRidesRoute,
   AdminRatingsRatingIdRoute: AdminRatingsRatingIdRoute,
   AdminReportsReportIdRoute: AdminReportsReportIdRoute,
   AdminUsersUserIdRoute: AdminUsersUserIdRouteWithChildren,
@@ -977,7 +987,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminBeepsIndexRoute: AdminBeepsIndexRoute,
   AdminCarsIndexRoute: AdminCarsIndexRoute,
   AdminFeedbackIndexRoute: AdminFeedbackIndexRoute,
-  AdminLeaderboardsIndexRoute: AdminLeaderboardsIndexRoute,
   AdminNotificationsIndexRoute: AdminNotificationsIndexRoute,
   AdminRatingsIndexRoute: AdminRatingsIndexRoute,
   AdminReportsIndexRoute: AdminReportsIndexRoute,

@@ -1,7 +1,7 @@
 import React from "react";
 import { Indicator } from "../../../../components/Indicator";
 import { useParams, createFileRoute } from "@tanstack/react-router";
-import { Alert, Stack, Typography, Box, Link } from "@mui/material";
+import { Alert, Typography } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating, printStars } from "../../../../utils/utils";
 import { orpc } from "../../../../utils/orpc";
@@ -28,75 +28,78 @@ function Details() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   return (
-    <Stack spacing={2}>
-      <Box>
+    <div className="flex flex-col gap-4">
+      <div>
         <strong>Email</strong>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+        <div className="flex items-center gap-2">
           <Indicator color={user.isEmailVerified ? "green" : "red"} />
-          <Link href={`mailto:${user.email}`}>{user.email}</Link>
-        </Stack>
-      </Box>
-      <Box>
+          <a href={`mailto:${user.email}`} className="underline underline-offset-2">
+            {user.email}
+          </a>
+        </div>
+      </div>
+      <div>
         <strong>Student</strong>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+        <div className="flex items-center gap-2">
           <Indicator color={user.isStudent ? "green" : "red"} />
-          <Typography>{user.isStudent ? "Yes" : "No"}</Typography>
-        </Stack>
-      </Box>
-      <Box>
+          <Typography type="body">{user.isStudent ? "Yes" : "No"}</Typography>
+        </div>
+      </div>
+      <div>
         <strong>Beeping</strong>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+        <div className="flex items-center gap-2">
           <Indicator color={user.isBeeping ? "green" : "red"} />
-          <Typography>{user.isBeeping ? "Yes" : "No"}</Typography>
-        </Stack>
-      </Box>
-      <Box>
+          <Typography type="body">{user.isBeeping ? "Yes" : "No"}</Typography>
+        </div>
+      </div>
+      <div>
         <strong>Rating</strong>
         {user.rating ? (
-          <Typography>
+          <Typography type="body">
             {printStars(Number(user.rating))} ({getFormattedRating(user.rating)}
             )
           </Typography>
         ) : (
-          <Typography>N/A</Typography>
+          <Typography type="body">N/A</Typography>
         )}
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Phone</strong>
-        <Typography>{user.phone}</Typography>
-      </Box>
-      <Box>
+        <Typography type="body">{user.phone}</Typography>
+      </div>
+      <div>
         <strong>Queue Size</strong>
-        <Typography>{user.queueSize}</Typography>
-      </Box>
-      <Box>
+        <Typography type="body">{user.queueSize}</Typography>
+      </div>
+      <div>
         <strong>Capacity</strong>
-        <Typography>{user.capacity}</Typography>
-      </Box>
-      <Box>
+        <Typography type="body">{user.capacity}</Typography>
+      </div>
+      <div>
         <strong>Rate</strong>
-        <Typography>
+        <Typography type="body">
           ${user.singlesRate} / ${user.groupRate}
         </Typography>
-      </Box>
-      <Box>
+      </div>
+      <div>
         <strong>Venmo usename</strong>
-        <Typography>{user.venmo || "N/A"}</Typography>
-      </Box>
-      <Box>
+        <Typography type="body">{user.venmo || "N/A"}</Typography>
+      </div>
+      <div>
         <strong>CashApp usename</strong>
-        <Typography>{user.cashapp || "N/A"}</Typography>
-      </Box>
-    </Stack>
+        <Typography type="body">{user.cashapp || "N/A"}</Typography>
+      </div>
+    </div>
   );
 }

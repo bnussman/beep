@@ -11,19 +11,7 @@ import { TableError } from "../../../components/TableError";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import {
-  TableBody,
-  TableCell,
-  Paper,
-  Chip,
-  Stack,
-  Table,
-  TableHead,
-  Typography,
-  TableContainer,
-  TableRow,
-} from "@mui/material";
+import { Chip, Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/beeps/active")({
   component: ActiveBeeps,
@@ -37,8 +25,6 @@ export const Route = createFileRoute("/admin/beeps/active")({
 function ActiveBeeps() {
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
-
-  const [parent] = useAutoAnimate();
 
   const { data, isLoading, error } = useQuery(
     orpc.beep.beeps.queryOptions({
@@ -56,22 +42,15 @@ function ActiveBeeps() {
   };
 
   return (
-    <Stack spacing={1}>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-4">
+        <Typography type="h1">
           Beeps
         </Typography>
-        <Chip
-          color="success"
-          variant="outlined"
-          size="small"
-          label="in progress"
-        />
-      </Stack>
+        <Chip color="success" variant="soft">
+          in progress
+        </Chip>
+      </div>
       <PaginationFooter
         count={data?.pages}
         pageSize={data?.pageSize ?? 0}
@@ -79,26 +58,25 @@ function ActiveBeeps() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Beeper</TableCell>
-              <TableCell>Rider</TableCell>
-              <TableCell>Origin</TableCell>
-              <TableCell>Destination</TableCell>
-              <TableCell>Group Size</TableCell>
-              <TableCell>Start Time</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody ref={data !== undefined ? parent : undefined}>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Active beeps">
+            <Table.Header>
+              <Table.Column>Beeper</Table.Column>
+              <Table.Column isRowHeader>Rider</Table.Column>
+              <Table.Column>Origin</Table.Column>
+              <Table.Column>Destination</Table.Column>
+              <Table.Column>Group Size</Table.Column>
+              <Table.Column>Start Time</Table.Column>
+              <Table.Column>Status</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body >
             {isLoading && <TableLoading colSpan={8} />}
             {error && <TableError colSpan={8} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.beeps.map((beep) => (
-              <TableRow key={beep.id}>
+              <Table.Row key={beep.id}>
                 <TableCellUser
                   user={beep.beeper}
                   linkProps={{ to: "/admin/users/$userId/queue" }}
@@ -107,30 +85,29 @@ function ActiveBeeps() {
                   user={beep.rider}
                   linkProps={{ to: "/admin/users/$userId/ride" }}
                 />
-                <TableCell>{beep.origin}</TableCell>
-                <TableCell>{beep.destination}</TableCell>
-                <TableCell>{beep.groupSize}</TableCell>
-                <TableCell>
+                <Table.Cell>{beep.origin}</Table.Cell>
+                <Table.Cell>{beep.destination}</Table.Cell>
+                <Table.Cell>{beep.groupSize}</Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(beep.start).toRelative()}
-                </TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
+                </Table.Cell>
+                <Table.Cell>
+                  <div className="flex items-center gap-2">
                     <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography sx={{ textTransform: "capitalize" }}>
+                    <Typography type="body" className="capitalize">
                       {beep.status.replaceAll("_", " ")}
                     </Typography>
-                  </Stack>
-                </TableCell>
-                <TableCell>
+                  </div>
+                </Table.Cell>
+                <Table.Cell>
                   <BeepMenu beepId={beep.id} />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         count={data?.pages}
         pageSize={data?.pageSize ?? 0}
@@ -138,6 +115,6 @@ function ActiveBeeps() {
         results={data?.results}
         onChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }
