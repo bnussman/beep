@@ -175,7 +175,7 @@ function User() {
         </div>
         <div className="flex flex-row flex-wrap justify-end gap-2">
           <LinkButton
-            to="/admin/users/$userId/edit"
+            to="/admin/users/$userId/edit/$"
             params={{ userId: user.id }}
             size="sm"
             variant="tertiary"
