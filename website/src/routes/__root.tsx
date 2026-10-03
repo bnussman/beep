@@ -30,6 +30,9 @@ const themeScript = `(function() {
 })();`
 
 export const Route = createRootRoute({
+  scripts: () => [
+    { children: themeScript, "data-cfasync": "false" }
+  ],
   head: () => ({
     links: [
       { rel: "icon", href: faviconUrl },
