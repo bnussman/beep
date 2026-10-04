@@ -1,27 +1,16 @@
 import React, { useState } from "react";
 import { orpc } from "../../../../utils/orpc";
-import { beepStatusMap } from "../../../../utils/utils";
+import { beepStatusToChipColorMap } from "../../../../utils/utils";
 import { DateTime, Duration } from "luxon";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../../components/BeepMenu";
-import { Indicator } from "../../../../components/Indicator";
 import { createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableCellUser } from "../../../../components/TableCellUser";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
-import {
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Chip, Table } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/beeps")({
   component: BeepsTable,
@@ -34,6 +23,7 @@ function BeepsTable() {
 
   const { data, isLoading, error } = useQuery(
     orpc.beep.beeps.queryOptions({
+      placeholderData: keepPreviousData,
       input: {
         userId,
         page: currentPage,
@@ -43,35 +33,34 @@ function BeepsTable() {
   );
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={currentPage}
-        onChange={(e, page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Beeper</TableCell>
-              <TableCell>Rider</TableCell>
-              <TableCell>Origin</TableCell>
-              <TableCell>Destination</TableCell>
-              <TableCell>Group Size</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Duration</TableCell>
-              <TableCell>Started</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="User beeps">
+            <Table.Header>
+              <Table.Column isRowHeader>Beeper</Table.Column>
+              <Table.Column>Rider</Table.Column>
+              <Table.Column>Origin</Table.Column>
+              <Table.Column>Destination</Table.Column>
+              <Table.Column>Group Size</Table.Column>
+              <Table.Column>Status</Table.Column>
+              <Table.Column>Duration</Table.Column>
+              <Table.Column>Started</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {isLoading && <TableLoading colSpan={9} />}
             {error && <TableError colSpan={9} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={9} />}
             {data?.beeps.map((beep) => (
-              <TableRow key={beep.id}>
+              <Table.Row key={beep.id}>
                 <TableCellUser
                   user={beep.beeper}
                   linkProps={{ to: "/admin/users/$userId/queue" }}
@@ -80,20 +69,18 @@ function BeepsTable() {
                   user={beep.rider}
                   linkProps={{ to: "/admin/users/$userId/ride" }}
                 />
-                <TableCell>{beep.origin}</TableCell>
-                <TableCell>{beep.destination}</TableCell>
-                <TableCell>{beep.groupSize}</TableCell>
-                <TableCell>
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
-                    <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography sx={{ textTransform: "capitalize" }}>
-                      {beep.status.replaceAll("_", " ")}
-                    </Typography>
-                  </Stack>
-                </TableCell>
-                <TableCell>
+                <Table.Cell>{beep.origin}</Table.Cell>
+                <Table.Cell>{beep.destination}</Table.Cell>
+                <Table.Cell>{beep.groupSize}</Table.Cell>
+                <Table.Cell>
+                  <Chip
+                    className="capitalize"
+                    color={beepStatusToChipColorMap[beep.status]}
+                  >
+                    {beep.status.replaceAll("_", " ")}
+                  </Chip>
+                </Table.Cell>
+                <Table.Cell>
                   {beep.end
                     ? Duration.fromMillis(
                         new Date(beep.end).getTime() -
@@ -102,25 +89,26 @@ function BeepsTable() {
                         .rescale()
                         .toHuman()
                     : "Still in progress"}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(beep.start).toRelative()}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <BeepMenu beepId={beep.id} />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={currentPage}
-        onChange={(e, page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }

@@ -1,19 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { RouterInputs } from "../../../api/src";
 import { Controller, useForm } from "react-hook-form";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  Alert,
-  Button,
-  Card,
-  Container,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Alert, Button, FieldError, Input, InputGroup, Label, TextField, Typography } from "@heroui/react";
+import { Link } from "../components/Link";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -22,6 +16,8 @@ export const Route = createFileRoute("/login")({
 function Login() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [isVisible, setIsVisible] = useState(false);
 
   const form = useForm<RouterInputs["auth"]["login"]>({
     defaultValues: {
@@ -46,67 +42,63 @@ function Login() {
   );
 
   return (
-    <Container maxWidth="sm">
-      <Card sx={{ p: 3 }}>
-        <form onSubmit={form.handleSubmit((values) => login(values))}>
-          <Stack spacing={2}>
-            <Typography variant="h4" sx={{
-              fontWeight: "bold"
-            }}>
-              Login
-            </Typography>
-            {form.formState.errors.root?.message && (
-              <Alert severity="error">
+    <div className="flex grow items-center justify-center">
+      <form className="flex flex-col gap-5 grow max-w-md" onSubmit={form.handleSubmit((values) => login(values))}>
+        <Typography type="h1">Login</Typography>
+        {form.formState.errors.root?.message && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>
                 {form.formState.errors.root.message}
-              </Alert>
-            )}
-            <Controller
-              control={form.control}
-              name="username"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Username or Email"
-                  type="text"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                  required
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="password"
-              render={({ field, fieldState }) => (
-                <TextField
-                  label="Password"
-                  type="password"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={Boolean(fieldState.error?.message)}
-                  helperText={fieldState.error?.message}
-                  required
-                />
-              )}
-            />
-            <Stack direction="row" sx={{
-              justifyContent: "space-between"
-            }}>
-              <Button LinkComponent={Link} href="/password/forgot">
-                Forgot Password
-              </Button>
-              <Button
-                type="submit"
-                loading={form.formState.isSubmitting}
-                variant="contained"
-              >
-                Sign in
-              </Button>
-            </Stack>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+              </Alert.Title>
+            </Alert.Content>
+          </Alert>
+        )}
+        <Controller
+          control={form.control}
+          name="username"
+          render={({ field, fieldState }) => (
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+              <Label>Username or Email</Label>
+              <Input type="text" />
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={form.control}
+          name="password"
+          render={({ field, fieldState }) => (
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+              <Label>Password</Label>
+              <InputGroup>
+                <InputGroup.Input type={isVisible ? "text" : "password"} />
+                <InputGroup.Suffix className="pe-0">
+                  <Button
+                    isIconOnly
+                    aria-label={isVisible ? "Hide password" : "Show password"}
+                    size="sm"
+                    variant="ghost"
+                    onPress={() => setIsVisible(!isVisible)}
+                  >
+                    {isVisible ? <EyeIcon className="size-4" /> : <EyeSlashIcon className="size-4" />}
+                  </Button>
+                </InputGroup.Suffix>
+              </InputGroup>
+              <FieldError>{fieldState.error?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <div className="flex items-center justify-between gap-4">
+          <Link to="/password/forgot" className="text-sm">
+            Forgot Password
+          </Link>
+          <Button type="submit" isPending={form.formState.isSubmitting}>
+            Sign in
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

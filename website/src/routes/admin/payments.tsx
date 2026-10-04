@@ -7,17 +7,7 @@ import { TableCellUser } from "../../components/TableCellUser";
 import { TableEmpty } from "../../components/TableEmpty";
 import { TableLoading } from "../../components/TableLoading";
 import { TableError } from "../../components/TableError";
-import {
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Table, Typography } from "@heroui/react";
 import { orpc } from "../../utils/orpc";
 
 export const Route = createFileRoute("/admin/payments")({
@@ -39,64 +29,62 @@ function Payments() {
     }),
   );
 
-  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Payments
       </Typography>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User</TableCell>
-              <TableCell>Product</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Store</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Expires</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Payments" className="min-w-225">
+            <Table.Header>
+              <Table.Column isRowHeader>User</Table.Column>
+              <Table.Column>Product</Table.Column>
+              <Table.Column>Price</Table.Column>
+              <Table.Column>Store</Table.Column>
+              <Table.Column>Created</Table.Column>
+              <Table.Column>Expires</Table.Column>
+            </Table.Header>
+            <Table.Body>
             {data?.results === 0 && <TableEmpty colSpan={6} />}
             {isLoading && <TableLoading colSpan={6} />}
             {error && <TableError colSpan={6} error={error.message} />}
             {data?.payments.map((payment) => (
-              <TableRow key={payment.id}>
+              <Table.Row key={payment.id}>
                 <TableCellUser user={payment.user} />
-                <TableCell>{payment.productId}</TableCell>
-                <TableCell>${payment.price}</TableCell>
-                <TableCell>{payment.store}</TableCell>
-                <TableCell>
+                <Table.Cell>{payment.productId}</Table.Cell>
+                <Table.Cell>${payment.price}</Table.Cell>
+                <Table.Cell>{payment.store}</Table.Cell>
+                <Table.Cell>
                   {new Date(payment.created).toLocaleString()}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {new Date(payment.expires).toLocaleString()}
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={page}
-        onChange={setCurrentPage}
+        onPageChange={setCurrentPage}
       />
-    </Stack>
+    </div>
   );
 }

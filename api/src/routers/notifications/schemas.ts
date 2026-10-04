@@ -7,7 +7,7 @@ export const sendNotificationInputSchema = z.object({
 });
 
 export const sendNotificationToUserInputSchema = z.object({
-  title: z.string(),
-  body: z.string(),
+  title: z.string().min(1),
+  body: z.string().min(1),
   userId: z.uuid(),
 });

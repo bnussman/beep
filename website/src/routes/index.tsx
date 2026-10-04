@@ -3,13 +3,7 @@ import iPhoneDark from "../assets/dark.webp?url";
 import iPhoneLight from "../assets/light.webp?url";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -17,62 +11,31 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <Container sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        spacing={3}
-        sx={{
-          width: "100%",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}>
-        <Stack spacing={2} sx={{
-          alignItems: { xs: "center", md: "flex-start" }
-        }}>
-          <Typography
-            variant="h1"
-            sx={{
-              fontWeight: "bold",
-              fontSize: { xs: "3.0rem", md: "3.0rem", lg: "3.8rem" },
-              textAlign: { xs: "center", sm: "center", md: "unset" }
-            }}>
-            Ride Beep App
-          </Typography>
-          <Typography sx={{
-            textAlign: { xs: "center", md: "unset" }
-          }}>
-            A rideshare app for students. Ride or drive at your university
-            today.
-          </Typography>
-          <Box>
-            <Button
-              component="a"
-              href={getDownloadLink()}
-              target="_blank"
-              size="large"
-              color="primary"
-              variant="contained"
-            >
-              Download
-            </Button>
-          </Box>
-        </Stack>
-        <picture>
-          <source srcSet={iPhoneLight} media="(prefers-color-scheme: light)" />
-          <source srcSet={iPhoneDark} media="(prefers-color-scheme: dark)" />
-          <Box
-            component="img"
-            sx={{
-              maxHeight: "min(max(80vh, 500px), 700px)",
-              maxWidth: "calc(100vw - 64px)",
-              objectFit: "contain",
-            }}
-            src={iPhoneLight}
-            alt="iPhone Mockup of the Beep App"
-            fetchPriority="high"
-          />
-        </picture>
-      </Stack>
-    </Container>
+    <div className="flex grow flex-col w-full items-center gap-6 md:justify-between md:flex-row">
+      <div className="flex flex-col items-center gap-4 md:items-start">
+        <Typography type="h1" className="text-center text-5xl font-bold lg:text-[3.8rem] md:text-left">
+          Ride Beep App
+        </Typography>
+        <Typography type="body" className="text-center md:text-left">
+          A rideshare app for students. Ride or drive at your university
+          today.
+        </Typography>
+        <a href={getDownloadLink()} target="_blank" rel="noopener noreferrer">
+          <Button size="lg">
+            Download
+          </Button>
+        </a>
+      </div>
+      <picture>
+        <source srcSet={iPhoneLight} media="(prefers-color-scheme: light)" />
+        <source srcSet={iPhoneDark} media="(prefers-color-scheme: dark)" />
+        <img
+          className="max-h-[min(max(80vh,500px),700px)] max-w-[calc(100vw-4rem)] object-contain"
+          src={iPhoneLight}
+          alt="iPhone Mockup of the Beep App"
+          fetchPriority="high"
+        />
+      </picture>
+    </div>
   );
 }

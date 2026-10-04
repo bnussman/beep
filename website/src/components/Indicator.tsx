@@ -1,61 +1,38 @@
-import { Box, BoxProps, Tooltip, useTheme } from "@mui/material";
 import React from "react";
+import { Tooltip } from "@heroui/react";
 
-interface Props extends BoxProps {
+interface Props extends React.HTMLAttributes<HTMLSpanElement> {
   color: string;
   tooltip?: string;
 }
 
-export function Indicator({ color, tooltip, ...rest }: Props) {
-  const theme = useTheme();
+const colorMap: Record<string, string> = {
+  green: "#81c784",
+  red: "#e57373",
+  yellow: "#ffb74d",
+  blue: "#64b5f6",
+  silver: "gray",
+};
 
-  const getColor = () => {
-    if (color === "green") {
-      return theme.palette.success.light;
-    }
-    if (color === "red") {
-      return theme.palette.error.light;
-    }
-    if (color === "yellow") {
-      return theme.palette.warning.light;
-    }
-    if (color === "blue") {
-      return theme.palette.info.light;
-    }
-    if (color === "silver") {
-      return "gray";
-    }
-    return color;
-  };
-
-  const getBorderProps = () => {
-    if (color === "white") {
-      return { outline: 1 };
-    }
-    return {};
-  };
-
-  const I = (
-    <Box
-      sx={{
-        display: "inline-block",
-        width: "16px",
-        height: "16px",
-        backgroundColor: getColor(),
-        borderRadius: "50%",
-        ...getBorderProps(),
+export function Indicator({ color, tooltip, className, style, ...rest }: Props) {
+  const indicator = (
+    <span
+      className={`inline-block size-4 rounded-full ${className ?? ""}`}
+      style={{
+        backgroundColor: colorMap[color] ?? color,
+        ...(color === "white" ? { outline: "1px solid currentColor" } : {}),
+        ...style,
       }}
       {...rest}
     />
   );
 
   if (tooltip) {
-    return (
-      <Tooltip title={tooltip} arrow>
-        {I}
-      </Tooltip>
-    );
+    return <Tooltip>
+      <Tooltip.Trigger>{indicator}</Tooltip.Trigger>
+      <Tooltip.Content showArrow>{tooltip}</Tooltip.Content>
+    </Tooltip>;
   }
 
-  return I;
+  return indicator;
 }

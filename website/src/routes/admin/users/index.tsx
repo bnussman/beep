@@ -1,30 +1,14 @@
 import React from "react";
-import SearchIcon from "@mui/icons-material/Search";
 import { orpc } from "../../../utils/orpc";
-import { Indicator } from "../../../components/Indicator";
-import { createFileRoute, Link as RouterLink, useNavigate, } from "@tanstack/react-router";
+import { Link } from "../../../components/Link";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, Label, SearchField, Spinner, Table, Typography } from "@heroui/react";
+import { TableEmpty } from "../../../components/TableEmpty";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
-import { useQuery } from "@tanstack/react-query";
-import { TableEmpty } from "../../../components/TableEmpty";
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  CircularProgress,
-  Stack,
-  InputAdornment,
-  TableContainer,
-  Paper,
-  TextField,
-  Avatar,
-  Link,
-} from "@mui/material";
 
 interface PaginationSearchParams {
   page: number;
@@ -42,7 +26,7 @@ export const Route = createFileRoute('/admin/users/')({
 });
 
 function Users() {
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 25;
   const { page, query } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
@@ -53,11 +37,11 @@ function Users() {
         pageSize: PAGE_SIZE,
         query: !query ? undefined : query,
       },
-      placeholderData: keepPreviousData
+      placeholderData: keepPreviousData,
     }),
   );
 
-  const setCurrentPage = (event: unknown, page: number) => {
+  const setCurrentPage = (page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
   };
 
@@ -74,93 +58,102 @@ function Users() {
   };
 
   return (
-    <Stack>
-      <Typography variant="h4" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex flex-col gap-2">
+      <Typography type="h1">
         Users
       </Typography>
-      <Stack spacing={1}>
-        <PaginationFooter
-          pageSize={PAGE_SIZE}
-          results={data?.results}
-          count={data?.pages}
-          page={page}
-          onChange={setCurrentPage}
-        />
-        <TextField
-          size="small"
-          type="text"
-          placeholder="Search"
-          value={query ?? ""}
-          onChange={(e) => setQuery(e.target.value)}
-          slotProps={{
-            input: {
-              endAdornment: isFetching && (
-                <InputAdornment position="end">
-                  <CircularProgress size="16px" />
-                </InputAdornment>
-              ),
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-        <TableContainer component={Paper} variant="outlined">
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>User</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Student</TableCell>
-                <TableCell>Email Verified</TableCell>
-                <TableCell>Beeping</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.results === 0 && <TableEmpty colSpan={5} />}
+      <SearchField
+        name="users-search"
+        value={query ?? ""}
+        onChange={setQuery}
+        className="w-full max-w-sm"
+      >
+        <Label className="sr-only">Search users</Label>
+        <SearchField.Group>
+          <SearchField.SearchIcon />
+          <SearchField.Input placeholder="Search users" />
+          {isFetching && <Spinner size="sm" />}
+          <SearchField.ClearButton />
+        </SearchField.Group>
+      </SearchField>
+      <PaginationFooter
+        pageSize={PAGE_SIZE}
+        results={data?.results}
+        pages={data?.pages}
+        page={page}
+        onPageChange={setCurrentPage}
+      />
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="Users">
+            <Table.Header>
+              <Table.Column isRowHeader>User</Table.Column>
+              <Table.Column>Email</Table.Column>
+              <Table.Column>Student</Table.Column>
+              <Table.Column>Email verified</Table.Column>
+              <Table.Column>Beeping</Table.Column>
+            </Table.Header>
+            <Table.Body>
+              {error && <TableError error={error.message} colSpan={5} />}
               {isLoading && <TableLoading colSpan={5} />}
-              {error && <TableError colSpan={5} error={error.message} />}
+              {data?.users.length === 0 && <TableEmpty colSpan={5} />}
               {data?.users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <Link component={RouterLink} to={`/admin/users/${user.id}`}>
-                      <Stack direction="row" spacing={1} sx={{
-                        alignItems: "center"
-                      }}>
-                        <Avatar src={user.photo ?? undefined} />
-                        <Typography>
-                          {user.first} {user.last}
-                        </Typography>
-                      </Stack>
+                <Table.Row key={user.id} id={user.id}>
+                  <Table.Cell>
+                    <Link
+                      to="/admin/users/$userId/$"
+                      params={{ userId: user.id }}
+                      className="flex items-center gap-3"
+                    >
+                      <Avatar>
+                        <Avatar.Image
+                          alt={`${user.first} ${user.last}`}
+                          src={user.photo ?? undefined}
+                        />
+                        <Avatar.Fallback>
+                          {user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}
+                        </Avatar.Fallback>
+                      </Avatar>
+                      <Typography type="body">
+                        {user.first} {user.last}
+                      </Typography>
                     </Link>
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <Indicator color={user.isStudent ? "green" : "red"} />
-                  </TableCell>
-                  <TableCell>
-                    <Indicator color={user.isEmailVerified ? "green" : "red"} />
-                  </TableCell>
-                  <TableCell>
-                    <Indicator color={user.isBeeping ? "green" : "red"} />
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                  <Table.Cell>{user.email}</Table.Cell>
+                  <Table.Cell>
+                    <span
+                      role="img"
+                      aria-label={user.isStudent ? "Student" : "Not a student"}
+                      className={`inline-block size-4 rounded-full ${user.isStudent ? "bg-success" : "bg-danger"}`}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span
+                      role="img"
+                      aria-label={user.isEmailVerified ? "Email verified" : "Email not verified"}
+                      className={`inline-block size-4 rounded-full ${user.isEmailVerified ? "bg-success" : "bg-danger"}`}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span
+                      role="img"
+                      aria-label={user.isBeeping ? "Beeping" : "Not beeping"}
+                      className={`inline-block size-4 rounded-full ${user.isBeeping ? "bg-success" : "bg-danger"}`}
+                    />
+                  </Table.Cell>
+                </Table.Row>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <PaginationFooter
-          pageSize={PAGE_SIZE}
-          results={data?.results}
-          count={data?.pages}
-          page={page}
-          onChange={setCurrentPage}
-        />
-      </Stack>
-    </Stack>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
+      <PaginationFooter
+        pageSize={PAGE_SIZE}
+        results={data?.results}
+        pages={data?.pages}
+        page={page}
+        onPageChange={setCurrentPage}
+      />
+    </div>
   );
 }

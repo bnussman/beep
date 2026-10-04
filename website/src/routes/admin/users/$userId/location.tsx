@@ -3,7 +3,7 @@ import { Marker } from "../../../../components/Marker";
 import { Map } from "../../../../components/Map";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loading } from "../../../../components/Loading";
-import { Alert, Box } from "@mui/material";
+import { Alert } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "../../../../utils/orpc";
 
@@ -23,25 +23,27 @@ function LocationView() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   if (!user?.location) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 2
-        }}>This user does not have location data.
-              </Box>
+      <div className="flex items-center justify-center py-4">
+        This user does not have location data.
+      </div>
     );
   }
 
   return (
-    <Box>
-      <div style={{ height: 550, width: "100%" }}>
+    <div>
+      <div className="h-137.5 w-full">
         <Map
           initialViewState={{
             latitude: user.location.latitude,
@@ -60,6 +62,6 @@ function LocationView() {
           />
         </Map>
       </div>
-    </Box>
+    </div>
   );
 }

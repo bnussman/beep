@@ -2,14 +2,7 @@ import React from "react";
 import { orpc } from "../utils/orpc";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  Alert,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Alert, AlertDialog, Button, toast } from "@heroui/react";
 
 interface Props {
   userId: string;
@@ -32,29 +25,45 @@ export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
     orpc.user.deleteUser.mutationOptions({
       onSuccess() {
         router.history.back();
+        toast.success("User has been successfully deleted."); 
         onClose();
       },
     }),
   );
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Delete User?</DialogTitle>
-      <DialogContent>
-        {error && <Alert severity="error">{error.message}</Alert>}
-        Are you sure you want to delete {user?.first} {user?.last}?
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
-          loading={isPending}
-          color="error"
-          variant="contained"
-          onClick={() => deleteUser(userId)}
-        >
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <AlertDialog.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+    >
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <AlertDialog.Header>
+            <AlertDialog.Heading>Delete User?</AlertDialog.Heading>
+          </AlertDialog.Header>
+          <AlertDialog.Body className="flex flex-col gap-4">
+            {error && (
+              <Alert status="danger">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>{error.message}</Alert.Title>
+                </Alert.Content>
+              </Alert>
+            )}
+            <p>Are you sure you want to delete {user?.first} {user?.last}?</p>
+          </AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" onPress={onClose}>Cancel</Button>
+            <Button
+              isPending={isPending}
+              variant="danger"
+              onPress={() => deleteUser(userId)}
+            >
+              Delete
+            </Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
   );
 }

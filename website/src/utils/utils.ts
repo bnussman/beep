@@ -1,3 +1,4 @@
+import { ChipProps } from "@heroui/react";
 import { RouterOutputs } from "../../../api/src";
 
 /**
@@ -88,18 +89,18 @@ export function getMiles(meters: number, round = false) {
   return miles;
 }
 
-export const beepStatusMap: Record<
+export const beepStatusToChipColorMap: Record<
   RouterOutputs["beep"]["beep"]["status"],
-  string
+  ChipProps['color']
 > = {
-  waiting: "orange",
-  on_the_way: "orange",
-  accepted: "green",
-  in_progress: "green",
-  here: "green",
-  denied: "red",
-  canceled: "red",
-  complete: "green",
+  waiting: "default",
+  on_the_way: "accent",
+  accepted: "accent",
+  in_progress: "accent",
+  here: "accent",
+  denied: "danger",
+  canceled: "danger",
+  complete: "success",
 };
 
 

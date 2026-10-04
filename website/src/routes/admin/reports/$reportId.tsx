@@ -10,16 +10,19 @@ import { DeleteReportDialog } from "../../../components/DeleteReportDialog";
 import { useRouter, createFileRoute } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import {
-  Button,
-  Typography,
-  Stack,
-  Avatar,
-  Card,
-  TextField,
-  Checkbox,
-  FormControlLabel,
   Alert,
-} from "@mui/material";
+  Avatar,
+  Button,
+  Checkbox,
+  FieldError,
+  Form,
+  Input,
+  Label,
+  TextArea,
+  TextField,
+  toast,
+  Typography,
+} from "@heroui/react";
 
 export const Route = createFileRoute('/admin/reports/$reportId')({
   component: Report,
@@ -46,6 +49,7 @@ function Report() {
       queryClient.invalidateQueries({
         queryKey: orpc.report.reports.key()
       });
+      toast.success("Report updated successfully");
     },
   }));
 
@@ -74,184 +78,161 @@ function Report() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   return (
-    <Stack spacing={2}>
-      <Stack
-        direction="row"
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
-        <Typography variant="h4" sx={{
-          fontWeight: "bold"
-        }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row items-center justify-between">
+        <Typography type="h1">
           Report
         </Typography>
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant="contained"
-          color="error"
-        >
+        <Button variant="danger" onPress={() => setIsOpen(true)}>
           Delete
         </Button>
-      </Stack>
-      <Card sx={{ p: 2, pt: 1 }}>
-        <Stack spacing={2}>
-          <Typography variant="h5" sx={{
-            fontWeight: "bold"
-          }}>
+      </div>
+      <div className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
+        <div className="flex flex-col gap-4">
+          <Typography type="h2">
             Details
           </Typography>
-          <Stack spacing={1}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Reporter</Typography>
+          <div className="flex flex-col gap-2">
+            <Typography type="body" className="font-bold">Reporter</Typography>
             <Link to="/admin/users/$userId" params={{ userId: report.reporter.id }}>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
-                <Avatar src={report.reporter.photo ?? undefined} />
-                <Typography>
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <Avatar.Image alt={`${report.reporter.first} ${report.reporter.last}`} src={report.reporter.photo ?? undefined} />
+                  <Avatar.Fallback>{report.reporter.first.at(0)?.toUpperCase()}{report.reporter.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                </Avatar>
+                <Typography type="body">
                   {report.reporter.first} {report.reporter.last}
                 </Typography>
-              </Stack>
+              </div>
             </Link>
-          </Stack>
-          <Stack spacing={1}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Reported</Typography>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Typography type="body" className="font-bold">Reported</Typography>
             <Link to="/admin/users/$userId" params={{ userId: report.reported.id }}>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
-                <Avatar src={report.reported.photo ?? undefined} />
-                <Typography>
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <Avatar.Image alt={`${report.reported.first} ${report.reported.last}`} src={report.reported.photo ?? undefined} />
+                  <Avatar.Fallback>{report.reported.first.at(0)?.toUpperCase()}{report.reported.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                </Avatar>
+                <Typography type="body">
                   {report.reported.first} {report.reported.last}
                 </Typography>
-              </Stack>
+              </div>
             </Link>
-          </Stack>
-          <Stack spacing={1}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Reason</Typography>
-            <Typography>{report.reason}</Typography>
-          </Stack>
-          <Stack spacing={1}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Date</Typography>
-            <Typography>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Typography type="body" className="font-bold">Reason</Typography>
+            <Typography type="body">{report.reason}</Typography>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Typography type="body" className="font-bold">Date</Typography>
+            <Typography type="body">
               {new Date(report.timestamp).toLocaleString()}
             </Typography>
-          </Stack>
-          <Stack spacing={1}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Beep</Typography>
-            <Typography>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Typography type="body" className="font-bold">Beep</Typography>
+            <Typography type="body">
               {report.beep_id ? (
                 <Link to="/admin/beeps/$beepId" params={{ beepId: report.beep_id }}>{report.beep_id}</Link>
               )
                 : 'N/A'
               }
             </Typography>
-          </Stack>
-          <Stack spacing={1}>
-            <Typography sx={{
-              fontWeight: "bold"
-            }}>Rating</Typography>
-            <Typography>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Typography type="body" className="font-bold">Rating</Typography>
+            <Typography type="body">
               {report.rating_id ? (
                 <Link to="/admin/ratings/$ratingId" params={{ ratingId: report.rating_id }}>{report.rating_id}</Link>
               )
                 : 'N/A'
               }
             </Typography>
-          </Stack>
-        </Stack>
-      </Card>
-      <Card sx={{ p: 2 }}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Stack spacing={2}>
-            <Stack
-              direction="row"
-              sx={{
-                justifyContent: "space-between",
-                flexWrap: "wrap"
-              }}>
-              <Typography variant="h5" sx={{
-                fontWeight: "bold"
-              }}>
+          </div>
+        </div>
+      </div>
+      <div className="rounded-lg border border-separator bg-surface p-4">
+        <Form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row flex-wrap justify-between">
+              <Typography type="h2">
                 Admin Notes
               </Typography>
               {report.handledBy && (
-                <Stack direction="row" spacing={1} sx={{
-                  alignItems: "center"
-                }}>
-                  <Typography sx={{
-                    fontWeight: "bold"
-                  }}>Resolved By</Typography>
-                  <Avatar
-                    src={report.handledBy.photo ?? undefined}
-                    sx={{ width: 24, height: 24 }}
-                  />
-                  <Typography>
+                <div className="flex items-center gap-2">
+                  <Typography type="body" className="font-bold">Resolved By</Typography>
+                  <Avatar className="size-6">
+                    <Avatar.Image
+                      alt={`${report.handledBy.first} ${report.handledBy.last}`}
+                      src={report.handledBy.photo ?? undefined}
+                    />
+                    <Avatar.Fallback>{report.handledBy.first.at(0)?.toUpperCase()}{report.handledBy.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                  </Avatar>
+                  <Typography type="body">
                     {report.handledBy.first} {report.handledBy.last}
                   </Typography>
-                </Stack>
+                </div>
               )}
-            </Stack>
+            </div>
             <Controller
               control={form.control}
               name="notes"
               render={({ field, fieldState }) => (
-                <TextField
-                  multiline
-                  label="Notes"
-                  rows={4}
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                />
+                <TextField {...field} value={field.value ?? ""} variant="secondary">
+                  <Label>Notes</Label>
+                  <TextArea rows={4} />
+                  <FieldError>{fieldState.error?.message}</FieldError>
+                </TextField>
               )}
             />
-            <Stack direction="row" sx={{
-              justifyContent: "space-between"
-            }}>
+            <div className="flex flex-row justify-between">
               <Controller
                 control={form.control}
                 name="handled"
                 render={({ field }) => (
-                  <FormControlLabel
-                    checked={field.value ?? false}
+                  <Checkbox
+                    isSelected={field.value ?? false}
                     onChange={field.onChange}
-                    control={<Checkbox />}
-                    label="Resolved"
-                  />
+                    variant="secondary"
+                  >
+                    <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      Resolved
+                    </Checkbox.Content>
+                  </Checkbox>
                 )}
               />
               <Button
-                variant="contained"
-                disabled={!form.formState.isDirty}
+                isDisabled={!form.formState.isDirty}
                 type="submit"
-                loading={isPending}
+                isPending={isPending}
               >
                 Save
               </Button>
-            </Stack>
-          </Stack>
-        </form>
-      </Card>
+            </div>
+          </div>
+        </Form>
+      </div>
       <DeleteReportDialog
         id={reportId}
         onClose={onClose}
         isOpen={isOpen}
         onSuccess={() => history.back()}
       />
-    </Stack>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import React from "react";
-import { Alert, Button } from "@mui/material";
-import { useNotifications } from "@toolpad/core";
+import { Alert, Button, toast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
@@ -16,39 +15,27 @@ export function Banners() {
   const { mutate: resend, isPending } = useMutation(
     orpc.auth.resendVerification.mutationOptions({
       onSuccess() {
-        notifications.show("Successfully resent verification email.", {
-          severity: "success",
-        });
+        toast.success("Successfully resent verification email.", { timeout: 5_000 });
       },
       onError(error) {
-        notifications.show(error.message, { severity: "error" });
+        toast.danger(error.message, { timeout: 5_000 });
       },
     })
   );
-
-  const notifications = useNotifications();
 
   if (!user || user.isEmailVerified) {
     return null;
   }
 
   return (
-    <Alert
-      severity="warning"
-      sx={{ alignItems: 'center' }}
-      slotProps={{ action: { sx: { padding: 0.5 } } }}
-      action={
-        <Button
-          loading={isPending}
-          onClick={() => resend()}
-          color="warning"
-          variant="contained"
-        >
-          Resend
-        </Button>
-      }
-    >
-      Please verify your email
+    <Alert status="warning" className="items-center">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>Please verify your email</Alert.Title>
+      </Alert.Content>
+      <Button isPending={isPending} onPress={() => resend()}>
+        Resend
+      </Button>
     </Alert>
   );
 }

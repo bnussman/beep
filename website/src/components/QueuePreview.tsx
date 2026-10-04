@@ -1,19 +1,11 @@
 import React from "react";
 import { useSubscription } from "../utils/subscriptions";
 import { orpc } from "../utils/orpc";
-import { Indicator } from "./Indicator";
-import { Link as RouterLink } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { beepStatusMap } from "../utils/utils";
-import {
-  Link,
-  Avatar,
-  Box,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { beepStatusToChipColorMap } from "../utils/utils";
+import { Avatar, Chip, Spinner } from "@heroui/react";
+import { Link as RouterLink } from "./Link";
 
 interface Props {
   userId: string;
@@ -38,72 +30,49 @@ export function QueuePreview({ userId }: Props) {
 
   if (isLoading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100px"
-        }}>
-        <CircularProgress size={24} />
-      </Box>
+      <div className="flex h-25 items-center justify-center">
+        <Spinner size="sm" />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100px"
-        }}>
+      <div className="flex h-25 items-center justify-center">
         {error.message}
-      </Box>
+      </div>
     );
   }
 
   if (data?.length === 0) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100px"
-        }}>This user's queue is empty.
-              </Box>
+      <div className="flex h-25 items-center justify-center">
+        This user's queue is empty.
+      </div>
     );
   }
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       {data?.map((beep) => (
-        <Link
-          component={RouterLink}
-          to={`/admin/users/${beep.rider.id}`}
-          key={beep.id}
-        >
-          <Stack key={beep.id} direction="row" spacing={1} sx={{
-            alignItems: "center"
-          }}>
-            <Avatar
-              src={beep.rider.photo || ""}
-              sx={{ width: 24, height: 24 }}
-            />
-            <Box
-              sx={{
-                fontWeight: "bold",
-                whiteSpace: "nowrap"
-              }}>
-              {beep.rider.first} {beep.rider.last}
-            </Box>
-            <Typography>{beep.status.replaceAll("_", " ")}</Typography>
-            <Indicator color={beepStatusMap[beep.status]} />
-          </Stack>
-        </Link>
+        <div className="flex flex-row gap-4 justify-between" key={beep.id}>
+          <RouterLink to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
+            <div className="flex items-center gap-2 w-full">
+              <Avatar className="size-6">
+                <Avatar.Image alt={`${beep.rider.first} ${beep.rider.last}`} src={beep.rider.photo || undefined} />
+                <Avatar.Fallback>{beep.rider.first.at(0)?.toUpperCase()}{beep.rider.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+              </Avatar>
+              <span className="whitespace-nowrap">
+                {beep.rider.first} {beep.rider.last}
+              </span>
+              <div className="flex-1" />
+            </div>
+          </RouterLink>
+          <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
+            {beep.status.replaceAll("_", " ")}
+          </Chip>
+        </div>
       ))}
-    </Stack>
+    </div>
   );
 }

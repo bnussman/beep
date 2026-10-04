@@ -1,23 +1,12 @@
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import TableCell, { TableCellProps } from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
+import { Spinner, Table, TableCellProps } from '@heroui/react';
 import React from 'react';
 
 export function TableLoading(props: TableCellProps) {
   return (
-    <TableRow>
-      <TableCell {...props}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            py: 10
-          }}>
-          <CircularProgress />
-        </Box>
-      </TableCell>
-    </TableRow>
+    <Table.Row>
+      <Table.Cell className="py-10 text-center" {...props}>
+        <Spinner />
+      </Table.Cell>
+    </Table.Row>
   );
 }

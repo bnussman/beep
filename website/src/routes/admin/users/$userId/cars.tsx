@@ -11,16 +11,7 @@ import { TableLoading } from "../../../../components/TableLoading";
 import { TableEmpty } from "../../../../components/TableEmpty";
 import { TableError } from "../../../../components/TableError";
 import { keepPreviousData } from "@tanstack/react-query";
-import {
-  Paper,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableHead,
-  Stack,
-  TableCell,
-} from "@mui/material";
+import { Table } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/cars")({
   component: CarsTable,
@@ -52,73 +43,73 @@ function CarsTable() {
   };
 
   return (
-    <Stack spacing={1}>
+    <div className="flex flex-col gap-2">
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={currentPage}
-        onChange={(e, page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
       />
-      <TableContainer component={Paper} variant="outlined">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Make</TableCell>
-              <TableCell>Model</TableCell>
-              <TableCell>Year</TableCell>
-              <TableCell>Color</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Photo</TableCell>
-              <TableCell>Default</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <Table>
+        <Table.ScrollContainer>
+          <Table.Content aria-label="User cars">
+            <Table.Header>
+              <Table.Column>Make</Table.Column>
+              <Table.Column isRowHeader>Model</Table.Column>
+              <Table.Column>Year</Table.Column>
+              <Table.Column>Color</Table.Column>
+              <Table.Column>Created</Table.Column>
+              <Table.Column>Photo</Table.Column>
+              <Table.Column>Default</Table.Column>
+              <Table.Column />
+            </Table.Header>
+            <Table.Body>
             {isLoading && <TableLoading colSpan={8} />}
             {error && <TableError colSpan={8} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.cars.map((car) => (
-              <TableRow key={car.id}>
-                <TableCell>{car.make}</TableCell>
-                <TableCell>{car.model}</TableCell>
-                <TableCell>{car.year}</TableCell>
-                <TableCell>
+              <Table.Row key={car.id}>
+                <Table.Cell>{car.make}</Table.Cell>
+                <Table.Cell>{car.model}</Table.Cell>
+                <Table.Cell>{car.year}</Table.Cell>
+                <Table.Cell>
                   <Indicator color={car.color} tooltip={car.color} />
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   {DateTime.fromJSDate(car.created).toRelative()}
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <img
                     src={car.photo}
                     alt={`${car.user.first}'s ${car.year} ${car.make} ${car.model}`}
                     style={{ width: 84, borderRadius: 10 }}
                   />
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <Indicator color={car.default ? "green" : "red"} />
-                </TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
+                </Table.Cell>
+                <Table.Cell className="text-right">
                   <CarMenu carId={car.id} onDelete={() => onDelete(car.id)} />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
+      </Table>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
-        count={data?.pages}
+        pageSize={data?.pageSize}
+        pages={data?.pages}
         page={currentPage}
-        onChange={(e, page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
       />
       <DeleteCarDialog
         car={selectedCar}
         onClose={() => setIsDeleteOpen(false)}
         isOpen={isDeleteOpen}
       />
-    </Stack>
+    </div>
   );
 }

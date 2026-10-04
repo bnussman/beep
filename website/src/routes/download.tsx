@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
-import { CircularProgress, Typography, Stack } from "@mui/material";
+import { Typography, Spinner } from "@heroui/react";
 
 export const Route = createFileRoute('/download')({
   component: Download,
@@ -13,19 +13,11 @@ function Download() {
   }, []);
 
   return (
-    <Stack
-      spacing={2}
-      sx={{
-        height: "200px",
-        alignItems: "center",
-        justifyContent: "center"
-      }}>
-      <Typography variant="h5" sx={{
-        fontWeight: "bold"
-      }}>
+    <div className="flex h-50 flex-col items-center justify-center gap-4">
+      <Typography type="h2">
         Redirecting you to download
       </Typography>
-      <CircularProgress />
-    </Stack>
+      <Spinner size="xl" />
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { useSubscription } from "../../../../utils/subscriptions";
 import { orpc } from "../../../../utils/orpc";
-import { beepStatusMap, decodePolyline } from "../../../../utils/utils";
+import { beepStatusToChipColorMap, decodePolyline } from "../../../../utils/utils";
 import { Map } from "../../../../components/Map";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { Loading } from "../../../../components/Loading";
@@ -10,22 +10,13 @@ import { Marker as BeeperMarker } from "../../../../components/Marker";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { BasicUser } from "../../../../components/BasicUser";
 import { DateTime } from "luxon";
-import { Indicator } from "../../../../components/Indicator";
-import {
-  Alert,
-  Box,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Alert, Chip, Tooltip, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/ride")({
   component: Ride,
 });
 
 function Ride() {
-  const theme = useTheme();
   const queryClient = useQueryClient();
 
   const { userId } = useParams({ from: Route.id });
@@ -103,94 +94,78 @@ function Ride() {
   }
 
   if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   if (!ride) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: 2
-        }}>User is not in a beep!
-              </Box>
+      <div className="flex items-center justify-center py-8">
+        User is not in a beep!
+      </div>
     );
   }
 
   return (
-    <Stack direction="row" sx={{
-      gap: 2
-    }}>
-      <Stack spacing={1}>
-        <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Beeper</Typography>
+    <div className="flex flex-row gap-8">
+      <div className="flex flex-col gap-2">
+        <div>
+          <Typography type="body" className="font-bold">Beeper</Typography>
           <BasicUser user={ride.beeper} />
-        </Box>
-        <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Status</Typography>
-          <Stack
-            direction="row"
-            sx={{
-              alignItems: "center",
-              gap: 1
-            }}>
-            <Typography sx={{
-              textTransform: "capitalize"
-            }}>
+        </div>
+        <div>
+          <Typography type="body" className="font-bold">Status</Typography>
+          <div className="flex flex-row items-center gap-2">
+            <Chip color={beepStatusToChipColorMap[ride.status]} className="capitalize">
               {ride.status.replaceAll("_", " ")}
-            </Typography>
-            <Indicator color={beepStatusMap[ride.status]} />
-          </Stack>
-        </Box>
-        <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Origin</Typography>
-          <Typography>{ride.origin}</Typography>
-        </Box>
-        <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Destination</Typography>
-          <Typography>{ride.destination}</Typography>
-        </Box>
-        <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Group Size</Typography>
-          <Typography>{ride.groupSize}</Typography>
-        </Box>
-        <Box>
-          <Typography sx={{
-            fontWeight: "bold"
-          }}>Started</Typography>
-          <Typography style={{ textWrap: "nowrap" }}>
+            </Chip>
+          </div>
+        </div>
+        <div>
+          <Typography type="body" className="font-bold">Origin</Typography>
+          <Typography type="body">{ride.origin}</Typography>
+        </div>
+        <div>
+          <Typography type="body" className="font-bold">Destination</Typography>
+          <Typography type="body">{ride.destination}</Typography>
+        </div>
+        <div>
+          <Typography type="body" className="font-bold">Group Size</Typography>
+          <Typography type="body">{ride.groupSize}</Typography>
+        </div>
+        <div>
+          <Typography type="body" className="font-bold">Started</Typography>
+          <Typography type="body" className="whitespace-nowrap">
             {new Date(ride.start).toLocaleString()}
           </Typography>
-          <Typography>{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
-        </Box>
-      </Stack>
-      <Box sx={{
-        width: "100%"
-      }}>
+          <Typography type="body">{DateTime.fromJSDate(ride.start).toRelative()}</Typography>
+        </div>
+      </div>
+      <div className="w-full">
         <Map>
           {origin && (
             <Marker latitude={origin.lat} longitude={origin.lng}>
-              <Tooltip title={ride.origin} arrow>
-                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{ride.origin}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
           {destination && (
             <Marker latitude={destination.lat} longitude={destination.lng}>
-              <Tooltip title={ride.destination} arrow>
-                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Typography type="body" className="mb-2.5 text-[32px]">📍</Typography>
+                </Tooltip.Trigger>
+                <Tooltip.Content showArrow>{ride.destination}</Tooltip.Content>
               </Tooltip>
             </Marker>
           )}
@@ -224,13 +199,13 @@ function Ride() {
             <Layer
               type="line"
               paint={{
-                "line-color": theme.palette.info.main,
+                "line-color": "#0288d1",
                 "line-width": 5,
               }}
             />
           </Source>
         </Map>
-      </Box>
-    </Stack>
+      </div>
+    </div>
   );
 }

@@ -3,15 +3,7 @@ import { RouterOutputs } from "../../../api/src";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  Alert,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
+import { Alert, AlertDialog, Button, Description, Label, TextArea, TextField } from "@heroui/react";
 
 type Car = RouterOutputs["car"]["cars"]["cars"][number];
 
@@ -52,31 +44,46 @@ export function DeleteCarDialog(props: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle>
-        Delete {car?.user.first}'s {car?.make} {car?.model}?
-      </DialogTitle>
-      <DialogContent>
-        {error && <Alert severity="error">{error.message}</Alert>}
-        <TextField
-          sx={{ mt: 2 }}
-          label="Notification Message"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          helperText="Type a message here if you want the user to recieve a notification about why their car was removed"
-          multiline
-          rows={3}
-          slotProps={{
-            inputLabel: { shrink: true },
-          }}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button loading={isPending} color="error" onClick={handleDelete}>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <AlertDialog.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && handleClose()}
+    >
+      <AlertDialog.Container>
+        <AlertDialog.Dialog>
+          <AlertDialog.Header>
+            <AlertDialog.Heading>
+              Delete {car?.user.first}'s {car?.make} {car?.model}?
+            </AlertDialog.Heading>
+          </AlertDialog.Header>
+          <AlertDialog.Body className="flex flex-col gap-4">
+            {error && (
+              <Alert status="danger">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>{error.message}</Alert.Title>
+                </Alert.Content>
+              </Alert>
+            )}
+            <TextField>
+              <Label>Notification Message</Label>
+              <TextArea
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                rows={3}
+              />
+              <Description>
+                Type a message here if you want the user to receive a notification about why their car was removed.
+              </Description>
+            </TextField>
+          </AlertDialog.Body>
+          <AlertDialog.Footer>
+            <Button variant="tertiary" onPress={handleClose}>Cancel</Button>
+            <Button isPending={isPending} variant="danger" onPress={handleDelete}>
+              Delete
+            </Button>
+          </AlertDialog.Footer>
+        </AlertDialog.Dialog>
+      </AlertDialog.Container>
+    </AlertDialog.Backdrop>
   );
 }
