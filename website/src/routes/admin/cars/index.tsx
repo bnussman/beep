@@ -107,6 +107,7 @@ function Cars() {
                       height: 64,
                       borderRadius: 8,
                       objectFit: "cover",
+                      cursor: "pointer",
                     }}
                   />
                 </Table.Cell>
