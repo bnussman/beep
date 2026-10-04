@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { orpc } from "../../../../utils/orpc";
 import { beepStatusToChipColorMap } from "../../../../utils/utils";
 import { DateTime, Duration } from "luxon";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../../components/BeepMenu";
 import { createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
@@ -23,6 +23,7 @@ function BeepsTable() {
 
   const { data, isLoading, error } = useQuery(
     orpc.beep.beeps.queryOptions({
+      placeholderData: keepPreviousData,
       input: {
         userId,
         page: currentPage,

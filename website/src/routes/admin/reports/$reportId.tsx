@@ -20,6 +20,7 @@ import {
   Label,
   TextArea,
   TextField,
+  toast,
   Typography,
 } from "@heroui/react";
 
@@ -48,6 +49,7 @@ function Report() {
       queryClient.invalidateQueries({
         queryKey: orpc.report.reports.key()
       });
+      toast.success("Report updated successfully");
     },
   }));
 

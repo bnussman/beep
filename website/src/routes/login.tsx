@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { RouterInputs } from "../../../api/src";
 import { Controller, useForm } from "react-hook-form";
 import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Alert, Button, FieldError, Input, Label, TextField, Typography } from "@heroui/react";
-import { LinkButton } from "../components/LinkButton";
+import { Alert, Button, FieldError, Input, InputGroup, Label, TextField, Typography } from "@heroui/react";
 import { Link } from "../components/Link";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -16,6 +16,8 @@ export const Route = createFileRoute("/login")({
 function Login() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [isVisible, setIsVisible] = useState(false);
 
   const form = useForm<RouterInputs["auth"]["login"]>({
     defaultValues: {
@@ -70,7 +72,20 @@ function Login() {
           render={({ field, fieldState }) => (
             <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Password</Label>
-              <Input type="password" />
+              <InputGroup>
+                <InputGroup.Input type={isVisible ? "text" : "password"} />
+                <InputGroup.Suffix className="pe-0">
+                  <Button
+                    isIconOnly
+                    aria-label={isVisible ? "Hide password" : "Show password"}
+                    size="sm"
+                    variant="ghost"
+                    onPress={() => setIsVisible(!isVisible)}
+                  >
+                    {isVisible ? <EyeIcon className="size-4" /> : <EyeSlashIcon className="size-4" />}
+                  </Button>
+                </InputGroup.Suffix>
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
