@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { orpc } from "../../../../utils/orpc";
-import { beepStatusMap } from "../../../../utils/utils";
+import { beepStatusToChipColorMap } from "../../../../utils/utils";
 import { DateTime, Duration } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../../components/BeepMenu";
-import { Indicator } from "../../../../components/Indicator";
 import { createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableCellUser } from "../../../../components/TableCellUser";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
-import { Table } from "@heroui/react";
-import { Typography } from "@heroui/react";
+import { Chip, Table } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/beeps")({
   component: BeepsTable,
@@ -74,12 +72,12 @@ function BeepsTable() {
                 <Table.Cell>{beep.destination}</Table.Cell>
                 <Table.Cell>{beep.groupSize}</Table.Cell>
                 <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography type="body" className="capitalize">
-                      {beep.status.replaceAll("_", " ")}
-                    </Typography>
-                  </div>
+                  <Chip
+                    className="capitalize"
+                    color={beepStatusToChipColorMap[beep.status]}
+                  >
+                    {beep.status.replaceAll("_", " ")}
+                  </Chip>
                 </Table.Cell>
                 <Table.Cell>
                   {beep.end

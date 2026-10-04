@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { orpc } from "../../../utils/orpc";
-import { Indicator } from "../../../components/Indicator";
-import { beepStatusMap, decodePolyline } from "../../../utils/utils";
+import { beepStatusToChipColorMap, decodePolyline } from "../../../utils/utils";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
@@ -10,11 +9,8 @@ import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import { DateTime, Interval } from "luxon";
 import { keepPreviousData, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
-import {
-  createFileRoute,
-  useRouter,
-} from "@tanstack/react-router";
-import { Alert, Button, Card, Tooltip, Typography } from "@heroui/react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Alert, Button, Card, Chip, Tooltip, Typography } from "@heroui/react";
 import { useSubscription } from "../../../utils/subscriptions";
 
 export const Route = createFileRoute("/admin/beeps/$beepId")({
@@ -125,12 +121,9 @@ function Beep() {
     {
       title: "Status",
       content: (
-        <div className="flex items-center gap-2">
-          <Typography type="body" className="capitalize">
-            {beep.status.replaceAll("_", " ")}
-          </Typography>
-          <Indicator color={beepStatusMap[beep.status]} />
-        </div>
+        <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
+          {beep.status.replaceAll("_", " ")}
+        </Chip>
       ),
     },
     {
@@ -215,7 +208,7 @@ function Beep() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
             <div key={item.title}>
-              <Typography type="body" className="text-[0.95rem] font-bold">
+              <Typography type="body" className="text-sm font-bold">
                 {item.title}
               </Typography>
               {item.content}

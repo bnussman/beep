@@ -43,7 +43,7 @@ export function Marker(props: Props) {
             <Separator />
             <QueuePreview userId={userId} />
             <Separator />
-            <Typography type="body">
+            <Typography type="body" className="text-sm">
               {latitude.toFixed(3)} {longitude.toFixed(3)}
             </Typography>
           </Popover.Dialog>

@@ -1,7 +1,6 @@
 import React from "react";
 import { orpc } from "../../../utils/orpc";
-import { Indicator } from "../../../components/Indicator";
-import { beepStatusMap } from "../../../utils/utils";
+import { beepStatusToChipColorMap } from "../../../utils/utils";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
@@ -92,12 +91,9 @@ function ActiveBeeps() {
                   {DateTime.fromJSDate(beep.start).toRelative()}
                 </Table.Cell>
                 <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <Indicator color={beepStatusMap[beep.status]} />
-                    <Typography type="body" className="capitalize">
-                      {beep.status.replaceAll("_", " ")}
-                    </Typography>
-                  </div>
+                  <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
+                    {beep.status.replaceAll("_", " ")}
+                  </Chip>
                 </Table.Cell>
                 <Table.Cell>
                   <BeepMenu beepId={beep.id} />

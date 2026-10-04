@@ -1,7 +1,7 @@
 import React from "react";
 import { useSubscription } from "../../../../utils/subscriptions";
 import { orpc } from "../../../../utils/orpc";
-import { beepStatusMap, decodePolyline } from "../../../../utils/utils";
+import { beepStatusToChipColorMap, decodePolyline } from "../../../../utils/utils";
 import { Map } from "../../../../components/Map";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { Loading } from "../../../../components/Loading";
@@ -10,8 +10,7 @@ import { Marker as BeeperMarker } from "../../../../components/Marker";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { BasicUser } from "../../../../components/BasicUser";
 import { DateTime } from "luxon";
-import { Indicator } from "../../../../components/Indicator";
-import { Alert, Tooltip, Typography } from "@heroui/react";
+import { Alert, Chip, Tooltip, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/ride")({
   component: Ride,
@@ -107,14 +106,14 @@ function Ride() {
 
   if (!ride) {
     return (
-      <div className="flex items-center justify-center py-4">
+      <div className="flex items-center justify-center py-8">
         User is not in a beep!
       </div>
     );
   }
 
   return (
-    <div className="flex flex-row gap-4">
+    <div className="flex flex-row gap-8">
       <div className="flex flex-col gap-2">
         <div>
           <Typography type="body" className="font-bold">Beeper</Typography>
@@ -123,10 +122,9 @@ function Ride() {
         <div>
           <Typography type="body" className="font-bold">Status</Typography>
           <div className="flex flex-row items-center gap-2">
-            <Typography type="body" className="capitalize">
+            <Chip color={beepStatusToChipColorMap[ride.status]} className="capitalize">
               {ride.status.replaceAll("_", " ")}
-            </Typography>
-            <Indicator color={beepStatusMap[ride.status]} />
+            </Chip>
           </div>
         </div>
         <div>

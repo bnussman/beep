@@ -1,11 +1,10 @@
 import React from "react";
 import { useSubscription } from "../utils/subscriptions";
 import { orpc } from "../utils/orpc";
-import { Indicator } from "./Indicator";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { beepStatusMap } from "../utils/utils";
-import { Avatar, Spinner, Typography } from "@heroui/react";
+import { beepStatusToChipColorMap } from "../utils/utils";
+import { Avatar, Chip, Spinner } from "@heroui/react";
 import { Link as RouterLink } from "./Link";
 
 interface Props {
@@ -56,19 +55,23 @@ export function QueuePreview({ userId }: Props) {
   return (
     <div className="flex flex-col gap-2">
       {data?.map((beep) => (
-        <RouterLink to="/admin/users/$userId" params={{ userId: beep.rider.id }} key={beep.id}>
-          <div className="flex items-center gap-2">
-            <Avatar className="size-6">
-              <Avatar.Image alt={`${beep.rider.first} ${beep.rider.last}`} src={beep.rider.photo || undefined} />
-              <Avatar.Fallback>{beep.rider.first.at(0)?.toUpperCase()}{beep.rider.last.at(0)?.toUpperCase()}</Avatar.Fallback>
-            </Avatar>
-            <span className="whitespace-nowrap font-bold">
-              {beep.rider.first} {beep.rider.last}
-            </span>
-            <Typography type="body">{beep.status.replaceAll("_", " ")}</Typography>
-            <Indicator color={beepStatusMap[beep.status]} />
-          </div>
-        </RouterLink>
+        <div className="flex flex-row gap-4 justify-between" key={beep.id}>
+          <RouterLink to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
+            <div className="flex items-center gap-2 w-full">
+              <Avatar className="size-6">
+                <Avatar.Image alt={`${beep.rider.first} ${beep.rider.last}`} src={beep.rider.photo || undefined} />
+                <Avatar.Fallback>{beep.rider.first.at(0)?.toUpperCase()}{beep.rider.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+              </Avatar>
+              <span className="whitespace-nowrap">
+                {beep.rider.first} {beep.rider.last}
+              </span>
+              <div className="flex-1" />
+            </div>
+          </RouterLink>
+          <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
+            {beep.status.replaceAll("_", " ")}
+          </Chip>
+        </div>
       ))}
     </div>
   );

@@ -17,10 +17,10 @@ export function BasicUser(props: Props) {
   return (
     <Link to="/admin/users/$userId" params={{ userId: user.id }}>
       <div className="flex items-center gap-3">
-        <Typography type="body">
+        <Typography type="body" className="whitespace-nowrap">
           {user.first} {user.last}
         </Typography>
-        <Avatar className="size-8">
+        <Avatar size="sm">
           <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
           <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
         </Avatar>
