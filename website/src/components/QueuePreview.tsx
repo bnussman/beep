@@ -3,9 +3,9 @@ import { useSubscription } from "../utils/subscriptions";
 import { orpc } from "../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { beepStatusToChipColorMap } from "../utils/utils";
-import { Avatar, Chip, Spinner } from "@heroui/react";
+import { Avatar, Spinner } from "@heroui/react";
 import { Link as RouterLink } from "./Link";
+import { BeepStatusChip } from "./BeepStatusChip";
 
 interface Props {
   userId: string;
@@ -68,9 +68,7 @@ export function QueuePreview({ userId }: Props) {
               <div className="flex-1" />
             </div>
           </RouterLink>
-          <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
-            {beep.status.replaceAll("_", " ")}
-          </Chip>
+          <BeepStatusChip status={beep.status} />
         </div>
       ))}
     </div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { orpc } from "../../../utils/orpc";
-import { beepStatusToChipColorMap, decodePolyline } from "../../../utils/utils";
+import { decodePolyline } from "../../../utils/utils";
 import { BasicUser } from "../../../components/BasicUser";
+import { BeepStatusChip } from "../../../components/BeepStatusChip";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
 import { Marker as BeeperMarker } from "../../../components/Marker";
@@ -10,7 +11,7 @@ import { DateTime, Interval } from "luxon";
 import { keepPreviousData, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Alert, Button, Card, Chip, Tooltip, Typography } from "@heroui/react";
+import { Alert, Button, Card, Tooltip, Typography } from "@heroui/react";
 import { useSubscription } from "../../../utils/subscriptions";
 
 export const Route = createFileRoute("/admin/beeps/$beepId")({
@@ -121,9 +122,7 @@ function Beep() {
     {
       title: "Status",
       content: (
-        <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
-          {beep.status.replaceAll("_", " ")}
-        </Chip>
+        <BeepStatusChip status={beep.status} />
       ),
     },
     {

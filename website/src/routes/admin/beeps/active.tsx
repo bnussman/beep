@@ -1,6 +1,6 @@
 import React from "react";
 import { orpc } from "../../../utils/orpc";
-import { beepStatusToChipColorMap } from "../../../utils/utils";
+import { BeepStatusChip } from "../../../components/BeepStatusChip";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
@@ -91,9 +91,7 @@ function ActiveBeeps() {
                   {DateTime.fromJSDate(beep.start).toRelative()}
                 </Table.Cell>
                 <Table.Cell>
-                  <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
-                    {beep.status.replaceAll("_", " ")}
-                  </Chip>
+                  <BeepStatusChip status={beep.status} />
                 </Table.Cell>
                 <Table.Cell>
                   <BeepMenu beepId={beep.id} />

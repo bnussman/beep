@@ -1,7 +1,7 @@
 import React from "react";
 import { useSubscription } from "../../../../utils/subscriptions";
 import { orpc } from "../../../../utils/orpc";
-import { beepStatusToChipColorMap } from "../../../../utils/utils";
+import { BeepStatusChip } from "../../../../components/BeepStatusChip";
 import { createFileRoute } from "@tanstack/react-router";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
@@ -10,7 +10,7 @@ import { TableCellUser } from "../../../../components/TableCellUser";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { Chip, Table } from "@heroui/react";
+import { Table } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/queue")({
   component: QueueTable,
@@ -59,9 +59,7 @@ function QueueTable() {
               <Table.Cell>{beep.groupSize}</Table.Cell>
               <Table.Cell>{DateTime.fromJSDate(beep.start).toRelative()}</Table.Cell>
               <Table.Cell>
-                <Chip color={beepStatusToChipColorMap[beep.status]} className="capitalize">
-                  {beep.status.replaceAll("_", " ")}
-                </Chip>
+                <BeepStatusChip status={beep.status} />
               </Table.Cell>
             </Table.Row>
           ))}

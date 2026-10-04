@@ -1,7 +1,8 @@
 import React from "react";
 import { useSubscription } from "../../../../utils/subscriptions";
 import { orpc } from "../../../../utils/orpc";
-import { beepStatusToChipColorMap, decodePolyline } from "../../../../utils/utils";
+import { decodePolyline } from "../../../../utils/utils";
+import { BeepStatusChip } from "../../../../components/BeepStatusChip";
 import { Map } from "../../../../components/Map";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { Loading } from "../../../../components/Loading";
@@ -10,7 +11,7 @@ import { Marker as BeeperMarker } from "../../../../components/Marker";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { BasicUser } from "../../../../components/BasicUser";
 import { DateTime } from "luxon";
-import { Alert, Chip, Tooltip, Typography } from "@heroui/react";
+import { Alert, Tooltip, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/users/$userId/ride")({
   component: Ride,
@@ -122,9 +123,7 @@ function Ride() {
         <div>
           <Typography type="body" className="font-bold">Status</Typography>
           <div className="flex flex-row items-center gap-2">
-            <Chip color={beepStatusToChipColorMap[ride.status]} className="capitalize">
-              {ride.status.replaceAll("_", " ")}
-            </Chip>
+            <BeepStatusChip status={ride.status} />
           </div>
         </div>
         <div>

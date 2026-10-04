@@ -93,11 +93,11 @@ export const beepStatusToChipColorMap: Record<
   RouterOutputs["beep"]["beep"]["status"],
   ChipProps['color']
 > = {
-  waiting: "default",
-  on_the_way: "accent",
-  accepted: "accent",
-  in_progress: "accent",
-  here: "accent",
+  waiting: "warning",
+  on_the_way: "warning",
+  accepted: "warning",
+  in_progress: "warning",
+  here: "warning",
   denied: "danger",
   canceled: "danger",
   complete: "success",
