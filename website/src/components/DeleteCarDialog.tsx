@@ -57,7 +57,7 @@ export function DeleteCarDialog(props: Props) {
           </AlertDialog.Header>
           <AlertDialog.Body className="flex flex-col gap-4">
             {error && (
-              <Alert status="danger">
+              <Alert status="danger" className="bg-surface-secondary">
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Title>{error.message}</Alert.Title>
@@ -67,6 +67,7 @@ export function DeleteCarDialog(props: Props) {
             <TextField>
               <Label>Notification Message</Label>
               <TextArea
+                variant="secondary"
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
                 rows={3}
