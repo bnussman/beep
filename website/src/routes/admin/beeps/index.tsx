@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { orpc } from "../../../utils/orpc";
-import { beepStatusToChipColorMap } from "../../../utils/utils";
+import { BeepStatusChip } from "../../../components/BeepStatusChip";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
 import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
@@ -12,7 +12,7 @@ import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { DateTime, Interval } from "luxon";
-import { Chip, Table, Typography } from "@heroui/react";
+import { Table, Typography } from "@heroui/react";
 
 export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
@@ -88,12 +88,7 @@ function Beeps() {
                 <Table.Cell>{beep.destination}</Table.Cell>
                 <Table.Cell>{beep.groupSize}</Table.Cell>
                 <Table.Cell>
-                  <Chip
-                    className="capitalize whitespace-nowrap"
-                    color={beepStatusToChipColorMap[beep.status]}
-                  >
-                    {beep.status.replaceAll("_", " ")}
-                  </Chip>
+                  <BeepStatusChip status={beep.status} />
                 </Table.Cell>
                 <Table.Cell>
                   {DateTime.fromJSDate(beep.start).toRelative()}
