@@ -89,7 +89,7 @@ function Beeps() {
                 <Table.Cell>{beep.groupSize}</Table.Cell>
                 <Table.Cell>
                   <Chip
-                    className="capitalize"
+                    className="capitalize whitespace-nowrap"
                     color={beepStatusToChipColorMap[beep.status]}
                   >
                     {beep.status.replaceAll("_", " ")}

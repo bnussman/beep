@@ -85,8 +85,8 @@ function Beepers() {
             {data?.map((beeper) => (
               <Table.Row key={beeper.id}>
                 <Table.Cell>
-                  <Link to="/admin/users/$userId" params={{ userId: beeper.id }}>
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-row justify-between items-center">
+                    <Link to="/admin/users/$userId" params={{ userId: beeper.id }} className="flex items-center gap-2">
                       <Avatar>
                         <Avatar.Image alt={`${beeper.first} ${beeper.last}`} src={beeper.photo || undefined} />
                         <Avatar.Fallback>{beeper.first.at(0)?.toUpperCase()}{beeper.last.at(0)?.toUpperCase()}</Avatar.Fallback>
@@ -94,14 +94,13 @@ function Beepers() {
                       <Typography type="body">
                         {beeper.first} {beeper.last}
                       </Typography>
-                      <div className="grow" />
-                      {beeper.isPremium && (
-                        <Chip variant="soft">
-                          Premium 👑
-                        </Chip>
-                      )}
-                    </div>
-                  </Link>
+                    </Link>
+                    {beeper.isPremium && (
+                      <Chip variant="soft">
+                        Premium 👑
+                      </Chip>
+                    )}
+                  </div>
                 </Table.Cell>
                 <Table.Cell>{beeper.queueSize} riders</Table.Cell>
                 <Table.Cell>{beeper.capacity} riders</Table.Cell>
