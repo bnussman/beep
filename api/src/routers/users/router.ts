@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { beeps, emailVerifications, users } from "../../../drizzle/schema";
+import { beeps, cars, emailVerifications, feedbacks, payments, ratings, reports, users } from "../../../drizzle/schema";
 import { db, writeDB } from "../../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
@@ -549,5 +549,60 @@ export const userRouter = {
       };
 
       await email.sendMail(mailOptions);
+    }),
+  migrateEntitiesToUser: adminProcedure
+    .input(z.object({ fromUserId: z.uuid(), toUserId: z.uuid() }))
+    .handler(async ({ input }) => {
+      const user = await db.query.users.findFirst({
+        where: { id: input.fromUserId },
+      });
+
+      if (!user) {
+        throw new ORPCError("NOT_FOUND", { message: "Original user not found." });
+      }
+
+      const toUser = await db.query.users.findFirst({
+        where: { id: input.toUserId },
+      });
+
+      if (!toUser) {
+        throw new ORPCError("NOT_FOUND", { message: "To user not found." });
+      }
+
+      await db.update(cars)
+        .set({ user_id: input.toUserId })
+        .where(eq(cars.user_id, input.fromUserId));
+
+      await db.update(beeps)
+        .set({ beeper_id: input.toUserId })
+        .where(eq(beeps.beeper_id, input.fromUserId));
+
+      await db.update(beeps)
+        .set({ rider_id: input.toUserId })
+        .where(eq(beeps.rider_id, input.fromUserId));
+
+      await db.update(ratings)
+        .set({ rater_id: input.toUserId })
+        .where(eq(ratings.rater_id, input.fromUserId));
+
+      await db.update(ratings)
+        .set({ rated_id: input.toUserId })
+        .where(eq(ratings.rated_id, input.fromUserId));
+
+      await db.update(reports)
+        .set({ reporter_id: input.toUserId })
+        .where(eq(reports.reporter_id, input.fromUserId));
+
+      await db.update(reports)
+        .set({ reported_id: input.toUserId })
+        .where(eq(reports.reported_id, input.fromUserId));
+      
+      await db.update(feedbacks)
+        .set({ user_id: input.toUserId })
+        .where(eq(feedbacks.user_id, input.fromUserId));
+
+      await db.update(payments)
+        .set({ user_id: input.toUserId })
+        .where(eq(payments.user_id, input.fromUserId));
     }),
 };
