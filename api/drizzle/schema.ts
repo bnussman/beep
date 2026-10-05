@@ -13,6 +13,7 @@ import {
   index,
   pgEnum,
   customType,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
@@ -91,7 +92,7 @@ export const users = pgTable(
   },
   (table) => [
     unique("user_username_unique").on(table.username),
-    unique("user_email_unique").on(table.email),
+    uniqueIndex("user_email_unique_idx").on(sql`lower(${table.email})`),
     index("user_is_beeping_idx").on(table.isBeeping)
       .where(sql`${table.isBeeping} = true`),
   ],
