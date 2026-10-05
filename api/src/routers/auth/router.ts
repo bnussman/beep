@@ -184,7 +184,10 @@ export const authRouter = {
     .input(forgotPasswordInput)
     .handler(async ({ input }) => {
       const user = await db.query.users.findFirst({
-        where: { email: input.email },
+        where: {
+          RAW: (table) =>
+            sql`lower(${table.email}) = ${input.email.toLowerCase()}`,
+        },
       });
 
       if (!user) {
