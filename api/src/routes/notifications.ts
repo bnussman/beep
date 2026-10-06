@@ -2,7 +2,7 @@ import { db } from "../services/db";
 import { users } from "../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
-import { adminProcedure } from "../services/orpc";
+import { adminProcedure } from "../middleware/orpc";
 import { sendNotificationInputSchema, sendNotificationToUserInputSchema } from "../schemas/notifications";
 import {
   sendNotification,

@@ -16,7 +16,7 @@ import {
   mustBeInAcceptedBeep,
   verifiedProcedure,
   withLock,
-} from "../services/orpc";
+} from "../middleware/orpc";
 import {
   getBeeperQueue,
   getDerivedRiderFields,

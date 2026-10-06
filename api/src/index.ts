@@ -1,6 +1,7 @@
 import './services/instrument';
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createHTTPContext, createWSContext, errorInterceptor, otelAbortSignalCaptureInterceptor } from "./services/orpc";
+import { createHTTPContext, createWSContext } from "./services/orpc";
+import { errorInterceptor, otelAbortSignalCaptureInterceptor } from "./middleware/orpc";
 import { userRouter } from "./routes/users";
 import { authRouter } from "./routes/auth";
 import { reportRouter } from "./routes/reports";

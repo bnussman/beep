@@ -1,7 +1,7 @@
 import { count, eq } from "drizzle-orm";
 import { reports } from "../../drizzle/schema";
 import { db } from "../services/db";
-import { adminProcedure, authedProcedure } from "../services/orpc";
+import { adminProcedure, authedProcedure } from "../middleware/orpc";
 import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../logic/users";
