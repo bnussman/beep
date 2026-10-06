@@ -3,32 +3,9 @@ import { db } from "../services/db";
 import { isAcceptedBeepNew } from "../logic/beeps";
 import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "../services/redis";
-import { os, ORPCError, onError } from "@orpc/server";
-import { DrizzleQueryError } from "drizzle-orm";
+import { ORPCError, onError } from "@orpc/server";
 import { StandardHandlerInterceptor } from "@orpc/server/standard";
-import type { Context } from "../services/orpc";
-
-const errorTransformerMiddleware = os.middleware(async function errorTransformer(opts) {
-  try {
-    return await opts.next(opts);
-  } catch (error) {
-    // Return a human readable error message for PostgreSQL duplicate key errors
-    if (
-      error instanceof DrizzleQueryError &&
-      error.cause &&
-      'code' in error.cause &&
-      'detail' in error.cause &&
-      typeof error.cause.detail === 'string' &&
-      error.cause.code === "23505"
-    ) {
-      throw new ORPCError("CONFLICT", { message: error.cause.detail });
-    }
-
-    throw error;
-  }
-});
-
-export const o = os.$context<Context>().use(errorTransformerMiddleware);
+import { o, type Context } from "../services/orpc";
 
 const isAuthenticatedMiddleware = o.middleware(function isAuthed({ next, context }) {
   if (!context.user || !context.token) {

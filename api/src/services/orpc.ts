@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/bun";
-import { StandardLazyRequest } from "@orpc/server";
+import { os, ORPCError, StandardLazyRequest } from "@orpc/server";
 import { tokens, users } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { DrizzleQueryError, eq } from "drizzle-orm";
 import { db } from "./db";
 
 async function createContext(bearerToken: string | undefined) {
@@ -39,3 +39,25 @@ export async function createWSContext(request: StandardLazyRequest) {
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
+
+const errorTransformerMiddleware = os.middleware(async function errorTransformer(opts) {
+  try {
+    return await opts.next(opts);
+  } catch (error) {
+    // Return a human readable error message for PostgreSQL duplicate key errors
+    if (
+      error instanceof DrizzleQueryError &&
+      error.cause &&
+      'code' in error.cause &&
+      'detail' in error.cause &&
+      typeof error.cause.detail === 'string' &&
+      error.cause.code === "23505"
+    ) {
+      throw new ORPCError("CONFLICT", { message: error.cause.detail });
+    }
+
+    throw error;
+  }
+});
+
+export const o = os.$context<Context>().use(errorTransformerMiddleware);

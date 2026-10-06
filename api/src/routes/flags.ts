@@ -1,4 +1,4 @@
-import { o } from "../middleware/orpc";
+import { o } from "../services/orpc";
 
 export const flagsRouter = {
   flags: o.handler(({ context }) => {
