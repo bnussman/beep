@@ -131,7 +131,7 @@ export const Menu = (props: MenuProps) => {
 
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger aria-label={props.label} className="contents">
+      <MenuComponent.Trigger render={<div />} nativeButton={false} aria-label={props.label} className="contents">
         {props.trigger({ onPress, onLongPress })}
       </MenuComponent.Trigger>
       <MenuComponent.Portal>
