@@ -15,7 +15,7 @@ import {
   background,
 } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
-import { carRouter } from "../../../api/src/routers/cars/router";
+import { carRouter } from "../../../api/src/routes/cars";
 import React from "react";
 
 export interface RiderActivityProps {
