@@ -1,0 +1,292 @@
+import { z } from "zod";
+import { db } from "../services/db";
+import { asyncIteratorObject, ORPCError } from "@orpc/server";
+import { pubSub } from "../services/pubsub";
+import { count, eq, and } from "drizzle-orm";
+import { beeps, users } from "../../drizzle/schema";
+import { updateLiveActivity } from "../services/live-activities";
+import { beepSchema, clearQueueInputSchema, editBeepInputSchema, getBeepsInputSchema } from "../schemas/beeps";
+import { condensedUserColumns } from "../logic/users";
+import {
+  adminProcedure,
+  authedProcedure,
+} from "../middleware/orpc";
+import {
+  PushNotification,
+  sendNotification,
+  sendNotifications,
+} from "../services/notifications";
+import {
+  getBeeperQueue,
+  getDerivedRiderFields,
+  getIsInProgressBeep,
+  inProgressBeep,
+  inProgressBeepNew,
+} from "../logic/beeps";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../utilities/pagination";
+
+export const beepRouter = {
+  beeps: authedProcedure
+    .input(getBeepsInputSchema)
+    .input(paginationSchema)
+    .handler(async ({ input, context }) => {
+      if (context.user.role !== "admin" && input.userId !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
+          message: "You cannot view beeps for other users.",
+        });
+      }
+
+      const where = {
+        ...(input.inProgress && inProgressBeepNew),
+        ...(input.status && { status: { in: input.status } }),
+        ...(input.userId && {
+          OR: [{ rider_id: input.userId }, { beeper_id: input.userId }],
+        }),
+      };
+
+      const [beeps, countData] = await Promise.all([
+        db.query.beeps.findMany({
+          offset: getOffsetFromPage(input.page, input.pageSize),
+          limit: input.pageSize,
+          where,
+          orderBy: { start: "desc" },
+          with: {
+            beeper: {
+              columns: {
+                ...condensedUserColumns,
+                venmo: true,
+                cashapp: true,
+                groupRate: true,
+                singlesRate: true,
+              },
+            },
+            rider: {
+              columns: {
+                ...condensedUserColumns,
+                venmo: true,
+                cashapp: true,
+              },
+            },
+            ratings: true,
+          },
+        }),
+        db.query.beeps.findMany({
+          columns: {},
+          extras: {
+            count: count(),
+          },
+          where,
+        }),
+      ]);
+
+      const results = countData[0].count;
+
+      return {
+        beeps,
+        page: input.page,
+        pages: getPagesFromCount(results, input.pageSize),
+        pageSize: input.pageSize,
+        results,
+      };
+    }),
+  beep: authedProcedure
+    .input(z.uuid())
+    .handler(async ({ input, context }) => {
+      const beep = await db.query.beeps.findFirst({
+        where: { id: input },
+        with: {
+          beeper: {
+            columns: condensedUserColumns,
+          },
+          rider: {
+            columns: condensedUserColumns,
+          },
+          ratings: true,
+        },
+      });
+
+      if (!beep) {
+        throw new ORPCError("NOT_FOUND", {
+          message: "Beep not found",
+        });
+      }
+
+      if (
+        context.user.role === "user" &&
+        ![beep.beeper_id, beep.rider_id].includes(context.user.id)
+      ) {
+        throw new ORPCError("FORBIDDEN", {
+          message: "You can't view a beep that you are not involved in.",
+        });
+      }
+
+      return beep;
+    }),
+  beepUpdates: authedProcedure
+    .input(z.uuid())
+    .output(asyncIteratorObject(beepSchema.partial()))
+    .handler(async function* ({ context, signal, input }) {
+      const beep = await db.query.beeps.findFirst({
+        where: { id: input }
+      });
+
+      if (!beep) {
+        throw new ORPCError("NOT_FOUND");
+      }
+
+      if (context.user.role !== "admin" && ![beep.rider_id, beep.beeper_id].includes(context.user.id)) {
+        throw new ORPCError("UNAUTHORIZED")
+      }
+
+      const eventSource = pubSub.subscribe(`beep-${input}`, { signal });
+
+      for await (const { beep } of eventSource) {
+        yield beep;
+      }
+    }),
+  deleteBeep: adminProcedure
+    .input(z.uuid())
+    .handler(async ({ input }) => {
+      await db.delete(beeps).where(eq(beeps.id, input));
+    }),
+  editBeep: authedProcedure
+    .input(editBeepInputSchema)
+    .handler(async ({ context, input }) => {
+      const beep = await db.query.beeps.findFirst({
+        where: { id: input.beepId },
+      });
+
+      if (!beep) {
+        throw new ORPCError("NOT_FOUND", { message: "Beep not found" });
+      }
+
+      if (beep.rider_id !== context.user.id) {
+        throw new ORPCError("FORBIDDEN", {
+          message: "You can't edit a beep that you are not involved in.",
+        });
+      }
+
+      if (!getIsInProgressBeep(beep)) {
+        throw new ORPCError("BAD_REQUEST", {
+          message: `You can't edit beep with status ${beeps.status}.`,
+        });
+      }
+
+      await db.update(beeps).set(input.data).where(eq(beeps.id, input.beepId));
+
+      pubSub.publish(`beep-${beep.id}`, { beep: input.data });
+
+      const beeper = await db.query.users.findFirst({
+        where: { id: beep.beeper_id },
+      });
+
+      const keyToFieldMap = {
+        origin: "pick up location",
+        destination: "destination location",
+        groupSize: "group size",
+      };
+
+      const fieldNames = Object.keys(input.data)
+        .map((key) => keyToFieldMap[key as keyof typeof keyToFieldMap])
+        .join(", ");
+
+      if (beeper?.pushToken) {
+        await sendNotification({
+          to: beeper.pushToken,
+          title: "Ride Details Updated",
+          body: `${context.user.first} updated their ${fieldNames}`,
+        });
+      }
+
+      // publish updated queue to beeper
+      const queue = await getBeeperQueue(beep.beeper_id);
+
+      for (const beep of queue) {
+        pubSub.publish(`ride-${beep.rider_id}`, {
+          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+        });
+      }
+
+      pubSub.publish(`queue-${beep.beeper_id}`, { queue });
+
+      return beep;
+    }),
+  clearQueue: adminProcedure
+    .input(clearQueueInputSchema)
+    .handler(async ({ input }) => {
+      const beeper = await db.query.users.findFirst({
+        where: { id: input.userId },
+        with: {
+          beeps: {
+            where: inProgressBeepNew,
+            with: {
+              rider: true,
+            },
+          },
+        },
+      });
+
+      if (!beeper) {
+        throw new ORPCError("NOT_FOUND", {
+          message: "User not found.",
+        });
+      }
+
+      if (beeper?.beeps.length === 0) {
+        throw new ORPCError("BAD_REQUEST", {
+          message: "User's queue is already empty.",
+        });
+      }
+
+      const values = { status: "canceled" as const, end: new Date() };
+
+      await db
+        .update(beeps)
+        .set(values)
+        .where(and(eq(beeps.beeper_id, beeper.id), inProgressBeep));
+
+      const notifications: PushNotification[] = [];
+
+      for (const beep of beeper.beeps) {
+        pubSub.publish(`ride-${beep.rider.id}`, { ride: null });
+        pubSub.publish(`beep-${beep.id}`, { beep: values })
+
+        if (beep.rider_live_activity_token) {
+          updateLiveActivity(beep.rider_live_activity_token, {
+            action: "end",
+            name: "RiderActivity",
+          });
+        }
+
+        if (beep.rider.pushToken) {
+          notifications.push({
+            to: beep.rider.pushToken,
+            title: "You are no longer getting a ride!",
+            body: "An admin cleared your beeper's queue probably because they were inactive.",
+          });
+        }
+      }
+
+      if (beeper.pushToken) {
+        notifications.push({
+          to: beeper.pushToken,
+          title: "Queue Cleared",
+          body: "An admin has cleared your queue (probably because you were inactive)",
+        });
+      }
+
+      sendNotifications(notifications);
+
+      const [user] = await db
+        .update(users)
+        .set({
+          ...(input.stopBeeping ? { isBeeping: false } : {}),
+          queueSize: 0,
+        })
+        .where(eq(users.id, beeper.id))
+        .returning();
+
+      pubSub.publish(`user-${beeper.id}`, { user });
+      pubSub.publish(`queue-${beeper.id}`, { queue: [] });
+    }),
+};

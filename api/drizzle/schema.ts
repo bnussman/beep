@@ -1,5 +1,5 @@
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
-import type { Location } from "../src/routers/users/types";
+import type { Location } from "../src/types/users";
 import { sql } from "drizzle-orm";
 import { Geometry } from "wkx";
 import {
