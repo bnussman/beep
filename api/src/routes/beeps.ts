@@ -10,7 +10,7 @@ import { condensedUserColumns } from "../logic/users";
 import {
   adminProcedure,
   authedProcedure,
-} from "../services/orpc";
+} from "../middleware/orpc";
 import {
   PushNotification,
   sendNotification,

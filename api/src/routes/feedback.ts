@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure } from "../services/orpc";
+import { adminProcedure, authedProcedure } from "../middleware/orpc";
 import { db } from "../services/db";
 import { eq } from "drizzle-orm";
 import { feedbacks } from "../../drizzle/schema";

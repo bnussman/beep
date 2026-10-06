@@ -1,4 +1,4 @@
-import { authedProcedure } from "../services/orpc";
+import { authedProcedure } from "../middleware/orpc";
 import { db } from "../services/db";
 import { count } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";

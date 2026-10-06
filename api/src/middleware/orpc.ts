@@ -1,8 +1,8 @@
 import * as Sentry from "@sentry/bun";
-import { db } from "./db";
+import { db } from "../services/db";
 import { isAcceptedBeepNew } from "../logic/beeps";
 import { createLock, NodeRedisAdapter } from "redlock-universal";
-import { redis } from "./redis";
+import { redis } from "../services/redis";
 import { os, ORPCError, onError, StandardLazyRequest } from "@orpc/server";
 import { tokens, users } from "../../drizzle/schema";
 import { DrizzleQueryError, eq } from "drizzle-orm";
