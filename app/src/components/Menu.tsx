@@ -131,7 +131,9 @@ export const Menu = (props: MenuProps) => {
 
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger render={props.trigger({ onPress, onLongPress })} aria-label={props.label} />
+      <MenuComponent.Trigger aria-label={props.label} className="contents">
+        {props.trigger({ onPress, onLongPress })}
+      </MenuComponent.Trigger>
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
           <MenuComponent.Popup className={popupClasses}>
