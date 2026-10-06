@@ -1,5 +1,5 @@
 import { redis } from "../services/redis";
-import { adminProcedure } from "../middleware/orpc";
+import { adminProcedure } from "../services/orpc";
 
 export const redisRouter = {
   channels: adminProcedure

@@ -1,4 +1,4 @@
-import { authedProcedure } from "../middleware/orpc";
+import { authedProcedure } from "../services/orpc";
 import { route } from "@banksnussman/osrm";
 import { OSRM_BASE_URL, PHOTON_BASE_URL } from "../utilities/constants";
 import { geocoding } from "@banksnussman/photon";

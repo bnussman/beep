@@ -17,7 +17,7 @@ import {
   adminProcedure,
   authedProcedure,
   mustHaveBeenInAcceptedBeep,
-} from "../middleware/orpc";
+} from "../services/orpc";
 import {
   S3_BUCKET_URL,
   WEB_BASE_URL,

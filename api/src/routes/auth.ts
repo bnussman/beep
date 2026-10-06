@@ -1,4 +1,4 @@
-import { authedProcedure, o } from "../middleware/orpc";
+import { authedProcedure, o } from "../services/orpc";
 import { db } from "../services/db";
 import { emailVerifications, forgotPasswords, tokens, users } from "../../drizzle/schema";
 import { and, eq, ne, sql } from "drizzle-orm";

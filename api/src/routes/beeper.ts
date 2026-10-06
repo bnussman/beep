@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { db } from "../services/db";
 import { eq } from "drizzle-orm";
-import { authedProcedure } from "../middleware/orpc";
+import { authedProcedure } from "../services/orpc";
 import { pubSub } from "../services/pubsub";
 import { beeps, users } from "../../drizzle/schema";
 import { queueResponseSchema } from "../schemas/beeper";

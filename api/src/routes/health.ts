@@ -1,4 +1,4 @@
-import { o } from "../middleware/orpc";
+import { o } from "../services/orpc";
 import { getDatabaseStatus, getRedisStatus } from "../logic/health";
 
 export const healthRouter = {

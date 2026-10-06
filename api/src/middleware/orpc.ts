@@ -3,46 +3,10 @@ import { db } from "../services/db";
 import { isAcceptedBeepNew } from "../logic/beeps";
 import { createLock, NodeRedisAdapter } from "redlock-universal";
 import { redis } from "../services/redis";
-import { os, ORPCError, onError, StandardLazyRequest } from "@orpc/server";
-import { tokens, users } from "../../drizzle/schema";
-import { DrizzleQueryError, eq } from "drizzle-orm";
+import { os, ORPCError, onError } from "@orpc/server";
+import { DrizzleQueryError } from "drizzle-orm";
 import { StandardHandlerInterceptor } from "@orpc/server/standard";
-
-async function createContext(bearerToken: string | undefined) {
-  if (!bearerToken) {
-    return {};
-  }
-
-  const result = await db
-    .select()
-    .from(tokens)
-    .leftJoin(users, eq(tokens.user_id, users.id))
-    .where(eq(tokens.id, bearerToken));
-
-  const session = result[0];
-
-  if (!session?.user) {
-    return {};
-  }
-
-  Sentry.setUser(session.user);
-
-  return { user: session.user, token: session.token };
-}
-
-export async function createHTTPContext(request: Request) {
-  const bearerToken = request.headers.get("authorization")?.split(" ")[1]
-
-  return await createContext(bearerToken);
-}
-
-export async function createWSContext(request: StandardLazyRequest) {
-  const bearerToken = (request.headers.Authorization as string | undefined)?.split(" ")[1]
-
-  return await createContext(bearerToken)
-}
-
-export type Context = Awaited<ReturnType<typeof createContext>>;
+import type { Context } from "../services/orpc";
 
 const errorTransformerMiddleware = os.middleware(async function errorTransformer(opts) {
   try {
