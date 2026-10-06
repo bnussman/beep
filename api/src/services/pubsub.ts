@@ -1,10 +1,10 @@
 import { RedisPublisher } from '@orpc/publisher/redis'
 import { redis } from "./redis";
-import type { Location } from "../schemas/users-types";
-import type { Ride } from "../schemas/rider-types";
-import type { Queue } from "../schemas/beeper-types";
-import type { User } from '../schemas/users-types';
-import type { Beep } from '../schemas/beeps-types';
+import type { Location } from "../types/users";
+import type { Ride } from "../types/rider";
+import type { Queue } from "../types/beeper";
+import type { User } from '../types/users';
+import type { Beep } from '../types/beeps';
 
 type PubSubChannels = {
   [key: `user-${string}`]: { user: User },

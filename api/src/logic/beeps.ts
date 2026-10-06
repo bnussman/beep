@@ -7,8 +7,8 @@ import { sendNotification } from "../services/notifications";
 import { updateLiveActivity } from "../services/live-activities";
 import { OSRM_BASE_URL } from "../utilities/constants";
 import { route } from "@banksnussman/osrm";
-import { Beep } from "../schemas/beeps-types";
-import type { Location, User } from "../schemas/users-types";
+import { Beep } from "../types/beeps";
+import type { Location, User } from "../types/users";
 
 export const inProgressBeep = or(
   eq(beeps.status, "waiting"),

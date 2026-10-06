@@ -1,6 +1,6 @@
 import { geocoding } from "@banksnussman/photon";
 import { PHOTON_BASE_URL } from "../utilities/constants";
-import type { Location } from "../schemas/users-types";
+import type { Location } from "../types/users";
 
 export async function getCoordinatesFromAddress(
   address: string,

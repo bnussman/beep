@@ -1,6 +1,6 @@
 import z from "zod";
 import { users } from "../../drizzle/schema";
-import { locationSchema } from "./users";
+import { locationSchema } from "../schemas/users";
 
 export type User = typeof users.$inferSelect;
 
