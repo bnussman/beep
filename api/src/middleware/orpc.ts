@@ -9,7 +9,7 @@ import { o, type Context } from "../services/orpc";
 import { tokens, users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
-const authProviderMiddleware = o.middleware(async function provideAuth({ next, context }) {
+export const authProviderMiddleware = o.middleware(async function provideAuth({ next, context }) {
    if (!context.rawToken) {
     return next();
   }
