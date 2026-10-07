@@ -75,7 +75,8 @@ export const verifiedProcedure = o
   .use(authCheckerMiddleware)
   .use(isVerifiedMiddleware);
 
-export const adminProcedure = o.use(authProviderMiddleware)
+export const adminProcedure = o
+  .use(authProviderMiddleware)
   .use(authCheckerMiddleware)
   .use(isAdminMiddleware);
 
