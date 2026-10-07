@@ -36,7 +36,7 @@ const authProviderMiddleware = o.middleware(async function provideAuth({ next, c
   return next({ context: { user: session.user, token: session.token } });
 });
 
-const authCheckerMiddleware = o.middleware(async function authChecker({ next, context }) {
+const authCheckerMiddleware = o.middleware(function authChecker({ next, context }) {
   if (!context.user || !context.token) {
     throw new ORPCError("UNAUTHORIZED");
   }
@@ -58,14 +58,12 @@ const isVerifiedMiddleware = o
 
 const isAdminMiddleware = o
   .use(authCheckerMiddleware)
-  .middleware(function isAdmin(opts) {
-    const { context } = opts;
-
+  .middleware(function isAdmin({ context, next }) {
     if (context.user.role !== "admin") {
-      throw new ORPCError("UNAUTHORIZED");
+      throw new ORPCError("FORBIDDEN");
     }
 
-    return opts.next({ context });
+    return next({ context });
   });
 
 export const authedProcedure = o
