@@ -6,17 +6,40 @@ import { redis } from "../services/redis";
 import { ORPCError, onError } from "@orpc/server";
 import { StandardHandlerInterceptor } from "@orpc/server/standard";
 import { o, type Context } from "../services/orpc";
+import { tokens, users } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
-const isAuthenticatedMiddleware = o.middleware(function isAuthed({ next, context }) {
-  if (!context.user || !context.token) {
+const authenticatedMiddleware = o.middleware(async function isAuthed({ next, context, path }) {
+   if (!context.rawToken) {
     throw new ORPCError("UNAUTHORIZED");
   }
 
-  return next({ context });
+  if (context.user && context.token) {
+    console.log("Auth deduped")
+    return next({ context: { user: context.user, token: context.token } });
+  }
+
+  const result = await db
+    .select()
+    .from(tokens)
+    .leftJoin(users, eq(tokens.user_id, users.id))
+    .where(eq(tokens.id, context.rawToken));
+
+  console.log("AUTH CHECKED!!!", path);
+
+  const session = result[0];
+
+  if (!session?.user) {
+    throw new ORPCError("UNAUTHORIZED");
+  }
+
+  Sentry.setUser(session.user);
+
+  return next({ context: { user: session.user, token: session.token } });
 });
 
 const isVerifiedMiddleware = o
-  .use(isAuthenticatedMiddleware)
+  .use(authenticatedMiddleware)
   .middleware(function isVerified({ context, next }) {
     if (!context.user.isStudent || !context.user.isEmailVerified) {
       throw new ORPCError("UNAUTHORIZED", {
@@ -28,7 +51,7 @@ const isVerifiedMiddleware = o
   });
 
 const isAdminMiddleware = o
-  .use(isAuthenticatedMiddleware)
+  .use(authenticatedMiddleware)
   .middleware(function isAdmin(opts) {
     const { context } = opts;
 
@@ -39,12 +62,12 @@ const isAdminMiddleware = o
     return opts.next({ context });
   });
 
-export const authedProcedure = o.use(isAuthenticatedMiddleware);
+export const authedProcedure = o.use(authenticatedMiddleware);
 export const verifiedProcedure = o.use(isVerifiedMiddleware);
 export const adminProcedure = o.use(isAdminMiddleware);
 
 export const mustHaveBeenInAcceptedBeep = o
-  .use(isAuthenticatedMiddleware)
+  .use(authenticatedMiddleware)
   .middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
     if (opts.context.user.role === "admin" || userId === opts.context.user.id) {
       return opts.next(opts);
@@ -85,7 +108,7 @@ export const mustHaveBeenInAcceptedBeep = o
   });
 
 export const mustBeInAcceptedBeep = o
-  .use(isAuthenticatedMiddleware)
+  .use(authenticatedMiddleware)
   .middleware(async function checkIfUserIsInAnAcceptedBeep(opts, userId: string) {
     if (opts.context.user.role === "admin" || userId === opts.context.user.id) {
       return opts.next(opts);
@@ -126,7 +149,7 @@ export const mustBeInAcceptedBeep = o
   });
 
 export const withLock = o
-  .use(isAuthenticatedMiddleware)
+  .use(authenticatedMiddleware)
   .middleware(async function handleLock(opts) {
     const lock = createLock({
       adapter: new NodeRedisAdapter(redis),

@@ -1,6 +1,6 @@
 import './services/instrument';
 import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createHTTPContext, createWSContext } from "./services/orpc";
+import { getTokenFromRequest, getTokenFromWSRequest } from "./services/orpc";
 import { errorInterceptor, otelAbortSignalCaptureInterceptor } from "./middleware/orpc";
 import { userRouter } from "./routes/users";
 import { authRouter } from "./routes/auth";
@@ -81,7 +81,7 @@ Bun.serve({
     }
 
     const { response } = await handler.handle(request, {
-      context: await createHTTPContext(request)
+      context: { rawToken: getTokenFromRequest(request) }
     })
 
     if (response) {
@@ -93,10 +93,8 @@ Bun.serve({
   websocket: {
     async message(ws, message) {
       await wsHandler.message(ws, message, {
-        context: async (request) => {
-          return await createWSContext(request)
-        },
-      })
+        context: (request) => ({ rawToken: getTokenFromWSRequest(request) }),
+      });
     },
     async close(ws) {
       await wsHandler.close(ws)
