@@ -9,13 +9,13 @@ import { o, type Context } from "../services/orpc";
 import { tokens, users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
-const authenticatedMiddleware = o.middleware(async function isAuthed({ next, context, path }) {
+const authProviderMiddleware = o.middleware(async function provideAuth({ next, context }) {
    if (!context.rawToken) {
-    throw new ORPCError("UNAUTHORIZED");
+    return next();
   }
 
+  // Dedupe according to https://orpc.dev/docs/recipes/dedupe-middleware
   if (context.user && context.token) {
-    console.log("Auth deduped")
     return next({ context: { user: context.user, token: context.token } });
   }
 
@@ -25,12 +25,10 @@ const authenticatedMiddleware = o.middleware(async function isAuthed({ next, con
     .leftJoin(users, eq(tokens.user_id, users.id))
     .where(eq(tokens.id, context.rawToken));
 
-  console.log("AUTH CHECKED!!!", path);
-
   const session = result[0];
 
   if (!session?.user) {
-    throw new ORPCError("UNAUTHORIZED");
+    return next();
   }
 
   Sentry.setUser(session.user);
@@ -38,11 +36,19 @@ const authenticatedMiddleware = o.middleware(async function isAuthed({ next, con
   return next({ context: { user: session.user, token: session.token } });
 });
 
+const authCheckerMiddleware = o.middleware(async function authChecker({ next, context }) {
+  if (!context.user || !context.token) {
+    throw new ORPCError("UNAUTHORIZED");
+  }
+
+  return next({ context: { user: context.user, token: context.token } });
+});
+
 const isVerifiedMiddleware = o
-  .use(authenticatedMiddleware)
+  .use(authCheckerMiddleware)
   .middleware(function isVerified({ context, next }) {
     if (!context.user.isStudent || !context.user.isEmailVerified) {
-      throw new ORPCError("UNAUTHORIZED", {
+      throw new ORPCError("FORBIDDEN", {
         message: "Your edu email must be verified.",
       });
     }
@@ -51,7 +57,7 @@ const isVerifiedMiddleware = o
   });
 
 const isAdminMiddleware = o
-  .use(authenticatedMiddleware)
+  .use(authCheckerMiddleware)
   .middleware(function isAdmin(opts) {
     const { context } = opts;
 
@@ -62,12 +68,21 @@ const isAdminMiddleware = o
     return opts.next({ context });
   });
 
-export const authedProcedure = o.use(authenticatedMiddleware);
-export const verifiedProcedure = o.use(isVerifiedMiddleware);
-export const adminProcedure = o.use(isAdminMiddleware);
+export const authedProcedure = o
+  .use(authProviderMiddleware)
+  .use(authCheckerMiddleware);
+
+export const verifiedProcedure = o
+  .use(authProviderMiddleware)
+  .use(authCheckerMiddleware)
+  .use(isVerifiedMiddleware);
+
+export const adminProcedure = o.use(authProviderMiddleware)
+  .use(authCheckerMiddleware)
+  .use(isAdminMiddleware);
 
 export const mustHaveBeenInAcceptedBeep = o
-  .use(authenticatedMiddleware)
+  .use(authCheckerMiddleware)
   .middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
     if (opts.context.user.role === "admin" || userId === opts.context.user.id) {
       return opts.next(opts);
@@ -108,7 +123,7 @@ export const mustHaveBeenInAcceptedBeep = o
   });
 
 export const mustBeInAcceptedBeep = o
-  .use(authenticatedMiddleware)
+  .use(authCheckerMiddleware)
   .middleware(async function checkIfUserIsInAnAcceptedBeep(opts, userId: string) {
     if (opts.context.user.role === "admin" || userId === opts.context.user.id) {
       return opts.next(opts);
@@ -149,7 +164,7 @@ export const mustBeInAcceptedBeep = o
   });
 
 export const withLock = o
-  .use(authenticatedMiddleware)
+  .use(authCheckerMiddleware)
   .middleware(async function handleLock(opts) {
     const lock = createLock({
       adapter: new NodeRedisAdapter(redis),
