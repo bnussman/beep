@@ -91,7 +91,7 @@ const wsLink = new WSRPCLink({
           return Number.POSITIVE_INFINITY
         },
         shouldRetry: (ctx) => {
-          if (ctx.error instanceof ORPCError && ctx.error.code === "UNAUTHORIZED") {
+          if (ctx.error instanceof ORPCError && (ctx.error.code === "UNAUTHORIZED" || ctx.error.code === "FORBIDDEN")) {
             return false;
           }
           return true;
