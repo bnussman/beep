@@ -3,7 +3,9 @@ import { User } from "../types/users";
 import { Token } from "../types/tokens";
 
 export function createContext(request: StandardLazyRequest) {
-  const authorizationHeader = request.headers.Authorization as string | undefined;
+  const authorizationHeader =
+    request.headers.authorization as string | undefined ??
+    request.headers.Authorization as string | undefined;
 
   if (!authorizationHeader) {
     return { rawToken: undefined };
