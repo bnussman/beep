@@ -1,6 +1,6 @@
 import './services/instrument';
-import { otelAbortSignalCaptureInterceptor } from "./middleware/orpc";
 import { errorInterceptor } from './middleware/errors';
+import { otelAbortSignalCaptureInterceptor } from './middleware/otel';
 import { userRouter } from "./routes/users";
 import { authRouter } from "./routes/auth";
 import { reportRouter } from "./routes/reports";

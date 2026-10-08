@@ -1,5 +1,5 @@
-import { authProviderMiddleware } from "../middleware/orpc";
 import { o } from "../services/orpc";
+import { authProviderMiddleware } from "../middleware/authentication";
 
 export const flagsRouter = {
   flags: o

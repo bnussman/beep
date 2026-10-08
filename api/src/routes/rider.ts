@@ -12,12 +12,6 @@ import { pubSub } from "../services/pubsub";
 import { DEFAULT_LOCATION_RADIUS } from "../utilities/constants";
 import { locationSchema } from "../schemas/users";
 import {
-  authedProcedure,
-  mustBeInAcceptedBeep,
-  verifiedProcedure,
-  withLock,
-} from "../middleware/orpc";
-import {
   getBeeperQueue,
   getDerivedRiderFields,
   getQueueSize,
@@ -33,6 +27,9 @@ import {
   startBeepInputSchema,
   updateLiveActivityTokenInputSchema
 } from "../schemas/rider";
+import { authedProcedure, verifiedProcedure } from "../middleware/orpc";
+import { mustBeInAcceptedBeep } from "../middleware/authorization";
+import { withLock } from "../middleware/lock";
 
 export const riderRouter = {
   beepers: verifiedProcedure

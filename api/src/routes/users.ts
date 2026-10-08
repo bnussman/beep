@@ -16,13 +16,13 @@ import { getActivePayments } from "../logic/payments";
 import {
   adminProcedure,
   authedProcedure,
-  mustHaveBeenInAcceptedBeep,
 } from "../middleware/orpc";
 import {
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../utilities/constants";
 import { paginationSchema } from "../utilities/pagination";
+import { mustHaveBeenInAcceptedBeep } from "../middleware/authorization";
 
 export const userRouter = {
   me: authedProcedure

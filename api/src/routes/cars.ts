@@ -12,7 +12,6 @@ import { CAR_COLOR_OPTIONS } from "../utilities/constants";
 import {
   authedProcedure,
   verifiedProcedure,
-  withLock,
 } from "../middleware/orpc";
 import { o } from "../services/orpc";
 import {
@@ -22,6 +21,7 @@ import {
   updateCarInputSchema
 } from "../schemas/cars";
 import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../utilities/pagination";
+import { withLock } from "../middleware/lock";
 
 export const carRouter = {
   cars: authedProcedure
