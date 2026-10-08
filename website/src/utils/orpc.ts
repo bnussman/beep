@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/react";
-import { createORPCClient, DynamicLink, ORPCError, ORPCErrorCode } from '@orpc/client';
+import { createORPCClient, DynamicLink, ORPCError } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
 import { AppRouterClient, RouterOutputs } from '../../../api/src'
