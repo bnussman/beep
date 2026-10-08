@@ -1,7 +1,6 @@
 import './services/instrument';
-import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createHTTPContext, createWSContext } from "./services/orpc";
-import { errorInterceptor, otelAbortSignalCaptureInterceptor } from "./middleware/orpc";
+import { errorInterceptor } from './middleware/errors';
+import { otelAbortSignalCaptureInterceptor } from './middleware/otel';
 import { userRouter } from "./routes/users";
 import { authRouter } from "./routes/auth";
 import { reportRouter } from "./routes/reports";
@@ -22,6 +21,8 @@ import { RPCHandler } from "@orpc/server/fetch";
 import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";
 import { RouterClient } from '@orpc/server'
+import { createContext } from './utilities/context';
+import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
 
 const appRouter = {
   user: userRouter,
@@ -81,7 +82,7 @@ Bun.serve({
     }
 
     const { response } = await handler.handle(request, {
-      context: await createHTTPContext(request)
+      context: createContext
     })
 
     if (response) {
@@ -93,10 +94,8 @@ Bun.serve({
   websocket: {
     async message(ws, message) {
       await wsHandler.message(ws, message, {
-        context: async (request) => {
-          return await createWSContext(request)
-        },
-      })
+        context: createContext
+      });
     },
     async close(ws) {
       await wsHandler.close(ws)
