@@ -1,10 +1,11 @@
 import * as Sentry from "@sentry/react";
-import { createORPCClient, DynamicLink, ORPCError } from '@orpc/client';
+import { createORPCClient, DynamicLink, ORPCError, ORPCErrorCode } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
 import { AppRouterClient, RouterOutputs } from '../../../api/src'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { ClientRetryPlugin } from '@orpc/client/plugins'
+import { COMMON_ERROR_STATUS_MAP } from "@orpc/client";
 
 export function getAuthToken() {
   const stored = localStorage.getItem("user");
@@ -66,10 +67,13 @@ const wsLink = new WSRPCLink({
           return Number.POSITIVE_INFINITY
         },
         shouldRetry: (ctx) => {
-          if (ctx.error instanceof ORPCError && (ctx.error.code === "UNAUTHORIZED" || ctx.error.code === "FORBIDDEN")) {
-            return false;
+          if (!(ctx.error instanceof ORPCError)) {
+            return true; // Network/transport errors
           }
-          return true;
+
+          const statusCode = COMMON_ERROR_STATUS_MAP[ctx.error.code as keyof typeof COMMON_ERROR_STATUS_MAP] ?? 500;
+
+          return statusCode >= 500;
         },
       },
     }),
