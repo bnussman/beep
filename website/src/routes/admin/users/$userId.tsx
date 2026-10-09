@@ -151,7 +151,7 @@ function User() {
             aria-label={user.photo ? `View ${user.first} ${user.last}'s photo` : undefined}
             disabled={!user.photo}
             onClick={() => setIsPhotoOpen(true)}
-            className="rounded-full disabled:cursor-default"
+            className="cursor-pointer rounded-full disabled:cursor-default"
           >
             <Avatar className="size-30 rounded-full">
               <Avatar.Image

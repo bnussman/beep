@@ -11,6 +11,7 @@ export function BeepStatusChip({ status }: Props) {
     <Chip
       color={beepStatusToChipColorMap[status]}
       className="capitalize whitespace-nowrap"
+      variant="soft"
     >
       {status.replaceAll("_", " ")}
     </Chip>
