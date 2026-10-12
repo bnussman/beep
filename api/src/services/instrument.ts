@@ -1,62 +1,33 @@
-import * as Sentry from "@sentry/bun";
-import { ENVIRONMENT, SENTRY_DSN } from "../utilities/constants";
-import { ORPCInstrumentation } from "@orpc/opentelemetry";
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto'
+import { resourceFromAttributes } from '@opentelemetry/resources'
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions'
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+import { ORPCInstrumentation } from '@orpc/opentelemetry'
+import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
+import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
 
-const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
-
-globalThis.fetch = (async (...args: Parameters<typeof globalThis.fetch>) => {
-  const [input, init] = args;
-  const method = (init?.method ?? (input instanceof Request ? input.method : "GET")).toUpperCase();
-  const url =
-    typeof input === "string"
-      ? input
-      : input instanceof URL
-        ? input.toString()
-        : input.url;
-
-  return Sentry.startSpan(
-    { op: "http.client", name: `${method} ${url}` },
-    async (span) => {
-      const baseUrl = typeof globalThis.location?.origin === "string" ? globalThis.location.origin : "http://localhost";
-      const parsedUrl = new URL(url, baseUrl);
-
-      span.setAttribute("http.request.method", method);
-      span.setAttribute("server.address", parsedUrl.hostname);
-      if (parsedUrl.port) {
-        span.setAttribute("server.port", parsedUrl.port);
-      }
-
-      const response = await originalFetch(...args);
-      span.setAttribute("http.response.status_code", response.status);
-
-      const contentLength = response.headers.get("content-length");
-      if (contentLength) {
-        span.setAttribute("http.response_content_length", Number(contentLength));
-      }
-
-      return response;
-    },
-  );
-}) as typeof globalThis.fetch;
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: ENVIRONMENT,
-  debug: false,
-  tracesSampler(samplingContext) {
-    return true;
+const exporter = new OTLPTraceExporter({
+  url: 'https://us.i.posthog.com/i/v1/traces',
+  headers: {
+    Authorization: `Bearer ${process.env.POSTHOG_API_KEY}`,
   },
-  openTelemetryInstrumentations: [
-    new ORPCInstrumentation({
-      propagationEnabled: false,
-    }),
+})
+
+const sdk = new NodeSDK({
+  instrumentations: [
+    new ORPCInstrumentation(), 
+    new RedisInstrumentation(),
+    new PgInstrumentation(),
   ],
-  integrations(integrations) {
-    return [
-      // Sentry.bunRuntimeMetricsIntegration(),
-      Sentry.bunServerIntegration(),
-      Sentry.postgresIntegration(),
-      Sentry.redisIntegration(),
-    ];
-  },
+  resource: resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: 'beep-api',
+  }),
+  spanProcessors: [new BatchSpanProcessor(exporter)],
+  
 });
+
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+
+sdk.start();
