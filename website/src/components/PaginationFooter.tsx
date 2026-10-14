@@ -1,6 +1,6 @@
 import { Pagination } from "@heroui/react";
 import React from "react";
-import { DEFAULT_PAGE_SIZE } from "../../../api/src/utils/constants";
+import { DEFAULT_PAGE_SIZE } from "../../../api/src/utilities/constants";
 
 interface Props {
   page: number | undefined;

@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import { createORPCClient, DynamicLink, ORPCError, RPCJsonSerializer } from '@orpc/client';
+import { COMMON_ERROR_STATUS_MAP, createORPCClient, DynamicLink, ORPCError } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
 import { AppRouterClient, RouterOutputs } from '../../../api/src'
@@ -91,10 +91,13 @@ const wsLink = new WSRPCLink({
           return Number.POSITIVE_INFINITY
         },
         shouldRetry: (ctx) => {
-          if (ctx.error instanceof ORPCError && ctx.error.code === "UNAUTHORIZED") {
-            return false;
+          if (!(ctx.error instanceof ORPCError)) {
+            return true; // Network/transport errors
           }
-          return true;
+
+          const statusCode = COMMON_ERROR_STATUS_MAP[ctx.error.code as keyof typeof COMMON_ERROR_STATUS_MAP] ?? 500;
+
+          return statusCode >= 500;
         },
       },
     }),

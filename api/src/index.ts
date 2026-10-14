@@ -1,26 +1,28 @@
-import './utils/instrument';
-import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
-import { createHTTPContext, createWSContext, errorInterceptor, otelAbortSignalCaptureInterceptor } from "./utils/orpc";
-import { userRouter } from "./routers/users/router";
-import { authRouter } from "./routers/auth/router";
-import { reportRouter } from "./routers/reports/router";
-import { ratingRouter } from "./routers/ratings/router";
-import { carRouter } from "./routers/cars/router";
-import { beepRouter } from "./routers/beeps/router";
-import { paymentRouter } from "./routers/payments/router";
-import { feedbackRouter } from "./routers/feedback/router";
-import { notificationRouter } from "./routers/notifications/router";
-import { redisRouter } from "./routers/redis/router";
-import { riderRouter } from "./routers/rider/router";
-import { beeperRouter } from "./routers/beeper/router";
-import { locationRouter } from "./routers/location/router";
-import { handlePaymentWebook } from "./utils/payments";
-import { healthRouter } from "./routers/health/router";
-import { flagsRouter } from "./routers/flags/router";
+import './services/instrument';
+import { errorInterceptor } from './middleware/errors';
+import { otelAbortSignalCaptureInterceptor } from './middleware/otel';
+import { userRouter } from "./routes/users";
+import { authRouter } from "./routes/auth";
+import { reportRouter } from "./routes/reports";
+import { ratingRouter } from "./routes/ratings";
+import { carRouter } from "./routes/cars";
+import { beepRouter } from "./routes/beeps";
+import { paymentRouter } from "./routes/payments";
+import { feedbackRouter } from "./routes/feedback";
+import { notificationRouter } from "./routes/notifications";
+import { redisRouter } from "./routes/redis";
+import { riderRouter } from "./routes/rider";
+import { beeperRouter } from "./routes/beeper";
+import { locationRouter } from "./routes/location";
+import { handlePaymentWebook } from "./services/payments";
+import { healthRouter } from "./routes/health";
+import { flagsRouter } from "./routes/flags";
 import { RPCHandler } from "@orpc/server/fetch";
 import { RPCHandler as WSRPCHandler } from '@orpc/server/websocket'
 import { CORSPlugin } from "@orpc/server/plugins";
 import { RouterClient } from '@orpc/server'
+import { createContext } from './utilities/context';
+import type { InferRouterOutputs, InferRouterInputs } from '@orpc/server'
 
 const appRouter = {
   user: userRouter,
@@ -80,7 +82,7 @@ Bun.serve({
     }
 
     const { response } = await handler.handle(request, {
-      context: await createHTTPContext(request)
+      context: createContext
     })
 
     if (response) {
@@ -92,10 +94,8 @@ Bun.serve({
   websocket: {
     async message(ws, message) {
       await wsHandler.message(ws, message, {
-        context: async (request) => {
-          return await createWSContext(request)
-        },
-      })
+        context: createContext
+      });
     },
     async close(ws) {
       await wsHandler.close(ws)

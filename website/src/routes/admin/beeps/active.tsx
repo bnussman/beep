@@ -46,7 +46,7 @@ function ActiveBeeps() {
         <Typography type="h1">
           Beeps
         </Typography>
-        <Chip color="success" variant="soft">
+        <Chip color="success" variant="secondary">
           in progress
         </Chip>
       </div>
