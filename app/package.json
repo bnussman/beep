@@ -58,7 +58,7 @@
     "tailwind-merge": "^3.5.0",
     "tailwind-variants": "^3.2.2",
     "tailwindcss": "^4.2.4",
-    "uniwind": "^1.6.3"
+    "uniwind": "^1.12.2"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
