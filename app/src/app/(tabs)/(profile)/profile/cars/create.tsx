@@ -235,7 +235,7 @@ export default function AddCar() {
       />
       <Button
         isLoading={isSubmitting}
-        onPress={onSubmit}
+        onPress={() => onSubmit()}
         isDisabled={isSubmitting}
       >
         Add Car
