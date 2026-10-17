@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { BETTER_STACK_DSN, ENVIRONMENT } from "../utilities/constants";
+import { ENVIRONMENT, SENTRY_DSN } from "../utilities/constants";
 import { ORPCInstrumentation } from "@orpc/opentelemetry";
 
 const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
@@ -40,7 +40,7 @@ globalThis.fetch = (async (...args: Parameters<typeof globalThis.fetch>) => {
 }) as typeof globalThis.fetch;
 
 Sentry.init({
-  dsn: BETTER_STACK_DSN,
+  dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
   debug: false,
   tracesSampler(samplingContext) {

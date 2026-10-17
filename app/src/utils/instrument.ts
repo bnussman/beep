@@ -8,7 +8,7 @@ Sentry.init({
   sendDefaultPii: true,
   enableLogs: true,
   environment: __DEV__ ? "local" : "production",
-  tracesSampleRate: 1,
+  tracesSampleRate: 0.25,
   replaysOnErrorSampleRate: 1,
   integrations: [
     Sentry.mobileReplayIntegration(),
