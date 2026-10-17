@@ -55,5 +55,5 @@ export default function Layout() {
 }
 
 export const unstable_settings = {
-  initialRouteName: "beep/index",
+  anchor: "beep/index",
 };

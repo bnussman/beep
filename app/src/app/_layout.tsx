@@ -141,5 +141,5 @@ function Layout() {
 export default Sentry.wrap(Layout);
 
 export const unstable_settings = {
-  initialRouteName: "(auth)/index",
+  anchor: "(auth)/index",
 };
