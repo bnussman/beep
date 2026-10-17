@@ -42,12 +42,7 @@ export const REVENUE_CAT_WEBHOOK_TOKEN = process.env.REVENUE_CAT_WEBHOOK_TOKEN;
 
 export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
 
-/**
- * @deprecated Using Better Stack because Sentry spans are expensive 😖
- */
 export const SENTRY_DSN = process.env.SENTRY_DSN;
-
-export const BETTER_STACK_DSN = process.env.BETTER_STACK_DSN;
 
 /**
  * A name for the environment.

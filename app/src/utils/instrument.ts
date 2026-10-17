@@ -4,9 +4,8 @@ import { isWeb } from "./constants";
 
 Sentry.init({
   release: config.version,
-  dsn: "https://XAiQXk5ndTy6tJCv2cmKpGep@s2795462.us-west-2a.betterstackdata.com/2795471",
-  environment: __DEV__ ? "local" : "production",
-  tracesSampleRate: 1,
+  dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
+  tracesSampleRate: 0.5,
   integrations: [
     Sentry.reactNativeTracingIntegration({ traceFetch: true }),
     Sentry.breadcrumbsIntegration({ fetch: true }),

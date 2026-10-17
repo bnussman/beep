@@ -11,7 +11,7 @@ export function getRouter() {
 
   if (!router.isServer) {
     Sentry.init({
-      dsn: "https://6smjQE16ZoQ8ddVFLSZnqfYn@s2795463.us-west-2a.betterstackdata.com/2795464",
+      dsn: "https://c0555c6729c4fab83598fea838e4e4ef@o1155818.ingest.us.sentry.io/4510825354428416",
       sendDefaultPii: true,
       integrations: [
         Sentry.browserTracingIntegration(),
