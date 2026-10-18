@@ -88,6 +88,7 @@ export default function SignUpScreen() {
 
   return (
     <KeyboardAwareScrollView
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ padding: 16, gap: 8 }}
       bottomOffset={64}
     >

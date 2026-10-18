@@ -30,6 +30,7 @@ export default function ForgotPasswordScreen() {
 
   return (
     <KeyboardAwareScrollView
+      contentInsetAdjustmentBehavior="automatic"
       scrollEnabled={false}
       contentContainerStyle={{ padding: 16, gap: 8 }}
     >
