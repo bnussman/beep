@@ -73,8 +73,8 @@ export default function StartBeepingScreen() {
     }),
   );
 
-  const onToggleIsBeeping = (value: boolean) => {
-    if (isAndroid && value) {
+  const onToggleIsBeeping = () => {
+    if (isAndroid && !user?.isBeeping) {
       Alert.alert(
         "Background Location Notice",
         "Ride Beep App collects location data to enable ETAs for riders when your are beeping and the app is closed or not in use",
@@ -346,7 +346,7 @@ export default function StartBeepingScreen() {
               onChangeText={(value) => field.onChange(Number(value))}
               returnKeyLabel="Start Beeping"
               returnKeyType="go"
-              onSubmitEditing={() => handleIsBeepingChange()}
+              onSubmitEditing={onToggleIsBeeping}
             />
             <Description>Price per person in a group</Description>
             <FieldError>{fieldState.error?.message}</FieldError>
@@ -354,7 +354,7 @@ export default function StartBeepingScreen() {
         )}
       />
       <Button
-        onPress={handleIsBeepingChange}
+        onPress={onToggleIsBeeping}
         isLoading={form.formState.isSubmitting}
       >
         Start Beeping

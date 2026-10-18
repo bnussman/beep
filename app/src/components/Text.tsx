@@ -4,7 +4,6 @@ import {
   TextStyle,
   useColorScheme,
 } from "react-native";
-import React from "react";
 import { cn } from "heroui-native";
 
 const fontSizeMap = {
@@ -36,7 +35,7 @@ export interface TextProps extends _TextProps {
   color?: "error" | "subtle";
 }
 
-export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
+export const Text = (props: TextProps) => {
   const { size, weight, color, className, ...rest } = props;
 
   const colorScheme = useColorScheme();
@@ -51,7 +50,6 @@ export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
 
   return (
     <_Text
-      ref={ref}
       {...rest}
       style={[
         weight ? { fontWeight: weight } : {},
@@ -72,4 +70,4 @@ export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
       )}
     />
   );
-});
+};

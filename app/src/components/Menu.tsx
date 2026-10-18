@@ -1,8 +1,8 @@
-import { SFSymbolIcon } from "expo-router/unstable-native-tabs";
 import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { ContextMenu } from "@base-ui/react/context-menu";
 import { cx } from "tailwind-variants";
 import { JSX } from "react";
+import type { SFSymbolIcon } from "expo-router/native-tabs";
 
 export interface Option {
   /**

@@ -80,7 +80,7 @@ export default function Cars() {
       );
     }
 
-    return null;
+    return undefined;
   };
 
   const onDelete = (id: string) => {

@@ -53,7 +53,7 @@ export default function RatingsScreen() {
         </View>
       );
     }
-    return null;
+    return undefined;
   };
 
   if (isLoading) {

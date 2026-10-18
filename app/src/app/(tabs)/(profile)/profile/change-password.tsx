@@ -1,23 +1,30 @@
-import { useRef, useState } from "react";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
+import { Controller, useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { View, type TextInput } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
+import { FieldError, TextField } from "heroui-native";
 
 export default function ChangePasswordScreen() {
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const confirmPasswordRef = useRef<TextInput>(null);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setFocus,
+    getValues,
+    formState: { isValid },
+  } = useForm({
+    defaultValues: { password: "", confirmPassword: "" },
+    mode: "onChange",
+  });
 
   const { mutateAsync: changePassword, isPending } = useMutation(
     orpc.auth.changePassword.mutationOptions({
       onSuccess() {
         alert("Successfully changed password.");
-        setPassword("");
-        setConfirmPassword("");
+        reset();
       },
       onError(error) {
         alert(error.message);
@@ -25,47 +32,66 @@ export default function ChangePasswordScreen() {
     }),
   );
 
-  const handlePasswordChange = () => {
-    if (password !== confirmPassword) {
-      return alert("Passwords did not match.");
-    }
-
-    changePassword({ password });
-  };
+  const onSubmit = handleSubmit(({ password }) => changePassword({ password }));
 
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={{ padding: 16, gap: 8 }}
       scrollEnabled={false}
     >
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="password1">New Password</Label>
-        <Input
-          id="password1"
-          secureTextEntry={true}
-          textContentType="password"
-          placeholder="New Password"
-          onChangeText={(text) => setPassword(text)}
-          onSubmitEditing={() => confirmPasswordRef.current?.focus()}
-          returnKeyType="next"
-        />
-      </View>
-      <View style={{ gap: 4 }}>
-        <Label htmlFor="password1">Repeat Password</Label>
-        <Input
-          id="password2"
-          ref={confirmPasswordRef}
-          secureTextEntry={true}
-          textContentType="password"
-          placeholder="Confirm Password"
-          returnKeyType="go"
-          onChangeText={(text) => setConfirmPassword(text)}
-          onSubmitEditing={handlePasswordChange}
-        />
-      </View>
+      <Controller
+        control={control}
+        name="password"
+        rules={{ required: "Password is required" }}
+        render={({ field: { onBlur, onChange, ref, value }, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="password1">New Password</Label>
+            <Input
+              id="password1"
+              ref={ref}
+              secureTextEntry
+              textContentType="newPassword"
+              placeholder="New Password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              onSubmitEditing={() => setFocus("confirmPassword")}
+              returnKeyType="next"
+              value={value}
+            />
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
+      <Controller
+        control={control}
+        name="confirmPassword"
+        rules={{
+          required: "Please repeat your password",
+          validate: (value) =>
+            value === getValues("password") || "Passwords did not match.",
+        }}
+        render={({ field: { onBlur, onChange, ref, value }, fieldState }) => (
+          <TextField isInvalid={!!fieldState.error}>
+            <Label htmlFor="password2">Repeat Password</Label>
+            <Input
+              id="password2"
+              ref={ref}
+              secureTextEntry
+              textContentType="newPassword"
+              placeholder="Confirm Password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              onSubmitEditing={() => onSubmit()}
+              returnKeyType="go"
+              value={value}
+            />
+            <FieldError>{fieldState.error?.message}</FieldError>
+          </TextField>
+        )}
+      />
       <Button
-        onPress={handlePasswordChange}
-        isDisabled={!password || password !== confirmPassword}
+        onPress={() => onSubmit()}
+        isDisabled={!isValid}
         isLoading={isPending}
       >
         Change Password

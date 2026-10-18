@@ -112,5 +112,5 @@ export default function Layout() {
 }
 
 export const unstable_settings = {
-  initialRouteName: "profile/index",
+  anchor: "profile/index",
 };
