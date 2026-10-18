@@ -84,10 +84,10 @@ function App() {
         headerBackButtonDisplayMode: "generic",
       }}
     >
-      <Stack.Protected guard={isLoggedIn}>
+      <Stack.Protected guard={isLoggedIn} redirectTo="/(auth)">
         <Stack.Screen options={{ headerShown: false }} name="(tabs)" />
       </Stack.Protected>
-      <Stack.Protected guard={!isLoggedIn}>
+      <Stack.Protected guard={!isLoggedIn} redirectTo="/(tabs)/(ride)/ride">
         <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
         <Stack.Screen
           options={{ headerTitle: "Sign Up" }}
