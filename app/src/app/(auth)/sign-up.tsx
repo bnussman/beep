@@ -88,6 +88,7 @@ export default function SignUpScreen() {
 
   return (
     <KeyboardAwareScrollView
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ padding: 16, gap: 8 }}
       bottomOffset={64}
     >
@@ -272,13 +273,13 @@ export default function SignUpScreen() {
               ref={field.ref}
               returnKeyLabel="sign up"
               returnKeyType="go"
-              onSubmitEditing={onSubmit}
+              onSubmitEditing={() => onSubmit()}
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
         )}
       />
-      <Button isLoading={isSubmitting} onPress={onSubmit}>
+      <Button isLoading={isSubmitting} onPress={() => onSubmit()}>
         Sign Up
       </Button>
     </KeyboardAwareScrollView>

@@ -52,3 +52,7 @@ jobs:
         env:
           EAS_SKIP_AUTO_FINGERPRINT: 1
         working-directory: ./app
+      - run: bunx @sentry/expo-upload-sourcemaps dist
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        working-directory: ./app

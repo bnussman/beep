@@ -9,9 +9,7 @@ test('a user can sign up', async ({ page }) => {
 });
 
 test('client side validation works', async ({ page }) => {
-  await page.goto('/', { timeout: 200_000 });
-
-  await page.getByRole('button', { name: 'Sign Up' }).click();
+  await page.goto('/sign-up', { timeout: 200_000 });
 
   await page.getByRole('button', { name: 'Sign Up' }).click();
 

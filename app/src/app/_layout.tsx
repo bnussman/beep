@@ -84,10 +84,10 @@ function App() {
         headerBackButtonDisplayMode: "generic",
       }}
     >
-      <Stack.Protected guard={isLoggedIn}>
+      <Stack.Protected guard={isLoggedIn} redirectTo="/(auth)">
         <Stack.Screen options={{ headerShown: false }} name="(tabs)" />
       </Stack.Protected>
-      <Stack.Protected guard={!isLoggedIn}>
+      <Stack.Protected guard={!isLoggedIn} redirectTo="/(tabs)/(ride)/ride">
         <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
         <Stack.Screen
           options={{ headerTitle: "Sign Up" }}
@@ -141,5 +141,5 @@ function Layout() {
 export default Sentry.wrap(Layout);
 
 export const unstable_settings = {
-  initialRouteName: "(auth)/index",
+  anchor: "(auth)/index",
 };

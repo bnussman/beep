@@ -148,7 +148,7 @@ export default function User() {
             </Text>
             <Text>This user has no ratings to display</Text>
           </View>
-        ) : null
+        ) : undefined
       }
       ListFooterComponentStyle={{
         display: "flex",

@@ -1,4 +1,4 @@
-import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/native-tabs";
 import { useUser } from "@/utils/useUser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";

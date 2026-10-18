@@ -7,7 +7,7 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import { MenuProps, Option } from "./Menu";
-import { disabled, fixedSize } from "@expo/ui/swift-ui/modifiers";
+import { disabled } from "@expo/ui/swift-ui/modifiers";
 
 export function Menu(props: MenuProps) {
   const renderMenuOption = (option: Option) => {
@@ -56,10 +56,10 @@ export function Menu(props: MenuProps) {
 
   if (props.activationMethod === "longPress") {
     return (
-      <Host matchContents modifiers={[fixedSize()]}>
+      <Host>
         <ContextMenu>
           <ContextMenu.Trigger>
-            <RNHostView matchContents>
+            <RNHostView>
               {props.trigger({ onPress, onLongPress })}
             </RNHostView>
           </ContextMenu.Trigger>
@@ -76,7 +76,7 @@ export function Menu(props: MenuProps) {
       <ExpoUIMenu
         modifiers={props.disabled ? [disabled()] : []}
         label={
-          <RNHostView matchContents>
+          <RNHostView>
             {props.trigger({ onPress, onLongPress })}
           </RNHostView>
         }

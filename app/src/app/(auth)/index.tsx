@@ -29,7 +29,7 @@ export default function LoginScreen() {
     formState: { isSubmitting },
   } = useForm<Values>();
 
-  const { mutate: login } = useMutation(
+  const { mutateAsync: login } = useMutation(
     orpc.auth.login.mutationOptions({
       async onSuccess(data, vars, idk, context) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
@@ -53,10 +53,10 @@ export default function LoginScreen() {
   }, []);
 
   const onLogin = handleSubmit(async (variables) => {
-    login({
+    await login({
       ...variables,
       pushToken: await getPushToken(),
-    });
+    }).catch((error) => {});
   });
 
   return (
@@ -114,14 +114,14 @@ export default function LoginScreen() {
               ref={ref}
               returnKeyLabel="login"
               returnKeyType="go"
-              onSubmitEditing={onLogin}
+              onSubmitEditing={() => onLogin()}
               textContentType="password"
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
         )}
       />
-      <Button isLoading={isSubmitting} onPress={onLogin}>
+      <Button isLoading={isSubmitting} onPress={() => onLogin()}>
         Login
       </Button>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
