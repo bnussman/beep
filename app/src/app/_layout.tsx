@@ -25,16 +25,7 @@ import {
   ThemeProvider,
 } from "expo-router/react-navigation";
 
-if (!global.AbortSignal.prototype.throwIfAborted) {
-  global.AbortSignal.prototype.throwIfAborted = function throwIfAborted() {
-    if (this.aborted) {
-      throw new Error('Aborted');
-    }
-  };
-}
-
 SplashScreen.preventAutoHideAsync();
-
 setupPurchase();
 setupNotifications();
 setupLiveActivityListeners();
