@@ -6,6 +6,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "react-native";
+import { StatusBar } from 'expo-status-bar';
 import { useAutoUpdate } from "@/utils/updates";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
@@ -120,6 +121,7 @@ function Layout() {
               }
             >
               <App />
+              <StatusBar />
             </ThemeProvider>
           </QueryClientProvider>
         </KeyboardProvider>
