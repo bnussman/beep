@@ -3,19 +3,16 @@ import {
   Spacer,
   Text,
   VStack,
-  Circle,
   ProgressView,
 } from "@expo/ui/swift-ui";
 import {
   font,
   padding,
   foregroundStyle,
-  frame,
   progressViewStyle,
   background,
 } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
-import { carRouter } from "../../../api/src/routes/cars";
 import React from "react";
 
 export interface RiderActivityProps {
