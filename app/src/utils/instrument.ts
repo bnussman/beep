@@ -9,7 +9,7 @@ Sentry.init({
   enableLogs: true,
   environment: __DEV__ ? "local" : "production",
   tracesSampleRate: 0.25,
-  replaysOnErrorSampleRate: 1,
+  replaysOnErrorSampleRate: 0.10,
   integrations: [
     Sentry.mobileReplayIntegration(),
     Sentry.feedbackIntegration(),
