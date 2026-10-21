@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
-import { LocationIcon } from "./LocationIcon";
+import { SymbolView } from 'expo-symbols';
 import {
   ActivityIndicator,
   Pressable,
@@ -91,7 +91,14 @@ export function LocationInput(props: Props) {
         hitSlop={16}
         onPress={handleGetCurrentLocation}
       >
-        {isLoading ? <ActivityIndicator /> : <LocationIcon />}
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <SymbolView
+            name={{ ios: 'location.fill', android: 'location_pin', web: 'location_pin' }}
+            size={18}
+          />
+        )}
       </Pressable>
     </View>
   );
