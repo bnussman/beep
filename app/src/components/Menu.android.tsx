@@ -73,10 +73,10 @@ export function Menu(props: MenuProps) {
   }
 
   return (
-    <Host matchContents>
+    <Host>
       <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
         <DropdownMenu.Trigger>
-          <RNHostView matchContents>
+          <RNHostView>
             {props.trigger({ onPress, onLongPress })}
           </RNHostView>
         </DropdownMenu.Trigger>

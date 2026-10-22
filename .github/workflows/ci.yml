@@ -36,5 +36,5 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bunx expo-doctor --verbose
-        continue-on-error: true
+        # continue-on-error: true
         working-directory: app

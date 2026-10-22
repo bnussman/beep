@@ -130,7 +130,7 @@ export default function BeepsScreen() {
       );
     }
 
-    return null;
+    return undefined;
   };
 
   if (isLoading) {

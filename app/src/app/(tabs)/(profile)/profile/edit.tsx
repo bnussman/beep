@@ -222,14 +222,14 @@ export default function EditProfileScreen() {
           returnKeyLabel="update"
           returnKeyType="go"
           textContentType="username"
-          onSubmitEditing={isDirty ? onSubmit : undefined}
+          onSubmitEditing={isDirty ? () => onSubmit() : undefined}
           autoCapitalize="none"
           />
         )}
         />
         <Text color="error">{errors.cashapp?.message}</Text>
       </View>
-      <Button onPress={onSubmit} isLoading={isSubmitting} isDisabled={!isDirty}>
+      <Button onPress={() => onSubmit()} isLoading={isSubmitting} isDisabled={!isDirty}>
         Update Profile
       </Button>
     </KeyboardAwareScrollView>

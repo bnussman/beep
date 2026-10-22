@@ -6,6 +6,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "react-native";
+import { StatusBar } from 'expo-status-bar';
 import { useAutoUpdate } from "@/utils/updates";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
@@ -25,17 +26,7 @@ import {
   ThemeProvider,
 } from "expo-router/react-navigation";
 
-if (!global.AbortSignal.prototype.throwIfAborted) {
-  console.log("PATCHING")
-  global.AbortSignal.prototype.throwIfAborted = function throwIfAborted() {
-    if (this.aborted) {
-      throw new Error('Aborted');
-    }
-  };
-}
-
 SplashScreen.preventAutoHideAsync();
-
 setupPurchase();
 setupNotifications();
 setupLiveActivityListeners();
@@ -84,10 +75,10 @@ function App() {
         headerBackButtonDisplayMode: "generic",
       }}
     >
-      <Stack.Protected guard={isLoggedIn}>
+      <Stack.Protected guard={isLoggedIn} redirectTo="/(auth)">
         <Stack.Screen options={{ headerShown: false }} name="(tabs)" />
       </Stack.Protected>
-      <Stack.Protected guard={!isLoggedIn}>
+      <Stack.Protected guard={!isLoggedIn} redirectTo="/(tabs)/(ride)/ride">
         <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
         <Stack.Screen
           options={{ headerTitle: "Sign Up" }}
@@ -130,6 +121,7 @@ function Layout() {
               }
             >
               <App />
+              <StatusBar />
             </ThemeProvider>
           </QueryClientProvider>
         </KeyboardProvider>
@@ -141,5 +133,5 @@ function Layout() {
 export default Sentry.wrap(Layout);
 
 export const unstable_settings = {
-  initialRouteName: "(auth)/index",
+  anchor: "(auth)/index",
 };

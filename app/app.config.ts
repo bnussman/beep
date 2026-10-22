@@ -5,6 +5,7 @@ import expoRouter from "expo-router/plugin";
 import expoNotifications from "expo-notifications/plugin";
 import expoLocation from "expo-location/plugin";
 import expoWidgets from "expo-widgets/plugin";
+import expoFont from "expo-font/plugin";
 import expoStatusBar from "expo-status-bar/plugin";
 
 const config: ExpoConfig = {
@@ -42,6 +43,7 @@ const config: ExpoConfig = {
   plugins: [
     expoRouter(),
     expoNotifications(),
+    expoFont(),
     expoLocation({
       isIosBackgroundLocationEnabled: true,
       isAndroidBackgroundLocationEnabled: true,
@@ -80,7 +82,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "39",
+    buildNumber: "40",
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
@@ -102,7 +104,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 59,
+    versionCode: 61,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",

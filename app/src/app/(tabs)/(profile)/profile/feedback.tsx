@@ -15,7 +15,6 @@ export default function Feedback() {
   const {
     mutateAsync: createFeedback,
     isPending,
-    error,
   } = useMutation(
     orpc.feedback.createFeedback.mutationOptions({
       onSuccess() {
@@ -81,6 +80,7 @@ export default function Feedback() {
               style={{ minHeight: 150, paddingVertical: 12 }}
               onBlur={onBlur}
               onChangeText={(val) => onChange(val)}
+              onSubmitEditing={() => onSubmit()}
               value={value}
             />
           )}
@@ -89,7 +89,7 @@ export default function Feedback() {
           {errors.message?.message}
         </FieldError>
       </TextField>
-      <Button onPress={onSubmit} isLoading={isPending}>
+      <Button onPress={() => onSubmit()} isLoading={isPending}>
         Submit
       </Button>
     </KeyboardAwareScrollView>

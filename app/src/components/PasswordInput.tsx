@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Text } from "./Text";
 import { Input } from "./Input";
+import { SymbolView } from 'expo-symbols';
 import { Pressable, TextInput, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
@@ -22,9 +22,14 @@ export function PasswordInput(props: Props) {
       />
       <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 28, height: 24 }}>
         <Pressable onPress={toggleShow} hitSlop={24}>
-          <Text size="2xl">
-            {show ? "🙈" : "👁️"}
-          </Text>
+          <SymbolView
+            name={{
+              ios: show ? "eye.slash" : "eye",
+              android: show ? "visibility_off" : "visibility",
+              web: show ? "visibility_off" : "visibility",
+            }}
+            size={20}
+          />
         </Pressable>
       </View>
     </View>

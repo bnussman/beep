@@ -3,19 +3,16 @@ import {
   Spacer,
   Text,
   VStack,
-  Circle,
   ProgressView,
 } from "@expo/ui/swift-ui";
 import {
   font,
   padding,
   foregroundStyle,
-  frame,
   progressViewStyle,
   background,
 } from "@expo/ui/swift-ui/modifiers";
 import { createLiveActivity, type LiveActivityEnvironment } from "expo-widgets";
-import { carRouter } from "../../../api/src/routes/cars";
 import React from "react";
 
 export interface RiderActivityProps {
@@ -68,26 +65,6 @@ const RiderActivity = (
       default:
         return "Unknown";
     }
-  };
-
-  const colorMap = {
-    red: "#ca3f3f",
-    green: "#62be62",
-    blue: "#4285ea",
-    purple: "#a837b7",
-    black: "#2b2b2b",
-    gray: "#a8a8a8",
-    pink: "#d36ecb",
-    white: "#e2e2e2",
-    orange: "#d8670a",
-    tan: "#c69567",
-    brown: "#78513edd",
-    silver: "#7e7e7e",
-    yellow: "#ffc72f",
-  };
-
-  const capitalize = (s: string) => {
-    return `${s.charAt(0).toUpperCase()}${s.slice(1, s.length)}`;
   };
 
   const getProgressValue = () => {

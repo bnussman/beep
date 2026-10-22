@@ -1,4 +1,4 @@
-import { NativeStackHeaderItem, NativeStackHeaderItemMenuAction, NativeStackHeaderItemMenuSubmenu } from "expo-router/build/react-navigation/native-stack";
+import type { NativeStackHeaderItem, NativeStackHeaderItemMenuAction, NativeStackHeaderItemMenuSubmenu } from "expo-router";
 import type { Option } from "./Menu";
 
 export function getNativeNavigationMenuItem(option: Option): NativeStackHeaderItemMenuAction | NativeStackHeaderItemMenuSubmenu {

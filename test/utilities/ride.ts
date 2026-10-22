@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 interface Options {
   origin?: string;
@@ -16,7 +16,12 @@ export async function startRide(page: Page, options?: Options) {
 
   await page.getByLabel("Pick Up Location").click({ force: true });
   await page.getByPlaceholder("Search...").fill(origin);
-  await page.getByText(origin).nth(0).click();
+
+  await expect(page.getByText(origin).nth(0)).toBeVisible();
+
+  await page.getByText(origin).first().click();
+
+  await expect(page.getByLabel("Destination Location")).toBeVisible();
 
   await page.getByLabel("Destination Location").click({ force: true });
   await page.getByPlaceholder("Search...").fill(destination);

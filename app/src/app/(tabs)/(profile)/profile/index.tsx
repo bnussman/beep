@@ -143,29 +143,26 @@ export default function EditProfileScreen() {
           <React.Fragment key={link.title}>
             {index > 0 && <Separator className="my-4" />}
             <Link href={link.href} asChild key={link.title}>
-              <Link.Trigger>
-                <Pressable>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 16,
-                    }}
-                  >
-                    <Text size="2xl">{link.icon}</Text>
-                    <View>
-                      <Text weight="500">{link.title}</Text>
-                      <Text color="subtle" size="xs">
-                        {link.description}
-                      </Text>
-                    </View>
-                    <View style={{ flex: 1 }} />
-                    <Text>→</Text>
+              <Pressable>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 16,
+                  }}
+                >
+                  <Text size="2xl">{link.icon}</Text>
+                  <View>
+                    <Text weight="500">{link.title}</Text>
+                    <Text color="subtle" size="xs">
+                      {link.description}
+                    </Text>
                   </View>
-                </Pressable>
-              </Link.Trigger>
-              <Link.Preview />
+                  <View style={{ flex: 1 }} />
+                  <Text>→</Text>
+                </View>
+              </Pressable>
             </Link>
           </React.Fragment>
         ))}

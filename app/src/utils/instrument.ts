@@ -4,10 +4,15 @@ import { isWeb } from "./constants";
 
 Sentry.init({
   release: config.version,
-  dsn: "https://XAiQXk5ndTy6tJCv2cmKpGep@s2795462.us-west-2a.betterstackdata.com/2795471",
+  dsn: 'https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.us.sentry.io/6358990',
+  sendDefaultPii: true,
+  enableLogs: true,
   environment: __DEV__ ? "local" : "production",
-  tracesSampleRate: 1,
+  tracesSampleRate: 0.25,
+  replaysOnErrorSampleRate: 0.10,
   integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
     Sentry.reactNativeTracingIntegration({ traceFetch: true }),
     Sentry.breadcrumbsIntegration({ fetch: true }),
     Sentry.expoRouterIntegration(),
