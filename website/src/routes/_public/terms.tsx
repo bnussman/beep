@@ -3,7 +3,7 @@ import { Link as RouterLink, createFileRoute } from '@tanstack/react-router';
 import { Accordion as HeroAccordion, Typography } from '@heroui/react';
 import { CaretDownIcon } from '@phosphor-icons/react';
 
-export const Route = createFileRoute('/terms')({
+export const Route = createFileRoute('/_public/terms')({
   component: Terms,
 });
 

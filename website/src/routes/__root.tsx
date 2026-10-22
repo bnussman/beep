@@ -67,7 +67,7 @@ function RootDocument() {
               <Banners />
               <Outlet />
             </main>
-            <Footer />
+            {/* <Footer /> */}
           </QueryClientProvider>
         </ThemeProvider>
         <Scripts />
