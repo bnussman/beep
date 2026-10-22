@@ -1,12 +1,806 @@
 {
-  "version": "8",
+  "type": "base",
+  "version": "9",
   "dialect": "postgres",
   "id": "4e49578d-6dbd-4072-b3ab-cda016d4a41f",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "beep_status"
+      ],
+      "writes": [
+        "s|enum|public.beep_status",
+        "n|enum|public.beep_status",
+        "e|enum|public.beep_status",
+        "n|type|public.beep_status"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "payment_product"
+      ],
+      "writes": [
+        "s|enum|public.payment_product",
+        "n|enum|public.payment_product",
+        "e|enum|public.payment_product",
+        "n|type|public.payment_product"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "payment_store"
+      ],
+      "writes": [
+        "s|enum|public.payment_store",
+        "n|enum|public.payment_store",
+        "e|enum|public.payment_store",
+        "n|type|public.payment_store"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "user_password_type"
+      ],
+      "writes": [
+        "s|enum|public.user_password_type",
+        "n|enum|public.user_password_type",
+        "e|enum|public.user_password_type",
+        "n|type|public.user_password_type"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "user_role"
+      ],
+      "writes": [
+        "s|enum|public.user_role",
+        "n|enum|public.user_role",
+        "e|enum|public.user_role",
+        "n|type|public.user_role"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "beep"
+      ],
+      "writes": [
+        "s|tbl|public.beep",
+        "n|tbl|public.beep",
+        "e|tbl|public.beep",
+        "n|rel|public.beep",
+        "n|type|public.beep",
+        "n|rel|public.beep_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.beep_status"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "car"
+      ],
+      "writes": [
+        "s|tbl|public.car",
+        "n|tbl|public.car",
+        "e|tbl|public.car",
+        "n|rel|public.car",
+        "n|type|public.car",
+        "n|rel|public.car_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "feedback"
+      ],
+      "writes": [
+        "s|tbl|public.feedback",
+        "n|tbl|public.feedback",
+        "e|tbl|public.feedback",
+        "n|rel|public.feedback",
+        "n|type|public.feedback",
+        "n|rel|public.feedback_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "forgot_password"
+      ],
+      "writes": [
+        "s|tbl|public.forgot_password",
+        "n|tbl|public.forgot_password",
+        "e|tbl|public.forgot_password",
+        "n|rel|public.forgot_password",
+        "n|type|public.forgot_password",
+        "n|rel|public.forgot_password_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "payment"
+      ],
+      "writes": [
+        "s|tbl|public.payment",
+        "n|tbl|public.payment",
+        "e|tbl|public.payment",
+        "n|rel|public.payment",
+        "n|type|public.payment",
+        "n|rel|public.payment_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.payment_product",
+        "n|enum|public.payment_store"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "rating"
+      ],
+      "writes": [
+        "s|tbl|public.rating",
+        "n|tbl|public.rating",
+        "e|tbl|public.rating",
+        "n|rel|public.rating",
+        "n|type|public.rating",
+        "n|rel|public.rating_pkey",
+        "n|rel|public.rating_beep_id_rater_id_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "report"
+      ],
+      "writes": [
+        "s|tbl|public.report",
+        "n|tbl|public.report",
+        "e|tbl|public.report",
+        "n|rel|public.report",
+        "n|type|public.report",
+        "n|rel|public.report_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "token"
+      ],
+      "writes": [
+        "s|tbl|public.token",
+        "n|tbl|public.token",
+        "e|tbl|public.token",
+        "n|rel|public.token",
+        "n|type|public.token",
+        "n|rel|public.token_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user"
+      ],
+      "writes": [
+        "s|tbl|public.user",
+        "n|tbl|public.user",
+        "e|tbl|public.user",
+        "n|rel|public.user",
+        "n|type|public.user",
+        "n|rel|public.user_pkey",
+        "n|rel|public.user_username_unique",
+        "n|rel|public.user_email_unique"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.user_password_type",
+        "n|enum|public.user_role"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "verify_email"
+      ],
+      "writes": [
+        "s|tbl|public.verify_email",
+        "n|tbl|public.verify_email",
+        "e|tbl|public.verify_email",
+        "n|rel|public.verify_email",
+        "n|type|public.verify_email",
+        "n|rel|public.verify_email_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "beep",
+        "beeper_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.beeper_id_idx",
+        "n|idx|public.beeper_id_idx",
+        "e|idx|public.beeper_id_idx",
+        "n|rel|public.beeper_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.beep.beeper_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "beep",
+        "beeper_id_rider_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.beeper_id_rider_id_idx",
+        "n|idx|public.beeper_id_rider_id_idx",
+        "e|idx|public.beeper_id_rider_id_idx",
+        "n|rel|public.beeper_id_rider_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.beep.beeper_id",
+        "n|col|public.beep.rider_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "beep",
+        "rider_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.rider_id_idx",
+        "n|idx|public.rider_id_idx",
+        "e|idx|public.rider_id_idx",
+        "n|rel|public.rider_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.beep.rider_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "beep",
+        "start_idx"
+      ],
+      "writes": [
+        "s|idx|public.start_idx",
+        "n|idx|public.start_idx",
+        "e|idx|public.start_idx",
+        "n|rel|public.start_idx"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.beep.start"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "beep",
+        "status_idx"
+      ],
+      "writes": [
+        "s|idx|public.status_idx",
+        "n|idx|public.status_idx",
+        "e|idx|public.status_idx",
+        "n|rel|public.status_idx"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.beep.status"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "beep"
+      ],
+      "writes": [
+        "s|fk|public.beep.beep_beeper_id_user_id_fkey",
+        "n|fk|public.beep.beep_beeper_id_user_id_fkey",
+        "e|fk|public.beep.beep_beeper_id_user_id_fkey",
+        "n|con|public.beep.beep_beeper_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.beep.beeper_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "beep"
+      ],
+      "writes": [
+        "s|fk|public.beep.beep_rider_id_user_id_fkey",
+        "n|fk|public.beep.beep_rider_id_user_id_fkey",
+        "e|fk|public.beep.beep_rider_id_user_id_fkey",
+        "n|con|public.beep.beep_rider_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.beep.rider_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "car"
+      ],
+      "writes": [
+        "s|fk|public.car.car_user_id_user_id_fkey",
+        "n|fk|public.car.car_user_id_user_id_fkey",
+        "e|fk|public.car.car_user_id_user_id_fkey",
+        "n|con|public.car.car_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.car",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.car.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "feedback"
+      ],
+      "writes": [
+        "s|fk|public.feedback.feedback_user_id_user_id_fkey",
+        "n|fk|public.feedback.feedback_user_id_user_id_fkey",
+        "e|fk|public.feedback.feedback_user_id_user_id_fkey",
+        "n|con|public.feedback.feedback_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.feedback",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.feedback.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "forgot_password"
+      ],
+      "writes": [
+        "s|fk|public.forgot_password.forgot_password_user_id_user_id_fkey",
+        "n|fk|public.forgot_password.forgot_password_user_id_user_id_fkey",
+        "e|fk|public.forgot_password.forgot_password_user_id_user_id_fkey",
+        "n|con|public.forgot_password.forgot_password_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.forgot_password",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.forgot_password.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "payment"
+      ],
+      "writes": [
+        "s|fk|public.payment.payment_user_id_user_id_fkey",
+        "n|fk|public.payment.payment_user_id_user_id_fkey",
+        "e|fk|public.payment.payment_user_id_user_id_fkey",
+        "n|con|public.payment.payment_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.payment",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.payment.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "rating"
+      ],
+      "writes": [
+        "s|fk|public.rating.rating_rater_id_user_id_fkey",
+        "n|fk|public.rating.rating_rater_id_user_id_fkey",
+        "e|fk|public.rating.rating_rater_id_user_id_fkey",
+        "n|con|public.rating.rating_rater_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.rating",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.rating.rater_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "rating"
+      ],
+      "writes": [
+        "s|fk|public.rating.rating_rated_id_user_id_fkey",
+        "n|fk|public.rating.rating_rated_id_user_id_fkey",
+        "e|fk|public.rating.rating_rated_id_user_id_fkey",
+        "n|con|public.rating.rating_rated_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.rating",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.rating.rated_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "rating"
+      ],
+      "writes": [
+        "s|fk|public.rating.rating_beep_id_beep_id_fkey",
+        "n|fk|public.rating.rating_beep_id_beep_id_fkey",
+        "e|fk|public.rating.rating_beep_id_beep_id_fkey",
+        "n|con|public.rating.rating_beep_id_beep_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.rating",
+        "n|sch|public",
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.rating.beep_id",
+        "n|col|public.beep.id",
+        "e|uniqueness|public.beep.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "report"
+      ],
+      "writes": [
+        "s|fk|public.report.report_reporter_id_user_id_fkey",
+        "n|fk|public.report.report_reporter_id_user_id_fkey",
+        "e|fk|public.report.report_reporter_id_user_id_fkey",
+        "n|con|public.report.report_reporter_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.report",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.report.reporter_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "report"
+      ],
+      "writes": [
+        "s|fk|public.report.report_reported_id_user_id_fkey",
+        "n|fk|public.report.report_reported_id_user_id_fkey",
+        "e|fk|public.report.report_reported_id_user_id_fkey",
+        "n|con|public.report.report_reported_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.report",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.report.reported_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "report"
+      ],
+      "writes": [
+        "s|fk|public.report.report_handled_by_id_user_id_fkey",
+        "n|fk|public.report.report_handled_by_id_user_id_fkey",
+        "e|fk|public.report.report_handled_by_id_user_id_fkey",
+        "n|con|public.report.report_handled_by_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.report",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.report.handled_by_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "report"
+      ],
+      "writes": [
+        "s|fk|public.report.report_beep_id_beep_id_fkey",
+        "n|fk|public.report.report_beep_id_beep_id_fkey",
+        "e|fk|public.report.report_beep_id_beep_id_fkey",
+        "n|con|public.report.report_beep_id_beep_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.report",
+        "n|sch|public",
+        "n|tbl|public.beep",
+        "n|sch|public",
+        "n|col|public.report.beep_id",
+        "n|col|public.beep.id",
+        "e|uniqueness|public.beep.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "token"
+      ],
+      "writes": [
+        "s|fk|public.token.token_user_id_user_id_fkey",
+        "n|fk|public.token.token_user_id_user_id_fkey",
+        "e|fk|public.token.token_user_id_user_id_fkey",
+        "n|con|public.token.token_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.token",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.token.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "verify_email"
+      ],
+      "writes": [
+        "s|fk|public.verify_email.verify_email_user_id_user_id_fkey",
+        "n|fk|public.verify_email.verify_email_user_id_user_id_fkey",
+        "e|fk|public.verify_email.verify_email_user_id_user_id_fkey",
+        "n|con|public.verify_email.verify_email_user_id_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.verify_email",
+        "n|sch|public",
+        "n|tbl|public.user",
+        "n|sch|public",
+        "n|col|public.verify_email.user_id",
+        "n|col|public.user.id",
+        "e|uniqueness|public.user.id"
+      ]
+    }
+  ],
   "ddl": [
     {
+      "schema": "public",
+      "name": "beep",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "car",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "feedback",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "forgot_password",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "payment",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "rating",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "report",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "token",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "user",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "verify_email",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "beep_status",
       "values": [
         "canceled",
         "denied",
@@ -17,121 +811,49 @@
         "in_progress",
         "complete"
       ],
-      "name": "beep_status",
-      "entityType": "enums",
-      "schema": "public"
+      "entityType": "enums"
     },
     {
+      "schema": "public",
+      "name": "payment_product",
       "values": [
         "top_of_beeper_list_1_hour",
         "top_of_beeper_list_2_hours",
         "top_of_beeper_list_3_hours"
       ],
-      "name": "payment_product",
-      "entityType": "enums",
-      "schema": "public"
+      "entityType": "enums"
     },
     {
+      "schema": "public",
+      "name": "payment_store",
       "values": [
         "play_store",
         "app_store"
       ],
-      "name": "payment_store",
-      "entityType": "enums",
-      "schema": "public"
+      "entityType": "enums"
     },
     {
+      "schema": "public",
+      "name": "user_password_type",
       "values": [
         "sha256",
         "bcrypt"
       ],
-      "name": "user_password_type",
-      "entityType": "enums",
-      "schema": "public"
+      "entityType": "enums"
     },
     {
+      "schema": "public",
+      "name": "user_role",
       "values": [
         "user",
         "admin"
       ],
-      "name": "user_role",
-      "entityType": "enums",
-      "schema": "public"
+      "entityType": "enums"
     },
     {
-      "isRlsEnabled": false,
-      "name": "beep",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "car",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "feedback",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "forgot_password",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "payment",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "rating",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "report",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "token",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "user",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "verify_email",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "beep",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -139,12 +861,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "beep",
       "name": "beeper_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -152,12 +874,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "beep",
       "name": "rider_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -165,12 +887,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "beep",
       "name": "origin",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -178,12 +900,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "destination",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "destination",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "beep",
+      "name": "group_size",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -191,12 +926,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "group_size",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "start",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -204,12 +939,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "start",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "end",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": false,
@@ -217,12 +952,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "end",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "status",
       "type": "beep_status",
       "typeSchema": "public",
       "notNull": true,
@@ -230,25 +965,12 @@
       "default": "'waiting'",
       "generated": null,
       "identity": null,
-      "name": "status",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "car",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -256,12 +978,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "car",
       "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -269,12 +991,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "car",
       "name": "make",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -282,12 +1004,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "car",
       "name": "model",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -295,12 +1017,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "car",
       "name": "color",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -308,12 +1030,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "photo",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "car",
+      "name": "photo",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "car",
+      "name": "year",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -321,12 +1056,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "year",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "car",
+      "name": "default",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -334,25 +1069,12 @@
       "default": "false",
       "generated": null,
       "identity": null,
-      "name": "default",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
+      "entityType": "columns"
     },
     {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "car",
       "name": "created",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -360,25 +1082,25 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "car",
       "name": "updated",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "car"
-    },
-    {
-      "type": "varchar(255)",
+      "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "feedback",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "feedback"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -386,12 +1108,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "feedback",
       "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "feedback"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -399,51 +1121,25 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "feedback",
       "name": "message",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "feedback"
-    },
-    {
-      "type": "timestamp with time zone",
+      "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "feedback",
       "name": "created",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "feedback"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "forgot_password"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "forgot_password"
-    },
-    {
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -451,25 +1147,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "time",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "forgot_password"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "forgot_password",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -477,12 +1160,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "forgot_password",
       "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -490,12 +1173,64 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "store_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "forgot_password",
+      "name": "time",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "payment",
+      "name": "id",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "payment",
+      "name": "user_id",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "payment",
+      "name": "store_id",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "payment",
+      "name": "product_id",
       "type": "payment_product",
       "typeSchema": "public",
       "notNull": true,
@@ -503,12 +1238,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "product_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "payment",
+      "name": "price",
       "type": "numeric",
       "typeSchema": null,
       "notNull": true,
@@ -516,12 +1251,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "price",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "payment",
+      "name": "store",
       "type": "payment_store",
       "typeSchema": "public",
       "notNull": true,
@@ -529,25 +1264,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "store",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
+      "entityType": "columns"
     },
     {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "payment",
       "name": "created",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
-    },
-    {
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -555,25 +1277,25 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "payment",
       "name": "expires",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "payment"
-    },
-    {
-      "type": "varchar(255)",
+      "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "rating",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -581,12 +1303,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "rating",
       "name": "rater_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -594,12 +1316,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "rated_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "rating",
+      "name": "rated_id",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "rating",
+      "name": "stars",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -607,25 +1342,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "stars",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "rating",
       "name": "message",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "rating",
+      "name": "timestamp",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -633,25 +1368,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "timestamp",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "rating",
       "name": "beep_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "rating"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -659,12 +1381,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "report",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -672,12 +1394,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "report",
       "name": "reporter_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -685,25 +1407,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "report",
       "name": "reported_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "handled_by_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -711,12 +1420,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "reason",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "handled_by_id",
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": false,
@@ -724,12 +1433,38 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "notes",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "reason",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "report",
+      "name": "notes",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "report",
+      "name": "timestamp",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -737,12 +1472,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "timestamp",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "handled",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -750,38 +1485,25 @@
       "default": "false",
       "generated": null,
       "identity": null,
-      "name": "handled",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "report",
       "name": "beep_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "report"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "token",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "token"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -789,12 +1511,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "token",
       "name": "tokenid",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "token"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -802,12 +1524,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "token",
       "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "token"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -815,12 +1537,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -828,12 +1550,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "first",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -841,12 +1563,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "last",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -854,12 +1576,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "username",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -867,12 +1589,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "email",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -880,38 +1602,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "phone",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "venmo",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "cashapp",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -919,12 +1615,51 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "password",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "venmo",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
+      "name": "cashapp",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
+      "name": "password",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
+      "name": "password_type",
       "type": "user_password_type",
       "typeSchema": "public",
       "notNull": true,
@@ -932,25 +1667,12 @@
       "default": "'bcrypt'",
       "generated": null,
       "identity": null,
-      "name": "password_type",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "false",
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "user",
       "name": "is_beeping",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -958,12 +1680,12 @@
       "default": "false",
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
       "name": "is_email_verified",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -971,12 +1693,25 @@
       "default": "false",
       "generated": null,
       "identity": null,
-      "name": "is_student",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "is_student",
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
+      "name": "group_rate",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -984,12 +1719,12 @@
       "default": "4",
       "generated": null,
       "identity": null,
-      "name": "group_rate",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "singles_rate",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -997,12 +1732,12 @@
       "default": "3",
       "generated": null,
       "identity": null,
-      "name": "singles_rate",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "capacity",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -1010,12 +1745,12 @@
       "default": "4",
       "generated": null,
       "identity": null,
-      "name": "capacity",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "queue_size",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -1023,12 +1758,12 @@
       "default": "0",
       "generated": null,
       "identity": null,
-      "name": "queue_size",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "rating",
       "type": "numeric",
       "typeSchema": null,
       "notNull": false,
@@ -1036,12 +1771,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "rating",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "role",
       "type": "user_role",
       "typeSchema": "public",
       "notNull": true,
@@ -1049,25 +1784,12 @@
       "default": "'user'",
       "generated": null,
       "identity": null,
-      "name": "role",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "user",
       "name": "push_token",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": false,
@@ -1075,12 +1797,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "photo",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "photo",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "user",
+      "name": "location",
       "type": "geometry",
       "typeSchema": null,
       "notNull": false,
@@ -1088,12 +1823,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "location",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "created",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": false,
@@ -1101,25 +1836,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "created",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "user"
+      "entityType": "columns"
     },
     {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "verify_email",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "verify_email"
-    },
-    {
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -1127,12 +1849,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "verify_email"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "verify_email",
+      "name": "user_id",
+      "type": "varchar(255)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "verify_email",
+      "name": "time",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -1140,12 +1875,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "time",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "verify_email"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "verify_email",
+      "name": "email",
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -1153,12 +1888,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "email",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "verify_email"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "beeper_id_idx",
       "nameExplicit": true,
       "columns": [
         {
@@ -1174,12 +1909,12 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "beeper_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "indexes"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "beeper_id_rider_id_idx",
       "nameExplicit": true,
       "columns": [
         {
@@ -1202,12 +1937,12 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "beeper_id_rider_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "indexes"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "rider_id_idx",
       "nameExplicit": true,
       "columns": [
         {
@@ -1223,12 +1958,12 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "rider_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "indexes"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "start_idx",
       "nameExplicit": true,
       "columns": [
         {
@@ -1244,12 +1979,12 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "start_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "indexes"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "status_idx",
       "nameExplicit": true,
       "columns": [
         {
@@ -1265,12 +2000,12 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "status_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "indexes"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "beep_beeper_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "beeper_id"
@@ -1282,12 +2017,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "beep_beeper_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "beep",
+      "name": "beep_rider_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "rider_id"
@@ -1299,29 +2034,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "beep_rider_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "beep"
+      "entityType": "fks"
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "CASCADE",
-      "onDelete": "CASCADE",
+      "schema": "public",
+      "table": "car",
       "name": "car_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "car"
-    },
-    {
       "nameExplicit": false,
       "columns": [
         "user_id"
@@ -1333,12 +2051,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "feedback",
       "name": "feedback_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "feedback"
-    },
-    {
       "nameExplicit": false,
       "columns": [
         "user_id"
@@ -1350,12 +2068,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "forgot_password",
       "name": "forgot_password_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "forgot_password"
-    },
-    {
       "nameExplicit": false,
       "columns": [
         "user_id"
@@ -1367,12 +2085,29 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "payment_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "payment"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "payment",
+      "name": "payment_user_id_user_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "CASCADE",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "rating",
+      "name": "rating_rater_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "rater_id"
@@ -1384,12 +2119,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "rating_rater_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "rating",
+      "name": "rating_rated_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "rated_id"
@@ -1401,12 +2136,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "rating_rated_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "rating",
+      "name": "rating_beep_id_beep_id_fkey",
       "nameExplicit": false,
       "columns": [
         "beep_id"
@@ -1418,12 +2153,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "rating_beep_id_beep_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "report_reporter_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "reporter_id"
@@ -1435,12 +2170,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "report_reporter_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "report"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "report_reported_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "reported_id"
@@ -1452,12 +2187,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "CASCADE",
-      "name": "report_reported_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "report"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "report_handled_by_id_user_id_fkey",
       "nameExplicit": false,
       "columns": [
         "handled_by_id"
@@ -1469,12 +2204,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "SET NULL",
-      "name": "report_handled_by_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "report"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "report",
+      "name": "report_beep_id_beep_id_fkey",
       "nameExplicit": false,
       "columns": [
         "beep_id"
@@ -1486,179 +2221,175 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "SET NULL",
-      "name": "report_beep_id_beep_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "report"
+      "entityType": "fks"
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "CASCADE",
-      "onDelete": "CASCADE",
-      "name": "token_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "token"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "CASCADE",
-      "onDelete": "CASCADE",
-      "name": "verify_email_user_id_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "verify_email"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "beep_pkey",
-      "schema": "public",
-      "table": "beep",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "car_pkey",
-      "schema": "public",
-      "table": "car",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "feedback_pkey",
-      "schema": "public",
-      "table": "feedback",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "forgot_password_pkey",
-      "schema": "public",
-      "table": "forgot_password",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "payment_pkey",
-      "schema": "public",
-      "table": "payment",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "rating_pkey",
-      "schema": "public",
-      "table": "rating",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "report_pkey",
-      "schema": "public",
-      "table": "report",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "token_pkey",
       "schema": "public",
       "table": "token",
-      "entityType": "pks"
-    },
-    {
+      "name": "token_user_id_user_id_fkey",
+      "nameExplicit": false,
       "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
         "id"
       ],
-      "nameExplicit": false,
-      "name": "user_pkey",
-      "schema": "public",
-      "table": "user",
-      "entityType": "pks"
+      "onUpdate": "CASCADE",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
     },
     {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "verify_email_pkey",
       "schema": "public",
       "table": "verify_email",
+      "name": "verify_email_user_id_user_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "CASCADE",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "beep",
+      "name": "beep_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
       "entityType": "pks"
     },
     {
+      "schema": "public",
+      "table": "car",
+      "name": "car_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "feedback",
+      "name": "feedback_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "forgot_password",
+      "name": "forgot_password_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "payment",
+      "name": "payment_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "rating",
+      "name": "rating_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "report",
+      "name": "report_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "token",
+      "name": "token_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "user",
+      "name": "user_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "verify_email",
+      "name": "verify_email_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "rating",
+      "name": "rating_beep_id_rater_id_unique",
       "nameExplicit": true,
       "columns": [
         "rater_id",
         "beep_id"
       ],
       "nullsNotDistinct": false,
-      "name": "rating_beep_id_rater_id_unique",
-      "entityType": "uniques",
-      "schema": "public",
-      "table": "rating"
+      "entityType": "uniques"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "user_username_unique",
       "nameExplicit": true,
       "columns": [
         "username"
       ],
       "nullsNotDistinct": false,
-      "name": "user_username_unique",
-      "entityType": "uniques",
-      "schema": "public",
-      "table": "user"
+      "entityType": "uniques"
     },
     {
+      "schema": "public",
+      "table": "user",
+      "name": "user_email_unique",
       "nameExplicit": true,
       "columns": [
         "email"
       ],
       "nullsNotDistinct": false,
-      "name": "user_email_unique",
-      "entityType": "uniques",
-      "schema": "public",
-      "table": "user"
+      "entityType": "uniques"
     }
-  ],
-  "renames": []
+  ]
 }
