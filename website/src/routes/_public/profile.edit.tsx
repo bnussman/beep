@@ -1,6 +1,6 @@
 import React from "react";
-import { RouterInputs } from "../../../api/src";
-import { orpc } from "../utils/orpc";
+import { RouterInputs } from "../../../../api/src";
+import { orpc } from "../../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ import {
 
 type Values = RouterInputs["user"]["edit"];
 
-export const Route = createFileRoute('/profile/edit')({
+export const Route = createFileRoute('/_public/profile/edit')({
   component: EditProfile,
 });
 

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { orpc } from "../utils/orpc";
+import { orpc } from "../../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { UserIcon } from "@phosphor-icons/react";
 import {
@@ -11,9 +11,9 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { Alert, Avatar, Button, Description, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
-import { RouterInputs } from "../../../api/src";
+import { RouterInputs } from "../../../../api/src";
 
-export const Route = createFileRoute("/signup")({
+export const Route = createFileRoute("/_public/signup")({
   component: SignUp,
 });
 

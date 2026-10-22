@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { RouterInputs } from "../../../api/src";
+import { RouterInputs } from "../../../../api/src";
 import { Controller, useForm } from "react-hook-form";
-import { orpc } from "../utils/orpc";
+import { orpc } from "../../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Alert, Button, FieldError, Input, InputGroup, Label, TextField, Typography } from "@heroui/react";
-import { Link } from "../components/Link";
+import { Link } from "../../components/Link";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/_public/login")({
   component: Login,
 });
 
