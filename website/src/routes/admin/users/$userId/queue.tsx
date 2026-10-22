@@ -6,11 +6,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
-import { TableCellUser } from "../../../../components/TableCellUser";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Table } from "@heroui/react";
+import { BasicUser } from "../../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/users/$userId/queue")({
   component: QueueTable,
@@ -53,7 +53,9 @@ function QueueTable() {
           {data?.length === 0 && <TableEmpty colSpan={6} />}
           {data?.map((beep) => (
             <Table.Row key={beep.id}>
-              <TableCellUser user={beep.rider} />
+              <Table.Cell>
+                <BasicUser user={beep.rider} />
+              </Table.Cell>
               <Table.Cell>{beep.origin}</Table.Cell>
               <Table.Cell>{beep.destination}</Table.Cell>
               <Table.Cell>{beep.groupSize}</Table.Cell>

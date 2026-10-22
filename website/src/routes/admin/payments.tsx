@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../components/PaginationFooter";
-import { TableCellUser } from "../../components/TableCellUser";
 import { TableEmpty } from "../../components/TableEmpty";
 import { TableLoading } from "../../components/TableLoading";
 import { TableError } from "../../components/TableError";
 import { Table, Typography } from "@heroui/react";
 import { orpc } from "../../utils/orpc";
+import { BasicUser } from "../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/payments")({
   component: Payments,
@@ -62,7 +62,9 @@ function Payments() {
             {error && <TableError colSpan={6} error={error.message} />}
             {data?.payments.map((payment) => (
               <Table.Row key={payment.id}>
-                <TableCellUser user={payment.user} />
+                <Table.Cell>
+                  <BasicUser user={payment.user} />
+                </Table.Cell>
                 <Table.Cell>{payment.productId}</Table.Cell>
                 <Table.Cell>${payment.price}</Table.Cell>
                 <Table.Cell>{payment.store}</Table.Cell>

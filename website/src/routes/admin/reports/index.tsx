@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Indicator } from "../../../components/Indicator";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
@@ -14,6 +13,7 @@ import { DateTime } from "luxon";
 import { Table } from "@heroui/react";
 import { Typography } from "@heroui/react";
 import { orpc } from "../../../utils/orpc";
+import { BasicUser } from "../../../components/BasicUser";
 
 export const Route = createFileRoute('/admin/reports/')({
   component: Reports,
@@ -75,8 +75,12 @@ function Reports() {
             {isLoading && <TableLoading colSpan={7} />}
             {data?.reports.map((report) => (
               <Table.Row key={report.id}>
-                <TableCellUser user={report.reporter} />
-                <TableCellUser user={report.reported} />
+                <Table.Cell>
+                  <BasicUser user={report.reporter} />
+                </Table.Cell>
+                <Table.Cell>
+                  <BasicUser user={report.reported} />
+                </Table.Cell>
                 <Table.Cell>{report.rating_id ? 'Rating' : report.beep_id ? "Beep" : "General"}</Table.Cell>
                 <Table.Cell>{report.reason}</Table.Cell>
                 <Table.Cell>
