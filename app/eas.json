@@ -4,12 +4,12 @@
   },
   "build": {
     "development": {
-      "bun": "1.4.2",
+      "bun": "1.4.4",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
-      "bun": "1.4.2",
+      "bun": "1.4.4",
       "distribution": "internal",
       "channel": "preview",
       "android": {
@@ -17,14 +17,14 @@
       }
     },
     "simulator": {
-      "bun": "1.4.2",
+      "bun": "1.4.4",
       "developmentClient": true,
       "ios": {
         "simulator": true
       }
     },
     "production": {
-      "bun": "1.4.2",
+      "bun": "1.4.4",
       "channel": "production"
     }
   },
