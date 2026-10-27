@@ -1,6 +1,6 @@
 import { authedProcedure } from "../middleware/orpc";
 import { db } from "../services/db";
-import { count } from "drizzle-orm";
+import { count, EmptyFilter } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../logic/users";
 import { listPaymentsInputSchema } from "../schemas/payments";
@@ -20,9 +20,9 @@ export const paymentRouter = {
       }
 
       const where = {
-        user_id: input.userId,
+        user_id: input.userId ?? EmptyFilter,
         ...(input.active ? { expires: { gte: new Date() } } : {}),
-      };
+      } as const;
 
       const [payments, paymentsCount] = await Promise.all([
         db.query.payments.findMany({
