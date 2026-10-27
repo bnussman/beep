@@ -27,7 +27,13 @@ export const carRouter = {
   cars: authedProcedure
     .input(getCarsInputSchema)
     .input(paginationSchema)
-    .handler(async ({ input }) => {
+    .handler(async ({ input, context }) => {
+      if (context.user.role !== "admin" && input.userId !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
+          message: "You don't have permission to view other user's cars.",
+        });
+      }
+
       const where = input.userId ? { user_id: input.userId } : {};
 
       const [cars, countData] = await Promise.all([
@@ -35,7 +41,7 @@ export const carRouter = {
           limit: input.pageSize,
           offset: getOffsetFromPage(input.page, input.pageSize),
           orderBy: { created: "desc" },
-          where: input.userId ? { user_id: input.userId } : {},
+          where,
           with: {
             user: {
               columns: condensedUserColumns,
@@ -158,12 +164,27 @@ export const carRouter = {
     }),
   updateCar: authedProcedure
     .input(updateCarInputSchema)
-    .handler(async ({ input }) => {
-      const [car] = await db
+    .handler(async ({ input, context }) => {
+      const car = await db.query.cars.findFirst({
+        where: { id: input.carId }
+      });
+
+      if (!car) {
+        throw new ORPCError("NOT_FOUND");
+      }
+
+      if (context.user.role !== "admin" && car.user_id !== context.user.id) {
+        throw new ORPCError("UNAUTHORIZED", {
+          message: "You don't have permission to update this car.",
+        });
+      }
+
+      await db
         .update(cars)
         .set(input.data)
-        .where(eq(cars.id, input.carId))
-        .returning();
+        .where(eq(cars.id, car.id));
+
+      Object.assign(car, input.data);
 
       if (input.data.default) {
         await db

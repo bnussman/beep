@@ -1,6 +1,6 @@
 import { authedProcedure } from "../middleware/orpc";
 import { db } from "../services/db";
-import { count } from "drizzle-orm";
+import { count, EmptyFilter } from "drizzle-orm";
 import { ORPCError } from "@orpc/server";
 import { condensedUserColumns } from "../logic/users";
 import { listPaymentsInputSchema } from "../schemas/payments";
@@ -11,18 +11,16 @@ export const paymentRouter = {
     .input(listPaymentsInputSchema)
     .input(paginationSchema)
     .handler(async ({ input, context }) => {
-      const userId = input.userId ?? context.user.id;
-
-      if (context.user.role === "user" && userId !== context.user.id) {
+      if (context.user.role !== "admin" && input.userId !== context.user.id) {
         throw new ORPCError("UNAUTHORIZED", {
           message: "You must be an admin to get purchases for other users",
         });
       }
 
       const where = {
-        user_id: input.userId,
+        user_id: input.userId ?? EmptyFilter,
         ...(input.active ? { expires: { gte: new Date() } } : {}),
-      };
+      } as const;
 
       const [payments, paymentsCount] = await Promise.all([
         db.query.payments.findMany({
