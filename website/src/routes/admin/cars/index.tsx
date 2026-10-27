@@ -7,13 +7,13 @@ import { DateTime } from "luxon";
 import { Indicator } from "../../../components/Indicator";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
-import { TableCellUser } from "../../../components/TableCellUser";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Table, Typography } from "@heroui/react";
+import { BasicUser } from "../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/cars/")({
   component: Cars,
@@ -86,7 +86,9 @@ function Cars() {
             {data?.results === 0 && <TableEmpty colSpan={9} />}
             {data?.cars.map((car) => (
               <Table.Row key={car.id}>
-                <TableCellUser user={car.user} />
+                <Table.Cell>
+                  <BasicUser user={car.user} />
+                </Table.Cell>
                 <Table.Cell>{car.make}</Table.Cell>
                 <Table.Cell>{car.model}</Table.Cell>
                 <Table.Cell>{car.year}</Table.Cell>

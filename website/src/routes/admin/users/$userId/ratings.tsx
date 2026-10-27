@@ -6,12 +6,12 @@ import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableLoading } from "../../../../components/TableLoading";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
-import { TableCellUser } from "../../../../components/TableCellUser";
 import { RatingMenu } from "../../../../components/RatingMenu";
 import { DeleteRatingDialog } from "../../../../components/DeleteRatingDialog";
 import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { Table } from "@heroui/react";
+import { BasicUser } from "../../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/users/$userId/ratings")({
   component: RatingsTable,
@@ -59,8 +59,12 @@ function RatingsTable() {
             {data?.results === 0 && <TableEmpty colSpan={6} />}
             {data?.ratings.map((rating) => (
               <Table.Row key={rating.id}>
-                <TableCellUser user={rating.rater} />
-                <TableCellUser user={rating.rated} />
+                <Table.Cell>
+                  <BasicUser user={rating.rater} />
+                </Table.Cell>
+                <Table.Cell>
+                  <BasicUser user={rating.rated} />
+                </Table.Cell>
                 <Table.Cell>{rating.message ?? "N/A"}</Table.Cell>
                 <Table.Cell>{printStars(rating.stars)}</Table.Cell>
                 <Table.Cell>

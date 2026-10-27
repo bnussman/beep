@@ -7,12 +7,12 @@ import { DeleteBeepDialog } from "../../../components/DeleteBeepDialog";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { DateTime, Interval } from "luxon";
 import { Table, Typography } from "@heroui/react";
+import { BasicUser } from "../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/beeps/")({
   component: Beeps,
@@ -76,14 +76,18 @@ function Beeps() {
             {data?.results === 0 && <TableEmpty colSpan={10} />}
             {data?.beeps.map((beep) => (
               <Table.Row key={beep.id}>
-                <TableCellUser
-                  user={beep.beeper}
-                  linkProps={{ to: "/admin/users/$userId/queue" }}
-                />
-                <TableCellUser
-                  user={beep.rider}
-                  linkProps={{ to: "/admin/users/$userId/ride" }}
-                />
+                <Table.Cell>
+                  <BasicUser
+                    user={beep.beeper}
+                    linkProps={{ to: "/admin/users/$userId/queue" }}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <BasicUser
+                    user={beep.rider}
+                    linkProps={{ to: "/admin/users/$userId/ride" }}
+                  />
+                </Table.Cell>
                 <Table.Cell>{beep.origin}</Table.Cell>
                 <Table.Cell>{beep.destination}</Table.Cell>
                 <Table.Cell>{beep.groupSize}</Table.Cell>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { orpc } from "../../../utils/orpc";
 import { printStars } from "../../../utils/utils";
 import { useQuery } from "@tanstack/react-query";
-import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { RatingMenu } from "../../../components/RatingMenu";
@@ -13,6 +12,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { Table, Typography } from "@heroui/react";
+import { BasicUser } from "../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/ratings/")({
   component: Ratings,
@@ -68,8 +68,12 @@ function Ratings() {
             {error && <TableError colSpan={6} error={error.message} />}
             {data?.ratings.map((rating) => (
               <Table.Row key={rating.id}>
-                <TableCellUser user={rating.rater} />
-                <TableCellUser user={rating.rated} />
+                <Table.Cell>
+                  <BasicUser user={rating.rater} />
+                </Table.Cell>
+                <Table.Cell>
+                  <BasicUser user={rating.rated} />
+                </Table.Cell>
                 <Table.Cell>{rating.message ?? "N/A"}</Table.Cell>
                 <Table.Cell>{printStars(rating.stars)}</Table.Cell>
                 <Table.Cell>

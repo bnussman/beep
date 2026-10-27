@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { orpc } from "../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
@@ -13,6 +11,7 @@ import { DeleteFeedbackDialog } from "../../../components/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
 import { Button, Table, Typography } from "@heroui/react";
 import { TrashIcon } from "@phosphor-icons/react";
+import { BasicUser } from "../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/feedback/")({
   component: Feedback,
@@ -25,7 +24,6 @@ function Feedback() {
   const { page } = Route.useSearch();
 
   const navigate = useNavigate({ from: Route.id });
-  const queryClient = useQueryClient();
 
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string>();
 
@@ -71,7 +69,9 @@ function Feedback() {
             {error && <TableError colSpan={4} error={error.message} />}
             {data?.feedback.map((feedback) => (
               <Table.Row key={feedback.id}>
-                <TableCellUser user={feedback.user} />
+                <Table.Cell>
+                  <BasicUser user={feedback.user} />
+                </Table.Cell>
                 <Table.Cell>{feedback.message}</Table.Cell>
                 <Table.Cell>
                   {DateTime.fromJSDate(feedback.created).toRelative()}

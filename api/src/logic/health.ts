@@ -19,7 +19,7 @@ export async function getRedisStatus() {
 export async function getDatabaseStatus() {
   const start = performance.now();
 
-  const databasePing = await db.execute(sql`select 1 = 1`); // Show throw if the Database is offline
+  const databasePing = await db.execute<Record<string, boolean>>(sql`select 1 = 1`); // Show throw if the Database is offline
 
   const end = performance.now();
 

@@ -6,12 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../../components/PaginationFooter";
 import { TableLoading } from "../../../../components/TableLoading";
-import { TableCellUser } from "../../../../components/TableCellUser";
 import { TableError } from "../../../../components/TableError";
 import { TableEmpty } from "../../../../components/TableEmpty";
 import { ReportMenu } from "../../../../components/ReportMenu";
 import { DeleteReportDialog } from "../../../../components/DeleteReportDialog";
 import { Table } from "@heroui/react";
+import { BasicUser } from "../../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/users/$userId/reports")({
   component: ReportsTable,
@@ -59,8 +59,12 @@ function ReportsTable() {
             {data?.results === 0 && <TableEmpty colSpan={6} />}
             {data?.reports.map((report) => (
               <Table.Row key={report.id}>
-                <TableCellUser user={report.reporter} />
-                <TableCellUser user={report.reported} />
+                <Table.Cell>
+                  <BasicUser user={report.reporter} />
+                </Table.Cell>
+                <Table.Cell>
+                  <BasicUser user={report.reported} />
+                </Table.Cell>
                 <Table.Cell>{report.reason}</Table.Cell>
                 <Table.Cell>
                   {DateTime.fromJSDate(report.timestamp).toRelative()}
