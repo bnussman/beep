@@ -3,7 +3,6 @@ import { orpc } from "../../../utils/orpc";
 import { BeepStatusChip } from "../../../components/BeepStatusChip";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
@@ -11,6 +10,7 @@ import { DateTime } from "luxon";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "../../../components/BeepMenu";
 import { Chip, Table, Typography } from "@heroui/react";
+import { BasicUser } from "../../../components/BasicUser";
 
 export const Route = createFileRoute("/admin/beeps/active")({
   component: ActiveBeeps,
@@ -76,14 +76,18 @@ function ActiveBeeps() {
             {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.beeps.map((beep) => (
               <Table.Row key={beep.id}>
-                <TableCellUser
-                  user={beep.beeper}
-                  linkProps={{ to: "/admin/users/$userId/queue" }}
-                />
-                <TableCellUser
-                  user={beep.rider}
-                  linkProps={{ to: "/admin/users/$userId/ride" }}
-                />
+                <Table.Cell>
+                  <BasicUser
+                    user={beep.beeper}
+                    linkProps={{ to: "/admin/users/$userId/queue" }}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <BasicUser
+                    user={beep.rider}
+                    linkProps={{ to: "/admin/users/$userId/ride" }}
+                  />
+                </Table.Cell>
                 <Table.Cell>{beep.origin}</Table.Cell>
                 <Table.Cell>{beep.destination}</Table.Cell>
                 <Table.Cell>{beep.groupSize}</Table.Cell>

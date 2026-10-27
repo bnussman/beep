@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { ENVIRONMENT, SENTRY_DSN } from "../utilities/constants";
+import { ENVIRONMENT, isDevelopment, SENTRY_DSN } from "../utilities/constants";
 import { ORPCInstrumentation } from "@orpc/opentelemetry";
 
 const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
@@ -43,9 +43,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
   debug: false,
-  tracesSampler(samplingContext) {
-    return true;
-  },
+  tracesSampleRate: isDevelopment ? 1 : 0.25,
   openTelemetryInstrumentations: [
     new ORPCInstrumentation({
       propagationEnabled: false,
