@@ -43,7 +43,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
   debug: false,
-  tracesSampleRate: isDevelopment ? 1 : 0.25,
+  tracesSampleRate: isDevelopment ? 1 : 0.1,
   openTelemetryInstrumentations: [
     new ORPCInstrumentation({
       propagationEnabled: false,
