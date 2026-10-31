@@ -7,7 +7,7 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import { MenuProps, Option } from "./Menu";
-import { disabled } from "@expo/ui/swift-ui/modifiers";
+import { disabled, frame } from "@expo/ui/swift-ui/modifiers";
 
 export function Menu(props: MenuProps) {
   const renderMenuOption = (option: Option) => {
@@ -72,11 +72,14 @@ export function Menu(props: MenuProps) {
   }
 
   return (
-    <Host>
+    <Host matchContents={props.fullWidth ? { vertical: true } : undefined}>
       <ExpoUIMenu
-        modifiers={props.disabled ? [disabled()] : []}
+        modifiers={[
+          ...(props.disabled ? [disabled()] : []),
+          ...(props.fullWidth ? [frame({ maxWidth: Infinity })] : []),
+        ]}
         label={
-          <RNHostView>
+          <RNHostView matchContents={props.fullWidth ? { vertical: true } : true}>
             {props.trigger({ onPress, onLongPress })}
           </RNHostView>
         }

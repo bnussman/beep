@@ -103,6 +103,7 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="make">Make</Label>
             <Menu
+              fullWidth
               trigger={({ onPress }) => (
                 <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
@@ -131,6 +132,7 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="model">Model</Label>
             <Menu
+              fullWidth
               disabled={!make}
               trigger={({ onPress }) => (
                 <Pressable accessibilityRole="button" onPress={onPress}>
@@ -159,6 +161,7 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="year">Year</Label>
             <Menu
+              fullWidth
               trigger={({ onPress }) => (
                 <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
@@ -187,6 +190,7 @@ export default function AddCar() {
           <TextField isInvalid={!!fieldState.error}>
             <Label htmlFor="color">Color</Label>
             <Menu
+              fullWidth
               trigger={({ onPress }) => (
                 <Pressable accessibilityRole="button" onPress={onPress}>
                   <Input
