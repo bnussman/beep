@@ -1,11 +1,11 @@
 import React from "react";
-import iPhoneDark from "../assets/dark.webp?url";
-import iPhoneLight from "../assets/light.webp?url";
-import { getDownloadLink } from "../utils/utils";
+import iPhoneDark from "../../assets/dark.webp?url";
+import iPhoneLight from "../../assets/light.webp?url";
+import { getDownloadLink } from "../../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { Button, Typography } from "@heroui/react";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_public/")({
   component: Home,
 });
 

@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Accordion, Typography } from '@heroui/react';
 import { CaretDownIcon } from '@phosphor-icons/react';
 
-export const Route = createFileRoute('/privacy')({
+export const Route = createFileRoute('/_public/privacy')({
   component: Privacy,
 });
 

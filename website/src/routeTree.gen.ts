@@ -9,12 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DownloadRouteImport } from './routes/download'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
+import { Route as PublicIndexRouteImport } from './routes/_public/index'
+import { Route as PublicDownloadRouteImport } from './routes/_public/download'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
+import { Route as PublicSignupRouteImport } from './routes/_public/signup'
+import { Route as PublicTermsRouteImport } from './routes/_public/terms'
 import { Route as AccountDeleteRouteImport } from './routes/account/delete'
 import { Route as AdminHealthRouteImport } from './routes/admin/health'
 import { Route as AdminLeaderboardsRouteImport } from './routes/admin/leaderboards'
@@ -22,7 +23,7 @@ import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminRedisRouteImport } from './routes/admin/redis'
 import { Route as PasswordChangeRouteImport } from './routes/password/change'
 import { Route as PasswordForgotRouteImport } from './routes/password/forgot'
-import { Route as ProfileEditRouteImport } from './routes/profile.edit'
+import { Route as PublicProfileEditRouteImport } from './routes/_public/profile.edit'
 import { Route as AccountVerifyIdRouteImport } from './routes/account/verify.$id'
 import { Route as AdminBeepersIndexRouteImport } from './routes/admin/beepers/index'
 import { Route as AdminBeepsIndexRouteImport } from './routes/admin/beeps/index'
@@ -54,35 +55,39 @@ import { Route as AdminUsersUserIdRideRouteImport } from './routes/admin/users/$
 import { Route as AdminUsersUserIdEditSplatRouteImport } from './routes/admin/users/$userId/edit/$'
 import { Route as AdminUsersUserIdEditLocationRouteImport } from './routes/admin/users/$userId/edit/location'
 
-const IndexRoute = IndexRouteImport.update({
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
-const DownloadRoute = DownloadRouteImport.update({
+const PublicDownloadRoute = PublicDownloadRouteImport.update({
   id: '/download',
   path: '/download',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
-const LoginRoute = LoginRouteImport.update({
+const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
-const PrivacyRoute = PrivacyRouteImport.update({
+const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
-const SignupRoute = SignupRouteImport.update({
+const PublicSignupRoute = PublicSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
-const TermsRoute = TermsRouteImport.update({
+const PublicTermsRoute = PublicTermsRouteImport.update({
   id: '/terms',
   path: '/terms',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const AccountDeleteRoute = AccountDeleteRouteImport.update({
   id: '/account/delete',
@@ -119,10 +124,10 @@ const PasswordForgotRoute = PasswordForgotRouteImport.update({
   path: '/password/forgot',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileEditRoute = ProfileEditRouteImport.update({
+const PublicProfileEditRoute = PublicProfileEditRouteImport.update({
   id: '/profile/edit',
   path: '/profile/edit',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const AccountVerifyIdRoute = AccountVerifyIdRouteImport.update({
   id: '/account/verify/$id',
@@ -280,12 +285,12 @@ const AdminUsersUserIdEditLocationRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/download': typeof DownloadRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/': typeof PublicIndexRoute
+  '/download': typeof PublicDownloadRoute
+  '/login': typeof PublicLoginRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/signup': typeof PublicSignupRoute
+  '/terms': typeof PublicTermsRoute
   '/account/delete': typeof AccountDeleteRoute
   '/admin/health': typeof AdminHealthRoute
   '/admin/leaderboards': typeof AdminLeaderboardsRouteWithChildren
@@ -293,7 +298,7 @@ export interface FileRoutesByFullPath {
   '/admin/redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
-  '/profile/edit': typeof ProfileEditRoute
+  '/profile/edit': typeof PublicProfileEditRoute
   '/account/verify/$id': typeof AccountVerifyIdRoute
   '/admin/beeps/$beepId': typeof AdminBeepsBeepIdRoute
   '/admin/beeps/active': typeof AdminBeepsActiveRoute
@@ -326,12 +331,11 @@ export interface FileRoutesByFullPath {
   '/admin/users/$userId/edit/location': typeof AdminUsersUserIdEditLocationRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/download': typeof DownloadRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/download': typeof PublicDownloadRoute
+  '/login': typeof PublicLoginRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/signup': typeof PublicSignupRoute
+  '/terms': typeof PublicTermsRoute
   '/account/delete': typeof AccountDeleteRoute
   '/admin/health': typeof AdminHealthRoute
   '/admin/leaderboards': typeof AdminLeaderboardsRouteWithChildren
@@ -339,7 +343,8 @@ export interface FileRoutesByTo {
   '/admin/redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
-  '/profile/edit': typeof ProfileEditRoute
+  '/': typeof PublicIndexRoute
+  '/profile/edit': typeof PublicProfileEditRoute
   '/account/verify/$id': typeof AccountVerifyIdRoute
   '/admin/beeps/$beepId': typeof AdminBeepsBeepIdRoute
   '/admin/beeps/active': typeof AdminBeepsActiveRoute
@@ -373,12 +378,12 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/download': typeof DownloadRoute
-  '/login': typeof LoginRoute
-  '/privacy': typeof PrivacyRoute
-  '/signup': typeof SignupRoute
-  '/terms': typeof TermsRoute
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_public/download': typeof PublicDownloadRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/signup': typeof PublicSignupRoute
+  '/_public/terms': typeof PublicTermsRoute
   '/account/delete': typeof AccountDeleteRoute
   '/admin/health': typeof AdminHealthRoute
   '/admin/leaderboards': typeof AdminLeaderboardsRouteWithChildren
@@ -386,7 +391,8 @@ export interface FileRoutesById {
   '/admin/redis': typeof AdminRedisRoute
   '/password/change': typeof PasswordChangeRoute
   '/password/forgot': typeof PasswordForgotRoute
-  '/profile/edit': typeof ProfileEditRoute
+  '/_public/': typeof PublicIndexRoute
+  '/_public/profile/edit': typeof PublicProfileEditRoute
   '/account/verify/$id': typeof AccountVerifyIdRoute
   '/admin/beeps/$beepId': typeof AdminBeepsBeepIdRoute
   '/admin/beeps/active': typeof AdminBeepsActiveRoute
@@ -467,7 +473,6 @@ export interface FileRouteTypes {
     | '/admin/users/$userId/edit/location'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/download'
     | '/login'
     | '/privacy'
@@ -480,6 +485,7 @@ export interface FileRouteTypes {
     | '/admin/redis'
     | '/password/change'
     | '/password/forgot'
+    | '/'
     | '/profile/edit'
     | '/account/verify/$id'
     | '/admin/beeps/$beepId'
@@ -513,12 +519,12 @@ export interface FileRouteTypes {
     | '/admin/users/$userId/edit/location'
   id:
     | '__root__'
-    | '/'
-    | '/download'
-    | '/login'
-    | '/privacy'
-    | '/signup'
-    | '/terms'
+    | '/_public'
+    | '/_public/download'
+    | '/_public/login'
+    | '/_public/privacy'
+    | '/_public/signup'
+    | '/_public/terms'
     | '/account/delete'
     | '/admin/health'
     | '/admin/leaderboards'
@@ -526,7 +532,8 @@ export interface FileRouteTypes {
     | '/admin/redis'
     | '/password/change'
     | '/password/forgot'
-    | '/profile/edit'
+    | '/_public/'
+    | '/_public/profile/edit'
     | '/account/verify/$id'
     | '/admin/beeps/$beepId'
     | '/admin/beeps/active'
@@ -560,12 +567,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DownloadRoute: typeof DownloadRoute
-  LoginRoute: typeof LoginRoute
-  PrivacyRoute: typeof PrivacyRoute
-  SignupRoute: typeof SignupRoute
-  TermsRoute: typeof TermsRoute
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
   AccountDeleteRoute: typeof AccountDeleteRoute
   AdminHealthRoute: typeof AdminHealthRoute
   AdminLeaderboardsRoute: typeof AdminLeaderboardsRouteWithChildren
@@ -573,7 +575,6 @@ export interface RootRouteChildren {
   AdminRedisRoute: typeof AdminRedisRoute
   PasswordChangeRoute: typeof PasswordChangeRoute
   PasswordForgotRoute: typeof PasswordForgotRoute
-  ProfileEditRoute: typeof ProfileEditRoute
   AccountVerifyIdRoute: typeof AccountVerifyIdRoute
   AdminBeepsBeepIdRoute: typeof AdminBeepsBeepIdRoute
   AdminBeepsActiveRoute: typeof AdminBeepsActiveRoute
@@ -594,47 +595,54 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_public/': {
+      id: '/_public/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicIndexRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/download': {
-      id: '/download'
+    '/_public/download': {
+      id: '/_public/download'
       path: '/download'
       fullPath: '/download'
-      preLoaderRoute: typeof DownloadRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicDownloadRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/login': {
-      id: '/login'
+    '/_public/login': {
+      id: '/_public/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/privacy': {
-      id: '/privacy'
+    '/_public/privacy': {
+      id: '/_public/privacy'
       path: '/privacy'
       fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicPrivacyRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/signup': {
-      id: '/signup'
+    '/_public/signup': {
+      id: '/_public/signup'
       path: '/signup'
       fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicSignupRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/terms': {
-      id: '/terms'
+    '/_public/terms': {
+      id: '/_public/terms'
       path: '/terms'
       fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicTermsRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
     '/account/delete': {
       id: '/account/delete'
@@ -685,12 +693,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PasswordForgotRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/edit': {
-      id: '/profile/edit'
+    '/_public/profile/edit': {
+      id: '/_public/profile/edit'
       path: '/profile/edit'
       fullPath: '/profile/edit'
-      preLoaderRoute: typeof ProfileEditRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PublicProfileEditRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
     '/account/verify/$id': {
       id: '/account/verify/$id'
@@ -905,6 +913,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PublicRouteRouteChildren {
+  PublicDownloadRoute: typeof PublicDownloadRoute
+  PublicLoginRoute: typeof PublicLoginRoute
+  PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicSignupRoute: typeof PublicSignupRoute
+  PublicTermsRoute: typeof PublicTermsRoute
+  PublicIndexRoute: typeof PublicIndexRoute
+  PublicProfileEditRoute: typeof PublicProfileEditRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicDownloadRoute: PublicDownloadRoute,
+  PublicLoginRoute: PublicLoginRoute,
+  PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicSignupRoute: PublicSignupRoute,
+  PublicTermsRoute: PublicTermsRoute,
+  PublicIndexRoute: PublicIndexRoute,
+  PublicProfileEditRoute: PublicProfileEditRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
 interface AdminLeaderboardsRouteChildren {
   AdminLeaderboardsSplatRoute: typeof AdminLeaderboardsSplatRoute
   AdminLeaderboardsRidesRoute: typeof AdminLeaderboardsRidesRoute
@@ -961,12 +993,7 @@ const AdminUsersUserIdRouteWithChildren =
   AdminUsersUserIdRoute._addFileChildren(AdminUsersUserIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  DownloadRoute: DownloadRoute,
-  LoginRoute: LoginRoute,
-  PrivacyRoute: PrivacyRoute,
-  SignupRoute: SignupRoute,
-  TermsRoute: TermsRoute,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
   AccountDeleteRoute: AccountDeleteRoute,
   AdminHealthRoute: AdminHealthRoute,
   AdminLeaderboardsRoute: AdminLeaderboardsRouteWithChildren,
@@ -974,7 +1001,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRedisRoute: AdminRedisRoute,
   PasswordChangeRoute: PasswordChangeRoute,
   PasswordForgotRoute: PasswordForgotRoute,
-  ProfileEditRoute: ProfileEditRoute,
   AccountVerifyIdRoute: AccountVerifyIdRoute,
   AdminBeepsBeepIdRoute: AdminBeepsBeepIdRoute,
   AdminBeepsActiveRoute: AdminBeepsActiveRoute,

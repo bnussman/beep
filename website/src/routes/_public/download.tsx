@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { getDownloadLink } from "../utils/utils";
+import { getDownloadLink } from "../../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { Typography, Spinner } from "@heroui/react";
 
-export const Route = createFileRoute('/download')({
+export const Route = createFileRoute('/_public/download')({
   component: Download,
 });
 
