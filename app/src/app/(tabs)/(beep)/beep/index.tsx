@@ -179,17 +179,6 @@ export default function StartBeepingScreen() {
       unstable_headerRightItems: () =>
         user?.isBeeping
           ? [
-              {
-                type: "button",
-                label: "Queue",
-                onPress: () => router.push("/beep/queue"),
-                badge:
-                  queue && queue.length > 1
-                    ? {
-                        value: queue.length - 1,
-                      }
-                    : undefined,
-              },
               ...(payments?.[0]
                 ? [
                     {
@@ -204,6 +193,17 @@ export default function StartBeepingScreen() {
                     },
                   ]
                 : []),
+            {
+                type: "button",
+                label: "Queue",
+                onPress: () => router.push("/beep/queue"),
+                badge:
+                  queue && queue.length > 1
+                    ? {
+                        value: queue.length - 1,
+                      }
+                    : undefined,
+              },
             ]
           : [],
       headerRight: user?.isBeeping
