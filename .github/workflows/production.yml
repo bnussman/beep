@@ -42,7 +42,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-node@v7
         with:
-          node-version: lts
+          node-version: lts/Lithium
       - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
