@@ -65,6 +65,11 @@ export interface MenuProps {
    * If `longPress`, a context menu is rendered
    */
   activationMethod?: "longPress" | "singlePress";
+  /**
+   * Makes the trigger fill the available width
+   * @platform ios
+   */
+  fullWidth?: boolean;
 }
 
 export const Menu = (props: MenuProps) => {
