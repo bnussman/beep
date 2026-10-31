@@ -16,6 +16,7 @@ import type {
   PurchasesOffering,
   PurchasesPackage,
 } from "react-native-purchases";
+import { cx } from 'tailwind-variants';
 
 interface Props {
   item: PurchasesOffering;
@@ -96,7 +97,8 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
 
   return (
     <Card
-      variant="tertiary"
+      variant="secondary"
+      className={cx({ 'border-accent-hover border-2': Boolean(payment) })}
       style={{
         paddingHorizontal: 8,
         paddingVertical: 8,
@@ -108,12 +110,11 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
     >
       <Text weight="bold">{p.identifier}</Text>
       {payment && (
-        <Text size="sm">
-          Expires in <Countdown date={payment.expires} />
+        <Text size="sm" className="shrink" numberOfLines={1} ellipsizeMode="tail">
+          Expires <Countdown date={payment.expires} />
         </Text>
       )}
       <View style={{ flexGrow: 1 }} />
-      {Boolean(payment) && <Text>✅</Text>}
       <Button
         isLoading={isPurchasing}
         onPress={() => onBuy(p)}

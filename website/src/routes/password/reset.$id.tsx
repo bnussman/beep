@@ -71,7 +71,7 @@ function ResetPassword() {
             name="password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextField {...field} isInvalid={fieldState.error ? true : undefined}>
+              <TextField {...field} isInvalid={fieldState.error ? true : undefined} variant="secondary">
                 <Label>Password</Label>
                 <Input type="password" autoComplete="new-password" />
                 <FieldError>{fieldState.error?.message}</FieldError>

@@ -33,6 +33,7 @@ export function CarSelect() {
     <View style={{ gap: 4 }}>
       <Label htmlFor="car">Car</Label>
       <Menu
+        fullWidth
         trigger={({ onPress }) => (
           <Pressable accessibilityRole="button" onPress={onPress}>
             <Input

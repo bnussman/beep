@@ -11,7 +11,7 @@ export function MoneyInput(props: Props) {
   return (
     <View>
       <Input {...props} keyboardType="numeric" style={{ paddingLeft: 38 }} />
-      <Text style={{ position: 'absolute', top: 18, left: 16 }}>
+      <Text style={{ position: 'absolute', top: 16, left: 16 }}>
         $ 
       </Text>
     </View>
