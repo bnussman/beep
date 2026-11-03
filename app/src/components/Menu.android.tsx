@@ -9,6 +9,8 @@ import {
   Box,
   DropdownMenuPopup,
   DropdownMenuGroup,
+  SelectableDropdownMenuItem,
+  Icon,
 } from '@expo/ui/jetpack-compose';
 
 function MenuItem(option: Option) {
@@ -20,7 +22,7 @@ function MenuItem(option: Option) {
 
   if (option.options) {
     return (
-      <DropdownMenu expanded={submenuExpanded} onDismissRequest={() => setSubmenuExpanded(false)}>
+      <DropdownMenuPopup expanded={submenuExpanded} onDismissRequest={() => setSubmenuExpanded(false)}>
         <DropdownMenu.Trigger>
           <DropdownMenuItem
             enabled={!option.disabled}
@@ -38,8 +40,23 @@ function MenuItem(option: Option) {
             />
           ))}
         </DropdownMenu.Items>
-      </DropdownMenu>
+      </DropdownMenuPopup>
     );
+  }
+
+  if (option.checked !== undefined) {
+    return (
+      <SelectableDropdownMenuItem
+        selected={option.checked}
+        onClick={option.onClick}>
+        <SelectableDropdownMenuItem.Text>
+          <Text>{option.title}</Text>
+        </SelectableDropdownMenuItem.Text>
+        <SelectableDropdownMenuItem.SelectedLeadingIcon>
+          <Icon source={require('./assets/check.xml')} size={20} />
+        </SelectableDropdownMenuItem.SelectedLeadingIcon>
+      </SelectableDropdownMenuItem>
+    )
   }
 
   return (
@@ -51,11 +68,6 @@ function MenuItem(option: Option) {
       <DropdownMenuItem.Text>
         <Text>{option.title}</Text>
       </DropdownMenuItem.Text>
-      {option.checked !== undefined && option.checked && (
-        <DropdownMenuItem.TrailingIcon>
-          <Text>✓</Text>
-        </DropdownMenuItem.TrailingIcon>
-      )}
     </DropdownMenuItem>
   );
 }
@@ -87,21 +99,11 @@ export function Menu(props: MenuProps) {
         onDismissRequest={() => setIsExpanded(false)}
       >
         <DropdownMenuGroup>
-
-        </DropdownMenuGroup>
-      </DropdownMenuPopup>
-      {/* <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
-        <DropdownMenu.Trigger>
-          <RNHostView>
-            {props.trigger({ onPress, onLongPress })}
-          </RNHostView>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Items>
           {props.options.map((option) => (
             <MenuItem key={option.title} {...option} />
           ))}
-        </DropdownMenu.Items>
-      </DropdownMenu> */}
+        </DropdownMenuGroup>
+      </DropdownMenuPopup>
     </Host>
   );
 }
