@@ -4,7 +4,7 @@ services:
     ports:
       - 6379:6379
   db:
-    image: kartoza/postgis
+    image: kartoza/postgis:18.6-3.6.4--v2026.10.25
     ports:
       - 5432:5432
     volumes:
