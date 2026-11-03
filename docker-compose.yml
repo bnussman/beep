@@ -16,10 +16,11 @@ services:
       POSTGRES_MULTIPLE_EXTENSIONS: postgis
       TZ: America/New_York
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U beep -d beep"]
+      test: ["CMD-SHELL", "PGPASSWORD=beep psql -h 127.0.0.1 -U beep -d beep -c 'SELECT postgis_version()'"]
       interval: 2s
       timeout: 2s
-      retries: 30
+      start_period: 5s
+      retries: 60
   s3:
     image: rustfs/rustfs
     ports:
