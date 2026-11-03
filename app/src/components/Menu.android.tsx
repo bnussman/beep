@@ -6,6 +6,9 @@ import {
   DropdownMenuItem,
   Text,
   RNHostView,
+  Box,
+  DropdownMenuPopup,
+  DropdownMenuGroup,
 } from '@expo/ui/jetpack-compose';
 
 function MenuItem(option: Option) {
@@ -74,7 +77,20 @@ export function Menu(props: MenuProps) {
 
   return (
     <Host>
-      <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
+      <Box>
+        <RNHostView>
+          {props.trigger({ onPress, onLongPress })}
+        </RNHostView>
+      </Box>
+      <DropdownMenuPopup
+        expanded={isExpanded}
+        onDismissRequest={() => setIsExpanded(false)}
+      >
+        <DropdownMenuGroup>
+
+        </DropdownMenuGroup>
+      </DropdownMenuPopup>
+      {/* <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
         <DropdownMenu.Trigger>
           <RNHostView>
             {props.trigger({ onPress, onLongPress })}
@@ -85,7 +101,7 @@ export function Menu(props: MenuProps) {
             <MenuItem key={option.title} {...option} />
           ))}
         </DropdownMenu.Items>
-      </DropdownMenu>
+      </DropdownMenu> */}
     </Host>
   );
 }
