@@ -15,6 +15,11 @@ services:
       POSTGRES_DBNAME: beep
       POSTGRES_MULTIPLE_EXTENSIONS: postgis
       TZ: America/New_York
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U beep -d beep"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
   s3:
     image: rustfs/rustfs
     ports:

@@ -18,6 +18,7 @@ jobs:
         with:
           node-version: latest
       - run: docker compose up -d
+      - run: docker compose up -d --wait db
       - run: bun install --frozen-lockfile
       - run: bun playwright install --with-deps --only-shell chromium
         working-directory: ./test
