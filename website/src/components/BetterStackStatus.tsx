@@ -10,8 +10,7 @@ export function BetterStackStatus() {
         src={`https://status.ridebeep.app/badge?theme=${resolvedTheme ?? "light"}`}
         width="250"
         height="30"
-        frameBorder="0"
-        scrolling="no"
+        loading="lazy"
         title="Beep Status"
         style={{ colorScheme: "normal" }}
       />
