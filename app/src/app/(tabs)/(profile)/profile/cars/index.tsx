@@ -23,8 +23,10 @@ export default function Cars() {
     isLoading,
     error,
     refetch,
+    isFetching,
     isFetchingNextPage,
     fetchNextPage,
+    hasNextPage,
     isRefetching,
   } = useInfiniteQuery(
     orpc.car.cars.infiniteOptions({
@@ -199,7 +201,14 @@ export default function Cars() {
           <Text key="message">You have no cars on your account!</Text>
         </View>
       }
-      onEndReached={() => fetchNextPage()}
+      onEndReached={() => {
+        // fetchNextPage cancels any in-flight fetch (cancelRefetch defaults to true).
+        // On web, onEndReached fires when this screen becomes visible again, which
+        // would cancel the refetch triggered by invalidating after adding a car.
+        if (hasNextPage && !isFetching) {
+          fetchNextPage();
+        }
+      }}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       refreshing={isRefetching}
