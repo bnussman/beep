@@ -10,39 +10,24 @@ import {
   DropdownMenuPopup,
   DropdownMenuGroup,
   SelectableDropdownMenuItem,
-  Icon,
 } from '@expo/ui/jetpack-compose';
 
 function MenuItem(option: Option) {
-  const [submenuExpanded, setSubmenuExpanded] = useState(false);
-
   if (option.show !== undefined && !option.show) {
     return null;
   }
 
   if (option.options) {
+    console.log("Manu options", option.options.map(l => l.title))
     return (
-      <DropdownMenuPopup expanded={submenuExpanded} onDismissRequest={() => setSubmenuExpanded(false)}>
-        <DropdownMenu.Trigger>
-          <DropdownMenuItem
-            enabled={!option.disabled}
-            onClick={() => setSubmenuExpanded(true)}>
-              <DropdownMenuItem.Text>
-                <Text>{option.title}</Text>
-              </DropdownMenuItem.Text>
-            </DropdownMenuItem>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Items>
-          {option.options.map((option) => (
-            <MenuItem
-              key={option.title}
-              {...option}
-            />
-          ))}
-        </DropdownMenu.Items>
-      </DropdownMenuPopup>
-    );
+      <DropdownMenuGroup>
+        {option.options.map((option) => (
+          <MenuItem key={option.title} {...option} />
+        ))}
+      </DropdownMenuGroup>
+    )
   }
+
 
   if (option.checked !== undefined) {
     return (
@@ -53,7 +38,7 @@ function MenuItem(option: Option) {
           <Text>{option.title}</Text>
         </SelectableDropdownMenuItem.Text>
         <SelectableDropdownMenuItem.SelectedLeadingIcon>
-          <Icon source={require('./assets/check.xml')} size={20} />
+          <Text>✓</Text>
         </SelectableDropdownMenuItem.SelectedLeadingIcon>
       </SelectableDropdownMenuItem>
     )
@@ -62,7 +47,10 @@ function MenuItem(option: Option) {
   return (
     <DropdownMenuItem
       enabled={!option?.disabled}
-      onClick={option.onClick}
+      onClick={() => {
+        option.onClick?.();
+
+      }}
       elementColors={option.destructive ? { textColor: '#d94e53' } : undefined}
     >
       <DropdownMenuItem.Text>
