@@ -4,13 +4,13 @@ import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Beep } from "@/components/Beep";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, PlatformColor, View } from "react-native";
+import { SymbolView } from "expo-symbols";
 import { getContentContainerStyle } from "@/utils/styles";
 import { PAGE_SIZE } from "@/utils/constants";
 import { useNavigation } from "expo-router/react-navigation";
 import { Menu, Option } from "@/components/Menu";
 import { capitalize } from "@/utils/strings";
-import { getNativeNavigationMenuItem } from "@/components/Menu.utils";
 import { Elipsis } from "@/components/Elipsis";
 import { Button } from "heroui-native";
 import { RouterOutputs } from "../../../../../../../api/src";
@@ -41,6 +41,7 @@ export default function BeepsScreen() {
     return {
       title: capitalize(status.replaceAll('_', ' ')),
       checked,
+      keepsMenuPresented: true,
       onClick: () => setStatuses((prev) => {
         if (checked) {
           return prev.filter(s => s !== status)
@@ -59,25 +60,27 @@ export default function BeepsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      unstable_headerRightItems: () => ([
-        {
-          type: "menu",
-          label: "Filter beeps by status",
-          icon: { name: "line.3.horizontal.decrease", type: "sfSymbol" },
-          menu: {
-            title: "Filter",
-            multiselectable: true,
-            items: nativeOptions.map(getNativeNavigationMenuItem)
-          },
-        },
-      ]),
+      // On iOS we intentionally use `headerRight` (SwiftUI menu) rather than
+      // `unstable_headerRightItems`. Native header items are rebuilt on every
+      // state change, which dismisses the menu after each selection.
       headerRight: () => (
         <Menu
-          trigger={({ onPress }) => (
-            <Button variant="ghost" onPress={onPress}>
-              <Elipsis />
-            </Button>
-          )}
+          label="Filter beeps by status"
+          trigger={({ onPress }) =>
+            Platform.OS === "ios" ? (
+              <View style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center" }}>
+                <SymbolView
+                  name="line.3.horizontal.decrease"
+                  size={20}
+                  tintColor={PlatformColor("label") as unknown as string}
+                />
+              </View>
+            ) : (
+              <Button variant="ghost" onPress={onPress}>
+                <Elipsis />
+              </Button>
+            )
+          }
           options={nativeOptions}
         />
       )
