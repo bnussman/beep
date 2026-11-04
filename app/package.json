@@ -13,6 +13,7 @@
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@expo/ui": "~58.0.27",
+    "@gorhom/bottom-sheet": "5.2.14",
     "@orpc/client": "2.0.0-beta.40",
     "@orpc/shared": "2.0.0-beta.40",
     "@orpc/tanstack-query": "2.0.0-beta.40",
