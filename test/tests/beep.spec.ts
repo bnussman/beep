@@ -21,6 +21,10 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByRole("tab", { name: "Beep" }).click();
   await beeperPage.getByRole("button", { name: "Start Beeping" }).click();
 
+  // Starting to beep is async (location lookup + mutation). Make sure the
+  // beeper is live before a rider loads the beeper list, which is fetched once.
+  await expect(beeperPage.getByText("Waiting for riders")).toBeVisible();
+
   await startRide(riderPage);
 
   await riderPage.getByText(beeper.name, { exact: false }).click();
@@ -115,6 +119,10 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   await beeperPage.getByRole("tab", { name: "Beep" }).click();
   await beeperPage.getByRole("button", { name: "Start beeping" }).click();
+
+  // Starting to beep is async (location lookup + mutation). Make sure the
+  // beeper is live before a rider loads the beeper list, which is fetched once.
+  await expect(beeperPage.getByText("Waiting for riders")).toBeVisible();
 
   // As rider 1, get a beep.
   await startRide(rider1Page);

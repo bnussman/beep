@@ -1,4 +1,4 @@
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 export async function createCar(page: Page) {
   await page.getByRole('tab', { name: 'Profile' }).click();
@@ -20,4 +20,8 @@ export async function createCar(page: Page) {
   await fileChooser.setFiles("../app/assets/icon.png");
 
   await page.getByRole("button", { name: "Add Car" }).click();
+
+  // Wait for the car to be created (we get sent back to the cars list).
+  // A default car is required to start beeping.
+  await expect(page.getByText("Ford Aspire 2023")).toBeVisible();
 }
