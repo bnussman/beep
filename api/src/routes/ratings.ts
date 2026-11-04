@@ -109,6 +109,12 @@ export const ratingRouter = {
   createRating: authedProcedure
     .input(createRatingInputSchema)
     .handler(async ({ context, input }) => {
+      if (context.user.id === input.userId) {
+        throw new ORPCError("BAD_REQUEST", {
+          message: "You cannot rate yourself.",
+        });
+      }
+
       const user = await db.query.users.findFirst({
         where: { id: input.userId },
       });
@@ -129,11 +135,17 @@ export const ratingRouter = {
         });
       }
 
-      if (![beep.rider_id, beep.beeper_id].includes(context.user.id)) {
+      const participantIds = [beep.rider_id, beep.beeper_id];
+
+      if (!participantIds.includes(context.user.id)) {
         throw new ORPCError("BAD_REQUEST", {
           message:
             "You must be the rider or beeper of this beep to leave a rating about it.",
         });
+      }
+
+      if (!participantIds.includes(input.userId)) {
+        throw new ORPCError("BAD_REQUEST", { message: "The user being rated must be the rider or beeper of this beep." });
       }
 
       if (beep.status !== "complete") {
