@@ -5,7 +5,6 @@ import { RideDetails } from "@/components/RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
 import { Pressable, View } from "react-native";
 import { RideMap } from "@/components/RideMap";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Controller, useFormContext } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Input, TextField, FieldError } from "heroui-native";
@@ -208,10 +207,10 @@ export default function MainFindBeepScreen() {
     <View style={{ flex: 1 }}>
       {isIOS && <RideToolbar />}
       <RideMap beepersLocation={beepersLocation} />
-      <BottomSheet enableDynamicSizing snapPoints={["30%", "50%"]}>
-        <BottomSheetView>
+      <BottomSheet snapPoints={[{ fraction: 0.3 }, "half"]} label="Ride Details">
+        <View>
           <RideDetails beepersLocation={beepersLocation} />
-        </BottomSheetView>
+        </View>
       </BottomSheet>
     </View>
   );

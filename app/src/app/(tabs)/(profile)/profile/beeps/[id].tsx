@@ -8,7 +8,6 @@ import { Text } from "@/components/Text";
 import { decodePolyline, getMiles } from "@/utils/location";
 import { orpc } from "@/utils/orpc";
 import { useUser } from "@/utils/useUser";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams } from "expo-router";
 import { Separator } from "heroui-native";
@@ -116,10 +115,8 @@ export default function BeepDetails() {
           />
         )}
       </Map>
-      <BottomSheet snapPoints={["20%"]} enableDynamicSizing>
-        <BottomSheetView
-          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 110 }}
-        >
+      <BottomSheet label="Beep Details">
+        <View style={{ gap: 8 }}>
           <Link
             href={{
               pathname: "/user/[id]",
@@ -242,7 +239,7 @@ export default function BeepDetails() {
               </View>
             </>
           )}
-        </BottomSheetView>
+        </View>
       </BottomSheet>
     </View>
   );
