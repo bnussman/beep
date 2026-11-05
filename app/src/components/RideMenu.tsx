@@ -80,6 +80,7 @@ export function RideMenu() {
   return (
     <View style={{ marginRight: 8 }}>
       <Menu
+        label="Ride actions"
         trigger={MenuTrigger}
         options={[
           {
