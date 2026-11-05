@@ -11,7 +11,7 @@ import {
   Text,
   RNHostView,
 } from "@expo/ui/jetpack-compose";
-import { height } from "@expo/ui/jetpack-compose/modifiers";
+import { height, verticalScroll } from "@expo/ui/jetpack-compose/modifiers";
 
 const DESTRUCTIVE_COLOR = "#d94e53";
 
@@ -127,7 +127,12 @@ export function Menu(props: MenuProps) {
         <RNHostView>
           <Trigger trigger={props.trigger} onPress={onPress} onLongPress={onLongPress} />
         </RNHostView>
-        <DropdownMenuPopup expanded={isExpanded} onDismissRequest={onClose}>
+        <DropdownMenuPopup
+          expanded={isExpanded}
+          onDismissRequest={onClose}
+          // Unlike the legacy DropdownMenu, DropdownMenuPopup does not scroll on its own
+          modifiers={[verticalScroll()]}
+        >
           {submenu && (
             <>
               <DropdownMenuGroup shapes={{ index: 0, count: 2 }}>
