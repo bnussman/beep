@@ -1,10 +1,8 @@
-import { Button, useThemeColor } from "heroui-native";
+import { Button, ButtonRootProps, useThemeColor } from "heroui-native";
 import { Platform } from "react-native";
 import { SymbolView, type SymbolViewProps } from "expo-symbols";
 
-interface Props {
-  onPress: () => void;
-  onLongPress: () => void;
+type Props = ButtonRootProps &{
   symbolViewProps?: Partial<SymbolViewProps>;
 }
 

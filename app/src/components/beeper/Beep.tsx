@@ -18,6 +18,8 @@ import { Menu } from "@/components/Menu";
 import { Elipsis } from "@/components/Elipsis";
 import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RouterOutputs } from "../../../../api/src";
+import { orpc } from "@/utils/orpc";
 import {
   call,
   openCashApp,
@@ -26,8 +28,7 @@ import {
   openVenmo,
   sms,
 } from "@/utils/links";
-import { RouterOutputs } from "../../../../api/src";
-import { orpc } from "@/utils/orpc";
+import { MenuTrigger } from "../MenuTrigger";
 
 interface Props {
   beep: RouterOutputs["beeper"]["queue"][number];
@@ -257,14 +258,12 @@ export function Beep(props: Props) {
         <Menu
           label="Beeper actions"
           trigger={({ onPress }) => (
-            <Button
+            <MenuTrigger
               style={{ paddingHorizontal: 16, paddingVertical: 6 }}
               size="md"
               variant="tertiary"
               onPress={onPress}
-            >
-              <Elipsis />
-            </Button>
+            />
           )}
           options={[
             {

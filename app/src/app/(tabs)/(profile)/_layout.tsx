@@ -1,13 +1,12 @@
 import { AddCarButton } from "@/components/AddCarButton";
-import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { useProfileMenu } from "@/components/ProfileMenu";
-import { Button } from "@/components/Button";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isIOS } from "@/utils/constants";
 import { Stack, useRouter } from "expo-router";
 import { BeepMenu, useBeepMenuOptions } from "@/components/BeepMenu";
+import { MenuTrigger } from "@/components/MenuTrigger";
 
 export default function Layout() {
   const router = useRouter();
@@ -24,11 +23,7 @@ export default function Layout() {
           unstable_headerRightItems: () => getNavigationMenuFromOptions(menu),
           headerRight: () => (
             <Menu
-              trigger={({ onPress }) => (
-                <Button variant="ghost" onPress={onPress}>
-                  <Elipsis />
-                </Button>
-              )}
+              trigger={MenuTrigger}
               options={menu}
             />
           ),
