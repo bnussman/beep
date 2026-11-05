@@ -57,6 +57,11 @@ function MenuItem(option: Option) {
   );
 }
 
+// Calling `trigger` inside its own component keeps any hooks it uses out of Menu's hook list
+function Trigger(props: { trigger: MenuProps["trigger"]; onPress: () => void; onLongPress: () => void }) {
+  return props.trigger({ onPress: props.onPress, onLongPress: props.onLongPress });
+}
+
 export function Menu(props: MenuProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -77,7 +82,7 @@ export function Menu(props: MenuProps) {
       <DropdownMenu expanded={isExpanded} onDismissRequest={() => setIsExpanded(false)}>
         <DropdownMenu.Trigger>
           <RNHostView>
-            {props.trigger({ onPress, onLongPress })}
+            <Trigger trigger={props.trigger} onPress={onPress} onLongPress={onLongPress} />
           </RNHostView>
         </DropdownMenu.Trigger>
         <DropdownMenu.Items>
