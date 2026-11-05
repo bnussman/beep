@@ -14,7 +14,7 @@ export default defineConfig({
         host: "https://ridebeep.app",
       },
     }),
-    react(),
+    react({ compiler: true }),
     tailwindcss(),
   ],
 });

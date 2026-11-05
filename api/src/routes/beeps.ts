@@ -122,7 +122,7 @@ export const beepRouter = {
 
       return beep;
     }),
-  beepUpdates: authedProcedure
+  beepUpdates: adminProcedure
     .input(z.uuid())
     .output(asyncIteratorObject(beepSchema.partial()))
     .handler(async function* ({ context, signal, input }) {

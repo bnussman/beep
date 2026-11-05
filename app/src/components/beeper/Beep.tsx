@@ -5,7 +5,6 @@ import { useUser } from "@/utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Alert, Pressable, View } from "react-native";
-import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Map } from "@/components/Map";
@@ -13,11 +12,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { decodePolyline } from "@/utils/location";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
-import { isAndroid, isIOS, isMobile, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS, isMobile } from "@/utils/constants";
 import { Menu } from "@/components/Menu";
-import { Elipsis } from "@/components/Elipsis";
 import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RouterOutputs } from "../../../../api/src";
+import { orpc } from "@/utils/orpc";
+import { MenuTrigger } from "../MenuTrigger";
 import {
   call,
   openCashApp,
@@ -26,8 +27,6 @@ import {
   openVenmo,
   sms,
 } from "@/utils/links";
-import { RouterOutputs } from "../../../../api/src";
-import { orpc } from "@/utils/orpc";
 
 interface Props {
   beep: RouterOutputs["beeper"]["queue"][number];
@@ -257,14 +256,12 @@ export function Beep(props: Props) {
         <Menu
           label="Beeper actions"
           trigger={({ onPress }) => (
-            <Button
+            <MenuTrigger
               style={{ paddingHorizontal: 16, paddingVertical: 6 }}
               size="md"
               variant="tertiary"
               onPress={onPress}
-            >
-              <Elipsis />
-            </Button>
+            />
           )}
           options={[
             {

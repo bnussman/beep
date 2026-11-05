@@ -7,7 +7,7 @@ import {
   Toggle,
 } from "@expo/ui/swift-ui";
 import { MenuProps, Option } from "./Menu";
-import { disabled, frame } from "@expo/ui/swift-ui/modifiers";
+import { disabled, frame, menuActionDismissBehavior } from "@expo/ui/swift-ui/modifiers";
 
 export function Menu(props: MenuProps) {
   const renderMenuOption = (option: Option) => {
@@ -35,6 +35,11 @@ export function Menu(props: MenuProps) {
           label={option.title}
           systemImage={option.sfIcon}
           onIsOnChange={option.onClick}
+          modifiers={
+            option.keepsMenuPresented
+              ? [menuActionDismissBehavior("disabled")]
+              : []
+          }
         />
       );
     }
@@ -45,7 +50,12 @@ export function Menu(props: MenuProps) {
         systemImage={option.sfIcon}
         label={option.title}
         onPress={option.onClick}
-        modifiers={option.disabled ? [disabled()] : []}
+        modifiers={[
+          ...(option.disabled ? [disabled()] : []),
+          ...(option.keepsMenuPresented
+            ? [menuActionDismissBehavior("disabled")]
+            : []),
+        ]}
         role={option.destructive ? "destructive" : undefined}
       />
     );

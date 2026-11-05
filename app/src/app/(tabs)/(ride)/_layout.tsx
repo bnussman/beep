@@ -15,7 +15,7 @@ export default function Layout() {
   }>();
 
   const rideForm = useForm({
-    values: {
+    defaultValues: {
       groupSize: params.groupSize ? String(params.groupSize) : "",
       origin: params.origin ?? "",
       destination: params.destination ?? "",

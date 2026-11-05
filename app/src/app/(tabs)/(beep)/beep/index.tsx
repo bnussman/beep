@@ -26,12 +26,12 @@ import { CarSelect } from "@/components/CarSelect";
 import { useActivePayments } from "../../(beep,ride,profile)/premium";
 import { Description, FieldError, TextField } from "heroui-native";
 import { Menu, Option } from "@/components/Menu";
-import { Elipsis } from "@/components/Elipsis";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { getTimeRemaining } from "@/utils/date";
 import { paddedContainerStyle } from "@/utils/styles";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
+import { MenuTrigger } from "@/components/MenuTrigger";
 
 export default function StartBeepingScreen() {
   const router = useRouter();
@@ -163,11 +163,7 @@ export default function StartBeepingScreen() {
       headerLeft: user?.isBeeping
         ? () => (
           <Menu
-            trigger={({ onPress }) => (
-              <Button variant="ghost" onPress={onPress}>
-                <Elipsis />
-              </Button>
-            )}
+            trigger={MenuTrigger}
             options={headerLeftMenuOptions}
           />
         )
