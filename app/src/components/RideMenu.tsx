@@ -1,11 +1,10 @@
-import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { orpc } from "@/utils/orpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "heroui-native";
 import { Alert, View } from "react-native";
+import { MenuTrigger } from "./MenuTrigger";
 
 export function RideMenu() {
   const queryClient = useQueryClient();
@@ -81,11 +80,8 @@ export function RideMenu() {
   return (
     <View style={{ marginRight: 8 }}>
       <Menu
-        trigger={({ onPress }) => (
-          <Button variant="ghost" onPress={onPress}>
-            <Elipsis />
-          </Button>
-        )}
+        label="Ride actions"
+        trigger={MenuTrigger}
         options={[
           {
             title: "Contact",

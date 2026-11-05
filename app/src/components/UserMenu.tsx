@@ -1,11 +1,10 @@
-import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import type { Option } from "@/components/Menu";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams, useRouter } from "expo-router";
-import { Button } from "./Button";
 import { orpc } from "@/utils/orpc";
+import { MenuTrigger } from "./MenuTrigger";
 
 interface Props {
   userId: string;
@@ -77,11 +76,7 @@ export function UserMenu({ userId }: Props) {
 
   return (
     <Menu
-      trigger={({ onPress }) => (
-        <Button variant="ghost" onPress={onPress}>
-          <Elipsis />
-        </Button>
-      )}
+      trigger={MenuTrigger}
       options={options}
     />
   );

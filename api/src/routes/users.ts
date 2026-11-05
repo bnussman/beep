@@ -73,6 +73,7 @@ export const userRouter = {
     }),
   edit: authedProcedure
     .input(editUserInputSchema)
+    .output(userSchema)
     .handler(async ({ context, input }) => {
       const values: Partial<typeof users.$inferInsert> = input;
 
@@ -156,15 +157,13 @@ export const userRouter = {
 
       pubSub.publish(`user-${context.user.id}`, { user: context.user });
 
-      if (input.location) {
-        const data = {
-          id: context.user.id,
-          location: input.location,
-        };
-
+      if (input.location && context.user.isBeeping) {
         updateEta(context.user.id, input.location);
 
-        pubSub.publish("locations", data);
+        pubSub.publish("locations", {
+          id: context.user.id,
+          location: input.location,
+        });
       }
 
       return context.user;
@@ -215,7 +214,7 @@ export const userRouter = {
 
       pubSub.publish(`user-${user.id}`, { user });
 
-      if (user.location) {
+      if (user.location && user.isBeeping) {
         const data = {
           id: user.id,
           location: user.location,
@@ -247,16 +246,17 @@ export const userRouter = {
       const userId = input?.userId ?? context.user.id;
 
       if (context.user.role === "user" && userId !== context.user.id) {
-        throw new ORPCError("UNAUTHORIZED", {
+        throw new ORPCError("FORBIDDEN", {
           message:
             "You must be an admin to get active payments for other users.",
         });
       }
 
-      return await getActivePayments(context.user.id);
+      return await getActivePayments(userId);
     }),
   updatePicture: authedProcedure
     .input(z.instanceof(File))
+    .output(userSchema)
     .handler(async ({ context, input }) => {
       const extention = input.name.substring(
         input.name.lastIndexOf("."),

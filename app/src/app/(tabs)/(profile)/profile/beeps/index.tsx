@@ -10,11 +10,9 @@ import { PAGE_SIZE } from "@/utils/constants";
 import { useNavigation } from "expo-router/react-navigation";
 import { Menu, Option } from "@/components/Menu";
 import { capitalize } from "@/utils/strings";
-import { getNativeNavigationMenuItem } from "@/components/Menu.utils";
-import { Elipsis } from "@/components/Elipsis";
-import { Button } from "heroui-native";
 import { RouterOutputs } from "../../../../../../../api/src";
 import { orpc } from "@/utils/orpc";
+import { MenuTrigger } from '@/components/MenuTrigger';
 
 const beepStatuses: BeepStatus[] = [
   "canceled",
@@ -41,6 +39,7 @@ export default function BeepsScreen() {
     return {
       title: capitalize(status.replaceAll('_', ' ')),
       checked,
+      keepsMenuPresented: true,
       onClick: () => setStatuses((prev) => {
         if (checked) {
           return prev.filter(s => s !== status)
@@ -50,39 +49,20 @@ export default function BeepsScreen() {
     };
   });
 
-  const nativeOptions: Option[] = [
-    {
-      title: "Status",
-      options,
-    }
-  ];
-
   useLayoutEffect(() => {
     navigation.setOptions({
-      unstable_headerRightItems: () => ([
-        {
-          type: "menu",
-          label: "Filter beeps by status",
-          icon: { name: "line.3.horizontal.decrease", type: "sfSymbol" },
-          menu: {
-            title: "Filter",
-            multiselectable: true,
-            items: nativeOptions.map(getNativeNavigationMenuItem)
-          },
-        },
-      ]),
+      // On iOS we intentionally use `headerRight` (SwiftUI menu) rather than
+      // `unstable_headerRightItems`. Native header items are rebuilt on every
+      // state change, which dismisses the menu after each selection.
       headerRight: () => (
         <Menu
-          trigger={({ onPress }) => (
-            <Button variant="ghost" onPress={onPress}>
-              <Elipsis />
-            </Button>
-          )}
-          options={nativeOptions}
+          label="Filter beeps by status"
+          trigger={(props) => <MenuTrigger symbolViewProps={{ name: { ios: 'line.3.horizontal.decrease', android: 'filter_list', web: 'filter_list' } }} {...props} />}
+          options={options}
         />
       )
     });
-  }, [options, nativeOptions]);
+  }, [options]);
 
   const {
     data,

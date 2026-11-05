@@ -43,7 +43,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
     ),
   ).toBeVisible();
 
-  await riderPage.getByText("...").click();
+  await riderPage.getByLabel("Ride actions").click();
   await riderPage.getByText("Contact").click();
 
   await expect(riderPage.getByText("Call")).toBeVisible();
@@ -207,7 +207,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await expect(rider2Page.getByText("1").first()).toBeVisible();
   await expect(rider2Page.getByText("person is ahead of you.")).toBeVisible();
 
-  await rider2Page.getByText("...").click();
+  await rider2Page.getByLabel("Ride actions").click();
 
   await expect(
     rider2Page.getByRole("menuitem", { name: "Cancel Ride" }),
@@ -216,7 +216,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await expect(rider3Page.getByText("2")).toBeVisible();
   await expect(rider3Page.getByText("people are ahead of you.")).toBeVisible();
 
-  await rider3Page.getByText("...").click();
+  await rider3Page.getByLabel("Ride actions").click();
   await expect(
     rider3Page.getByRole("menuitem", { name: "Cancel Ride" }),
   ).toBeVisible(); // the rider should be allowed to leave the queue
