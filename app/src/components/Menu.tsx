@@ -41,6 +41,13 @@ export interface Option {
    * Provide this if you want the item to be checkable
    */
   checked?: boolean;
+  /**
+   * Keeps the menu open after this option is pressed. Useful for
+   * multi-select (checkable) options.
+   *
+   * @platform ios
+   */
+  keepsMenuPresented?: boolean;
 }
 
 export interface MenuProps {

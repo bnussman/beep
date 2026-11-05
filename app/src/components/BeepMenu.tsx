@@ -1,10 +1,9 @@
 import { useRouter } from "expo-router";
 import { Menu, type Option } from "./Menu";
-import { Button } from "./Button";
-import { Elipsis } from "./Elipsis";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
 import { useUser } from "@/utils/useUser";
+import { MenuTrigger } from "./MenuTrigger";
 
 interface Props {
   beepId: string;
@@ -131,11 +130,7 @@ export function BeepMenu(props: Props) {
 
   return (
     <Menu
-      trigger={({ onPress }) => (
-        <Button variant="ghost" onPress={onPress}>
-          <Elipsis />
-        </Button>
-      )}
+      trigger={MenuTrigger}
       options={options}
     />
   );
