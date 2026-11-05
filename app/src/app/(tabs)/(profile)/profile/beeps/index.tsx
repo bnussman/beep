@@ -4,17 +4,15 @@ import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Beep } from "@/components/Beep";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { ActivityIndicator, FlatList, Platform, PlatformColor, View } from "react-native";
-import { SymbolView } from "expo-symbols";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { getContentContainerStyle } from "@/utils/styles";
 import { PAGE_SIZE } from "@/utils/constants";
 import { useNavigation } from "expo-router/react-navigation";
 import { Menu, Option } from "@/components/Menu";
 import { capitalize } from "@/utils/strings";
-import { Elipsis } from "@/components/Elipsis";
-import { Button } from "heroui-native";
 import { RouterOutputs } from "../../../../../../../api/src";
 import { orpc } from "@/utils/orpc";
+import { MenuTrigger } from '@/components/MenuTrigger';
 
 const beepStatuses: BeepStatus[] = [
   "canceled",
@@ -51,13 +49,6 @@ export default function BeepsScreen() {
     };
   });
 
-  const nativeOptions: Option[] = [
-    {
-      title: "Status",
-      options,
-    }
-  ];
-
   useLayoutEffect(() => {
     navigation.setOptions({
       // On iOS we intentionally use `headerRight` (SwiftUI menu) rather than
@@ -66,26 +57,12 @@ export default function BeepsScreen() {
       headerRight: () => (
         <Menu
           label="Filter beeps by status"
-          trigger={({ onPress }) =>
-            Platform.OS === "ios" ? (
-              <View style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center" }}>
-                <SymbolView
-                  name="line.3.horizontal.decrease"
-                  size={20}
-                  tintColor={PlatformColor("label") as unknown as string}
-                />
-              </View>
-            ) : (
-              <Button variant="ghost" onPress={onPress}>
-                <Elipsis />
-              </Button>
-            )
-          }
-          options={nativeOptions}
+          trigger={(props) => <MenuTrigger symbolViewProps={{ name: { ios: 'line.3.horizontal.decrease', android: 'filter_list', web: 'filter_list' } }} {...props} />}
+          options={options}
         />
       )
     });
-  }, [options, nativeOptions]);
+  }, [options]);
 
   const {
     data,

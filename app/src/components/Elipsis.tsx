@@ -1,10 +1,14 @@
-import { Text } from "./Text";
-import { View } from "react-native";
+import { SymbolView } from "expo-symbols";
+import { useThemeColor } from "heroui-native";
 
 export function Elipsis() {
+  const foreground = useThemeColor("foreground");
+
   return (
-    <View style={{ transform: [{ translateY: -14 }] }}>
-      <Text size="4xl">...</Text>
-    </View>
+    <SymbolView
+      name={{ ios: 'ellipsis', android: 'more_vert', web: 'more_vert' }}
+      size={24}
+      tintColor={foreground}
+    />
   );
 }
