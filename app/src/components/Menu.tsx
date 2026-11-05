@@ -45,7 +45,7 @@ export interface Option {
    * Keeps the menu open after this option is pressed. Useful for
    * multi-select (checkable) options.
    *
-   * @platform ios
+   * @platform ios, android
    */
   keepsMenuPresented?: boolean;
 }
