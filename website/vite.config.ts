@@ -17,4 +17,7 @@ export default defineConfig({
     react({ compiler: true }),
     tailwindcss(),
   ],
+  build: {
+    sourcemap: true,
+  },
 });
