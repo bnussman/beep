@@ -7,6 +7,44 @@ import { FooterLinkGroup } from "./FooterGroup";
 import { FacebookLogoIcon, GithubLogoIcon, InstagramLogoIcon, LinkedinLogoIcon, SnapchatLogoIcon, TiktokLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 
 export function Footer() {
+  const socialLinks = [
+    {
+      href: "https://github.com/bnussman/beep",
+      ariaLabel: "GitHub",
+      Icon: GithubLogoIcon,
+    },
+    {
+      href: "https://twitter.com/ridebeepapp",
+      ariaLabel: "X",
+      Icon: XLogoIcon,
+    },
+    {
+      href: "https://linkedin.com/company/ride-beep-app",
+      ariaLabel: "LinkedIn",
+      Icon: LinkedinLogoIcon,
+    },
+    {
+      href: "https://instagram.com/ridebeepapp",
+      ariaLabel: "Instagram",
+      Icon: InstagramLogoIcon,
+    },
+    {
+      href: "https://facebook.com/ridebeepapp",
+      ariaLabel: "Facebook",
+      Icon: FacebookLogoIcon,
+    },
+    {
+      href: "https://snapchat.com/@ridebeepapp",
+      ariaLabel: "Snapchat",
+      Icon: SnapchatLogoIcon,
+    },
+    {
+      href: "https://tiktok.com/@ridebeepapp",
+      ariaLabel: "TikTok",
+      Icon: TiktokLogoIcon,
+    },
+  ];
+
   const productItems: FooterItemType[] = [
     {
       content: "iOS",
@@ -64,27 +102,11 @@ export function Footer() {
             © {new Date().getFullYear()} Ride Beep App
           </Typography>
           <div className="flex flex-row gap-4">
-            <a href="https://github.com/bnussman/beep" target="_blank">
-              <GithubLogoIcon size={20} />
-            </a>
-            <a href="https://twitter.com/ridebeepapp" target="_blank">
-              <XLogoIcon size={20} />
-            </a>
-            <a href="https://linkedin.com/company/ride-beep-app" target="_blank">
-              <LinkedinLogoIcon size={20} />
-            </a>
-            <a href="https://instagram.com/ridebeepapp" target="_blank">
-              <InstagramLogoIcon size={20} />
-            </a>
-            <a href="https://facebook.com/ridebeepapp" target="_blank">
-              <FacebookLogoIcon size={20} />
-            </a>
-            <a href="https://snapchat.com/@ridebeepapp" target="_blank">
-              <SnapchatLogoIcon size={20} />
-            </a>
-            <a href="https://tiktok.com/@ridebeepapp" target="_blank">
-              <TiktokLogoIcon size={20} />
-            </a>
+            {socialLinks.map(({ href, ariaLabel, Icon }) => (
+              <a key={href} href={href} target="_blank" aria-label={ariaLabel}>
+                <Icon size={20} />
+              </a>
+            ))}
           </div>
         </div>
       </div>
