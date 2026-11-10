@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Text } from "@/components/Text";
 import { getBeeperIcon } from "@/utils/emojis";
 import { MapMarker, Marker } from "react-native-maps";

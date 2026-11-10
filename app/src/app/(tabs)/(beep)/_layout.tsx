@@ -1,6 +1,6 @@
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
-import { isAndroid, isIOS, isWeb } from "@/utils/constants";
+import { isAndroid, isIOS } from "@/utils/constants";
 import { Stack, useRouter } from "expo-router";
 import { CloseButton } from "heroui-native";
 

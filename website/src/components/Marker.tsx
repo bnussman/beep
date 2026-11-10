@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function Marker(props: Props) {
-  const { latitude, longitude, variant, userId, username, photo, name } = props;
+  const { latitude, longitude, variant, userId, photo, name } = props;
 
   if (variant === "queue") {
     return (

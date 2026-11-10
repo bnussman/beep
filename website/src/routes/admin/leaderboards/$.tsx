@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, Link as RouterLink, createFileRoute } from '@tanstack/react-router';
+import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
 import { Link } from '../../../components/Link';
 import { Avatar, Table, Typography } from '@heroui/react';

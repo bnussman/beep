@@ -15,7 +15,6 @@ export default function User() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const {
-    data: user,
     isLoading: userPending,
     isRefetching: isUserRefetching,
     error: userError,

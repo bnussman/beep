@@ -16,7 +16,6 @@ import {
   Checkbox,
   FieldError,
   Form,
-  Input,
   Label,
   TextArea,
   TextField,
@@ -42,7 +41,6 @@ function Report() {
   const {
     mutateAsync: updateReport,
     isPending,
-    error: updateError,
   } = useMutation(orpc.report.updateReport.mutationOptions({
     onSuccess(report) {
       queryClient.invalidateQueries(orpc.report.report.queryOptions({ input: reportId }));

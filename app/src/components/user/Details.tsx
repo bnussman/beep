@@ -4,7 +4,7 @@ import { Text } from '@/components/Text';
 import { Image } from '@/components/Image';
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
-import { getFormattedRatingString, printStars } from "../Stars";
+import { printStars } from "../Stars";
 import { Color, Indicator } from "../Indicator";
 
 interface Props {

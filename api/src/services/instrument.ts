@@ -49,7 +49,7 @@ Sentry.init({
       propagation: false,
     }),
   ],
-  integrations(integrations) {
+  integrations() {
     return [
       // Sentry.bunRuntimeMetricsIntegration(),
       Sentry.bunServerIntegration(),

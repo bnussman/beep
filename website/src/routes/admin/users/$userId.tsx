@@ -15,11 +15,9 @@ import { LinkButton } from "../../../components/LinkButton";
 import {
   Outlet,
   useLocation,
-  useNavigate,
   createFileRoute,
   Link,
 } from "@tanstack/react-router";
-import { MigrateUserDialog } from "../../../components/MigrateUserDialog";
 
 export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
@@ -89,8 +87,6 @@ function User() {
   const [isSendNotificationOpen, setIsSendNotificationOpen] = useState(false);
 
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
-
-  const [isMigrateOpen, setIsMigrateOpen] = useState(false);
 
   const onVerify = () => {
     updateUser({
@@ -203,13 +199,6 @@ function User() {
           </Button>
           <Button
             size="sm"
-            onPress={() => setIsMigrateOpen(true)}
-            variant="tertiary"
-          >
-            Migrate User's Entities
-          </Button>
-          <Button
-            size="sm"
             onPress={onSyncPayments}
             isPending={isSyncingPayments}
             variant="tertiary"
@@ -276,11 +265,6 @@ function User() {
         id={user.id}
         isOpen={isSendNotificationOpen}
         onClose={() => setIsSendNotificationOpen(false)}
-      />
-      <MigrateUserDialog
-        userId={user.id}
-        isOpen={isMigrateOpen}
-        onClose={() => setIsMigrateOpen(false)}
       />
       <PhotoDialog
         src={user.photo}
