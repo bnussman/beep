@@ -1,5 +1,5 @@
 import React from "react";
-import { DotsThreeVertical, DotsThreeVerticalIcon } from "@phosphor-icons/react";
+import { DotsThreeVerticalIcon } from "@phosphor-icons/react";
 import { Button, Dropdown, Label } from "@heroui/react";
 import { createLink } from "@tanstack/react-router";
 

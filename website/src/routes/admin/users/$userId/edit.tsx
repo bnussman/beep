@@ -1,7 +1,7 @@
 import React from "react";
 import { orpc } from "../../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { Alert, Spinner, Tabs, Typography } from "@heroui/react";
 
 export const Route = createFileRoute('/admin/users/$userId/edit')({

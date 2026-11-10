@@ -6,7 +6,7 @@ import { Rates } from "./Rates";
 import { getCurrentStatusMessage, statusToDescription } from "@/utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { isIOS } from "@/utils/constants";
 import { orpc } from "@/utils/orpc";
 
@@ -20,8 +20,6 @@ interface Props {
 }
 
 export function RideDetails(props: Props) {
-  const router = useRouter();
-
   const { data: beep } = useQuery(orpc.rider.currentRide.queryOptions());
 
   const isAcceptedBeep =

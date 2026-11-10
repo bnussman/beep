@@ -4,8 +4,7 @@ import {
   useThemeColor,
 } from "heroui-native";
 import { ActivityIndicator } from "react-native";
-import React from "react";
-import { isIOS, isWeb } from "@/utils/constants";
+import { isWeb } from "@/utils/constants";
 
 interface Props {
   /**

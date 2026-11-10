@@ -11,7 +11,6 @@ import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams } from "expo-router";
-import { Separator } from "heroui-native";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";

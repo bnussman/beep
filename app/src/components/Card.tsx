@@ -3,7 +3,6 @@ import {
   Card as HeroCard,
   CardRootProps,
 } from "heroui-native";
-import React from "react";
 
 interface Props extends CardRootProps {
   /**
