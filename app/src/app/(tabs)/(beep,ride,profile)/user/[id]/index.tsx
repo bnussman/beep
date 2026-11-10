@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -28,13 +28,13 @@ export default function User() {
     isFetchingNextPage: isFetchingNextPageOfRatings,
     isLoading: isLoadingRatings,
     isRefetching: isRefetchingRatings,
-    hasNextPage: hasNextPageOfRatings
+    hasNextPage: hasNextPageOfRatings,
   } = useInfiniteQuery(
     orpc.rating.ratings.infiniteOptions({
       input: (page) => ({
         ratedId: id,
         pageSize: PAGE_SIZE,
-        page
+        page,
       }),
       initialPageParam: 1,
       getNextPageParam(page) {
@@ -43,8 +43,8 @@ export default function User() {
         }
         return page.page + 1;
       },
-      enabled: selectedIndex === 1
-    })
+      enabled: selectedIndex === 1,
+    }),
   );
 
   if (userPending) {
@@ -135,18 +135,33 @@ export default function User() {
       }}
       onEndReachedThreshold={0.1}
       ListEmptyComponent={
-        selectedIndex === 1 ?
-        isLoadingRatings ? (
-          <View style={{ display: "flex", alignItems: "center", minHeight: 300, justifyContent: 'center' }}>
-            <ActivityIndicator />
-          </View>
-        ) : (
-          <View style={{ display: "flex", alignItems: "center", minHeight: 300, justifyContent: 'center' }}>
-            <Text weight="800" size="3xl">
-              No Ratings
-            </Text>
-            <Text>This user has no ratings to display</Text>
-          </View>
+        selectedIndex === 1 ? (
+          isLoadingRatings ? (
+            <View
+              style={{
+                display: "flex",
+                alignItems: "center",
+                minHeight: 300,
+                justifyContent: "center",
+              }}
+            >
+              <ActivityIndicator />
+            </View>
+          ) : (
+            <View
+              style={{
+                display: "flex",
+                alignItems: "center",
+                minHeight: 300,
+                justifyContent: "center",
+              }}
+            >
+              <Text weight="800" size="3xl">
+                No Ratings
+              </Text>
+              <Text>This user has no ratings to display</Text>
+            </View>
+          )
         ) : undefined
       }
       ListFooterComponentStyle={{

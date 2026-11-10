@@ -22,9 +22,7 @@ export function Label(props: Props) {
     }, [htmlFor]);
   }
 
-  const webProps = isWeb
-    ? { accessibilityRole: "label" as AccessibilityRole }
-    : {};
+  const webProps = isWeb ? { accessibilityRole: "label" as AccessibilityRole } : {};
 
   return <HeroLabel id={id} {...rest} {...webProps} />;
 }

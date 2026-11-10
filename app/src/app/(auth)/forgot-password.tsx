@@ -45,9 +45,7 @@ export default function ForgotPasswordScreen() {
           onSubmitEditing={onSubmit}
         />
       </TextField>
-      <Description>
-        We will send you an email with a link to reset your password.
-      </Description>
+      <Description>We will send you an email with a link to reset your password.</Description>
       <Button isLoading={isPending} isDisabled={!email} onPress={onSubmit}>
         Reset Password
       </Button>

@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
-import { SymbolView } from 'expo-symbols';
-import {
-  ActivityIndicator,
-  Pressable,
-  TextInput,
-  TextInputProps,
-  View,
-} from "react-native";
+import { SymbolView } from "expo-symbols";
+import { ActivityIndicator, Pressable, TextInput, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
   ref: React.Ref<TextInput>;
@@ -44,9 +38,7 @@ export function LocationInput(props: Props) {
       });
 
       if (locations.length === 0) {
-        props.onChangeText?.(
-          `${position.coords.latitude}, ${position.coords.longitude}`,
-        );
+        props.onChangeText?.(`${position.coords.latitude}, ${position.coords.longitude}`);
       } else {
         const location = locations[0];
         const parts = Array.from(
@@ -95,7 +87,7 @@ export function LocationInput(props: Props) {
           <ActivityIndicator />
         ) : (
           <SymbolView
-            name={{ ios: 'location.fill', android: 'location_pin', web: 'location_pin' }}
+            name={{ ios: "location.fill", android: "location_pin", web: "location_pin" }}
             size={18}
           />
         )}

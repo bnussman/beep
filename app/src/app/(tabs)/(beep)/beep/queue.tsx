@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
@@ -29,7 +29,10 @@ export default function StartBeepingScreen() {
       }}
       refreshing={isRefetching}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ ...getContentContainerStyle(queue.length === 0), ...paddedContainerStyle }}
+      contentContainerStyle={{
+        ...getContentContainerStyle(queue.length === 0),
+        ...paddedContainerStyle,
+      }}
       ListEmptyComponent={
         <View style={{ gap: 8, alignItems: "center" }}>
           <Text size="5xl">⏳</Text>

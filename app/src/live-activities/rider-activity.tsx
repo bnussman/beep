@@ -1,10 +1,4 @@
-import {
-  HStack,
-  Spacer,
-  Text,
-  VStack,
-  ProgressView,
-} from "@expo/ui/swift-ui";
+import { HStack, Spacer, Text, VStack, ProgressView } from "@expo/ui/swift-ui";
 import {
   font,
   padding,
@@ -23,10 +17,7 @@ export interface RiderActivityProps {
   car?: { make: string; model: string; color: string };
 }
 
-const RiderActivity = (
-  props: RiderActivityProps,
-  environment: LiveActivityEnvironment,
-) => {
+const RiderActivity = (props: RiderActivityProps, environment: LiveActivityEnvironment) => {
   "widget";
 
   const getHeading = () => {
@@ -87,16 +78,16 @@ const RiderActivity = (
   const renderProgressBar = () => (
     <ProgressView
       value={getProgressValue()}
-      modifiers={[progressViewStyle("linear"), foregroundStyle('#4285ea'), background('#7e7e7e')]}
+      modifiers={[progressViewStyle("linear"), foregroundStyle("#4285ea"), background("#7e7e7e")]}
     />
   );
 
   return {
     banner: (
       <HStack modifiers={[padding({ all: 16 })]} spacing={8}>
-        <VStack  alignment="leading" spacing={16}>
+        <VStack alignment="leading" spacing={16}>
           <VStack spacing={8} alignment="leading">
-            <HStack spacing={8} >
+            <HStack spacing={8}>
               <Text modifiers={[font({ size: 18 })]}>🚕</Text>
               <Text modifiers={[font({ size: 18, weight: "heavy" })]}>{getHeading()}</Text>
             </HStack>
@@ -113,9 +104,7 @@ const RiderActivity = (
           <React.Fragment>
             <Spacer />
             <VStack modifiers={[padding({ all: 12 })]}>
-              <Text modifiers={[font({ weight: "bold", size: 20 })]}>
-                {props.etaMinutes}
-              </Text>
+              <Text modifiers={[font({ weight: "bold", size: 20 })]}>{props.etaMinutes}</Text>
               <Text modifiers={[font({ size: 12 })]}>minutes</Text>
             </VStack>
           </React.Fragment>
@@ -138,16 +127,12 @@ const RiderActivity = (
     expandedTrailing:
       props.status === "accepted" && props.positionInQueue > 0 ? (
         <VStack modifiers={[padding({ all: 12 })]}>
-          <Text modifiers={[font({ weight: "bold", size: 20 })]}>
-            {props.positionInQueue}
-          </Text>
+          <Text modifiers={[font({ weight: "bold", size: 20 })]}>{props.positionInQueue}</Text>
           <Text modifiers={[font({ size: 10 })]}>riders ahead</Text>
         </VStack>
       ) : props.etaMinutes !== undefined ? (
         <VStack modifiers={[padding({ all: 12 })]}>
-          <Text modifiers={[font({ weight: "bold", size: 20 })]}>
-            {props.etaMinutes}
-          </Text>
+          <Text modifiers={[font({ weight: "bold", size: 20 })]}>{props.etaMinutes}</Text>
           <Text modifiers={[font({ size: 12 })]}>minutes</Text>
         </VStack>
       ) : null,

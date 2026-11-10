@@ -18,9 +18,7 @@ export function setupLiveActivityListeners() {
   }
 }
 
-export function startBeepLiveActivity(
-  beep: RouterOutputs["rider"]["startBeep"],
-) {
+export function startBeepLiveActivity(beep: RouterOutputs["rider"]["startBeep"]) {
   const riderActivity = RiderActivity.start({
     status: beep.status,
     name: beep.beeper.first,

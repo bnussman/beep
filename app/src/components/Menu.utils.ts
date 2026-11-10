@@ -1,14 +1,20 @@
-import type { NativeStackHeaderItem, NativeStackHeaderItemMenuAction, NativeStackHeaderItemMenuSubmenu } from "expo-router";
+import type {
+  NativeStackHeaderItem,
+  NativeStackHeaderItemMenuAction,
+  NativeStackHeaderItemMenuSubmenu,
+} from "expo-router";
 import type { Option } from "./Menu";
 
-export function getNativeNavigationMenuItem(option: Option): NativeStackHeaderItemMenuAction | NativeStackHeaderItemMenuSubmenu {
+export function getNativeNavigationMenuItem(
+  option: Option,
+): NativeStackHeaderItemMenuAction | NativeStackHeaderItemMenuSubmenu {
   if (option.options) {
     return {
       type: "submenu",
       multiselectable: true,
       label: option.title,
       icon: option.sfIcon ? { name: option.sfIcon, type: "sfSymbol" } : undefined,
-      items: option.options.map(getNativeNavigationMenuItem)
+      items: option.options.map(getNativeNavigationMenuItem),
     };
   }
 
@@ -16,18 +22,14 @@ export function getNativeNavigationMenuItem(option: Option): NativeStackHeaderIt
     label: option.title,
     type: "action",
     keepsMenuPresented: true,
-    state: option.checked !== undefined ? option.checked ? 'on' : 'off' : undefined,
-    icon: option.sfIcon
-      ? { name: option.sfIcon, type: "sfSymbol" }
-      : undefined,
+    state: option.checked !== undefined ? (option.checked ? "on" : "off") : undefined,
+    icon: option.sfIcon ? { name: option.sfIcon, type: "sfSymbol" } : undefined,
     destructive: option.destructive,
-    onPress: option.onClick ?? (() => { }),
+    onPress: option.onClick ?? (() => {}),
   };
 }
 
-export function getNavigationMenuFromOptions(
-  options: Option[],
-): NativeStackHeaderItem[] {
+export function getNavigationMenuFromOptions(options: Option[]): NativeStackHeaderItem[] {
   return [
     {
       type: "menu",
@@ -36,7 +38,9 @@ export function getNavigationMenuFromOptions(
       menu: {
         title: "",
         multiselectable: true,
-        items: options.filter((option) => option.show === undefined || option.show).map(getNativeNavigationMenuItem)
+        items: options
+          .filter((option) => option.show === undefined || option.show)
+          .map(getNativeNavigationMenuItem),
       },
     },
   ];

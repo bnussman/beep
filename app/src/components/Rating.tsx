@@ -32,14 +32,12 @@ export function Rating(props: Props) {
     orpc.rating.deleteRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: orpc.rating.ratings.key()
+          queryKey: orpc.rating.ratings.key(),
         });
         queryClient.invalidateQueries({
-          queryKey: orpc.beep.beeps.key()
+          queryKey: orpc.beep.beeps.key(),
         });
-        queryClient.invalidateQueries(
-          orpc.rider.getLastBeepToRate.queryOptions(),
-        );
+        queryClient.invalidateQueries(orpc.rider.getLastBeepToRate.queryOptions());
       },
       onError(error) {
         alert(error.message);
@@ -114,11 +112,13 @@ export function Rating(props: Props) {
                   {otherUser.first} {otherUser.last}
                 </Text>
                 <Text color="subtle" size="xs">
-                  {`${isRater ? "You rated" : "Rated you"} - ${
-                    item.timestamp.toLocaleString(undefined, {
-                    dateStyle: "short",
-                    timeStyle: "short",
-                  })}`}
+                  {`${isRater ? "You rated" : "Rated you"} - ${item.timestamp.toLocaleString(
+                    undefined,
+                    {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    },
+                  )}`}
                 </Text>
               </View>
             </View>

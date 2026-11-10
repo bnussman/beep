@@ -35,10 +35,7 @@ export default function ChangePasswordScreen() {
   const onSubmit = handleSubmit(({ password }) => changePassword({ password }));
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={{ padding: 16, gap: 8 }}
-      scrollEnabled={false}
-    >
+    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 8 }} scrollEnabled={false}>
       <Controller
         control={control}
         name="password"
@@ -67,8 +64,7 @@ export default function ChangePasswordScreen() {
         name="confirmPassword"
         rules={{
           required: "Please repeat your password",
-          validate: (value) =>
-            value === getValues("password") || "Passwords did not match.",
+          validate: (value) => value === getValues("password") || "Passwords did not match.",
         }}
         render={({ field: { onBlur, onChange, ref, value }, fieldState }) => (
           <TextField isInvalid={!!fieldState.error}>
@@ -89,11 +85,7 @@ export default function ChangePasswordScreen() {
           </TextField>
         )}
       />
-      <Button
-        onPress={() => onSubmit()}
-        isDisabled={!isValid}
-        isLoading={isPending}
-      >
+      <Button onPress={() => onSubmit()} isDisabled={!isValid} isLoading={isPending}>
         Change Password
       </Button>
     </KeyboardAwareScrollView>

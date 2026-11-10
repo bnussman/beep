@@ -37,9 +37,7 @@ export default function PickLocation() {
             item.properties.state,
           ];
 
-          const address = addressParts
-            .filter((part) => part !== undefined)
-            .join(" ");
+          const address = addressParts.filter((part) => part !== undefined).join(" ");
 
           if (item.properties.name) {
             return {
@@ -51,8 +49,7 @@ export default function PickLocation() {
           return { address };
         });
       },
-    },
-    ),
+    }),
   );
 
   const placeholderOption = { address: query, name: undefined };
@@ -72,11 +69,7 @@ export default function PickLocation() {
         <SearchField value={query} onChange={setQuery}>
           <SearchField.Group>
             <SearchField.SearchIcon />
-            <SearchField.Input
-              autoFocus
-              textContentType="fullStreetAddress"
-              autoCorrect={false}
-            />
+            <SearchField.Input autoFocus textContentType="fullStreetAddress" autoCorrect={false} />
             <SearchField.ClearButton />
           </SearchField.Group>
         </SearchField>

@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import { ActivityIndicator, FlatList } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
@@ -18,42 +18,35 @@ export default function Cars() {
   const { user } = useUser();
 
   const queryClient = useQueryClient();
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    isFetchingNextPage,
-    fetchNextPage,
-    isRefetching,
-  } = useInfiniteQuery(
-    orpc.car.cars.infiniteOptions({
-      input: (page) => ({
-        userId: user?.id,
-        pageSize: PAGE_SIZE,
-        page,
+  const { data, isLoading, error, refetch, isFetchingNextPage, fetchNextPage, isRefetching } =
+    useInfiniteQuery(
+      orpc.car.cars.infiniteOptions({
+        input: (page) => ({
+          userId: user?.id,
+          pageSize: PAGE_SIZE,
+          page,
+        }),
+        placeholderData: keepPreviousData,
+        initialPageParam: 1,
+        getNextPageParam(page) {
+          if (page.page === page.pages) {
+            return undefined;
+          }
+          return page.page + 1;
+        },
       }),
-      placeholderData: keepPreviousData,
-      initialPageParam: 1,
-      getNextPageParam(page) {
-        if (page.page === page.pages) {
-          return undefined;
-        }
-        return page.page + 1;
-      },
-    }),
-  );
+    );
 
   const { mutate: deleteCar } = useMutation(
     orpc.car.deleteCar.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: orpc.car.cars.key()
+          queryKey: orpc.car.cars.key(),
         });
       },
       onError(error) {
         alert(error.message);
-      }
+      },
     }),
   );
 
@@ -61,7 +54,7 @@ export default function Cars() {
     orpc.car.updateCar.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: orpc.car.cars.key()
+          queryKey: orpc.car.cars.key(),
         });
       },
     }),
@@ -72,9 +65,7 @@ export default function Cars() {
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return (
-        <View
-          style={{ flexDirection: "row", alignItems: "center", padding: 16 }}
-        >
+        <View style={{ flexDirection: "row", alignItems: "center", padding: 16 }}>
           <ActivityIndicator />
         </View>
       );

@@ -6,7 +6,7 @@ const RiderActivity = {
       end: () => {},
     };
   },
-  nativeLiveActivityFactory: null
+  nativeLiveActivityFactory: null,
 };
- 
+
 export default RiderActivity;

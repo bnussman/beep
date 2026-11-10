@@ -24,7 +24,7 @@ export function Indicator(props: Props) {
         width: size,
         height: size,
         borderRadius: size / 2,
-        backgroundColor: colorMap[color]
+        backgroundColor: colorMap[color],
       }}
     />
   );

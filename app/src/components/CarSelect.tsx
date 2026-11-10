@@ -13,7 +13,7 @@ export function CarSelect() {
 
   const { data: cars } = useQuery(
     orpc.car.cars.queryOptions({
-      input: user ? { userId: user.id } : skipToken
+      input: user ? { userId: user.id } : skipToken,
     }),
   );
 
@@ -54,8 +54,7 @@ export function CarSelect() {
               ]
             : (cars?.cars.map((car) => ({
                 title: `${car.year} ${car.make} ${car.model}`,
-                onClick: () =>
-                  mutate({ carId: car.id, data: { default: true } }),
+                onClick: () => mutate({ carId: car.id, data: { default: true } }),
                 checked: car.id === defaultCar?.id,
               })) ?? [])
         }

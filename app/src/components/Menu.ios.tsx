@@ -17,11 +17,7 @@ export function Menu(props: MenuProps) {
 
     if (option.options) {
       return (
-        <ExpoUIMenu
-          key={option.title}
-          label={option.title}
-          systemImage={option.sfIcon}
-        >
+        <ExpoUIMenu key={option.title} label={option.title} systemImage={option.sfIcon}>
           {option.options.map(renderMenuOption)}
         </ExpoUIMenu>
       );
@@ -35,11 +31,7 @@ export function Menu(props: MenuProps) {
           label={option.title}
           systemImage={option.sfIcon}
           onIsOnChange={option.onClick}
-          modifiers={
-            option.keepsMenuPresented
-              ? [menuActionDismissBehavior("disabled")]
-              : []
-          }
+          modifiers={option.keepsMenuPresented ? [menuActionDismissBehavior("disabled")] : []}
         />
       );
     }
@@ -52,30 +44,24 @@ export function Menu(props: MenuProps) {
         onPress={option.onClick}
         modifiers={[
           ...(option.disabled ? [disabled()] : []),
-          ...(option.keepsMenuPresented
-            ? [menuActionDismissBehavior("disabled")]
-            : []),
+          ...(option.keepsMenuPresented ? [menuActionDismissBehavior("disabled")] : []),
         ]}
         role={option.destructive ? "destructive" : undefined}
       />
     );
   };
 
-  const onPress = () => { };
-  const onLongPress = () => { };
+  const onPress = () => {};
+  const onLongPress = () => {};
 
   if (props.activationMethod === "longPress") {
     return (
       <Host>
         <ContextMenu>
           <ContextMenu.Trigger>
-            <RNHostView>
-              {props.trigger({ onPress, onLongPress })}
-            </RNHostView>
+            <RNHostView>{props.trigger({ onPress, onLongPress })}</RNHostView>
           </ContextMenu.Trigger>
-          <ContextMenu.Items>
-            {props.options.map(renderMenuOption)}
-          </ContextMenu.Items>
+          <ContextMenu.Items>{props.options.map(renderMenuOption)}</ContextMenu.Items>
         </ContextMenu>
       </Host>
     );

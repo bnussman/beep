@@ -27,23 +27,19 @@ export function Beep({ item }: Props) {
   const isBeeper = user?.id === item.beeper.id;
 
   const myRating = item.ratings.find((r) => r.rater_id === user?.id);
-  const otherUsersRating = item.ratings.find(
-    (r) => r.rater_id === otherUser.id,
-  );
+  const otherUsersRating = item.ratings.find((r) => r.rater_id === otherUser.id);
 
   const isAcceptedOrComplete =
-    item.status !== "waiting" &&
-    item.status !== "canceled" &&
-    item.status !== "denied";
+    item.status !== "waiting" && item.status !== "canceled" && item.status !== "denied";
 
   const { mutateAsync: deleteRating } = useMutation(
     orpc.rating.deleteRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: orpc.beep.beeps.key()
+          queryKey: orpc.beep.beeps.key(),
         });
         queryClient.invalidateQueries({
-          queryKey: orpc.rating.ratings.key()
+          queryKey: orpc.rating.ratings.key(),
         });
         queryClient.invalidateQueries({
           queryKey: orpc.rider.getLastBeepToRate.queryKey(),
@@ -177,52 +173,69 @@ export function Beep({ item }: Props) {
       trigger={({ onLongPress }) => (
         <Card
           style={{ padding: 16, gap: 8 }}
-          onPress={() => router.navigate({ pathname: "/(tabs)/(profile)/profile/beeps/[id]", params: { id: item.id } })}
+          onPress={() =>
+            router.navigate({
+              pathname: "/(tabs)/(profile)/profile/beeps/[id]",
+              params: { id: item.id },
+            })
+          }
           onLongPress={onLongPress}
         >
-          <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-              >
-                <Avatar size="xs" src={otherUser.photo ?? undefined} />
-                <View style={{ flexShrink: 1 }}>
-                  <Text weight="bold" size="lg">
-                    {otherUser.first} {otherUser.last}
-                  </Text>
-                  <Text color="subtle" size="xs">
-                    {`${isRider ? "Ride" : "Beep"} - ${new Date(
-                      item.start,
-                    ).toLocaleString()}`}
-                  </Text>
-                </View>
-              </View>
-              <View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Avatar size="xs" src={otherUser.photo ?? undefined} />
+            <View style={{ flexShrink: 1 }}>
+              <Text weight="bold" size="lg">
+                {otherUser.first} {otherUser.last}
+              </Text>
+              <Text color="subtle" size="xs">
+                {`${isRider ? "Ride" : "Beep"} - ${new Date(item.start).toLocaleString()}`}
+              </Text>
+            </View>
+          </View>
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ width: 96 }} weight="bold">
+                Pick Up
+              </Text>
+              <Text style={{ textAlign: "right", flexShrink: 1 }}>{item.origin}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ width: 96 }} weight="bold">
+                Drop Off
+              </Text>
+              <Text style={{ textAlign: "right", flexShrink: 1 }}>{item.destination}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text weight="bold">Group size</Text>
+              <Text>{item.groupSize}</Text>
+            </View>
+            {item.status === "complete" && (
+              <>
                 <View
                   style={{
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    alignItems: "center",
                   }}
                 >
-                  <Text style={{ width: 96 }} weight="bold">
-                    Pick Up
-                  </Text>
-                  <Text style={{ textAlign: "right", flexShrink: 1 }}>
-                    {item.origin}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={{ width: 96 }} weight="bold">
-                    Drop Off
-                  </Text>
-                  <Text style={{ textAlign: "right", flexShrink: 1 }}>
-                    {item.destination}
-                  </Text>
+                  <Text weight="bold">Your Rating</Text>
+                  <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
                 </View>
                 <View
                   style={{
@@ -230,39 +243,13 @@ export function Beep({ item }: Props) {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Text weight="bold">Group size</Text>
-                  <Text>{item.groupSize}</Text>
+                  <Text weight="bold">{otherUser.first}'s Rating</Text>
+                  <Text>{otherUsersRating ? printStars(otherUsersRating.stars) : "N/A"}</Text>
                 </View>
-                {item.status === "complete" && (
-                  <>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text weight="bold">Your Rating</Text>
-                      <Text>
-                        {myRating ? printStars(myRating.stars) : "N/A"}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text weight="bold">{otherUser.first}'s Rating</Text>
-                      <Text>
-                        {otherUsersRating
-                          ? printStars(otherUsersRating.stars)
-                          : "N/A"}
-                      </Text>
-                    </View>
-                  </>
-                )}
-              </View>
-          </Card>
+              </>
+            )}
+          </View>
+        </Card>
       )}
     />
   );

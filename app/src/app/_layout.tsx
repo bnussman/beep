@@ -6,7 +6,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useColorScheme } from "react-native";
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from "expo-status-bar";
 import { useAutoUpdate } from "@/utils/updates";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
@@ -15,16 +15,8 @@ import { setupLiveActivityListeners } from "@/live-activities/utils";
 import { orpc } from "@/utils/orpc";
 import { queryClient } from "@/utils/tanstack-query";
 import { useSubscription } from "@/utils/subscriptions";
-import {
-  QueryClientProvider,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "expo-router/react-navigation";
+import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
 
 SplashScreen.preventAutoHideAsync();
 setupPurchase();
@@ -37,14 +29,12 @@ function App() {
 
   useAutoUpdate();
 
-  const { data: user, isLoading } = useQuery(
-    orpc.user.me.queryOptions({ retry: false })
-  );
+  const { data: user, isLoading } = useQuery(orpc.user.me.queryOptions({ retry: false }));
 
   useSubscription({
     ...orpc.user.updates.liveOptions({
       enabled: user !== undefined,
-      context: { ws: true }
+      context: { ws: true },
     }),
     onData(data) {
       queryClient.setQueryData(orpc.user.me.queryKey(), data);
@@ -80,14 +70,8 @@ function App() {
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn} redirectTo="/(tabs)/(ride)/ride">
         <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
-        <Stack.Screen
-          options={{ headerTitle: "Sign Up" }}
-          name="(auth)/sign-up"
-        />
-        <Stack.Screen
-          options={{ headerTitle: "Forgot Password" }}
-          name="(auth)/forgot-password"
-        />
+        <Stack.Screen options={{ headerTitle: "Sign Up" }} name="(auth)/sign-up" />
+        <Stack.Screen options={{ headerTitle: "Forgot Password" }} name="(auth)/forgot-password" />
       </Stack.Protected>
     </Stack>
   );
@@ -112,12 +96,12 @@ function Layout() {
                 colorScheme === "dark"
                   ? DarkTheme
                   : {
-                    ...DefaultTheme,
-                    colors: {
-                      ...DefaultTheme.colors,
-                      background: "#fafafa",
-                    },
-                  }
+                      ...DefaultTheme,
+                      colors: {
+                        ...DefaultTheme.colors,
+                        background: "#fafafa",
+                      },
+                    }
               }
             >
               <App />

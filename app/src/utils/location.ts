@@ -67,8 +67,7 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export async function startLocationTracking() {
   try {
-    const hasStarted =
-      await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
 
     if (hasStarted) {
       return;
@@ -96,8 +95,7 @@ export async function startLocationTracking() {
 
 export async function stopLocationTracking() {
   try {
-    const hasStarted =
-      await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
 
     if (hasStarted) {
       await Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
@@ -134,9 +132,7 @@ export function useLocationPermissions() {
     }
 
     if (!hasBackgroundPermission) {
-      alert(
-        "Please allow beep to use your location when beep is in the background.",
-      );
+      alert("Please allow beep to use your location when beep is in the background.");
       return false;
     }
 
@@ -164,15 +160,11 @@ TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
         });
       } catch (e) {
         captureException(e);
-        console.error(
-          "Background task errored when sending location to the API",
-          e,
-        );
+        console.error("Background task errored when sending location to the API", e);
       }
     }
   },
 );
-
 
 /**
  * Full credit to https://github.com/huextrat/react-native-maps-routes/blob/main/src/utils/decoder.ts

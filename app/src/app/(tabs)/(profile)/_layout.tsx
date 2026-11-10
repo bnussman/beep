@@ -21,22 +21,13 @@ export default function Layout() {
         options={{
           headerTitle: "Edit",
           unstable_headerRightItems: () => getNavigationMenuFromOptions(menu),
-          headerRight: () => (
-            <Menu
-              trigger={MenuTrigger}
-              options={menu}
-            />
-          ),
+          headerRight: () => <Menu trigger={MenuTrigger} options={menu} />,
         }}
       />
-      <Stack.Screen
-        name="profile/change-password"
-        options={{ headerTitle: "Change Password" }}
-      />
+      <Stack.Screen name="profile/change-password" options={{ headerTitle: "Change Password" }} />
       <Stack.Screen
         name="profile/cars/index"
         options={{
-
           headerTitle: "Cars",
           headerRight: !isIOS ? () => <AddCarButton /> : undefined,
           unstable_headerRightItems: () => [
@@ -49,18 +40,12 @@ export default function Layout() {
           ],
         }}
       />
-      <Stack.Screen
-        name="profile/cars/create"
-        options={{ headerTitle: "Add Car" }}
-      />
-      <Stack.Screen
-        name="profile/beeps/index"
-        options={{ headerTitle: "Beeps" }}
-      />
+      <Stack.Screen name="profile/cars/create" options={{ headerTitle: "Add Car" }} />
+      <Stack.Screen name="profile/beeps/index" options={{ headerTitle: "Beeps" }} />
       <Stack.Screen
         name="profile/beeps/[id]"
         options={(route) => {
-          const params = route.route.params as { id: string, ratingId?: string };
+          const params = route.route.params as { id: string; ratingId?: string };
           return {
             headerRight: () => {
               return <BeepMenu beepId={params.id} />;
@@ -69,18 +54,12 @@ export default function Layout() {
               const options = useBeepMenuOptions({ beepId: params.id });
               return getNavigationMenuFromOptions(options);
             },
-            headerTitle: "Beep"
+            headerTitle: "Beep",
           };
         }}
       />
-      <Stack.Screen
-        name="profile/ratings"
-        options={{ headerTitle: "Ratings" }}
-      />
-      <Stack.Screen
-        name="profile/feedback"
-        options={{ headerTitle: "Feedback" }}
-      />
+      <Stack.Screen name="profile/ratings" options={{ headerTitle: "Ratings" }} />
+      <Stack.Screen name="profile/feedback" options={{ headerTitle: "Feedback" }} />
       <Stack.Screen
         options={(route) => {
           const params = route.route.params as { id: string };
@@ -97,10 +76,7 @@ export default function Layout() {
         }}
         name="user/[id]/index"
       />
-      <Stack.Screen
-        options={{ headerTitle: "Report" }}
-        name="user/[id]/report"
-      />
+      <Stack.Screen options={{ headerTitle: "Report" }} name="user/[id]/report" />
       <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
     </Stack>
   );

@@ -31,7 +31,7 @@ export function RideDetails(props: Props) {
   const { data: car } = useQuery(
     orpc.user.getUsersDefaultCar.queryOptions({
       input: beep ? beep.beeper.id : skipToken,
-      enabled: isAcceptedBeep
+      enabled: isAcceptedBeep,
     }),
   );
 
@@ -59,16 +59,11 @@ export function RideDetails(props: Props) {
         <Link.Trigger>
           <Pressable>
             <Text weight="800">Beeper</Text>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-            >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <Text>
                 {beep.beeper.first} {beep.beeper.last}
               </Text>
-              <Avatar
-                style={{ width: 24, height: 24 }}
-                src={beep.beeper.photo ?? undefined}
-              />
+              <Avatar style={{ width: 24, height: 24 }} src={beep.beeper.photo ?? undefined} />
             </View>
           </Pressable>
         </Link.Trigger>
@@ -80,14 +75,12 @@ export function RideDetails(props: Props) {
           <>
             <Text>Waiting on {beep.beeper.first} to accept your request.</Text>
             <Text>
-              {beep.position} {beep.position === 1 ? "person is" : "people are"}{" "}
-              ahead of you.
+              {beep.position} {beep.position === 1 ? "person is" : "people are"} ahead of you.
             </Text>
             {beep.riders_waiting - 1 > 0 && (
               <Text>
                 {beep.riders_waiting - 1}{" "}
-                {beep.riders_waiting - 1 === 1 ? "person is" : "people are"}{" "}
-                also waiting.
+                {beep.riders_waiting - 1 === 1 ? "person is" : "people are"} also waiting.
               </Text>
             )}
           </>
@@ -96,8 +89,7 @@ export function RideDetails(props: Props) {
             <Text>
               <Text>Beeper has accepted you but </Text>
               <Text style={{ fontWeight: "bold" }}>
-                {beep.position}{" "}
-                {beep.position === 1 ? "person is" : "people are"} ahead of you.
+                {beep.position} {beep.position === 1 ? "person is" : "people are"} ahead of you.
               </Text>
             </Text>
             {statusToDescription[beep.queue[0].status] ? (
@@ -108,15 +100,13 @@ export function RideDetails(props: Props) {
           <Text>{getCurrentStatusMessage(beep)}</Text>
         )}
       </View>
-      {beep.status === "on_the_way" && (
-        <ETA eta={beep.pick_up_eta} />
-      )}
+      {beep.status === "on_the_way" && <ETA eta={beep.pick_up_eta} />}
       {car && (
         <View>
           <Text weight="800">Car</Text>
           <Text style={{ marginBottom: 8 }}>
-            <Text style={{ textTransform: "capitalize" }}>{car.color}</Text>{" "}
-            {car.year} {car.make} {car.model}
+            <Text style={{ textTransform: "capitalize" }}>{car.color}</Text> {car.year} {car.make}{" "}
+            {car.model}
           </Text>
           <Image
             style={{ borderRadius: 10, height: 150, width: 300 }}

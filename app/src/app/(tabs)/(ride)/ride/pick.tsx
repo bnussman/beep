@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import { useEffect } from "react";
 import { useNavigation } from "expo-router/react-navigation";
 import { Avatar } from "@/components/Avatar";
@@ -41,9 +41,9 @@ export default function PickBeepScreen() {
     orpc.rider.beepers.queryOptions({
       input: location
         ? {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        }
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          }
         : skipToken,
     }),
   );
@@ -123,9 +123,7 @@ export default function PickBeepScreen() {
             <Text size="xl" weight="800">
               {item.first} {item.last}
             </Text>
-            {item.rating && (
-              <Text size="xs">{printStars(Number(item.rating))}</Text>
-            )}
+            {item.rating && <Text size="xs">{printStars(Number(item.rating))}</Text>}
           </View>
           {item.isPremium && (
             <Text
@@ -135,7 +133,7 @@ export default function PickBeepScreen() {
                 shadowColor: "#f5db73",
                 shadowOpacity: 1,
                 opacity: 1,
-                padding: 16
+                padding: 16,
               }}
             >
               👑

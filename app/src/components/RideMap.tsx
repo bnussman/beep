@@ -28,9 +28,9 @@ export function RideMap({ beepersLocation }: Props) {
     orpc.location.getRoute.queryOptions({
       input: beep
         ? {
-          origin: beep.origin,
-          destination: beep.destination,
-        }
+            origin: beep.origin,
+            destination: beep.destination,
+          }
         : skipToken,
     }),
   );
@@ -51,26 +51,17 @@ export function RideMap({ beepersLocation }: Props) {
   };
 
   useEffect(() => {
-    if (
-      beep?.status === "accepted" ||
-      beep?.status === "on_the_way" ||
-      beep?.status === "here"
-    ) {
-      const locations = [beepersLocation, location?.coords].filter(
-        (i) => i !== undefined,
-      );
+    if (beep?.status === "accepted" || beep?.status === "on_the_way" || beep?.status === "here") {
+      const locations = [beepersLocation, location?.coords].filter((i) => i !== undefined);
 
       mapRef.current?.fitToCoordinates(locations, {
         animated: true,
         edgePadding: { bottom: 200, left: 100, right: 100, top: 100 },
       });
     } else {
-      const locations = [
-        beepersLocation,
-        location?.coords,
-        origin,
-        destination,
-      ].filter((i) => i !== undefined);
+      const locations = [beepersLocation, location?.coords, origin, destination].filter(
+        (i) => i !== undefined,
+      );
 
       mapRef.current?.fitToCoordinates(locations, {
         animated: true,
@@ -82,19 +73,9 @@ export function RideMap({ beepersLocation }: Props) {
   return (
     <Map style={{ flex: 1 }} ref={mapRef} showsUserLocation>
       {beepersLocation && <AnimatedMarker {...beepersLocation} />}
-      {origin && (
-        <Marker
-          coordinate={origin}
-          title="Pick Up"
-          description={beep?.origin}
-        />
-      )}
+      {origin && <Marker coordinate={origin} title="Pick Up" description={beep?.origin} />}
       {destination && (
-        <Marker
-          coordinate={destination}
-          title="Drop off"
-          description={beep?.destination}
-        />
+        <Marker coordinate={destination} title="Drop off" description={beep?.destination} />
       )}
       {polylineCoordinates && (
         <Polyline

@@ -74,10 +74,5 @@ export function useUserMenuOptions(userId: string): Option[] {
 export function UserMenu({ userId }: Props) {
   const options = useUserMenuOptions(userId);
 
-  return (
-    <Menu
-      trigger={MenuTrigger}
-      options={options}
-    />
-  );
+  return <Menu trigger={MenuTrigger} options={options} />;
 }

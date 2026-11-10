@@ -75,25 +75,18 @@ export default function EditProfileScreen() {
 
   return (
     <ScrollView contentContainerStyle={{ ...paddedContainerStyle, paddingHorizontal: 16, gap: 16 }}>
-      <Link
-        href={{ pathname: "/user/[id]", params: { id: user?.id ?? "" } }}
-        asChild
-      >
+      <Link href={{ pathname: "/user/[id]", params: { id: user?.id ?? "" } }} asChild>
         <Pressable
           style={{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            gap: 8
+            gap: 8,
           }}
         >
           <View style={{ flexShrink: 1 }}>
-            <Text
-              size="2xl"
-              weight="800"
-              style={{ letterSpacing: 0.2, flexShrink: 1 }}
-            >
+            <Text size="2xl" weight="800" style={{ letterSpacing: 0.2, flexShrink: 1 }}>
               {user?.first} {user?.last}
             </Text>
             <Text color="subtle">{user?.email}</Text>
@@ -103,9 +96,7 @@ export default function EditProfileScreen() {
       </Link>
       {!user?.isEmailVerified && (
         <Card style={{ gap: 8 }}>
-          <View
-            style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-          >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Text size="2xl">📧</Text>
             <Text weight="bold">Your email is not verified</Text>
           </View>
@@ -128,11 +119,7 @@ export default function EditProfileScreen() {
             }}
           >
             <Text>Didn't receive the email?</Text>
-            <Button
-              onPress={() => resend()}
-              isLoading={resendLoading}
-              size="sm"
-            >
+            <Button onPress={() => resend()} isLoading={resendLoading} size="sm">
               Resend it!
             </Button>
           </View>

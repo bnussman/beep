@@ -7,7 +7,7 @@ import { RouterOutputs } from "../../../../api/src";
 import { Link } from "expo-router";
 
 interface Props {
-  rating: RouterOutputs['rating']['rating'];
+  rating: RouterOutputs["rating"]["rating"];
 }
 
 export function UserRating({ rating }: Props) {

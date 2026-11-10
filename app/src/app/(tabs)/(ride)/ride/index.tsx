@@ -35,13 +35,11 @@ export default function MainFindBeepScreen() {
   useSubscription({
     ...orpc.rider.currentRideUpdates.liveOptions({
       enabled: Boolean(beep),
-      context: { ws: true }
+      context: { ws: true },
     }),
     onData(data) {
       if (data === null) {
-        queryClient.invalidateQueries(
-          orpc.rider.getLastBeepToRate.queryOptions(),
-        );
+        queryClient.invalidateQueries(orpc.rider.getLastBeepToRate.queryOptions());
       }
       queryClient.setQueryData(orpc.rider.currentRide.queryKey(), (prev) => {
         if (data === null) {
@@ -52,15 +50,15 @@ export default function MainFindBeepScreen() {
         }
         return { ...prev, ...data };
       });
-    }
-  })
+    },
+  });
 
   const { data: beepersLocation } = useSubscription(
     orpc.rider.beeperLocationUpdates.liveOptions({
       input: beep ? beep.beeper.id : skipToken,
       enabled: isAcceptedBeep,
-      context: { ws: true }
-    })
+      context: { ws: true },
+    }),
   );
 
   useEffect(() => {
@@ -169,10 +167,7 @@ export default function MainFindBeepScreen() {
               asChild
             >
               <Pressable>
-                <TextField
-                  pointerEvents="none"
-                  isInvalid={Boolean(fieldState.error)}
-                >
+                <TextField pointerEvents="none" isInvalid={Boolean(fieldState.error)}>
                   <Label htmlFor="destination">Destination Location</Label>
                   <Input
                     id="destination"

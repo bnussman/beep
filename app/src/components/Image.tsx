@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  ImageProps,
-  Image as _Image,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { ImageProps, Image as _Image, View, ActivityIndicator } from "react-native";
 import { Card } from "./Card";
 
 export function Image({ style, ...props }: ImageProps) {

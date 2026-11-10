@@ -1,16 +1,26 @@
 import { QueryKey, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-interface Options<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = readonly unknown[]> extends UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> {
+interface Options<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = readonly unknown[],
+> extends UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> {
   onData?: (data: TQueryFnData) => void;
 }
 
-export function useSubscription<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends QueryKey = readonly unknown[]>(options: Options<TQueryFnData, TError, TData, TQueryKey>) {
+export function useSubscription<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = readonly unknown[],
+>(options: Options<TQueryFnData, TError, TData, TQueryKey>) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!options.enabled) {
-      queryClient.cancelQueries({ queryKey: options.queryKey })
+      queryClient.cancelQueries({ queryKey: options.queryKey });
     }
   }, [options.enabled]);
 

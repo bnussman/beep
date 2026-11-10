@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { MenuProps, Option } from "./Menu";
-import {
-  Host,
-  DropdownMenu,
-  DropdownMenuItem,
-  Text,
-  RNHostView,
-} from '@expo/ui/jetpack-compose';
+import { Host, DropdownMenu, DropdownMenuItem, Text, RNHostView } from "@expo/ui/jetpack-compose";
 
 function MenuItem(option: Option) {
   const [submenuExpanded, setSubmenuExpanded] = useState(false);
@@ -19,20 +13,15 @@ function MenuItem(option: Option) {
     return (
       <DropdownMenu expanded={submenuExpanded} onDismissRequest={() => setSubmenuExpanded(false)}>
         <DropdownMenu.Trigger>
-          <DropdownMenuItem
-            enabled={!option.disabled}
-            onClick={() => setSubmenuExpanded(true)}>
-              <DropdownMenuItem.Text>
-                <Text>{option.title}</Text>
-              </DropdownMenuItem.Text>
-            </DropdownMenuItem>
+          <DropdownMenuItem enabled={!option.disabled} onClick={() => setSubmenuExpanded(true)}>
+            <DropdownMenuItem.Text>
+              <Text>{option.title}</Text>
+            </DropdownMenuItem.Text>
+          </DropdownMenuItem>
         </DropdownMenu.Trigger>
         <DropdownMenu.Items>
           {option.options.map((option) => (
-            <MenuItem
-              key={option.title}
-              {...option}
-            />
+            <MenuItem key={option.title} {...option} />
           ))}
         </DropdownMenu.Items>
       </DropdownMenu>
@@ -43,7 +32,7 @@ function MenuItem(option: Option) {
     <DropdownMenuItem
       enabled={!option?.disabled}
       onClick={option.onClick}
-      elementColors={option.destructive ? { textColor: '#d94e53' } : undefined}
+      elementColors={option.destructive ? { textColor: "#d94e53" } : undefined}
     >
       <DropdownMenuItem.Text>
         <Text>{option.title}</Text>
@@ -58,7 +47,11 @@ function MenuItem(option: Option) {
 }
 
 // Calling `trigger` inside its own component keeps any hooks it uses out of Menu's hook list
-function Trigger(props: { trigger: MenuProps["trigger"]; onPress: () => void; onLongPress: () => void }) {
+function Trigger(props: {
+  trigger: MenuProps["trigger"];
+  onPress: () => void;
+  onLongPress: () => void;
+}) {
   return props.trigger({ onPress: props.onPress, onLongPress: props.onLongPress });
 }
 
@@ -66,16 +59,16 @@ export function Menu(props: MenuProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const onLongPress = () => {
-    if (props.activationMethod === 'longPress') {
-      setIsExpanded(true)
+    if (props.activationMethod === "longPress") {
+      setIsExpanded(true);
     }
   };
 
   const onPress = () => {
-    if (props.activationMethod === undefined || props.activationMethod === 'singlePress') {
+    if (props.activationMethod === undefined || props.activationMethod === "singlePress") {
       setIsExpanded(true);
     }
-  }
+  };
 
   return (
     <Host>

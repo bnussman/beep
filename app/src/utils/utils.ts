@@ -1,8 +1,6 @@
 import { RouterOutputs } from "../../../api/src";
 
-export function getCurrentStatusMessage(
-  beep: RouterOutputs["rider"]["currentRide"],
-): string {
+export function getCurrentStatusMessage(beep: RouterOutputs["rider"]["currentRide"]): string {
   switch (beep?.status) {
     case "waiting":
       return "Waiting for beeper to accept or deny you.";
@@ -19,10 +17,7 @@ export function getCurrentStatusMessage(
   }
 }
 
-export const statusToDescription: Record<
-  RouterOutputs["beep"]["beep"]["status"],
-  string
-> = {
+export const statusToDescription: Record<RouterOutputs["beep"]["beep"]["status"], string> = {
   canceled: "",
   denied: "",
   waiting: "",

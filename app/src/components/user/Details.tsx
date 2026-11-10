@@ -1,7 +1,7 @@
 import { Surface } from "heroui-native";
 import { View } from "react-native";
-import { Text } from '@/components/Text';
-import { Image } from '@/components/Image';
+import { Text } from "@/components/Text";
+import { Image } from "@/components/Image";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
 import { printStars } from "../Stars";
@@ -12,16 +12,14 @@ interface Props {
 }
 
 export function UserDetails(props: Props) {
-  const { data: user } = useQuery(
-    orpc.user.publicUser.queryOptions({ input: props.userId })
-  );
+  const { data: user } = useQuery(orpc.user.publicUser.queryOptions({ input: props.userId }));
 
   const { data: userDetails } = useQuery(
     orpc.user.getUserPrivateDetails.queryOptions({ input: props.userId }),
   );
 
   const { data: car } = useQuery(
-    orpc.user.getUsersDefaultCar.queryOptions({ input: props.userId })
+    orpc.user.getUsersDefaultCar.queryOptions({ input: props.userId }),
   );
 
   if (!user) {
@@ -46,34 +44,38 @@ export function UserDetails(props: Props) {
           <Text weight="800">Beeping</Text>
           <View className="flex flex-row gap-2 items-center">
             <Text color="subtle">{user.isBeeping ? "Yes " : "No"}</Text>
-            {user.isBeeping && (
-              <Text color="subtle">
-                ({user.queueSize} riders)
-              </Text>
-            )}
+            {user.isBeeping && <Text color="subtle">({user.queueSize} riders)</Text>}
             {/* <Indicator color={user.isBeeping ? "green" : "red"} /> */}
           </View>
         </View>
         <View className="flex flex-row justify-between">
           <Text weight="800">Rates</Text>
-          <Text selectable color="subtle">${user.singlesRate} singles / ${user.groupRate} groups</Text>
+          <Text selectable color="subtle">
+            ${user.singlesRate} singles / ${user.groupRate} groups
+          </Text>
         </View>
         {userDetails?.phone ? (
           <View className="flex flex-row justify-between">
             <Text weight="800">Phone Number</Text>
-            <Text selectable color="subtle">{userDetails.phone}</Text>
+            <Text selectable color="subtle">
+              {userDetails.phone}
+            </Text>
           </View>
         ) : null}
         {user.venmo ? (
           <View className="flex flex-row justify-between">
             <Text weight="800">Venmo</Text>
-            <Text selectable color="subtle">{user.venmo}</Text>
+            <Text selectable color="subtle">
+              {user.venmo}
+            </Text>
           </View>
         ) : null}
         {user.cashapp ? (
           <View className="flex flex-row justify-between">
             <Text weight="800">Cash App</Text>
-            <Text selectable color="subtle">{user.cashapp}</Text>
+            <Text selectable color="subtle">
+              {user.cashapp}
+            </Text>
           </View>
         ) : null}
         {car && (
@@ -94,10 +96,7 @@ export function UserDetails(props: Props) {
                 <Indicator color={car.color as Color} />
               </View>
             </View>
-            <Image
-              src={car.photo}
-              style={{ width: "100%", height: 200, borderRadius: 16 }}
-            />
+            <Image src={car.photo} style={{ width: "100%", height: 200, borderRadius: 16 }} />
           </>
         )}
       </Surface>

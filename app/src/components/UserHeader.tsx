@@ -9,7 +9,7 @@ interface Props {
 
 export function UserHeader({ picture, name }: Props) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
       <Text size="3xl" weight="800">
         {name}
       </Text>

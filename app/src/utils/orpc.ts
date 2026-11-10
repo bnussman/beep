@@ -1,13 +1,13 @@
 import * as Sentry from "@sentry/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
-import { COMMON_ERROR_STATUS_MAP, createORPCClient, DynamicLink, ORPCError } from '@orpc/client';
-import { RPCLink } from '@orpc/client/fetch';
-import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
-import { AppRouterClient, RouterOutputs } from '../../../api/src'
-import { createTanstackQueryUtils } from '@orpc/tanstack-query'
+import { COMMON_ERROR_STATUS_MAP, createORPCClient, DynamicLink, ORPCError } from "@orpc/client";
+import { RPCLink } from "@orpc/client/fetch";
+import { RPCLink as WSRPCLink } from "@orpc/client/websocket";
+import { AppRouterClient, RouterOutputs } from "../../../api/src";
+import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { isWeb } from "./constants";
-import { ClientRetryPlugin } from '@orpc/client/plugins'
+import { ClientRetryPlugin } from "@orpc/client/plugins";
 import { RPCSerializer } from "./serializer";
 
 export async function getAuthToken() {
@@ -44,13 +44,11 @@ function getLocalIP() {
 const ip = getLocalIP();
 
 const origin = __DEV__ ? `http://${ip}:3000` : "https://api.ridebeep.app";
-const wsUrl = __DEV__
-  ? `ws://${ip}:3000`
-  : "wss://api.ridebeep.app";
+const wsUrl = __DEV__ ? `ws://${ip}:3000` : "wss://api.ridebeep.app";
 
 const httpLink = new RPCLink({
   origin,
-  url: '/',
+  url: "/",
   headers: async () => {
     const token = await getAuthToken();
 
@@ -63,11 +61,11 @@ const httpLink = new RPCLink({
   serializer: new RPCSerializer(),
   fetch(url, init) {
     return fetch(url, init);
-  }
-})
+  },
+});
 
 interface ClientContext {
-  ws?: boolean
+  ws?: boolean;
 }
 
 const wsLink = new WSRPCLink({
@@ -76,23 +74,24 @@ const wsLink = new WSRPCLink({
     delay(info) {
       return info.attempt === 1 ? 0 : 2_000;
     },
-    onClose: true
+    onClose: true,
   },
   plugins: [
     new ClientRetryPlugin({
       default: {
         retryDelay: (value) => {
-          return value.attempt === 1 ? 0 : 2_000
+          return value.attempt === 1 ? 0 : 2_000;
         },
         retry: () => {
-          return Number.POSITIVE_INFINITY
+          return Number.POSITIVE_INFINITY;
         },
         shouldRetry: (ctx) => {
           if (!(ctx.error instanceof ORPCError)) {
             return true; // Network/transport errors
           }
 
-          const statusCode = COMMON_ERROR_STATUS_MAP[ctx.error.code as keyof typeof COMMON_ERROR_STATUS_MAP] ?? 500;
+          const statusCode =
+            COMMON_ERROR_STATUS_MAP[ctx.error.code as keyof typeof COMMON_ERROR_STATUS_MAP] ?? 500;
 
           return statusCode >= 500;
         },
@@ -100,24 +99,24 @@ const wsLink = new WSRPCLink({
     }),
   ],
   headers: async () => {
-     const token = await getAuthToken();
+    const token = await getAuthToken();
 
-     if (!token) {
-       return {};
-     }
+    if (!token) {
+      return {};
+    }
 
-     return { Authorization: `Bearer ${token}` };
-   },
-})
+    return { Authorization: `Bearer ${token}` };
+  },
+});
 
 const link = new DynamicLink<ClientContext>((options, path, input) => {
   if (options.context.ws) {
-    return wsLink
+    return wsLink;
   }
 
-  return httpLink
-})
+  return httpLink;
+});
 
-export const orpcClient: AppRouterClient = createORPCClient(link)
+export const orpcClient: AppRouterClient = createORPCClient(link);
 
 export const orpc = createTanstackQueryUtils(orpcClient);

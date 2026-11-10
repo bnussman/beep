@@ -19,14 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RouterOutputs } from "../../../../api/src";
 import { orpc } from "@/utils/orpc";
 import { MenuTrigger } from "../MenuTrigger";
-import {
-  call,
-  openCashApp,
-  openDirections,
-  openMaps,
-  openVenmo,
-  sms,
-} from "@/utils/links";
+import { call, openCashApp, openDirections, openMaps, openVenmo, sms } from "@/utils/links";
 
 interface Props {
   beep: RouterOutputs["beeper"]["queue"][number];
@@ -42,7 +35,7 @@ export function Beep(props: Props) {
       input: {
         origin: beep.origin,
         destination: beep.destination,
-      }
+      },
     }),
   );
 
@@ -119,7 +112,7 @@ export function Beep(props: Props) {
       style={{
         paddingHorizontal: 16,
         gap: 16,
-        height: '100%',
+        height: "100%",
         paddingTop: isIOS ? 56 : isAndroid ? 0 : 16,
         paddingBottom: isIOS ? 20 : isAndroid ? 96 : 16,
       }}
@@ -207,9 +200,7 @@ export function Beep(props: Props) {
               <Text weight="bold" style={{ flexShrink: 1 }}>
                 Duration
               </Text>
-              <Text style={{ flexShrink: 1 }}>
-                {Math.round(route.duration / 60)} min
-              </Text>
+              <Text style={{ flexShrink: 1 }}>{Math.round(route.duration / 60)} min</Text>
             </View>
             <View style={{ flexShrink: 1, justifyContent: "center", gap: 4 }}>
               <Text weight="bold" style={{ flexShrink: 1 }}>
@@ -290,8 +281,7 @@ export function Beep(props: Props) {
                 {
                   title: "Directions to Rider",
                   sfIcon: "figure.wave",
-                  onClick: () =>
-                    openDirections("Current+Location", beep.origin),
+                  onClick: () => openDirections("Current+Location", beep.origin),
                 },
                 {
                   title: "Directions for Beep",
@@ -354,11 +344,7 @@ export function Beep(props: Props) {
         {beep.status === "waiting" ? (
           <View style={{ flexDirection: "row", gap: 8, flexGrow: 1 }}>
             <AcceptDenyButton item={beep} type="deny" />
-            <AcceptDenyButton
-              style={{ flexGrow: 1 }}
-              item={beep}
-              type="accept"
-            />
+            <AcceptDenyButton style={{ flexGrow: 1 }} item={beep} type="accept" />
           </View>
         ) : (
           <ActionButton beep={beep} />

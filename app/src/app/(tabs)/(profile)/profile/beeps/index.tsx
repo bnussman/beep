@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import { useLayoutEffect, useState } from "react";
 import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
@@ -12,7 +12,7 @@ import { Menu, Option } from "@/components/Menu";
 import { capitalize } from "@/utils/strings";
 import { RouterOutputs } from "../../../../../../../api/src";
 import { orpc } from "@/utils/orpc";
-import { MenuTrigger } from '@/components/MenuTrigger';
+import { MenuTrigger } from "@/components/MenuTrigger";
 
 const beepStatuses: BeepStatus[] = [
   "canceled",
@@ -25,27 +25,28 @@ const beepStatuses: BeepStatus[] = [
   "complete",
 ];
 
-type BeepStatus = RouterOutputs['beep']['beep']['status'];
+type BeepStatus = RouterOutputs["beep"]["beep"]["status"];
 
 export default function BeepsScreen() {
   const { user } = useUser();
   const navigation = useNavigation();
 
-  const [statuses, setStatuses] = useState<BeepStatus[]>(['complete']);
+  const [statuses, setStatuses] = useState<BeepStatus[]>(["complete"]);
 
   const options: Option[] = beepStatuses.map((status) => {
     const checked = statuses.includes(status);
 
     return {
-      title: capitalize(status.replaceAll('_', ' ')),
+      title: capitalize(status.replaceAll("_", " ")),
       checked,
       keepsMenuPresented: true,
-      onClick: () => setStatuses((prev) => {
-        if (checked) {
-          return prev.filter(s => s !== status)
-        }
-        return [...prev, status];
-      })
+      onClick: () =>
+        setStatuses((prev) => {
+          if (checked) {
+            return prev.filter((s) => s !== status);
+          }
+          return [...prev, status];
+        }),
     };
   });
 
@@ -57,40 +58,44 @@ export default function BeepsScreen() {
       headerRight: () => (
         <Menu
           label="Filter beeps by status"
-          trigger={(props) => <MenuTrigger symbolViewProps={{ name: { ios: 'line.3.horizontal.decrease', android: 'filter_list', web: 'filter_list' } }} {...props} />}
+          trigger={(props) => (
+            <MenuTrigger
+              symbolViewProps={{
+                name: {
+                  ios: "line.3.horizontal.decrease",
+                  android: "filter_list",
+                  web: "filter_list",
+                },
+              }}
+              {...props}
+            />
+          )}
           options={options}
         />
-      )
+      ),
     });
   }, [options]);
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    isRefetching,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery(
-    orpc.beep.beeps.infiniteOptions({
-      input: (page: number) => ({
-        userId: user?.id,
-        pageSize: PAGE_SIZE,
-        status: statuses,
-        page,
+  const { data, isLoading, error, refetch, isRefetching, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery(
+      orpc.beep.beeps.infiniteOptions({
+        input: (page: number) => ({
+          userId: user?.id,
+          pageSize: PAGE_SIZE,
+          status: statuses,
+          page,
+        }),
+        initialPageParam: 1,
+        placeholderData: keepPreviousData,
+        getNextPageParam(page) {
+          if (page.page === page.pages) {
+            return undefined;
+          }
+          return page.page + 1;
+        },
+        refetchOnMount: false,
       }),
-      initialPageParam: 1,
-      placeholderData: keepPreviousData,
-      getNextPageParam(page) {
-        if (page.page === page.pages) {
-          return undefined;
-        }
-        return page.page + 1;
-      },
-      refetchOnMount: false,
-    }),
-  );
+    );
 
   const beeps = data?.pages.flatMap((page) => page.beeps);
 

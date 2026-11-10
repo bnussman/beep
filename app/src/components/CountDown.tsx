@@ -6,9 +6,7 @@ interface Props {
 }
 
 export const Countdown = (props: Props) => {
-  const [timeRemaining, setTimeRemaining] = useState(
-    getTimeRemaining(props.date)
-  );
+  const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(props.date));
 
   useEffect(() => {
     setTimeRemaining(getTimeRemaining(props.date));

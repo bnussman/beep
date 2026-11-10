@@ -1,6 +1,7 @@
 {
   "name": "@beep/app",
   "version": "2.23.0",
+  "private": true,
   "main": "expo-router/entry",
   "scripts": {
     "dev": "expo start --dev-client --web",
@@ -8,7 +9,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -72,21 +75,21 @@
     "@types/react-dom": "~19.3.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "babel-preset-expo": "~58.0.0",
+    "oxfmt": "^0.78.0",
     "typescript": "^6.0.3"
-  },
-  "private": true,
-  "expo": {
-    "doctor": {
-      "reactNativeDirectoryCheck": {
-        "listUnknownPackages": false
-      }
-    }
   },
   "devEngines": {
     "runtime": {
       "name": "node",
       "version": "^24.4.0",
       "onFail": "download"
+    }
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
     }
   }
 }

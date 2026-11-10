@@ -10,9 +10,7 @@ export default function Layout() {
 
   const enabled = user && user.isBeeping;
 
-  const { data: queue } = useQuery(
-    orpc.beeper.queue.queryOptions({ enabled })
-  );
+  const { data: queue } = useQuery(orpc.beeper.queue.queryOptions({ enabled }));
 
   useSubscription({
     ...orpc.beeper.watchQueue.liveOptions({
@@ -21,7 +19,7 @@ export default function Layout() {
     }),
     onData(data) {
       queryClient.setQueryData(orpc.beeper.queue.queryKey(), data);
-    }
+    },
   });
 
   return (

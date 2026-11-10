@@ -4,12 +4,12 @@ import { isWeb } from "./constants";
 
 Sentry.init({
   release: config.version,
-  dsn: 'https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.us.sentry.io/6358990',
+  dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.us.sentry.io/6358990",
   sendDefaultPii: true,
   enableLogs: true,
   environment: __DEV__ ? "local" : "production",
   tracesSampleRate: 0.25,
-  replaysOnErrorSampleRate: 0.10,
+  replaysOnErrorSampleRate: 0.1,
   integrations: [
     Sentry.mobileReplayIntegration(),
     Sentry.feedbackIntegration(),
@@ -18,10 +18,6 @@ Sentry.init({
     Sentry.expoRouterIntegration(),
   ],
   tracePropagationTargets: isWeb
-    ? [
-      "localhost",
-      "https://api.dev.ridebeep.app",
-      "https://api.ridebeep.app"
-    ]
+    ? ["localhost", "https://api.dev.ridebeep.app", "https://api.ridebeep.app"]
     : undefined,
 });

@@ -66,7 +66,7 @@ export default function SignUpScreen() {
     await signup({
       ...variables,
       pushToken: pushToken ?? undefined,
-      photo: getFile(variables.photo) as File
+      photo: getFile(variables.photo) as File,
     }).catch(() => {});
   });
 
@@ -147,15 +147,10 @@ export default function SignUpScreen() {
           name="photo"
           render={({ field, fieldState }) => (
             <TextField isInvalid={!!fieldState.error}>
-              <TouchableOpacity
-                onPress={chooseProfilePhoto}
-                aria-label="profile photo"
-              >
+              <TouchableOpacity onPress={chooseProfilePhoto} aria-label="profile photo">
                 <Avatar src={field.value?.uri} size="xl" />
               </TouchableOpacity>
-              <FieldError className="max-w-32 text-center">
-                {fieldState.error?.message}
-              </FieldError>
+              <FieldError className="max-w-32 text-center">{fieldState.error?.message}</FieldError>
             </TextField>
           )}
         />

@@ -27,9 +27,7 @@ export function RideToolbar() {
     }
 
     if (isMobile) {
-      const message = [
-        `Are you sure you want to cancel your ride with ${beep.beeper.first}?`,
-      ];
+      const message = [`Are you sure you want to cancel your ride with ${beep.beeper.first}?`];
 
       const messageMap = {
         on_the_way: "They are on the way",
@@ -163,16 +161,10 @@ export function RideToolbar() {
       <Stack.Toolbar placement="left"></Stack.Toolbar>
       <Stack.Toolbar placement="right">
         {beep && beep.status !== "waiting" && (
-          <Stack.Toolbar.Button
-            icon="phone.fill"
-            onPress={() => call(beep.beeper.id)}
-          />
+          <Stack.Toolbar.Button icon="phone.fill" onPress={() => call(beep.beeper.id)} />
         )}
         {beep && beep.status !== "waiting" && (
-          <Stack.Toolbar.Button
-            icon="message.fill"
-            onPress={() => sms(beep.beeper.id)}
-          />
+          <Stack.Toolbar.Button icon="message.fill" onPress={() => sms(beep.beeper.id)} />
         )}
         {beep && beep.status !== "waiting" && (
           <Stack.Toolbar.Menu icon="creditcard.fill">
@@ -209,16 +201,10 @@ export function RideToolbar() {
           <Stack.Toolbar.MenuAction icon="mappin" onPress={onEditOrigin}>
             Pick Up
           </Stack.Toolbar.MenuAction>
-          <Stack.Toolbar.MenuAction
-            icon="mappin.and.ellipse"
-            onPress={onEditDestination}
-          >
+          <Stack.Toolbar.MenuAction icon="mappin.and.ellipse" onPress={onEditDestination}>
             Destination
           </Stack.Toolbar.MenuAction>
-          <Stack.Toolbar.MenuAction
-            icon="person.2.fill"
-            onPress={onEditGroupSize}
-          >
+          <Stack.Toolbar.MenuAction icon="person.2.fill" onPress={onEditGroupSize}>
             Group Size
           </Stack.Toolbar.MenuAction>
         </Stack.Toolbar.Menu>

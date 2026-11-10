@@ -25,7 +25,9 @@ export default function ReportScreen() {
 
   const { data: user } = useQuery(orpc.user.publicUser.queryOptions({ input: id }));
 
-  const { data: rating } = useQuery(orpc.rating.rating.queryOptions({ input: ratingId ?? skipToken }));
+  const { data: rating } = useQuery(
+    orpc.rating.rating.queryOptions({ input: ratingId ?? skipToken }),
+  );
   const { data: beep } = useQuery(orpc.beep.beep.queryOptions({ input: beepId ?? skipToken }));
 
   const { mutateAsync: report, isPending } = useMutation(
@@ -55,23 +57,21 @@ export default function ReportScreen() {
         scrollEnabled={false}
         contentContainerStyle={{ padding: 16, gap: 8 }}
       >
-        {user && (
-          <UserHeader
-            name={`${user.first} ${user.last}`}
-            picture={user.photo}
-          />
-        )}
+        {user && <UserHeader name={`${user.first} ${user.last}`} picture={user.photo} />}
         <View className="my-2">
           {beep && (
             <Text>
-              You are reporting {user?.first} for the beep from <Text weight="600">{beep.origin}</Text> to <Text weight="600">{beep.destination}</Text>{" "}
-              that took place on <Text weight="600">{beep.start.toLocaleDateString()}</Text>.
+              You are reporting {user?.first} for the beep from{" "}
+              <Text weight="600">{beep.origin}</Text> to{" "}
+              <Text weight="600">{beep.destination}</Text> that took place on{" "}
+              <Text weight="600">{beep.start.toLocaleDateString()}</Text>.
             </Text>
           )}
           {rating && (
             <Text>
-              You are reporting {user?.first} for their <Text weight="600">{rating.stars} star</Text> rating they gave you
-              on <Text weight="600">{rating.timestamp.toLocaleDateString()}</Text>.
+              You are reporting {user?.first} for their{" "}
+              <Text weight="600">{rating.stars} star</Text> rating they gave you on{" "}
+              <Text weight="600">{rating.timestamp.toLocaleDateString()}</Text>.
             </Text>
           )}
         </View>
@@ -85,11 +85,7 @@ export default function ReportScreen() {
             onChangeText={(text) => setReason(text)}
           />
         </View>
-        <Button
-          onPress={handleReport}
-          isDisabled={!reason}
-          isLoading={isPending}
-        >
+        <Button onPress={handleReport} isDisabled={!reason} isLoading={isPending}>
           Report User
         </Button>
       </KeyboardAwareScrollView>

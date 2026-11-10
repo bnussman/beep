@@ -7,10 +7,9 @@ interface Props {
 }
 
 export function ETA(props: Props) {
-
   const renderBody = () => {
     if (props.eta) {
-      const pickUpAt = props.eta.toLocaleTimeString([], { timeStyle: 'short' });
+      const pickUpAt = props.eta.toLocaleTimeString([], { timeStyle: "short" });
 
       return (
         <Text>

@@ -35,7 +35,7 @@ export function ActionButton(props: Props) {
         }
 
         queryClient.invalidateQueries({
-          queryKey: orpc.beep.beeps.key()
+          queryKey: orpc.beep.beeps.key(),
         });
         queryClient.setQueryData(orpc.beeper.queue.queryKey(), data);
       },

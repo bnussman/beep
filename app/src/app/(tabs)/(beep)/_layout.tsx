@@ -27,10 +27,7 @@ export default function Layout() {
         }}
         name="user/[id]/index"
       />
-      <Stack.Screen
-        options={{ headerTitle: "Report" }}
-        name="user/[id]/report"
-      />
+      <Stack.Screen options={{ headerTitle: "Report" }} name="user/[id]/report" />
       <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
       <Stack.Screen
         options={{
@@ -44,9 +41,7 @@ export default function Layout() {
               onPress: () => router.back(),
             },
           ],
-          headerRight: () => (
-            <CloseButton className="mr-2" onPress={() => router.back()} />
-          ),
+          headerRight: () => <CloseButton className="mr-2" onPress={() => router.back()} />,
         }}
         name="premium"
       />

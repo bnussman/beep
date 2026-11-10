@@ -66,8 +66,7 @@ function isNotificationPermissionGranted(
 ) {
   return (
     permissionStatus.granted ||
-    permissionStatus.ios?.status ===
-      Notifications.IosAuthorizationStatus.PROVISIONAL
+    permissionStatus.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
   );
 }
 
@@ -122,8 +121,7 @@ export function setupNotifications() {
       orpcClient.beeper.updateBeep({
         beepId: response.notification.request.content.data?.id as string,
         data: {
-          status:
-            response.actionIdentifier === "accept" ? "accepted" : "denied",
+          status: response.actionIdentifier === "accept" ? "accepted" : "denied",
         },
       });
     }

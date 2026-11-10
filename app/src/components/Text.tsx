@@ -1,9 +1,4 @@
-import {
-  Text as _Text,
-  TextProps as _TextProps,
-  TextStyle,
-  useColorScheme,
-} from "react-native";
+import { Text as _Text, TextProps as _TextProps, TextStyle, useColorScheme } from "react-native";
 import { cn } from "heroui-native";
 
 const fontSizeMap = {

@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import PremiumImage from "../../../../assets/premium.png";
 import { orpc } from "@/utils/orpc";
 import { useEffect, useState } from "react";
@@ -12,11 +12,8 @@ import { FlatList } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
-import type {
-  PurchasesOffering,
-  PurchasesPackage,
-} from "react-native-purchases";
-import { cx } from 'tailwind-variants';
+import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
+import { cx } from "tailwind-variants";
 
 interface Props {
   item: PurchasesOffering;
@@ -32,13 +29,11 @@ function Offering({ item, disabled }: Props) {
         {item.identifier} ✨
       </Text>
       <Text>
-        Promotes you to the top of the beeper list so you get more riders
-        joining your queue
+        Promotes you to the top of the beeper list so you get more riders joining your queue
       </Text>
       <Text size="xs" style={{ marginBottom: 4 }}>
-        Goes into effect immediately upon purchase and cannot be paused. When
-        riders go to find a beeper, beepers are ordered by their premium status,
-        then by their distance.
+        Goes into effect immediately upon purchase and cannot be paused. When riders go to find a
+        beeper, beepers are ordered by their premium status, then by their distance.
       </Text>
       <Image
         source={PremiumImage}
@@ -98,7 +93,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
   return (
     <Card
       variant="secondary"
-      className={cx({ 'border-accent-hover border-2': Boolean(payment) })}
+      className={cx({ "border-accent-hover border-2": Boolean(payment) })}
       style={{
         paddingHorizontal: 8,
         paddingVertical: 8,
@@ -115,11 +110,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
         </Text>
       )}
       <View style={{ flexGrow: 1 }} />
-      <Button
-        isLoading={isPurchasing}
-        onPress={() => onBuy(p)}
-        isDisabled={disabled}
-      >
+      <Button isLoading={isPurchasing} onPress={() => onBuy(p)} isDisabled={disabled}>
         {p.product.priceString}
       </Button>
     </Card>
@@ -141,13 +132,8 @@ function usePackages() {
       const Purchases: typeof import("react-native-purchases").default =
         require("react-native-purchases").default;
       const offerings = await Purchases.getOfferings();
-      if (
-        offerings.current !== null &&
-        offerings.current.availablePackages.length !== 0
-      ) {
-        const topOfBeeperListPackages: PurchasesOffering[] = Object.values(
-          offerings.all,
-        );
+      if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
+        const topOfBeeperListPackages: PurchasesOffering[] = Object.values(offerings.all);
         setOfferings(topOfBeeperListPackages);
       }
     } catch (e) {
@@ -246,9 +232,7 @@ export default function Premium() {
       data={offerings}
       contentContainerStyle={{ padding: 16 }}
       contentInsetAdjustmentBehavior="automatic"
-      renderItem={({ item }) => (
-        <Offering item={item} disabled={numberOfActivePayments > 0} />
-      )}
+      renderItem={({ item }) => <Offering item={item} disabled={numberOfActivePayments > 0} />}
       onRefresh={() => {
         refetch();
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch();

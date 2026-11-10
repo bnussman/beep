@@ -32,31 +32,26 @@ export function BeepersMap() {
     ...orpc.rider.beepersLocations.liveOptions({
       input,
       enabled,
-      context: { ws: true }
+      context: { ws: true },
     }),
     onData(data) {
-      queryClient.setQueryData(
-        orpc.rider.beepersNearMe.queryKey({ input }),
-        (prev) => {
-          if (!prev) {
-            return undefined;
-          }
+      queryClient.setQueryData(orpc.rider.beepersNearMe.queryKey({ input }), (prev) => {
+        if (!prev) {
+          return undefined;
+        }
 
-          const indexOfItem = prev.findIndex(
-            (beeper) => beeper.id === data.id,
-          );
+        const indexOfItem = prev.findIndex((beeper) => beeper.id === data.id);
 
-          if (indexOfItem !== -1) {
-            const newData = [...prev];
-            newData[indexOfItem] = {
-              ...prev[indexOfItem],
-              location: data.location,
-            };
-            return newData;
-          }
-        },
-      );
-    }
+        if (indexOfItem !== -1) {
+          const newData = [...prev];
+          newData[indexOfItem] = {
+            ...prev[indexOfItem],
+            location: data.location,
+          };
+          return newData;
+        }
+      });
+    },
   });
 
   const initialRegion: Region | undefined = location

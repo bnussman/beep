@@ -18,7 +18,7 @@ import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { RouterInputs } from "../../../../../../../api/src";
 
-interface Values extends Omit<RouterInputs['car']['createCar'], 'photo'> {
+interface Values extends Omit<RouterInputs["car"]["createCar"], "photo"> {
   photo: ImagePicker.ImagePickerAsset;
 }
 
@@ -35,9 +35,7 @@ export default function AddCar() {
 
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
 
-  const { data: colors } = useQuery(
-    orpc.car.getColors.queryOptions()
-  );
+  const { data: colors } = useQuery(orpc.car.getColors.queryOptions());
 
   const { data: models } = useQuery(
     orpc.car.getModels.queryOptions({ input: make ? make : skipToken }),
@@ -84,8 +82,8 @@ export default function AddCar() {
   const onSubmit = handleSubmit(async (variables) => {
     await addCar({
       ...variables,
-      photo: getFile(variables.photo) as File
-    }).catch(() => { });
+      photo: getFile(variables.photo) as File,
+    }).catch(() => {});
   });
 
   return (
@@ -106,18 +104,15 @@ export default function AddCar() {
               fullWidth
               trigger={({ onPress }) => (
                 <Pressable accessibilityRole="button" onPress={onPress}>
-                  <Input
-                    id="make"
-                    readOnly
-                    value={field.value}
-                    placeholder="Select a make"
-                  />
+                  <Input id="make" readOnly value={field.value} placeholder="Select a make" />
                 </Pressable>
               )}
-              options={makes?.map((make) => ({
-                title: make,
-                onClick: () => field.onChange(make),
-              })) ?? []}
+              options={
+                makes?.map((make) => ({
+                  title: make,
+                  onClick: () => field.onChange(make),
+                })) ?? []
+              }
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
@@ -136,18 +131,15 @@ export default function AddCar() {
               disabled={!make}
               trigger={({ onPress }) => (
                 <Pressable accessibilityRole="button" onPress={onPress}>
-                  <Input
-                    id="model"
-                    readOnly
-                    value={field.value}
-                    placeholder="Select a model"
-                  />
+                  <Input id="model" readOnly value={field.value} placeholder="Select a model" />
                 </Pressable>
               )}
-              options={models?.map((model) => ({
-                title: model,
-                onClick: () => field.onChange(model),
-              })) ?? []}
+              options={
+                models?.map((model) => ({
+                  title: model,
+                  onClick: () => field.onChange(model),
+                })) ?? []
+              }
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
@@ -201,10 +193,12 @@ export default function AddCar() {
                   />
                 </Pressable>
               )}
-              options={colors?.map((color) => ({
-                title: color,
-                onClick: () => field.onChange(color),
-              })) ?? []}
+              options={
+                colors?.map((color) => ({
+                  title: color,
+                  onClick: () => field.onChange(color),
+                })) ?? []
+              }
             />
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
@@ -237,11 +231,7 @@ export default function AddCar() {
           </TextField>
         )}
       />
-      <Button
-        isLoading={isSubmitting}
-        onPress={() => onSubmit()}
-        isDisabled={isSubmitting}
-      >
+      <Button isLoading={isSubmitting} onPress={() => onSubmit()} isDisabled={isSubmitting}>
         Add Car
       </Button>
     </KeyboardAwareScrollView>

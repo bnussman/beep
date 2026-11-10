@@ -1,9 +1,5 @@
 import { useEffect } from "react";
-import {
-  checkForUpdateAsync,
-  fetchUpdateAsync,
-  reloadAsync,
-} from "expo-updates";
+import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from "expo-updates";
 import { captureException } from "@sentry/react-native";
 
 async function checkForUpdates() {

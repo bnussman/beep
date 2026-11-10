@@ -1,8 +1,4 @@
-import {
-  Button as HeroButton,
-  ButtonRootProps,
-  useThemeColor,
-} from "heroui-native";
+import { Button as HeroButton, ButtonRootProps, useThemeColor } from "heroui-native";
 import { ActivityIndicator } from "react-native";
 import { isWeb } from "@/utils/constants";
 
@@ -19,12 +15,8 @@ export function Button(props: Props & ButtonRootProps) {
   const themeColorAccentForeground = useThemeColor("accent-foreground");
 
   return (
-    <HeroButton {...rest} variant={rest.variant === 'ghost' && isWeb ? 'secondary' : rest.variant}>
-      {isLoading ? (
-        <ActivityIndicator color={themeColorAccentForeground} />
-      ) : (
-        children
-      )}
+    <HeroButton {...rest} variant={rest.variant === "ghost" && isWeb ? "secondary" : rest.variant}>
+      {isLoading ? <ActivityIndicator color={themeColorAccentForeground} /> : children}
     </HeroButton>
   );
 }

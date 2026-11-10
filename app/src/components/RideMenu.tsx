@@ -28,9 +28,7 @@ export function RideMenu() {
     }
 
     if (isMobile) {
-      const message = [
-        `Are you sure you want to cancel your ride with ${beep.beeper.first}?`,
-      ];
+      const message = [`Are you sure you want to cancel your ride with ${beep.beeper.first}?`];
 
       const messageMap = {
         on_the_way: "They are on the way",

@@ -1,8 +1,4 @@
-import {
-  PressableFeedback,
-  Card as HeroCard,
-  CardRootProps,
-} from "heroui-native";
+import { PressableFeedback, Card as HeroCard, CardRootProps } from "heroui-native";
 
 interface Props extends CardRootProps {
   /**

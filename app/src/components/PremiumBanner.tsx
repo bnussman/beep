@@ -31,9 +31,7 @@ export function PremiumBanner() {
           <Text style={{ textAlign: "center", marginBottom: 8 }}>
             Get premium to show at the top of the beeper list
           </Text>
-          <Button onPress={() => router.navigate("/premium")}>
-            Get Premium 👑
-          </Button>
+          <Button onPress={() => router.navigate("/premium")}>Get Premium 👑</Button>
         </>
       )}
     </View>

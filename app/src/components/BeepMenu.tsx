@@ -21,15 +21,13 @@ export function useBeepMenuOptions(props: Props): Option[] {
     orpc.rating.deleteRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: orpc.rating.ratings.key()
+          queryKey: orpc.rating.ratings.key(),
         });
-        queryClient.invalidateQueries(
-          orpc.rider.getLastBeepToRate.queryOptions(),
-        );
+        queryClient.invalidateQueries(orpc.rider.getLastBeepToRate.queryOptions());
         queryClient.invalidateQueries({
-          queryKey: orpc.beep.beeps.key()
+          queryKey: orpc.beep.beeps.key(),
         });
-        queryClient.invalidateQueries({ queryKey: orpc.beep.beep.key({ input: beepId })});
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beep.key({ input: beepId }) });
       },
       onError(error) {
         alert(error.message);
@@ -50,7 +48,7 @@ export function useBeepMenuOptions(props: Props): Option[] {
 
     const otherUsersRating = beep?.ratings.find((rating) => rating.rater_id === otherUser?.id);
 
-    if (!otherUsersRating ) {
+    if (!otherUsersRating) {
       return alert(`${otherUser.first} has not left a rating for this Beep.`);
     }
 
@@ -82,7 +80,6 @@ export function useBeepMenuOptions(props: Props): Option[] {
     });
   };
 
-
   const onDeleteRating = () => {
     if (!myRating) {
       return alert("Rating not found.");
@@ -111,7 +108,7 @@ export function useBeepMenuOptions(props: Props): Option[] {
           title: "Rating",
           sfIcon: "star.bubble.fill",
           onClick: onReportRating,
-        }
+        },
       ],
     },
     {
@@ -124,14 +121,8 @@ export function useBeepMenuOptions(props: Props): Option[] {
   ];
 }
 
-
 export function BeepMenu(props: Props) {
   const options = useBeepMenuOptions(props);
 
-  return (
-    <Menu
-      trigger={MenuTrigger}
-      options={options}
-    />
-  );
+  return <Menu trigger={MenuTrigger} options={options} />;
 }

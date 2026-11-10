@@ -49,18 +49,13 @@ export default function Layout() {
                   onPress: () => router.back(),
                 },
               ],
-              headerRight: () => (
-                <CloseButton className="mr-2" onPress={() => router.back()} />
-              ),
+              headerRight: () => <CloseButton className="mr-2" onPress={() => router.back()} />,
             };
           }}
           name="ride/pick-location"
         />
         <Stack.Screen name="ride/map" options={{ headerTitle: "Beeper Map" }} />
-        <Stack.Screen
-          name="ride/pick"
-          options={{ headerTitle: "Choose Beeper" }}
-        />
+        <Stack.Screen name="ride/pick" options={{ headerTitle: "Choose Beeper" }} />
         <Stack.Screen
           options={(route) => {
             const params = route.route.params as { id: string };
@@ -77,10 +72,7 @@ export default function Layout() {
           }}
           name="user/[id]/index"
         />
-        <Stack.Screen
-          options={{ headerTitle: "Report" }}
-          name="user/[id]/report"
-        />
+        <Stack.Screen options={{ headerTitle: "Report" }} name="user/[id]/report" />
         <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
       </Stack>
     </FormProvider>

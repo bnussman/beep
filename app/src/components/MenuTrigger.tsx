@@ -15,10 +15,7 @@ export function MenuTrigger({ symbolViewProps, style, ...props }: Props) {
     <Button
       variant="ghost"
       {...props}
-      style={[
-        { paddingHorizontal: Platform.select({ ios: 6, android: 4, web: 16 }) },
-        style,
-      ]}
+      style={[{ paddingHorizontal: Platform.select({ ios: 6, android: 4, web: 16 }) }, style]}
     >
       <SymbolView
         name={{ ios: "ellipsis", android: "more_vert", web: "more_vert" }}

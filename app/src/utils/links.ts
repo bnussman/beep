@@ -25,7 +25,6 @@ export function getCashAppLink(
   groupRate?: number,
   singlesRate?: number,
 ) {
-
   if (groupSize === undefined || groupRate === undefined) {
     return `https://cash.app/$${username}`;
   }
@@ -45,8 +44,9 @@ export function openCashApp(
     return alert("User does not have a Cash App username configured.");
   }
 
-  Linking.openURL(getCashAppLink(username, groupSize, groupRate, singlesRate))
-  .catch((error) => alert("Unable to open Cash App. Please make sure you have the app installed."));
+  Linking.openURL(getCashAppLink(username, groupSize, groupRate, singlesRate)).catch((error) =>
+    alert("Unable to open Cash App. Please make sure you have the app installed."),
+  );
 }
 
 export function getVenmoLink(
@@ -76,12 +76,12 @@ export function openVenmo(
   transaction?: "pay" | "charge",
 ) {
   if (!username) {
-    return alert("User does not have a Venmo username configured.")
+    return alert("User does not have a Venmo username configured.");
   }
 
-  Linking.openURL(
-    getVenmoLink(username, groupSize, groupRate, singlesRate, transaction),
-  ).catch((error) => alert("Unable to open Venmo. Please make sure you have the app installed."));
+  Linking.openURL(getVenmoLink(username, groupSize, groupRate, singlesRate, transaction)).catch(
+    (error) => alert("Unable to open Venmo. Please make sure you have the app installed."),
+  );
 }
 
 export function shareVenmoInformation(
@@ -108,9 +108,7 @@ export function shareVenmoInformation(
 }
 
 export async function call(userId: string) {
-  const { data, error } = await tryCatch(
-    orpcClient.user.getUserPrivateDetails(userId),
-  );
+  const { data, error } = await tryCatch(orpcClient.user.getUserPrivateDetails(userId));
 
   if (error) {
     return alert(error.message);
@@ -127,9 +125,7 @@ export async function call(userId: string) {
 }
 
 export async function sms(userId: string) {
-  const { data, error } = await tryCatch(
-    orpcClient.user.getUserPrivateDetails(userId),
-  );
+  const { data, error } = await tryCatch(orpcClient.user.getUserPrivateDetails(userId));
 
   if (error) {
     return alert(error.message);

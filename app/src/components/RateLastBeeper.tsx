@@ -33,8 +33,7 @@ export function RateLastBeeper() {
             Rate {otherUser.first} {otherUser.last}
           </Alert.Title>
           <Alert.Description>
-            You recently had a beep with {otherUser.first}. Tap here to rate
-            them!
+            You recently had a beep with {otherUser.first}. Tap here to rate them!
           </Alert.Description>
         </Alert.Content>
       </Alert>

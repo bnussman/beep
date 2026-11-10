@@ -4,8 +4,7 @@ import Constants from "expo-constants";
 
 export const isRunningInExpoGo = Constants.appOwnership === "expo";
 
-export const isMobile: boolean =
-  Platform.OS == "ios" || Platform.OS == "android";
+export const isMobile: boolean = Platform.OS == "ios" || Platform.OS == "android";
 
 export const isSimulator = Device.isDevice === false;
 

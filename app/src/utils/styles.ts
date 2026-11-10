@@ -1,22 +1,23 @@
 import { StyleProp, ViewStyle } from "react-native";
 import { isIOS } from "./constants";
 
-export const paddedContainerStyle =
-  !isIOS ? {
-    paddingVertical: 16,
-  } : {};
+export const paddedContainerStyle = !isIOS
+  ? {
+      paddingVertical: 16,
+    }
+  : {};
 
 export function getContentContainerStyle(shouldCenter: boolean): StyleProp<ViewStyle> {
   if (shouldCenter) {
     return {
       flex: 1,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      ...(isIOS && ({
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      ...(isIOS && {
         flex: undefined,
-        height: '75%'
-      })),
+        height: "75%",
+      }),
     };
   }
 

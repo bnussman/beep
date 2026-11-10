@@ -100,8 +100,7 @@ export default function StartBeepingScreen() {
   const handleIsBeepingChange = form.handleSubmit(async (values) => {
     const willBeBeeping = !user?.isBeeping;
 
-    let location: { latitude: number; longitude: number } | undefined =
-      undefined;
+    let location: { latitude: number; longitude: number } | undefined = undefined;
 
     if (willBeBeeping) {
       const hasLoactionPermission = await requestLocationPermission();
@@ -161,17 +160,10 @@ export default function StartBeepingScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: user?.isBeeping
-        ? () => (
-          <Menu
-            trigger={MenuTrigger}
-            options={headerLeftMenuOptions}
-          />
-        )
+        ? () => <Menu trigger={MenuTrigger} options={headerLeftMenuOptions} />
         : null,
       unstable_headerLeftItems: () =>
-        user?.isBeeping
-          ? getNavigationMenuFromOptions(headerLeftMenuOptions)
-          : [],
+        user?.isBeeping ? getNavigationMenuFromOptions(headerLeftMenuOptions) : [],
       unstable_headerRightItems: () =>
         user?.isBeeping
           ? [
@@ -189,7 +181,7 @@ export default function StartBeepingScreen() {
                     },
                   ]
                 : []),
-            {
+              {
                 type: "button",
                 label: "Queue",
                 onPress: () => router.push("/beep/queue"),
@@ -215,10 +207,7 @@ export default function StartBeepingScreen() {
             >
               <Link href="/beep/queue" asChild>
                 <Button>
-                  Queue{" "}
-                  {queue && queue.length > 1
-                    ? `(${String(queue.length - 1)})`
-                    : ""}
+                  Queue {queue && queue.length > 1 ? `(${String(queue.length - 1)})` : ""}
                 </Button>
               </Link>
               {payments?.[0] && (
@@ -267,8 +256,8 @@ export default function StartBeepingScreen() {
             maxWidth: "90%",
           }}
         >
-          If a rider wants a ride, it will appear here. If your app is closed,
-          you will receive a push notification.
+          If a rider wants a ride, it will appear here. If your app is closed, you will receive a
+          push notification.
         </Text>
         {!payments || (payments?.length === 0 && <PremiumBanner />)}
       </View>
@@ -298,9 +287,7 @@ export default function StartBeepingScreen() {
               returnKeyType="next"
               onSubmitEditing={() => form.setFocus("singlesRate")}
             />
-            <Description>
-              Maximum number of riders you can safely fit in your car
-            </Description>
+            <Description>Maximum number of riders you can safely fit in your car</Description>
             <FieldError>{fieldState.error?.message}</FieldError>
           </TextField>
         )}
@@ -349,15 +336,12 @@ export default function StartBeepingScreen() {
           </TextField>
         )}
       />
-      <Button
-        onPress={onToggleIsBeeping}
-        isLoading={form.formState.isSubmitting}
-      >
+      <Button onPress={onToggleIsBeeping} isLoading={form.formState.isSubmitting}>
         Start Beeping
       </Button>
       {/* <Text size="sm" style={{ marginTop: 24, textAlign: 'center' }}>
         Use the toggle in the top right to start beeping
       </Text> */}
-      </KeyboardAwareScrollView>
+    </KeyboardAwareScrollView>
   );
 }

@@ -46,7 +46,7 @@ export function QueueItem({ item: beep }: Props) {
       input: {
         origin: beep.origin,
         destination: beep.destination,
-      }
+      },
     }),
   );
 
@@ -132,16 +132,14 @@ export function QueueItem({ item: beep }: Props) {
                     {beep.rider.rating && printStars(Number(beep.rider.rating))}
                   </Text>
                   <Text size="xs">
-                    <Text color="subtle">
-                      Joined your queue at{" "}
-                    </Text>
+                    <Text color="subtle">Joined your queue at </Text>
                     <Text color="subtle" weight="bold">
                       {new Date(beep.start).toLocaleTimeString(undefined, {
                         timeStyle: "short",
                       })}
                     </Text>
                   </Text>
-                  {beep.status === 'waiting' && (
+                  {beep.status === "waiting" && (
                     <Text color="subtle" size="xs">
                       Please accept or deny this rider.
                     </Text>
@@ -154,22 +152,20 @@ export function QueueItem({ item: beep }: Props) {
           <Separator />
           <View
             style={{
-              display: 'flex',
-              flexDirection: 'row',
+              display: "flex",
+              flexDirection: "row",
               gap: 16,
-              alignItems: 'center',
+              alignItems: "center",
             }}
           >
             <View style={{ flexGrow: 1 }}>
-              <Text weight="bold" >
-                Status
-              </Text>
-              <View style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-                <Text style={{ textTransform: "capitalize",  }}>
-                  {beep.status.replaceAll('_', ' ')}
+              <Text weight="bold">Status</Text>
+              <View style={{ display: "flex", flexDirection: "row", gap: 8, alignItems: "center" }}>
+                <Text style={{ textTransform: "capitalize" }}>
+                  {beep.status.replaceAll("_", " ")}
                 </Text>
-                {beep.status === 'waiting' && <Indicator color="yellow" size={12} />}
-                {beep.status === 'accepted' && <Indicator color="green" size={12} />}
+                {beep.status === "waiting" && <Indicator color="yellow" size={12} />}
+                {beep.status === "accepted" && <Indicator color="green" size={12} />}
               </View>
             </View>
             <Separator orientation="vertical" />
@@ -177,16 +173,13 @@ export function QueueItem({ item: beep }: Props) {
               <Text weight="bold">Group Size</Text>
               <Text>{beep.groupSize}</Text>
             </View>
-            {route && (route.duration / 60 < 60) && (
+            {route && route.duration / 60 < 60 && (
               <>
                 <Separator orientation="vertical" />
                 <View>
-                  <Text weight="bold">
-                    Distance
-                  </Text>
-                  <Text >
-                    {getMiles(route.distance, true)} mi
-                    ({Math.round(route.duration / 60)} min)
+                  <Text weight="bold">Distance</Text>
+                  <Text>
+                    {getMiles(route.distance, true)} mi ({Math.round(route.duration / 60)} min)
                   </Text>
                 </View>
               </>
@@ -218,70 +211,71 @@ export function QueueItem({ item: beep }: Props) {
               />
             </Map>
           )}
-          </Card>
+        </Card>
       )}
-      options={
-        [
-          ...(beep.status === 'waiting' ? [
-            {
-              title: "Accept",
-              sfIcon: "checkmark" as const,
-              onClick: () =>
-              mutate({ beepId: beep.id, data: { status: "accepted" } }),
-            },
-            {
-              title: "Deny",
-              sfIcon: "xmark" as const,
-              destructive: true,
-              onClick: () =>
-              mutate({ beepId: beep.id, data: { status: "denied" } }),
-            }
-          ] : []),
-          ...(beep.status === 'accepted' ? [
-            {
-              title: "Contact",
-              sfIcon: "phone.fill" as const,
-              options: [
-
-                {
-                  title: "Call",
-                  sfIcon: "phone.fill" as const,
-                  onClick: () => call(beep.rider.id),
-                },
-                {
-                  title: "Text",
-                  sfIcon: "message.fill" as const,
-                  onClick: () => sms(beep.rider.id),
-                },
-              ],
-            }] : []),
-          {
-            title: "Directions",
-            sfIcon: "map.fill",
-            options: [
+      options={[
+        ...(beep.status === "waiting"
+          ? [
               {
-                title: "Directions to Rider",
-                sfIcon: "figure.wave",
-                onClick: () =>
-                openDirections("Current+Location", beep.origin),
+                title: "Accept",
+                sfIcon: "checkmark" as const,
+                onClick: () => mutate({ beepId: beep.id, data: { status: "accepted" } }),
               },
               {
-                title: "Directions for Beep",
-                sfIcon: "map.fill",
-                onClick: () => openDirections(beep.origin, beep.destination),
+                title: "Deny",
+                sfIcon: "xmark" as const,
+                destructive: true,
+                onClick: () => mutate({ beepId: beep.id, data: { status: "denied" } }),
               },
-            ],
-          },
-          ...(beep.status === 'accepted' ? [
+            ]
+          : []),
+        ...(beep.status === "accepted"
+          ? [
+              {
+                title: "Contact",
+                sfIcon: "phone.fill" as const,
+                options: [
+                  {
+                    title: "Call",
+                    sfIcon: "phone.fill" as const,
+                    onClick: () => call(beep.rider.id),
+                  },
+                  {
+                    title: "Text",
+                    sfIcon: "message.fill" as const,
+                    onClick: () => sms(beep.rider.id),
+                  },
+                ],
+              },
+            ]
+          : []),
+        {
+          title: "Directions",
+          sfIcon: "map.fill",
+          options: [
             {
-              title: "Cancel Beep",
-              sfIcon: "xmark" as const,
-              onClick: onPromptCancel,
-              destructive: true,
+              title: "Directions to Rider",
+              sfIcon: "figure.wave",
+              onClick: () => openDirections("Current+Location", beep.origin),
             },
-          ] : []),
-        ]
-      }
+            {
+              title: "Directions for Beep",
+              sfIcon: "map.fill",
+              onClick: () => openDirections(beep.origin, beep.destination),
+            },
+          ],
+        },
+        ...(beep.status === "accepted"
+          ? [
+              {
+                title: "Cancel Beep",
+                sfIcon: "xmark" as const,
+                onClick: onPromptCancel,
+                destructive: true,
+              },
+            ]
+          : []),
+      ]}
     />
   );
 }

@@ -128,10 +128,7 @@ export default function LoginScreen() {
         <Button variant="tertiary" onPress={() => router.push("/sign-up")}>
           Sign Up
         </Button>
-        <Button
-          variant="tertiary"
-          onPress={() => router.push("/forgot-password")}
-        >
+        <Button variant="tertiary" onPress={() => router.push("/forgot-password")}>
           Forgot Password
         </Button>
       </View>

@@ -2,12 +2,7 @@ import { useEffect, useRef } from "react";
 import { Text } from "@/components/Text";
 import { getBeeperIcon } from "@/utils/emojis";
 import { MapMarker, Marker } from "react-native-maps";
-import {
-  runOnJS,
-  useDerivedValue,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { runOnJS, useDerivedValue, useSharedValue, withTiming } from "react-native-reanimated";
 
 interface BeeperMakerProps {
   longitude: number;
@@ -44,10 +39,7 @@ export const AnimatedMarker = (props: BeeperMakerProps) => {
   }, [latitude, longitude]);
 
   return (
-    <Marker
-      ref={markerRef}
-      coordinate={{ latitude: latitude.value, longitude: longitude.value }}
-    >
+    <Marker ref={markerRef} coordinate={{ latitude: latitude.value, longitude: longitude.value }}>
       <Text size="3xl">{getBeeperIcon()}</Text>
     </Marker>
   );

@@ -1,4 +1,4 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 import { FlatList, View, ActivityIndicator } from "react-native";
 import { useUser } from "@/utils/useUser";
 import { Rating } from "@/components/Rating";
@@ -11,30 +11,23 @@ import { orpc } from "@/utils/orpc";
 export default function RatingsScreen() {
   const { user } = useUser();
 
-  const {
-    data,
-    isLoading,
-    error,
-    fetchNextPage,
-    refetch,
-    isFetchingNextPage,
-    isRefetching,
-  } = useInfiniteQuery(
-    orpc.rating.ratings.infiniteOptions({
-      input: (page) => ({
-        userId: user?.id,
-        pageSize: PAGE_SIZE,
-        page
+  const { data, isLoading, error, fetchNextPage, refetch, isFetchingNextPage, isRefetching } =
+    useInfiniteQuery(
+      orpc.rating.ratings.infiniteOptions({
+        input: (page) => ({
+          userId: user?.id,
+          pageSize: PAGE_SIZE,
+          page,
+        }),
+        initialPageParam: 1,
+        getNextPageParam(page) {
+          if (page.page === page.pages) {
+            return undefined;
+          }
+          return page.page + 1;
+        },
       }),
-      initialPageParam: 1,
-      getNextPageParam(page) {
-        if (page.page === page.pages) {
-          return undefined;
-        }
-        return page.page + 1;
-      },
-    })
-  );
+    );
 
   const ratings = data?.pages.flatMap((ratings) => ratings.ratings);
 

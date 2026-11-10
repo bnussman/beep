@@ -58,7 +58,7 @@ export interface MenuProps {
   /**
    * The trigger for the menu
    */
-  trigger: ((props: { onPress: () => void; onLongPress: () => void; }) => JSX.Element);
+  trigger: (props: { onPress: () => void; onLongPress: () => void }) => JSX.Element;
   /**
    * Options that render in the Menu
    */
@@ -80,11 +80,10 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
-  const MenuComponent =
-    props.activationMethod === "longPress" ? ContextMenu : BaseMenu;
+  const MenuComponent = props.activationMethod === "longPress" ? ContextMenu : BaseMenu;
 
-  const onPress = () => { };
-  const onLongPress = () => { };
+  const onPress = () => {};
+  const onLongPress = () => {};
 
   if (props.disabled) {
     return props.trigger({ onPress, onLongPress });
@@ -140,10 +139,12 @@ export const Menu = (props: MenuProps) => {
     );
   };
 
-
   return (
     <MenuComponent.Root>
-      <MenuComponent.Trigger render={props.trigger({ onPress, onLongPress })} aria-label={props.label} />
+      <MenuComponent.Trigger
+        render={props.trigger({ onPress, onLongPress })}
+        aria-label={props.label}
+      />
       <MenuComponent.Portal>
         <MenuComponent.Positioner>
           <MenuComponent.Popup className={popupClasses}>
@@ -157,5 +158,4 @@ export const Menu = (props: MenuProps) => {
 
 const popupClasses =
   "bg-surface border-border border rounded-xl p-2 shadow min-w-[200px] max-h-[var(--available-height)] overflow-y-auto";
-const itemClasses =
-  "text-foreground p-2 cursor-pointer hover:bg-surface-hover rounded-xl";
+const itemClasses = "text-foreground p-2 cursor-pointer hover:bg-surface-hover rounded-xl";

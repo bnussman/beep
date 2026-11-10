@@ -20,19 +20,15 @@ export default function BeepDetails() {
   const mapRef = useRef<MapView>(null);
   const { user } = useUser();
 
-  const {
-    data: beep,
-    isPending,
-    error,
-  } = useQuery(orpc.beep.beep.queryOptions({ input: id }));
+  const { data: beep, isPending, error } = useQuery(orpc.beep.beep.queryOptions({ input: id }));
 
   const { data: route } = useQuery(
     orpc.location.getRoute.queryOptions({
       input: beep
         ? {
-          origin: beep.origin,
-          destination: beep.destination,
-        }
+            origin: beep.origin,
+            destination: beep.destination,
+          }
         : skipToken,
     }),
   );
@@ -64,9 +60,7 @@ export default function BeepDetails() {
 
   const myRating = beep?.ratings.find((r) => r.rater_id === user?.id);
 
-  const otherUsersRating = beep?.ratings.find(
-    (r) => r.rater_id === otherUser?.id,
-  );
+  const otherUsersRating = beep?.ratings.find((r) => r.rater_id === otherUser?.id);
 
   if (error) {
     return (
@@ -103,9 +97,7 @@ export default function BeepDetails() {
     <View style={{ gap: 8, height: "100%" }}>
       <Map ref={mapRef} style={{ height: "100%" }}>
         {origin && <Marker coordinate={origin} identifier="origin" />}
-        {destination && (
-          <Marker coordinate={destination} identifier="destination" />
-        )}
+        {destination && <Marker coordinate={destination} identifier="destination" />}
         {polylineCoordinates && (
           <Polyline
             coordinates={polylineCoordinates ?? []}
@@ -116,9 +108,7 @@ export default function BeepDetails() {
         )}
       </Map>
       <BottomSheet snapPoints={["20%"]} enableDynamicSizing>
-        <BottomSheetView
-          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 110 }}
-        >
+        <BottomSheetView style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 110 }}>
           <Link
             href={{
               pathname: "/user/[id]",
@@ -140,10 +130,7 @@ export default function BeepDetails() {
                   <Text>
                     {otherUser?.first} {otherUser?.last}
                   </Text>
-                  <Avatar
-                    src={otherUser?.photo ?? undefined}
-                    style={{ width: 16, height: 16 }}
-                  />
+                  <Avatar src={otherUser?.photo ?? undefined} style={{ width: 16, height: 16 }} />
                 </View>
               </Pressable>
             </Link.Trigger>
@@ -189,9 +176,7 @@ export default function BeepDetails() {
             }}
           >
             <Text weight="800">Status</Text>
-            <Text style={{ textTransform: "capitalize" }}>
-              {beep?.status.replaceAll("_", " ")}
-            </Text>
+            <Text style={{ textTransform: "capitalize" }}>{beep?.status.replaceAll("_", " ")}</Text>
           </View>
           <View
             style={{
@@ -222,9 +207,7 @@ export default function BeepDetails() {
                 }}
               >
                 <Text weight="bold">Your Rating</Text>
-                <Text>
-                  {myRating ? printStars(myRating.stars) : "N/A"}
-                </Text>
+                <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
               </View>
               <View
                 style={{
@@ -233,11 +216,7 @@ export default function BeepDetails() {
                 }}
               >
                 <Text weight="bold">{otherUser?.first}'s Rating</Text>
-                <Text>
-                  {otherUsersRating
-                    ? printStars(otherUsersRating.stars)
-                    : "N/A"}
-                </Text>
+                <Text>{otherUsersRating ? printStars(otherUsersRating.stars) : "N/A"}</Text>
               </View>
             </>
           )}

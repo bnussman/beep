@@ -12,10 +12,7 @@ import { ORPCError } from "@orpc/client";
 import { FieldError, TextField } from "heroui-native";
 
 export default function Feedback() {
-  const {
-    mutateAsync: createFeedback,
-    isPending,
-  } = useMutation(
+  const { mutateAsync: createFeedback, isPending } = useMutation(
     orpc.feedback.createFeedback.mutationOptions({
       onSuccess() {
         Alert.alert(
@@ -49,21 +46,13 @@ export default function Feedback() {
   const onSubmit = handleSubmit((values) => createFeedback(values));
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={{ padding: 16, gap: 8 }}
-      scrollEnabled={false}
-    >
+    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 8 }} scrollEnabled={false}>
       <Card
-        onPress={() =>
-          Linking.openURL(
-            "https://apps.apple.com/us/app/ride-beep-app/id1528601773",
-          )
-        }
+        onPress={() => Linking.openURL("https://apps.apple.com/us/app/ride-beep-app/id1528601773")}
       >
         <Text>
-          Please submit your ideas, bugs, and feature requests here! If you like
-          the app, please consider clicking here to leave us an App Store
-          rating.
+          Please submit your ideas, bugs, and feature requests here! If you like the app, please
+          consider clicking here to leave us an App Store rating.
         </Text>
       </Card>
       <TextField isInvalid={Boolean(errors.message?.message)}>
@@ -85,9 +74,7 @@ export default function Feedback() {
             />
           )}
         />
-        <FieldError>
-          {errors.message?.message}
-        </FieldError>
+        <FieldError>{errors.message?.message}</FieldError>
       </TextField>
       <Button onPress={() => onSubmit()} isLoading={isPending}>
         Submit
