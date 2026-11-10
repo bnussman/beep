@@ -46,7 +46,7 @@ Sentry.init({
   tracesSampleRate: isDevelopment ? 1 : 0.1,
   openTelemetryInstrumentations: [
     new ORPCInstrumentation({
-      propagationEnabled: false,
+      propagation: false,
     }),
   ],
   integrations(integrations) {
