@@ -6,6 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
+import { CreditCardIcon, EnvelopeIcon, MoneyIcon, PhoneIcon } from "@phosphor-icons/react";
+import { Loading } from "../components/Loading";
 import {
   Alert,
   Avatar,
@@ -19,6 +21,7 @@ import {
   toast,
   TextField,
   Typography,
+  InputGroup,
 } from "@heroui/react";
 
 type Values = RouterInputs["user"]["edit"];
@@ -28,7 +31,7 @@ export const Route = createFileRoute('/profile/edit')({
 });
 
 function EditProfile() {
-  const { data: user } = useQuery(orpc.user.me.queryOptions({ enabled: false }));
+  const { data: user, isPending, error } = useQuery(orpc.user.me.queryOptions({ enabled: false }));
 
   const {
     handleSubmit,
@@ -46,13 +49,13 @@ function EditProfile() {
     },
     values: user
       ? {
-          first: user.first,
-          last: user.last,
-          email: user.email,
-          phone: user.phone,
-          venmo: user.venmo,
-          cashapp: user.cashapp,
-        }
+        first: user.first,
+        last: user.last,
+        email: user.email,
+        phone: user.phone,
+        venmo: user.venmo,
+        cashapp: user.cashapp,
+      }
       : undefined,
   });
 
@@ -95,8 +98,19 @@ function EditProfile() {
     }
   };
 
-  if (!user) {
-    return null;
+  if (isPending) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{error.message}</Alert.Title>
+        </Alert.Content>
+      </Alert>
+    );
   }
 
   return (
@@ -172,13 +186,18 @@ function EditProfile() {
           render={({ field, fieldState }) => (
             <TextField {...field} type="email" isInvalid={fieldState.error ? true : undefined}>
               <Label>Email</Label>
-              <Input />
+              <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <EnvelopeIcon size={16} weight="bold" className="text-current" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="name@email.com" />
+              </InputGroup>
               <Description>
-                {(fieldState.error?.message ?? user.isEmailVerified)
-                  ? user.isStudent
-                    ? "Your email is verified and you are a student"
-                    : "Your email is verified"
-                  : "Your email is not verified"}
+                {(user.isEmailVerified && user.isStudent) ?
+                  "Your email is verified and you are a student"
+                  : user.isEmailVerified
+                    ? "Your email is verified"
+                    : "Your email is not verified"}
               </Description>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
@@ -190,7 +209,12 @@ function EditProfile() {
           render={({ field, fieldState }) => (
             <TextField {...field} type="tel" isInvalid={fieldState.error ? true : undefined}>
               <Label>Phone</Label>
-              <Input />
+              <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <PhoneIcon size={16} weight="bold" className="text-current" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="(123) 456-7890" />
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
@@ -201,7 +225,12 @@ function EditProfile() {
           render={({ field, fieldState }) => (
             <TextField {...field} value={field.value ?? ""} isInvalid={fieldState.error ? true : undefined}>
               <Label>Venmo</Label>
-              <Input />
+              <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <CreditCardIcon size={16} weight="bold" className="text-current" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="None" />
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
@@ -212,7 +241,12 @@ function EditProfile() {
           render={({ field, fieldState }) => (
             <TextField {...field} value={field.value ?? ""} isInvalid={fieldState.error ? true : undefined}>
               <Label>Cash App</Label>
-              <Input />
+              <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <MoneyIcon size={16} weight="bold" className="text-current" />
+                </InputGroup.Prefix>
+                <InputGroup.Input placeholder="None" />
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}

@@ -35,7 +35,7 @@ function Report() {
 
   const {
     data: report,
-    isLoading,
+    isPending: reportLoading,
     error,
   } = useQuery(orpc.report.report.queryOptions({ input: reportId }));
 
@@ -72,7 +72,7 @@ function Report() {
     });
   };
 
-  if (isLoading || !report) {
+  if (reportLoading) {
     return <Loading />;
   }
 
