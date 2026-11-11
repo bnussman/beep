@@ -4,7 +4,8 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { orpc } from "../../utils/orpc";
 import { ORPCError } from "@orpc/client";
-import { Alert, Button, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
+import { Alert, Button, FieldError, Form, Label, TextField, Typography } from "@heroui/react";
+import { PasswordInput } from "../../components/PasswordInput";
 
 export const Route = createFileRoute('/password/change')({
   component: ChangePassword,
@@ -86,7 +87,7 @@ function ChangePassword() {
           render={({ field, fieldState }) => (
             <TextField {...field} isRequired minLength={6} isInvalid={fieldState.error ? true : undefined}>
               <Label>Password</Label>
-              <Input type="password" autoComplete="new-password" />
+              <PasswordInput autoComplete="new-password" />
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
@@ -97,7 +98,7 @@ function ChangePassword() {
           render={({ field, fieldState }) => (
             <TextField {...field} isRequired minLength={6} isInvalid={fieldState.error ? true : undefined}>
               <Label>Confirm Password</Label>
-              <Input type="password" autoComplete="new-password" />
+              <PasswordInput autoComplete="new-password" />
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}

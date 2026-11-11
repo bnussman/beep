@@ -4,14 +4,15 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "../utils/orpc";
 import { ORPCError } from "@orpc/client";
-import { UserIcon } from "@phosphor-icons/react";
+import { EnvelopeIcon, PhoneIcon, UserIcon } from "@phosphor-icons/react";
 import {
   Link as RouterLink,
   createFileRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import { Alert, Avatar, Button, Description, FieldError, Form, Input, Label, TextField, Typography } from "@heroui/react";
+import { Alert, Avatar, Button, Description, FieldError, Form, Input, InputGroup, Label, TextField, Typography } from "@heroui/react";
 import { RouterInputs } from "../../../api/src";
+import { PasswordInput } from "../components/PasswordInput";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
@@ -156,7 +157,12 @@ function SignUp() {
           render={({ field, fieldState }) => (
             <TextField {...field} type="email" isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Email</Label>
-              <Input />
+              <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <EnvelopeIcon size={16} weight="bold" className="text-current" />
+                </InputGroup.Prefix>
+                <InputGroup.Input />
+              </InputGroup>
               <Description>
                 You must use a .edu to be eligible to use the Beep App
               </Description>
@@ -172,7 +178,12 @@ function SignUp() {
           render={({ field, fieldState }) => (
             <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Phone Number</Label>
-              <Input type="tel" />
+              <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <PhoneIcon size={16} weight="bold" className="text-current" />
+                </InputGroup.Prefix>
+                <InputGroup.Input type="tel" />
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
@@ -194,7 +205,7 @@ function SignUp() {
           render={({ field, fieldState }) => (
             <TextField {...field} minLength={6} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Password</Label>
-              <Input type="password" />
+              <PasswordInput />
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
