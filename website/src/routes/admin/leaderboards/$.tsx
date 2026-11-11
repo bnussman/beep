@@ -1,8 +1,7 @@
 import React from 'react'
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Link } from '../../../components/Link';
-import { Avatar, Table, Typography } from '@heroui/react';
+import { Table } from '@heroui/react';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';

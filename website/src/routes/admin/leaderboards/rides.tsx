@@ -2,11 +2,10 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import { Link } from "../../../components/Link";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { keepPreviousData } from "@tanstack/react-query";
-import { Avatar, Table, Typography } from "@heroui/react";
+import { Table } from "@heroui/react";
 import { orpc } from "../../../utils/orpc";
 import { BasicUser } from "../../../components/BasicUser";
 
