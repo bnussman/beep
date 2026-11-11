@@ -1,7 +1,5 @@
 # Beep App 🚕
 
-[![Better Stack Badge](https://incidents.betterstack.com/status-badges/v1/monitor/2z3g9.svg)](https://incidents.betterstack.com/?utm_source=status_badge)
-
 ![ci](https://github.com/bnussman/beep/actions/workflows/ci.yml/badge.svg)
 ![e2e](https://github.com/bnussman/beep/actions/workflows/e2e.yml/badge.svg)
 
