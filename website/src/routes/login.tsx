@@ -5,7 +5,7 @@ import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Alert, Button, FieldError, Input, InputGroup, Label, TextField, Typography } from "@heroui/react";
+import { Alert, Button, FieldError, InputGroup, Label, TextField, Typography } from "@heroui/react";
 import { Link } from "../components/Link";
 import { PasswordInput } from "../components/PasswordInput";
 import { UserIcon } from "@phosphor-icons/react";
