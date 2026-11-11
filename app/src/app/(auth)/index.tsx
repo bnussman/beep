@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Text } from "@/components/Text";
-import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { getPushToken } from "@/utils/notifications";
@@ -11,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 import { SplashScreen, useRouter } from "expo-router";
-import { FieldError, TextField } from "heroui-native";
+import { FieldError, Input, TextField } from "heroui-native";
 import { RouterInputs } from "../../../../api/src";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
@@ -125,11 +124,11 @@ export default function LoginScreen() {
         Login
       </Button>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Button variant="tertiary" onPress={() => router.push("/sign-up")}>
+        <Button variant="ghost" onPress={() => router.push("/sign-up")}>
           Sign Up
         </Button>
         <Button
-          variant="tertiary"
+          variant="ghost"
           onPress={() => router.push("/forgot-password")}
         >
           Forgot Password

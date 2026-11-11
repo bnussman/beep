@@ -1,20 +1,14 @@
-import React, { useState } from "react";
 import * as Location from "expo-location";
-import { Input } from "@/components/Input";
+import type { ComponentProps } from "react";
+import { useState } from "react";
+import { InputGroup } from 'heroui-native';
 import { SymbolView } from 'expo-symbols';
 import {
   ActivityIndicator,
   Pressable,
-  TextInput,
-  TextInputProps,
-  View,
 } from "react-native";
 
-interface Props extends TextInputProps {
-  ref: React.Ref<TextInput>;
-}
-
-export function LocationInput(props: Props) {
+export function LocationInput(props: ComponentProps<typeof InputGroup.Input>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGetCurrentLocation = async () => {
@@ -70,36 +64,37 @@ export function LocationInput(props: Props) {
   };
 
   return (
-    <View style={{ flexDirection: "row", gap: 8 }}>
-      <Input
+    <InputGroup>
+      <InputGroup.Input
         placeholder={isLoading ? "Loading" : undefined}
-        style={{ flex: 1, flexGrow: 1, paddingRight: 56 }}
         textContentType="fullStreetAddress"
         {...props}
       />
-      <Pressable
-        style={{
-          position: "absolute",
-          right: 16,
-          top: 12,
-          display: "flex",
-          alignContent: "center",
-          justifyContent: "center",
-          width: 24,
-          height: 24,
-        }}
-        hitSlop={16}
-        onPress={handleGetCurrentLocation}
-      >
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <SymbolView
-            name={{ ios: 'location.fill', android: 'location_pin', web: 'location_pin' }}
-            size={18}
-          />
-        )}
-      </Pressable>
-    </View>
+      <InputGroup.Suffix>
+        <Pressable
+          style={{
+            position: "absolute",
+            right: 16,
+            top: 12,
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            width: 24,
+            height: 24,
+          }}
+          hitSlop={16}
+          onPress={handleGetCurrentLocation}
+        >
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <SymbolView
+              name={{ ios: 'location.fill', android: 'location_pin', web: 'location_pin' }}
+              size={18}
+            />
+          )}
+        </Pressable>
+      </InputGroup.Suffix>
+    </InputGroup>
   );
 }

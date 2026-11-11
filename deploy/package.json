@@ -9,8 +9,8 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@pulumi/docker": "5.2.0",
-    "@pulumi/kubernetes": "4.34.1",
-    "@pulumi/pulumi": "3.262.0"
+    "@pulumi/docker": "5.2.2",
+    "@pulumi/kubernetes": "4.34.3",
+    "@pulumi/pulumi": "3.274.1"
   }
 }

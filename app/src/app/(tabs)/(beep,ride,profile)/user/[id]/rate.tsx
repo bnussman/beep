@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { RateBar } from "@/components/Rate";
-import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { View } from "react-native";
@@ -12,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { orpc } from "@/utils/orpc";
+import { Input } from "heroui-native";
 
 export default function RateScreen() {
   const { id, beepId } = useLocalSearchParams<{ id: string; beepId: string }>();
