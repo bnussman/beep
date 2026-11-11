@@ -1,23 +1,22 @@
-import { createLock, NodeRedisAdapter } from "redlock-universal";
+import { lock } from "@orpc/experimental-lock";
+import { RedisLocker } from "@orpc/experimental-lock/redis";
 import { redis } from "../services/redis";
 import { authCheckerMiddleware } from "./authentication";
 import { o } from "../services/orpc";
 
+const locker = new RedisLocker(redis, {
+  prefix: "lock:",
+  ttl: 5_000,
+});
+
+/**
+ * Prevents a user from running the same procedure concurrently.
+ */
 export const withLock = o
-  .use(authCheckerMiddleware)
-  .middleware(async function handleLock(opts) {
-    const lock = createLock({
-      adapter: new NodeRedisAdapter(redis),
-      key: `${opts.path}-${opts.context.user.id}`,
-      ttl: 5_000,
-    });
-
-    const handle = await lock.acquire();
-
-    const result = await opts.next(opts);
-
-    await lock.release(handle);
-
-    return result;
-  });
-
+.use(authCheckerMiddleware)
+.middleware(
+  lock({
+    locker,
+    key: ({ path, context }) => `${path.join(".")}-${context.user.id}`,
+  })
+);
