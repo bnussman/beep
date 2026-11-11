@@ -12,6 +12,7 @@
         "@banksnussman/osrm": "^0.0.4",
         "@banksnussman/photon": "^0.0.5",
         "@banksnussman/revenuecat": "0.0.6",
+        "@orpc/experimental-lock": "2.0.0-beta.50",
         "@orpc/opentelemetry": "2.0.0-beta.50",
         "@orpc/publisher": "2.0.0-beta.50",
         "@orpc/server": "2.0.0-beta.50",
@@ -23,7 +24,6 @@
         "nodemailer": "^10.5.0",
         "pg": "^8.23.1",
         "redis": "6.3.1",
-        "redlock-universal": "^0.8.10",
         "validator": "^13.15.35",
         "wkx": "^0.5.0",
         "zod": "^4.6.7",
@@ -552,6 +552,8 @@
     "@orpc/client": ["@orpc/client@2.0.0-beta.50", "", { "dependencies": { "@orpc/shared": "2.0.0-beta.50", "@standard-server/core": "~0.16.0", "@standard-server/fetch": "~0.16.0", "@standard-server/peer": "~0.16.0" } }, "sha512-RGn2PMJeEahpFw9pakNxVsm2FIo4A4eu/99weL2u3poTFYp128H4OuL86e1Dh0ThU9QKpqCWtItgjwvRvQZY7Q=="],
 
     "@orpc/contract": ["@orpc/contract@2.0.0-beta.50", "", { "dependencies": { "@orpc/client": "2.0.0-beta.50", "@orpc/shared": "2.0.0-beta.50", "@standard-schema/spec": "^1.1.0" } }, "sha512-LizE0mabmcTUm849dC306xUoGeiWwXN+OA4njptAddcPLph0o1sUPPAXlXzK7Dw9r7S9CzGlI/kqt2AsND6dxg=="],
+
+    "@orpc/experimental-lock": ["@orpc/experimental-lock@2.0.0-beta.50", "", { "dependencies": { "@orpc/server": "2.0.0-beta.50", "@orpc/shared": "2.0.0-beta.50" }, "peerDependencies": { "@upstash/redis": ">=1.35.6", "redis": ">=6.0.0" }, "optionalPeers": ["@upstash/redis", "redis"] }, "sha512-KT2A1PVmqFrr+cCRFtpIfpTf12JyOY035LmJozNlwABPewy5OvKjtW1k+jltOh4LVE8QV1PmrCKlcic/VOSoGw=="],
 
     "@orpc/json-schema": ["@orpc/json-schema@2.0.0-beta.50", "", { "dependencies": { "@openapi-spec/types": "~0.8.0", "@orpc/client": "2.0.0-beta.50", "@orpc/contract": "2.0.0-beta.50", "@orpc/server": "2.0.0-beta.50", "@orpc/shared": "2.0.0-beta.50", "@standard-schema/spec": "^1.1.0" } }, "sha512-mtx2rWiJJ7q+fWxReTSAaved2UpaG8d/QeWOL/onXvfYmTqtvwIt183PLcz6eV4AuExq4tvboWrgf4A8a/IcYA=="],
 
@@ -1744,8 +1746,6 @@
     "readdirp": ["readdirp@5.1.1", "", {}, "sha512-Kko+Y5XQ6fM+Ce3dq3m9YGxnacYZYl9cA1wZjaF3Vbry2L3i1qVg8+CAgNPsXRArPMUMCaOR7oa9Nqntc43JKA=="],
 
     "redis": ["redis@6.3.1", "", { "dependencies": { "@redis/bloom": "6.3.1", "@redis/client": "6.3.1", "@redis/json": "6.3.1", "@redis/search": "6.3.1", "@redis/time-series": "6.3.1" } }, "sha512-mV96ZKxQ4CGn3SyEGaY0Lb9YA443mdVey3c+mdr0NAUaBxiOZGoYCWX8PoM55kictSOmxlJRtZJxIsmZm3jL+w=="],
-
-    "redlock-universal": ["redlock-universal@0.8.10", "", { "peerDependencies": { "@valkey/valkey-glide": ">=2.0.0", "ioredis": ">=5.0.0", "redis": ">=4.0.0" }, "optionalPeers": ["@valkey/valkey-glide", "ioredis", "redis"] }, "sha512-SXbHPGrukkLH5+NKkBBHCkQdSgkIUsH1EdYe/JEE4CwmVuv2mJf6rwYVBbOSOfgfq6u3xHcuO84ZluLWcNLHJA=="],
 
     "regenerate": ["regenerate@1.4.2", "", {}, "sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A=="],
 
