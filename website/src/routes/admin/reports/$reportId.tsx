@@ -13,6 +13,7 @@ import {
   Alert,
   Avatar,
   Button,
+  Card,
   Checkbox,
   FieldError,
   Form,
@@ -96,7 +97,7 @@ function Report() {
           Delete
         </Button>
       </div>
-      <div className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
+      <Card className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
           <Typography type="h2">
             Details
@@ -160,8 +161,8 @@ function Report() {
             </Typography>
           </div>
         </div>
-      </div>
-      <div className="rounded-lg border border-separator bg-surface p-4">
+      </Card>
+      <Card>
         <Form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-row flex-wrap justify-between">
@@ -224,7 +225,7 @@ function Report() {
             </div>
           </div>
         </Form>
-      </div>
+      </Card>
       <DeleteReportDialog
         id={reportId}
         onClose={onClose}
