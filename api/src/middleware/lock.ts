@@ -1,5 +1,4 @@
-import { ORPCError } from "@orpc/server";
-import { LockTimeoutError } from "@orpc/experimental-lock";
+import { lock } from "@orpc/experimental-lock";
 import { RedisLocker } from "@orpc/experimental-lock/redis";
 import { redis } from "../services/redis";
 import { authCheckerMiddleware } from "./authentication";
@@ -14,16 +13,10 @@ const locker = new RedisLocker(redis, {
  * Prevents a user from running the same procedure concurrently.
  */
 export const withLock = o
-  .use(authCheckerMiddleware)
-  .middleware(async function handleLock({ next, path, context, signal }) {
-    const key = `${path.join(".")}-${context.user.id}`;
-
-    try {
-      return await locker.lock(key, () => next(), { signal });
-    } catch (error) {
-      if (error instanceof LockTimeoutError) {
-        throw new ORPCError("CONFLICT", { cause: error });
-      }
-      throw error;
-    }
-  });
+.use(authCheckerMiddleware)
+.use(
+  lock({
+    locker,
+    key: ({ path, context }) => `${path.join(".")}-${context.user.id}`,
+  })
+);
