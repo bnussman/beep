@@ -27,7 +27,7 @@ export function useProfileMenu(): Option[] {
     }),
   );
 
-  const { mutate: logout, isPending } = useMutation(
+  const { mutate: logout } = useMutation(
     orpc.auth.logout.mutationOptions({
       onSuccess() {
         AsyncStorage.clear();

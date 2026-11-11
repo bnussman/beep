@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { SafeAreaView, View } from "react-native";
-import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { UserHeader } from "@/components/UserHeader";
@@ -11,6 +10,7 @@ import { Label } from "@/components/Label";
 import { useLocalSearchParams } from "expo-router";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { orpc } from "@/utils/orpc";
+import { Input } from "heroui-native";
 
 export default function ReportScreen() {
   const { id, beepId, ratingId } = useLocalSearchParams<{

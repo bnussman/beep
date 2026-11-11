@@ -203,7 +203,7 @@ function Beep() {
           Delete
         </Button>
       </div>
-      <Card className="flex flex-col gap-4 rounded-lg border border-separator bg-surface p-4">
+      <Card className="flex flex-col gap-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((item) => (
             <div key={item.title}>

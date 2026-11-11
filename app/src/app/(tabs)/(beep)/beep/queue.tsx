@@ -16,7 +16,7 @@ export default function StartBeepingScreen() {
     }),
   );
 
-  const [currentBeep, ...queue] = data ?? [];
+  const [_, ...queue] = data ?? [];
 
   return (
     <FlatList

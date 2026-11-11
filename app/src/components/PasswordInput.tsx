@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import { Input } from "./Input";
+import { ComponentProps, useState } from "react";
 import { SymbolView } from 'expo-symbols';
-import { Pressable, TextInput, TextInputProps, View } from "react-native";
+import { InputGroup } from 'heroui-native';
+import { Pressable } from "react-native";
 
-interface Props extends TextInputProps {
-  ref: React.Ref<TextInput>;
-}
+type Props = ComponentProps<typeof InputGroup.Input>;
 
 export function PasswordInput(props: Props) {
   const [show, setShow] = useState(false);
@@ -13,14 +11,13 @@ export function PasswordInput(props: Props) {
   const toggleShow = () => setShow((prev) => !prev);
 
   return (
-    <View style={{ flexDirection: 'row', gap: 8 }}>
-      <Input
-        style={{ flexGrow: 1, paddingRight: 52 }}
+    <InputGroup>
+      <InputGroup.Input
         textContentType="password"
         secureTextEntry={!show}
         {...props}
       />
-      <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 28, height: 24 }}>
+      <InputGroup.Suffix>
         <Pressable onPress={toggleShow} hitSlop={24}>
           <SymbolView
             name={{
@@ -31,7 +28,7 @@ export function PasswordInput(props: Props) {
             size={20}
           />
         </Pressable>
-      </View>
-    </View>
+      </InputGroup.Suffix>
+    </InputGroup>
   );
 }

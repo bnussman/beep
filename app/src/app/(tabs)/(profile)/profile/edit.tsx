@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { View, Pressable, ActivityIndicator } from "react-native";
 import { Avatar } from "@/components/Avatar";
-import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
@@ -13,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
+import { Input } from "heroui-native";
 
 export default function EditProfileScreen() {
   const { user } = useUser();

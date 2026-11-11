@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/Button";
-import { Description, TextField } from "heroui-native";
+import { Description, Input, TextField } from "heroui-native";
 import { orpc } from "@/utils/orpc";
 
 export default function ForgotPasswordScreen() {

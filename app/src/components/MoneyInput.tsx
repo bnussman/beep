@@ -1,19 +1,14 @@
-import React from "react";
-import { Input } from "@/components/Input";
+import { ComponentProps } from "react";
 import { Text } from "@/components/Text";
-import { TextInput, TextInputProps, View } from "react-native";
+import { Input, InputGroup } from "heroui-native";
 
-interface Props extends TextInputProps {
-  ref: React.Ref<TextInput>;
-}
-
-export function MoneyInput(props: Props) {
+export function MoneyInput(props: ComponentProps<typeof Input>) {
   return (
-    <View>
-      <Input {...props} keyboardType="numeric" style={{ paddingLeft: 38 }} />
-      <Text style={{ position: 'absolute', top: 16, left: 16 }}>
-        $ 
-      </Text>
-    </View>
+    <InputGroup>
+      <InputGroup.Prefix>
+        <Text>$</Text>
+      </InputGroup.Prefix>
+      <InputGroup.Input keyboardType="numeric" {...props} />
+    </InputGroup>
   );
 }

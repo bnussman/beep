@@ -1,5 +1,5 @@
 import React from "react";
-import { DotsThreeVertical, DotsThreeVerticalIcon } from "@phosphor-icons/react";
+import { DotsThreeOutlineIcon } from "@phosphor-icons/react";
 import { Button, Dropdown, Label } from "@heroui/react";
 import { createLink } from "@tanstack/react-router";
 
@@ -13,8 +13,8 @@ interface Props {
 export function RatingMenu(props: Props) {
   return (
     <Dropdown>
-      <Button isIconOnly variant="tertiary" aria-label="Rating actions">
-        <DotsThreeVerticalIcon size={20} />
+      <Button isIconOnly variant="ghost" aria-label="Rating actions">
+        <DotsThreeOutlineIcon className="size-4" weight="fill" />
       </Button>
       <Dropdown.Popover>
         <Dropdown.Menu>

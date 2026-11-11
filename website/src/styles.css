@@ -4,3 +4,24 @@
 @theme {
   --default-font-family: 'Poppins';
 }
+
+@layer base {
+  [data-theme="light"] {
+    --background: var(--color-white);
+    --surface: var(--color-white);
+    --overlay: var(--color-white);
+    --field-background: var(--color-white);
+    --segment: var(--color-white);
+    --border-width: 1px;
+    --field-border-width: 1px;
+    --border: oklch(88% 0.004 286.32);
+    --field-border: var(--border);
+    --color-field-border-invalid: var(--field-border);
+    --surface-shadow:
+      0 0 0 1px var(--border), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
+      0 2px 4px 0 rgba(0, 0, 0, 0.04);
+    --overlay-shadow:
+      0 0 0 1px var(--border), 0 2px 8px 0 rgba(0, 0, 0, 0.06),
+      0 14px 28px 0 rgba(0, 0, 0, 0.08);
+  }
+}

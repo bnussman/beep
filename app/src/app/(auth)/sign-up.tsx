@@ -9,10 +9,9 @@ import { Avatar } from "@/components/Avatar";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
-import { Input } from "@/components/Input";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
-import { TextField, FieldError, Description } from "heroui-native";
+import { TextField, FieldError, Description, Input } from "heroui-native";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
 

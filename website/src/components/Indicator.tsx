@@ -6,23 +6,22 @@ interface Props extends React.HTMLAttributes<HTMLSpanElement> {
   tooltip?: string;
 }
 
-const colorMap: Record<string, string> = {
-  green: "#81c784",
-  red: "#e57373",
-  yellow: "#ffb74d",
-  blue: "#64b5f6",
-  silver: "gray",
+const colorClasses: Record<string, string> = {
+  green: "bg-success",
+  red: "bg-danger",
+  yellow: "bg-warning",
+  blue: "bg-accent",
+  silver: "bg-gray-400",
+  white: "bg-white outline outline-1 outline-border",
 };
 
 export function Indicator({ color, tooltip, className, style, ...rest }: Props) {
+  const colorClass = colorClasses[color];
+
   const indicator = (
     <span
-      className={`inline-block size-4 rounded-full ${className ?? ""}`}
-      style={{
-        backgroundColor: colorMap[color] ?? color,
-        ...(color === "white" ? { outline: "1px solid currentColor" } : {}),
-        ...style,
-      }}
+      className={`inline-block size-4 rounded-full ${colorClass ?? ""} ${className ?? ""}`}
+      style={colorClass ? style : { backgroundColor: color, ...style }}
       {...rest}
     />
   );

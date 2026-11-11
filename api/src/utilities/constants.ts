@@ -89,10 +89,10 @@ export const CAR_COLOR_OPTIONS = [
 ];
 
 /*
- * Set to http://photon.geo:2322 in k8s cluster
+ * Set to http://photon.geo:2322 in k8s cluster, otherwise defaults to our public Photon instance.
  */
-export const PHOTON_BASE_URL = process.env.PHOTON_BASE_URL ?? "http://192.168.0.110:2322";
-export const OSRM_BASE_URL = "http://192.168.0.104:5000";
+export const PHOTON_BASE_URL = process.env.PHOTON_BASE_URL ?? "https://photon.nussman.us";
+export const OSRM_BASE_URL = process.env.OSRM_BASE_URL ?? "https://osrm.ridebeep.app";
 
 export const APPLE_APN_KEY_ID = process.env.APPLE_APN_KEY_ID;
 export const APPLE_APN_KEY = process.env.APPLE_APN_KEY;

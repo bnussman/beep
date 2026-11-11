@@ -1,15 +1,14 @@
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Controller, useForm } from "react-hook-form";
-import { Alert, Linking, View } from "react-native";
+import { Alert, Linking } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useMutation } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
-import { FieldError, TextField } from "heroui-native";
+import { FieldError, Input, TextField } from "heroui-native";
 
 export default function Feedback() {
   const {

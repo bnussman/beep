@@ -73,13 +73,10 @@ interface ClientContext {
 const wsLink = new WSRPCLink({
   connect: () => new WebSocket(wsUrl),
   reconnect: {
-    enabled: true,
     delay(info) {
       return info.attempt === 1 ? 0 : 2_000;
     },
-    onClose: {
-      enabled: true,
-    }
+    onClose: true
   },
   plugins: [
     new ClientRetryPlugin({
