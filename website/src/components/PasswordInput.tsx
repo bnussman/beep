@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
 import { Button, InputGroup } from "@heroui/react";
 import { useState } from "react";
-import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
+import { EyeIcon, EyeSlashIcon, KeyIcon } from "@phosphor-icons/react";
 
 export function PasswordInput(props: ComponentProps<typeof InputGroup.Input>) {
   const [isVisible, setIsVisible] = useState(false);
@@ -10,6 +10,9 @@ export function PasswordInput(props: ComponentProps<typeof InputGroup.Input>) {
 
   return (
     <InputGroup>
+      <InputGroup.Prefix className="border-none">
+        <KeyIcon weight="bold" />
+      </InputGroup.Prefix>
       <InputGroup.Input type={isVisible ? "text" : "password"} {...props} />
       <InputGroup.Suffix className="pe-0 border-none">
         <Button

@@ -5,9 +5,10 @@ import { orpc } from "../utils/orpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Alert, Button, FieldError, Input, Label, TextField, Typography } from "@heroui/react";
+import { Alert, Button, FieldError, Input, InputGroup, Label, TextField, Typography } from "@heroui/react";
 import { Link } from "../components/Link";
 import { PasswordInput } from "../components/PasswordInput";
+import { UserIcon } from "@phosphor-icons/react";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -59,7 +60,12 @@ function Login() {
           render={({ field, fieldState }) => (
             <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined} autoFocus>
               <Label>Username or Email</Label>
-              <Input type="text" />
+               <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <UserIcon weight="bold" />
+                </InputGroup.Prefix>
+                <InputGroup.Input type="text" />
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}

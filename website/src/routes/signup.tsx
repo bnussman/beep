@@ -194,7 +194,12 @@ function SignUp() {
           render={({ field, fieldState }) => (
             <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
               <Label>Username</Label>
-              <Input type="text" />
+               <InputGroup>
+                <InputGroup.Prefix className="border-none">
+                  <UserIcon weight="bold" />
+                </InputGroup.Prefix>
+                <InputGroup.Input type="text" />
+              </InputGroup>
               <FieldError>{fieldState.error?.message}</FieldError>
             </TextField>
           )}
