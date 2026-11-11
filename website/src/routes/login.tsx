@@ -59,7 +59,7 @@ function Login() {
           control={form.control}
           name="username"
           render={({ field, fieldState }) => (
-            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined}>
+            <TextField {...field} isRequired isInvalid={fieldState.error ? true : undefined} autoFocus>
               <Label>Username or Email</Label>
               <Input type="text" />
               <FieldError>{fieldState.error?.message}</FieldError>
@@ -74,7 +74,7 @@ function Login() {
               <Label>Password</Label>
               <InputGroup>
                 <InputGroup.Input type={isVisible ? "text" : "password"} />
-                <InputGroup.Suffix className="pe-0">
+                <InputGroup.Suffix className="pe-0 border-none">
                   <Button
                     isIconOnly
                     aria-label={isVisible ? "Hide password" : "Show password"}
