@@ -14,7 +14,7 @@ const locker = new RedisLocker(redis, {
  */
 export const withLock = o
 .use(authCheckerMiddleware)
-.use(
+.middleware(
   lock({
     locker,
     key: ({ path, context }) => `${path.join(".")}-${context.user.id}`,
