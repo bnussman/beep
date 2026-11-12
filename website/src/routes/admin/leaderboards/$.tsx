@@ -52,7 +52,7 @@ function Beeps() {
             <Table.Body>
               {isLoading && <TableLoading colSpan={2} />}
               {error && <TableError colSpan={2} error={error.message} />}
-              {data?.users?.map(({ user, beeps }) => (
+              {data?.data?.map(({ user, beeps }) => (
                 <Table.Row key={user.id}>
                   <Table.Cell>
                     <BasicUser user={user} />

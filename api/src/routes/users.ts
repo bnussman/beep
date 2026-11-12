@@ -13,16 +13,11 @@ import { inProgressBeep, updateEta } from "../logic/beeps";
 import { asyncIteratorObject, ORPCError } from "@orpc/server";
 import { activePaymentsInputSchema, adminEditUserInputSchema, editUserInputSchema, listsUsersInputSchema, sendTestEmailInputSchema, syncUserPaymentsInputSchema, userSchema } from "../schemas/users";
 import { getActivePayments } from "../logic/payments";
-import {
-  adminProcedure,
-  authedProcedure,
-} from "../middleware/orpc";
-import {
-  S3_BUCKET_URL,
-  WEB_BASE_URL,
-} from "../utilities/constants";
-import { paginationSchema } from "../utilities/pagination";
+import { adminProcedure, authedProcedure, } from "../middleware/orpc";
+import { S3_BUCKET_URL } from "../utilities/constants";
+import { getOffsetFromPage, getPagesFromCount, paginationSchema } from "../utilities/pagination";
 import { mustHaveBeenInAcceptedBeep } from "../middleware/authorization";
+import { sendVerificationEmail } from "../logic/auth";
 
 export const userRouter = {
   me: authedProcedure
@@ -77,24 +72,9 @@ export const userRouter = {
     .handler(async ({ context, input }) => {
       const values: Partial<typeof users.$inferInsert> = input;
 
-      if (values.isBeeping === false) {
-        const countOfInProgressBeeps = await db.$count(
-          beeps,
-          and(eq(beeps.beeper_id, context.user.id), inProgressBeep),
-        );
-
-        if (countOfInProgressBeeps > 0) {
-          throw new ORPCError("BAD_REQUEST", {
-            message:
-              "You can't stop beeping when you have riders in your queue",
-          });
-        }
-      }
-
       if (input.email && input.email !== context.user.email) {
-        // User is changing their email, we must make them reverify.
         values.isEmailVerified = false;
-        values.isEmailVerified = false;
+        values.isStudent = false;
 
         await db
           .delete(emailVerifications)
@@ -109,21 +89,11 @@ export const userRouter = {
 
         await db.insert(emailVerifications).values(verifyEmailEntry);
 
-        const mailOptions: SendMailOptions = {
-          from: "Beep App <banks@ridebeep.app>",
-          to: input.email,
-          subject: "Verify your Beep App Email!",
-          html: `Hey ${context.user.username}, <br><br>
-                  Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
-                  - Beep App Team
-              `,
-        };
-
-        try {
-          await email.sendMail(mailOptions);
-        } catch (error) {
-          Sentry.captureException(error);
-        }
+        await sendVerificationEmail({
+          email: verifyEmailEntry.email,
+          token: verifyEmailEntry.id,
+          username: context.user.username,
+        });
       }
 
       if (input.isBeeping) {
@@ -144,14 +114,23 @@ export const userRouter = {
         }
       }
 
-      if ("location" in values) {
-        await writeDB.update(users).set(values).where(eq(users.id, context.user.id));
-      } else {
-        await db
-          .update(users)
-          .set(values)
-          .where(eq(users.id, context.user.id));
+      if (values.isBeeping === false) {
+        const countOfInProgressBeeps = await db.$count(
+          beeps,
+          and(eq(beeps.beeper_id, context.user.id), inProgressBeep),
+        );
+
+        if (countOfInProgressBeeps > 0) {
+          throw new ORPCError("BAD_REQUEST", {
+            message:
+              "You can't stop beeping when you have riders in your queue",
+          });
+        }
       }
+
+      const dbInstance = 'location' in values ? writeDB : db; 
+
+      await dbInstance.update(users).set(values).where(eq(users.id, context.user.id));
 
       Object.assign(context.user, values);
 
@@ -422,7 +401,8 @@ export const userRouter = {
   usersWithBeeps: adminProcedure
     .input(paginationSchema)
     .handler(async ({ input }) => {
-      const usersData = await db
+      const [data, results] = await Promise.all([
+        db
         .select({
           user: {
             id: users.id,
@@ -436,16 +416,15 @@ export const userRouter = {
         .leftJoin(beeps, eq(users.id, beeps.beeper_id))
         .groupBy(users.id)
         .orderBy(sql`beeps desc`)
-        .offset((input.page - 1) * input.pageSize)
-        .limit(input.pageSize);
-
-      const usersCount = await db.select({ count: count() }).from(users);
-      const results = usersCount[0].count;
+        .offset(getOffsetFromPage(input.page, input.pageSize))
+        .limit(input.pageSize),
+        db.$count(users)
+      ]);
 
       return {
-        users: usersData,
+        data,
         page: input.page,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         pageSize: input.pageSize,
         results,
       };
@@ -453,7 +432,8 @@ export const userRouter = {
   usersWithRides: adminProcedure
     .input(paginationSchema)
     .handler(async ({ input }) => {
-      const usersData = await db
+      const [data, results] = await Promise.all([
+        db
         .select({
           user: {
             id: users.id,
@@ -467,17 +447,16 @@ export const userRouter = {
         .leftJoin(beeps, eq(users.id, beeps.rider_id))
         .groupBy(users.id)
         .orderBy(sql`rides desc`)
-        .offset((input.page - 1) * input.pageSize)
-        .limit(input.pageSize);
-
-      const usersCount = await db.select({ count: count() }).from(users);
-      const results = usersCount[0].count;
+        .offset(getOffsetFromPage(input.page, input.pageSize))
+        .limit(input.pageSize),
+        db.$count(users)
+      ]);
 
       return {
-        users: usersData,
+        data,
         results,
         page: input.page,
-        pages: Math.ceil(results / input.pageSize),
+        pages: getPagesFromCount(results, input.pageSize),
         pageSize: input.pageSize,
       };
     }),

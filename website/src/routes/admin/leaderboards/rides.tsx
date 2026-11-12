@@ -52,7 +52,7 @@ function Rides() {
             <Table.Body>
               {isLoading && <TableLoading colSpan={2} />}
               {error && <TableError colSpan={2} error={error.message} />}
-              {data?.users?.map(({ user, rides }) => (
+              {data?.data?.map(({ user, rides }) => (
                 <Table.Row key={user.id}>
                   <Table.Cell>
                     <BasicUser user={user} />
