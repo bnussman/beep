@@ -1,4 +1,3 @@
-import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Typography } from "@heroui/react";
 import { Table } from "@heroui/react";

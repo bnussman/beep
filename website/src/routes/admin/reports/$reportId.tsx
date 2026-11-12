@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { RouterInputs } from "../../../../../api/src";
 import { orpc } from "../../../utils/orpc";
 import { Link } from "../../../components/Link";
@@ -52,7 +52,7 @@ function Report() {
     },
   }));
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
 
   const values = {

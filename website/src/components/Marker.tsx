@@ -1,4 +1,3 @@
-import React from "react";
 import { Marker as _Marker } from "react-map-gl/maplibre";
 import { QueuePreview } from "./QueuePreview";
 import { Avatar, Popover, Separator, Tooltip, Typography } from "@heroui/react";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Alert } from "@heroui/react";
 
 export function NotFound() {

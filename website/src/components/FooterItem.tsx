@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "./Link";
 import type { FooterItemLink, FooterItem as FooterItemType } from "./FooterItem.types";
 

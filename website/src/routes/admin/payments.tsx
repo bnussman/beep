@@ -1,4 +1,3 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { keepPreviousData } from "@tanstack/react-query";

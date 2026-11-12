@@ -1,4 +1,3 @@
-import React from 'react'
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
 import { Table } from '@heroui/react';

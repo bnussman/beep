@@ -1,4 +1,3 @@
-import React from "react";
 import iPhoneDark from "../assets/dark.webp?url";
 import iPhoneLight from "../assets/light.webp?url";
 import { getDownloadLink } from "../utils/utils";

@@ -1,4 +1,4 @@
-import React from "react";
+import type { ComponentProps } from "react";
 import { default as _Map } from "react-map-gl/maplibre";
 import { useTheme } from "@heroui/react";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -7,7 +7,7 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 
 setWorkerUrl(workerUrl);
 
-export function Map(props: React.ComponentProps<typeof _Map>) {
+export function Map(props: ComponentProps<typeof _Map>) {
   const { resolvedTheme } = useTheme();
 
   return (

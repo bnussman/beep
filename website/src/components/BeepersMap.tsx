@@ -1,4 +1,3 @@
-import React from "react";
 import { Marker } from "./Marker";
 import { Map } from "./Map";
 import { RouterOutputs } from "../../../api/src";

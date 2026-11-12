@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Indicator } from "../../../components/Indicator";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";

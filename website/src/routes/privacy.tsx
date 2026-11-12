@@ -1,4 +1,3 @@
-import React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Accordion, Typography } from '@heroui/react';
 import { CaretDownIcon } from '@phosphor-icons/react';

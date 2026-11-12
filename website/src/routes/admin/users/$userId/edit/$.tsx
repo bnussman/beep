@@ -1,4 +1,3 @@
-import React from "react";
 import { orpc } from "../../../../../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { createFileRoute } from "@tanstack/react-router";

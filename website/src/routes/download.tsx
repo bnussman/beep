@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { getDownloadLink } from "../utils/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { Typography, Spinner } from "@heroui/react";
