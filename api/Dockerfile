@@ -1,4 +1,4 @@
-FROM oven/bun:1.4.4-alpine
+FROM oven/bun:canary-alpine
 
 WORKDIR /usr/api
 
@@ -12,4 +12,4 @@ EXPOSE 3000
 
 ENV NODE_ENV=production
 
-CMD ["bun", "run", "--preload", "@sentry/node/preload", "src/index.ts"]
+CMD ["bun", "run", "--preload", "@sentry/bun/import", "src/index.ts"]

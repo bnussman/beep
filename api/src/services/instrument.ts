@@ -1,60 +1,28 @@
 import * as Sentry from "@sentry/bun";
 import { ENVIRONMENT, isDevelopment, SENTRY_DSN } from "../utilities/constants";
 import { ORPCInstrumentation } from "@orpc/opentelemetry";
-
-const originalFetch: typeof globalThis.fetch = globalThis.fetch.bind(globalThis);
-
-globalThis.fetch = (async (...args: Parameters<typeof globalThis.fetch>) => {
-  const [input, init] = args;
-  const method = (init?.method ?? (input instanceof Request ? input.method : "GET")).toUpperCase();
-  const url =
-    typeof input === "string"
-      ? input
-      : input instanceof URL
-        ? input.toString()
-        : input.url;
-
-  return Sentry.startSpan(
-    { op: "http.client", name: `${method} ${url}` },
-    async (span) => {
-      const baseUrl = typeof globalThis.location?.origin === "string" ? globalThis.location.origin : "http://localhost";
-      const parsedUrl = new URL(url, baseUrl);
-
-      span.setAttribute("http.request.method", method);
-      span.setAttribute("server.address", parsedUrl.hostname);
-      if (parsedUrl.port) {
-        span.setAttribute("server.port", parsedUrl.port);
-      }
-
-      const response = await originalFetch(...args);
-      span.setAttribute("http.response.status_code", response.status);
-
-      const contentLength = response.headers.get("content-length");
-      if (contentLength) {
-        span.setAttribute("http.response_content_length", Number(contentLength));
-      }
-
-      return response;
-    },
-  );
-}) as typeof globalThis.fetch;
+import { registerInstrumentations } from "@opentelemetry/instrumentation";
 
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
   debug: false,
   tracesSampleRate: isDevelopment ? 1 : 0.1,
-  openTelemetryInstrumentations: [
-    new ORPCInstrumentation({
-      propagation: false,
-    }),
-  ],
+  enableOpenTelemetrySetup: true,
   integrations() {
     return [
-      // Sentry.bunRuntimeMetricsIntegration(),
       Sentry.bunServerIntegration(),
+      Sentry.fetchIntegration(),
       Sentry.postgresIntegration(),
       Sentry.redisIntegration(),
     ];
   },
+});
+
+registerInstrumentations({
+  instrumentations: [
+    new ORPCInstrumentation({
+      propagation: false,
+    }),
+  ],
 });

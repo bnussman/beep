@@ -10,7 +10,7 @@ import { pubSub } from "../services/pubsub";
 import { authSchema, changePasswordInput, forgotPasswordInput, loginInput, logoutInput, resetPasswordInput, verifyAccountInput } from "../schemas/auth";
 import { signupSchema, userSchema } from "../schemas/users";
 import { ORPCError, ValidationError } from "@orpc/server";
-import { isExpired, sendResetPasswordEmail, sendSignupVerificationEmail } from "../logic/auth";
+import { isExpired, sendResetPasswordEmail, sendVerificationEmail } from "../logic/auth";
 import { sha256 } from "../utilities/hash";
 
 export const authRouter = {
@@ -161,7 +161,7 @@ export const authRouter = {
         })
         .returning();
 
-      await sendSignupVerificationEmail({
+      await sendVerificationEmail({
         email: input.email,
         token: verifyEmailEntry.id,
         username: input.username,
@@ -344,7 +344,7 @@ export const authRouter = {
 
     await db.insert(emailVerifications).values(verifyEmailEntry);
 
-    await sendSignupVerificationEmail({
+    await sendVerificationEmail({
       email: verifyEmailEntry.email,
       username: context.user.email,
       token: verifyEmailEntry.id,

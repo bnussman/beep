@@ -1,5 +1,4 @@
 import { AlertDialog, Button } from "@heroui/react";
-import React from "react";
 
 interface Props {
   open: boolean;

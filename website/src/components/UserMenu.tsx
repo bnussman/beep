@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar, Dropdown, Label, Separator } from "@heroui/react";
 import { createLink, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";

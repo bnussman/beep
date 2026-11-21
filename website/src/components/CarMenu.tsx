@@ -1,4 +1,3 @@
-import React from "react";
 import { CarIcon, DotsThreeOutlineIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button, Dropdown, Label, toast } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";

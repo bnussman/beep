@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { orpc } from "../../../../utils/orpc";
 import { printStars } from "../../../../utils/utils";
 import { createFileRoute } from "@tanstack/react-router"

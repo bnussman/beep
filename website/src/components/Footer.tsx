@@ -1,4 +1,3 @@
-import React from "react";
 import type { FooterItem as FooterItemType } from "./FooterItem.types";
 import { BetterStackStatus } from "./BetterStackStatus";
 import { ANDROID_DOWNLOAD_URL, IOS_DOWNLOAD_URL } from "../utils/utils";

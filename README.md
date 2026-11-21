@@ -7,11 +7,11 @@
 ![production](https://github.com/bnussman/beep/actions/workflows/production.yml/badge.svg?branch=production)
 
 
-## 📚 Introduction
+## Overview
 
-This is the monorepo for the Beep App. The *Beep App* is a full stack ride share application. This app is built for students at any college campus but is mostly used by students at Appalachian State University. This application is not afilliated with any university and is independently developed and maintained.
+This is the monorepo for the Beep App. The *Beep App* is a full stack ride share application. This app is built for students at any college campus. This application is not afilliated with any university and is independently developed and maintained.
 
-## ⌨️ Developing Locally
+## Developing Locally
 
 ### Dependencies
 
@@ -23,7 +23,7 @@ This is the monorepo for the Beep App. The *Beep App* is a full stack ride share
 #### Optional
 - [EAS CLI](https://github.com/expo/eas-cli?tab=readme-ov-file#installation) (only needed if you're going to build releases for the app)
 
-### 💻 Running Locally
+### Running Locally
 
 Fork this repository
 ```
@@ -55,7 +55,7 @@ To run the development envrionment use in the repo's root
 bun dev
 ```
 
-### 🌎 Services running for local development
+### Services running for local development
 | Service    | URL                           |
 |------------|-------------------------------|
 | API        | http://localhost:3000         |

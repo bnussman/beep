@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import * as Sentry from "@sentry/react";
 import { useSubscription } from "../utils/subscriptions";
 import { orpc } from "../utils/orpc";

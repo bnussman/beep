@@ -1,4 +1,3 @@
-import React from "react";
 import { orpc } from "../../../utils/orpc";
 import { Link } from "../../../components/Link";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";

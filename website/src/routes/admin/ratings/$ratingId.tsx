@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";

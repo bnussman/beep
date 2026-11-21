@@ -1,4 +1,3 @@
-import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loading } from "../../components/Loading";
 import { useQuery } from "@tanstack/react-query";

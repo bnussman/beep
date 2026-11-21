@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react";
+import { ComponentProps } from "react";
 import { Avatar, Typography } from "@heroui/react";
 import { Link } from "./Link";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { Marker } from "../../../../components/Marker";
 import { Map } from "../../../../components/Map";
 import { createFileRoute } from "@tanstack/react-router";
