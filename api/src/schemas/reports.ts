@@ -7,7 +7,7 @@ export const listReportsInputSchema = z.object({
 export const updateReportInputSchema = z.object({
   reportId: z.uuid(),
   data: z.object({
-    notes: z.string().max(255).nullable().optional(),
+    notes: z.string().nullable().optional(),
     handled: z.boolean().nullable().optional(),
   }),
 });
@@ -15,7 +15,7 @@ export const updateReportInputSchema = z.object({
 export const createReportInputSchema = 
   z.object({
     userId: z.uuid(),
-    reason: z.string().max(255),
+    reason: z.string(),
     beepId: z.uuid().optional(),
     ratingId: z.uuid().optional(),
   });

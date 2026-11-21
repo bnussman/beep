@@ -9,7 +9,7 @@ interface SendVerificationEmailOptions {
   token: string;
 }
 
-export async function sendVerificationEmail(options: SendVerificationEmailOptions) {
+export async function sendSignupVerificationEmail(options: SendVerificationEmailOptions) {
   const mailOptions: SendMailOptions = {
     from: "Beep App <banks@ridebeep.app>",
     to: options.email,

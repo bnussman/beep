@@ -1,3 +1,4 @@
+import React from "react";
 import { Typography } from "@heroui/react";
 import type { FooterItem as FooterItemType } from "./FooterItem.types";
 import { FooterItem } from "./FooterItem";

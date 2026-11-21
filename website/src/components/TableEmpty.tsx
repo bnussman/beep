@@ -1,4 +1,5 @@
 import { Table, TableCellProps } from '@heroui/react';
+import React from 'react';
 
 interface Props extends TableCellProps {
   /**

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Spinner } from '@heroui/react';
 
 export function Loading() {

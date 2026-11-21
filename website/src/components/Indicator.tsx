@@ -1,7 +1,7 @@
-import type { HTMLAttributes } from "react";
+import React from "react";
 import { Tooltip } from "@heroui/react";
 
-interface Props extends HTMLAttributes<HTMLSpanElement> {
+interface Props extends React.HTMLAttributes<HTMLSpanElement> {
   color: string;
   tooltip?: string;
 }

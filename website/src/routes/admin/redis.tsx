@@ -1,3 +1,4 @@
+import React from "react";
 import { Loading } from "../../components/Loading";
 import { createFileRoute } from "@tanstack/react-router";
 import { Alert, Typography } from "@heroui/react";

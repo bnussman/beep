@@ -1,3 +1,4 @@
+import React from 'react'
 import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
 import { Tabs, Typography } from '@heroui/react';
 

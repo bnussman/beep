@@ -6,12 +6,12 @@
   "type": "module",
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "bun run --preload @sentry/bun/import --watch src/index.ts",
+    "dev": "bun run --preload @sentry/node/preload --watch src/index.ts",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.5",
+    "@types/bun": "^1.4.4",
     "@types/pg": "^8.23.1",
     "@types/validator": "^13.15.10",
     "drizzle-kit": "1.0.0-rc.5",
@@ -21,13 +21,12 @@
     "@banksnussman/osrm": "^0.0.4",
     "@banksnussman/photon": "^0.0.5",
     "@banksnussman/revenuecat": "0.0.6",
-    "@opentelemetry/api": "1.9.1",
-    "@opentelemetry/instrumentation": "0.220.0",
     "@orpc/experimental-lock": "2.0.0-beta.50",
     "@orpc/opentelemetry": "2.0.0-beta.50",
     "@orpc/publisher": "2.0.0-beta.50",
     "@orpc/server": "2.0.0-beta.50",
-    "@sentry/bun": "^11.15.0",
+    "@sentry/bun": "^10.74.0",
+    "@sentry/node": "^10.74.0",
     "car-info": "0.2.7",
     "drizzle-orm": "1.0.0-rc.5",
     "jose": "^6.2.17",
@@ -41,7 +40,7 @@
   "devEngines": {
     "runtime": {
       "name": "bun",
-      "version": "1.4.5",
+      "version": "1.4.4",
       "onFail": "download"
     }
   }
