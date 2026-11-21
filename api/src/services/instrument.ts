@@ -6,7 +6,7 @@ import { registerInstrumentations } from "@opentelemetry/instrumentation";
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
-  debug: true,
+  debug: false,
   tracesSampleRate: isDevelopment ? 1 : 0.1,
   enableOpenTelemetrySetup: true,
   integrations() {
