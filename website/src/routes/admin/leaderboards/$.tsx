@@ -1,12 +1,13 @@
+import React from 'react'
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Table } from '@heroui/react';
+import { Link } from '../../../components/Link';
+import { Avatar, Table, Typography } from '@heroui/react';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from '../../../utils/orpc';
-import { BasicUser } from '../../../components/BasicUser';
 
 export const Route = createFileRoute('/admin/leaderboards/$')({
   component: Beeps,
@@ -51,10 +52,18 @@ function Beeps() {
             <Table.Body>
               {isLoading && <TableLoading colSpan={2} />}
               {error && <TableError colSpan={2} error={error.message} />}
-              {data?.data?.map(({ user, beeps }) => (
+              {data?.users?.map(({ user, beeps }) => (
                 <Table.Row key={user.id}>
                   <Table.Cell>
-                    <BasicUser user={user} />
+                    <Link to="/admin/users/$userId/$" params={{ userId: user.id }}>
+                      <div className="flex items-center gap-2">
+                        <Avatar>
+                          <Avatar.Image alt={`${user.first} ${user.last}`} src={user.photo ?? undefined} />
+                          <Avatar.Fallback>{user.first.at(0)?.toUpperCase()}{user.last.at(0)?.toUpperCase()}</Avatar.Fallback>
+                        </Avatar>
+                        <Typography type="body">{user.first} {user.last}</Typography>
+                      </div>
+                    </Link>
                   </Table.Cell>
                   <Table.Cell>{beeps}</Table.Cell>
                 </Table.Row>

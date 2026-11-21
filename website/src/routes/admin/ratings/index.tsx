@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { orpc } from "../../../utils/orpc";
 import { printStars } from "../../../utils/utils";
 import { useQuery } from "@tanstack/react-query";

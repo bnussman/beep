@@ -1,4 +1,5 @@
 import { Spinner, Table, TableCellProps } from '@heroui/react';
+import React from 'react';
 
 export function TableLoading(props: TableCellProps) {
   return (

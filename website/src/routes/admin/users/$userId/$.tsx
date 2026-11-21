@@ -1,3 +1,4 @@
+import React from "react";
 import { Indicator } from "../../../../components/Indicator";
 import { useParams, createFileRoute } from "@tanstack/react-router";
 import { Alert, Typography } from "@heroui/react";
