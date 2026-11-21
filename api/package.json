@@ -14,7 +14,7 @@
     "@types/bun": "^1.4.5",
     "@types/pg": "^8.23.1",
     "@types/validator": "^13.15.10",
-    "drizzle-kit": "1.0.0-rc.5",
+    "drizzle-kit": "1.0.0-rc.6",
     "typescript": "^7.0.2"
   },
   "dependencies": {
@@ -29,7 +29,7 @@
     "@orpc/server": "2.0.0-beta.50",
     "@sentry/bun": "^11.15.0",
     "car-info": "0.2.7",
-    "drizzle-orm": "1.0.0-rc.5",
+    "drizzle-orm": "1.0.0-rc.6",
     "jose": "^6.2.17",
     "nodemailer": "^10.5.0",
     "pg": "^8.23.1",
